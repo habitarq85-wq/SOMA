@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOMA // Diagrama Espacial</title>
+<script src="/static/vendor/vis-network/vis-network.min.js"></script>
+<link rel="stylesheet" href="/static/vendor/vis-network/vis-network.min.css">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; }
+:root {
+    --bg: #0a0a0a;
+    --paper: #f4f1ee;
+    --accent: #bc4b21;
+    --card-bg: #1a1a1a;
+    --border: #2a2a2a;
+    --text: #ccc;
+}
+body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--paper);
+    height: 100vh;
+    display: flex;
+    overflow: hidden;
+}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* Panel izquierdo */
+.panel-left {
+    width: 260px;
+    min-width: 260px;
+    background: var(--bg);
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+}
+.logo {
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-align: center;
+    font-family: 'Georgia', serif;
+}
+.logo-sub {
+    font-size: 10px;
+    color: var(--paper);
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+    margin-top: -8px;
+}
+.divider { height: 1px; background: var(--border); margin: 4px 0; }
+.panel-left label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.panel-left select {
+    background: var(--card-bg);
+    color: var(--paper);
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    font-size: 12px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    cursor: pointer;
+}
+.panel-left select:focus { outline: 1px solid var(--accent); }
+.panel-left button {
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    letter-spacing: 0.5px;
+}
+.panel-left button:hover { opacity: 0.85; }
+.btn-reset {
+    background: var(--card-bg);
+    color: var(--paper);
+    border: 1px solid var(--border) !important;
+}
+.btn-export {
+    background: var(--accent);
+    color: white;
+}
+.btn-export-svg {
+    background: #2a5a2a;
+    color: white;
+}
+.instrucciones {
+    font-size: 10px;
+    color: #888;
+    line-height: 1.6;
+    padding: 8px;
+    background: var(--card-bg);
+    border-radius: 4px;
+    border-left: 2px solid var(--accent);
+}
+
+/* Panel derecho */
+.panel-right {
+    width: 240px;
+    min-width: 240px;
+    background: var(--card-bg);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+}
+.panel-right-header {
+    padding: 16px 12px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+}
+.btn-refresh {
+    float: right;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--paper);
+    padding: 2px 8px;
+    font-size: 10px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.btn-refresh:hover { border-color: var(--accent); color: var(--accent); }
+.lista-proyectos {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px;
+}
+.proyecto-item {
+    padding: 8px 10px;
+    margin: 2px 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-left: 3px solid transparent;
+}
+.proyecto-item:hover { background: #222; }
+.proyecto-item.active {
+    background: #2a1a10;
+    border-left-color: var(--accent);
+}
+.proyecto-nombre {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--paper);
+}
+.proyecto-cliente {
+    font-size: 10px;
+    color: #888;
+    margin-top: 2px;
+}
+.proyecto-fecha {
+    font-size: 9px;
+    color: #555;
+    margin-top: 1px;
+}
+.proyecto-vacio {
+    padding: 12px;
+    font-size: 11px;
+    color: #555;
+    text-align: center;
+}
+.empty-msg {
+    padding: 30px;
+    text-align: center;
+    color: #555;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+/* Panel central (grafo) */
+.panel-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    min-height: 0;
+    overflow: hidden;
+}
+.graph-header {
+    padding: 10px 16px;
+    font-size: 12px;
+    color: var(--accent);
+    font-family: 'Courier New', monospace;
+    border-bottom: 1px solid var(--border);
+    min-height: 38px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#graph-container {
+    flex: 1;
+    min-height: 400px;
+    width: 100%;
+    height: 100%;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+}
+.graph-footer {
+    padding: 6px 16px;
+    font-size: 10px;
+    color: #555;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Mini leyenda en footer */
+.leyenda {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.leyenda-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 9px;
+    color: #888;
+}
+.leyenda-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.15);
+}
+</style>
+</head>
+<body>
+
+<!-- Panel Izquierdo -->
+<div class="panel-left">
+    <div>
+        <div class="logo">SOMA</div>
+        <div class="logo-sub">DIAGRAMA ESPACIAL</div>
+    </div>
+    <div class="divider"></div>
+
+    <div>
+        <label>Filtrar por Zona</label>
+        <select id="filtro-zona">
+            <option value="0">Todas</option>
+            <option value="1">1 - Social</option>
+            <option value="2">2 - Operativa</option>
+            <option value="3">3 - Descanso</option>
+            <option value="4">4 - Soporte</option>
+            <option value="5">5 - Transición</option>
+        </select>
+    </div>
+
+    <button class="btn-reset" id="btn-reset">↻ Resetear Posiciones</button>
+    <button class="btn-export" id="btn-export">📷 Guardar Diagrama</button>
+    <button class="btn-export-svg" id="btn-export-svg">📐 Exportar SVG</button>
+
+    <div class="instrucciones">
+        <b style="color:var(--accent)">💡 Instrucciones:</b><br>
+        • Selecciona un proyecto de la lista derecha<br>
+        • Elige filtro por zona arriba<br>
+        • Arrastra nodos para reubicarlos<br>
+        • Rueda del ratón para zoom<br>
+        • Click + arrastrar fondo para mover vista
+    </div>
+</div>
+
+<!-- Panel Central -->
+<div class="panel-center">
+    <div class="graph-header" id="graph-header">Selecciona un proyecto</div>
+    <div id="graph-container">
+        <div class="empty-msg" id="empty-msg">
+            Selecciona un proyecto de la lista derecha<br>
+            para visualizar su diagrama de relaciones espaciales.
+        </div>
+    </div>
+    <div class="graph-footer" id="graph-footer">
+        <span id="node-count">0 nodos</span>
+        <div class="leyenda">
+            <span class="leyenda-item"><span class="leyenda-dot" style="background:#4d7ae6"></span> Social</span>
+            <span class="leyenda-item"><span class="leyenda-dot" style="background:#e6cc33"></span> Operativa</span>
+            <span class="leyenda-item"><span class="leyenda-dot" style="background:#e64d4d"></span> Descanso</span>
+            <span class="leyenda-item"><span class="leyenda-dot" style="background:#e68033"></span> Soporte</span>
+            <span class="leyenda-item"><span class="leyenda-dot" style="background:#9933cc"></span> Transición</span>
+        </div>
+    </div>
+</div>
+
+<!-- Panel Derecho -->
+<div class="panel-right">
+    <div class="panel-right-header">
+        Proyectos
+        <button class="btn-refresh" id="btn-refresh">↻</button>
+    </div>
+    <div class="lista-proyectos" id="lista-proyectos">
+        <div class="proyecto-vacio">Cargando proyectos...</div>
+    </div>
+</div>
+
+<script>
+const DESCRIPCION_ZONA = {
+    1: "Social", 2: "Operativa", 3: "Descanso",
+    4: "Soporte", 5: "Transición"
+};
+const ZONA_COLOR = {
+    1: "#4d7ae6", 2: "#e6cc33", 3: "#e64d4d",
+    4: "#e68033", 5: "#9933cc"
+};
+
+let network = null;
+let currentNodes = null;
+let currentEdges = null;
+let proyectoActual = null;
+let posicionesGuardadas = {};
+
+// ---- Cargar proyectos ----
+async function cargarProyectos() {
+    const lista = document.getElementById('lista-proyectos');
+    lista.innerHTML = '<div class="proyecto-vacio">Cargando proyectos...</div>';
+    try {
+        const res = await fetch('/api/diagrama/proyectos');
+        if (!res.ok) { lista.innerHTML = '<div class="proyecto-vacio">Error al cargar</div>'; return; }
+        const proyectos = await res.json();
+
+        if (!proyectos.length) {
+            lista.innerHTML = '<div class="proyecto-vacio">No hay proyectos con programa arquitectónico</div>';
+            return;
+        }
+
+        lista.innerHTML = '';
+        for (const p of proyectos) {
+            const div = document.createElement('div');
+            div.className = 'proyecto-item';
+            div.dataset.id = p.id;
+            div.innerHTML = `
+                <div class="proyecto-nombre">${p.nombre}</div>
+                <div class="proyecto-cliente">${p.cliente || 'Sin cliente'}</div>
+                <div class="proyecto-fecha">${p.fecha || ''}</div>
+            `;
+            div.addEventListener('click', () => seleccionarProyecto(p));
+            lista.appendChild(div);
+        }
+
+        // Seleccionar el primero por defecto si no hay selección
+        if (!proyectoActual && proyectos.length > 0) {
+            seleccionarProyecto(proyectos[0]);
+        }
+    } catch (e) {
+        lista.innerHTML = '<div class="proyecto-vacio">Error de conexión</div>';
+    }
+}
+
+// ---- Seleccionar proyecto ----
+async function seleccionarProyecto(proy) {
+    proyectoActual = proy;
+
+    // Resaltar en lista
+    document.querySelectorAll('.proyecto-item').forEach(el => el.classList.remove('active'));
+    const item = document.querySelector(`.proyecto-item[data-id="${proy.id}"]`);
+    if (item) item.classList.add('active');
+
+    await cargarGrafo(proy.id);
+}
+
+// ---- Cargar grafo ----
+async function cargarGrafo(leadId) {
+    const zona = parseInt(document.getElementById('filtro-zona').value) || 0;
+    const url = `/api/diagrama/grafo/${leadId}${zona > 0 ? '?zona=' + zona : ''}`;
+
+    document.getElementById('graph-header').textContent =
+        `SOMA Graph — ${proyectoActual.nombre}${zona > 0 ? ' | Zona: ' + zona + ' - ' + (DESCRIPCION_ZONA[zona] || '') : ' | Todas las zonas'}`;
+
+    const container = document.getElementById('graph-container');
+    container.innerHTML = '<div class="empty-msg" style="color:#bc4b21;">Cargando grafo...</div>';
+
+    try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+
+        if (data.status === 'empty' || !data.nodes.length) {
+            container.innerHTML = '<div class="empty-msg">No hay espacios en esta zona para este proyecto.</div>';
+            network = null;
+            currentNodes = null;
+            currentEdges = null;
+            document.getElementById('node-count').textContent = '0 nodos';
+            return;
+        }
+
+        currentNodes = data.nodes;
+        currentEdges = data.edges;
+
+        document.getElementById('node-count').textContent = `${data.nodes.length} nodos, ${data.edges.length} relaciones`;
+
+        // Limpiar contenedor
+        container.innerHTML = '';
+        renderGrafo(container, data.nodes, data.edges);
+    } catch (e) {
+        document.getElementById('graph-container').innerHTML =
+            '<div class="empty-msg">Error al cargar el grafo</div>';
+        network = null;
+    }
+}
+
+// ---- Renderizar grafo con vis-network ----
+function renderGrafo(container, nodes, edges) {
+    // Cargar posiciones guardadas
+    const clave = `soma_diagrama_${proyectoActual.id}_zona_${parseInt(document.getElementById('filtro-zona').value) || 0}`;
+    posicionesGuardadas = JSON.parse(localStorage.getItem(clave) || '{}');
+
+    const visNodes = new vis.DataSet(nodes.map(n => {
+        const pos = posicionesGuardadas[n.id];
+        const size = Math.max(12, Math.min(n.size, 60));
+        return {
+            id: n.id,
+            label: n.label,
+            size: size,
+            color: {
+                background: n.color,
+                border: '#ffffff',
+                highlight: { background: n.color, border: '#ffffff' }
+            },
+            font: {
+                color: '#f4f1ee',
+                size: Math.max(6, Math.min(size * 0.45, 16)),
+                face: 'Courier New',
+                strokeWidth: 2,
+                strokeColor: '#000000',
+                multi: true,
+                align: 'center'
+            },
+            borderWidth: 1.5,
+            borderWidthSelected: 2.5,
+            shape: 'dot',
+            title: `<b>${n.espacio}</b><br>Clave: ${n.id}<br>Área: ${n.area} m²<br>Zona: ${n.zona} - ${DESCRIPCION_ZONA[n.zona] || ''}<br>Tipo: ${n.tipo}`,
+            x: pos ? pos.x : undefined,
+            y: pos ? pos.y : undefined
+        };
+    }));
+
+    const visEdges = new vis.DataSet(edges.map(e => ({
+        from: e.from,
+        to: e.to,
+        color: { color: '#f4f1ee', opacity: 0.35 },
+        width: 1.5,
+        smooth: { type: 'continuous' },
+        selectionWidth: 2
+    })));
+
+    const options = {
+        nodes: {
+            shape: 'dot',
+            scaling: { label: { enabled: false } }
+        },
+        edges: {
+            smooth: { type: 'continuous' }
+        },
+        physics: {
+            enabled: true,
+            solver: 'barnesHut',
+            barnesHut: {
+                gravitationalConstant: -800,
+                centralGravity: 0.2,
+                springLength: 150,
+                springConstant: 0.03,
+                damping: 0.6
+            },
+            stabilization: { iterations: 30 }
+        },
+        interaction: {
+            dragNodes: true,
+            dragView: true,
+            zoomView: true,
+            hover: true,
+            tooltipDelay: 200,
+            navigationButtons: false
+        },
+        layout: {
+            improvedLayout: true,
+            randomSeed: 42
+        },
+        configure: {
+            enabled: false
+        }
+    };
+
+    network = new vis.Network(container, { nodes: visNodes, edges: visEdges }, options);
+
+    network.once('stabilizationIterationsDone', function () {
+        network.setOptions({ physics: { enabled: false } });
+        network.fit();
+        guardarPosiciones();
+    });
+
+
+
+    // Guardar posiciones al arrastrar
+    network.on('dragEnd', function () {
+        guardarPosiciones();
+    });
+}
+
+// ---- Guardar posiciones ----
+function guardarPosiciones() {
+    if (!network || !proyectoActual) return;
+    const positions = network.getPositions();
+    const zona = parseInt(document.getElementById('filtro-zona').value) || 0;
+    const clave = `soma_diagrama_${proyectoActual.id}_zona_${zona}`;
+    // Redondear para ahorrar espacio
+    const posRedondeadas = {};
+    for (const [id, pos] of Object.entries(positions)) {
+        posRedondeadas[id] = { x: Math.round(pos.x * 100) / 100, y: Math.round(pos.y * 100) / 100 };
+    }
+    localStorage.setItem(clave, JSON.stringify(posRedondeadas));
+}
+
+// ---- Resetear posiciones ----
+function resetearPosiciones() {
+    if (!network || !proyectoActual) return;
+    const zona = parseInt(document.getElementById('filtro-zona').value) || 0;
+    const clave = `soma_diagrama_${proyectoActual.id}_zona_${zona}`;
+    localStorage.removeItem(clave);
+    posicionesGuardadas = {};
+    network.setOptions({ physics: { enabled: true } });
+    network.once('stabilizationIterationsDone', function () {
+        network.setOptions({ physics: { enabled: false } });
+        guardarPosiciones();
+    });
+}
+
+// ---- Exportar PNG ----
+function exportarPNG() {
+    if (!network) return;
+    const canvas = document.querySelector('#graph-container canvas');
+    if (!canvas) return;
+    const link = document.createElement('a');
+    link.download = `soma_diagrama_${proyectoActual?.nombre || 'proyecto'}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+}
+
+// ---- Exportar SVG ----
+async function exportarSVG() {
+    if (!network || !currentNodes) return;
+
+    const zona = parseInt(document.getElementById('filtro-zona').value) || 0;
+    const positions = network.getPositions();
+    const nodeIds = Object.keys(positions);
+    if (!nodeIds.length) return;
+
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    for (const id of nodeIds) {
+        const p = positions[id];
+        if (p.x < minX) minX = p.x;
+        if (p.y < minY) minY = p.y;
+        if (p.x > maxX) maxX = p.x;
+        if (p.y > maxY) maxY = p.y;
+    }
+    const pad = 80;
+    const w = maxX - minX + pad * 2;
+    const h = maxY - minY + pad * 2;
+
+    let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}">
+  <rect width="100%" height="100%" fill="#0a0a0a"/>
+  <g transform="translate(${-minX + pad}, ${-minY + pad})">\n`;
+
+    // Edge data
+    for (const edge of currentEdges) {
+        const from = positions[edge.from];
+        const to = positions[edge.to];
+        if (!from || !to) continue;
+        svg += `    <line x1="${from.x}" y1="${from.y}" x2="${to.x}" y2="${to.y}" stroke="#f4f1ee" stroke-opacity="0.35" stroke-width="1.5"/>\n`;
+    }
+
+    // Node data
+    const nodeMap = {};
+    for (const n of currentNodes) nodeMap[n.id] = n;
+
+    for (const id of nodeIds) {
+        const p = positions[id];
+        const n = nodeMap[id];
+        if (!n) continue;
+        const r = Math.max(6, Math.min(n.size * 0.6, 30));
+        svg += `    <circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${n.color}" stroke="#ffffff" stroke-width="1.2" opacity="0.85"/>\n`;
+        // Labels
+        const lines = (n.label || id).split('\n');
+        const lineHeight = Math.max(8, r * 0.7);
+        const startY = p.y - ((lines.length - 1) * lineHeight) / 2;
+        for (let i = 0; i < lines.length; i++) {
+            svg += `    <text x="${p.x}" y="${startY + i * lineHeight + 3}" fill="#f4f1ee" font-size="${Math.max(7, r * 0.45)}" font-family="monospace" text-anchor="middle" font-weight="bold">${lines[i]}</text>\n`;
+        }
+    }
+
+    svg += `  </g>\n</svg>`;
+
+    const blob = new Blob([svg], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.download = `soma_diagrama_${proyectoActual?.nombre || 'proyecto'}.svg`;
+    link.href = url;
+    link.click();
+    URL.revokeObjectURL(url);
+}
+
+// ---- Event listeners ----
+document.getElementById('filtro-zona').addEventListener('change', function () {
+    if (proyectoActual) cargarGrafo(proyectoActual.id);
+});
+
+document.getElementById('btn-reset').addEventListener('click', resetearPosiciones);
+document.getElementById('btn-export').addEventListener('click', exportarPNG);
+document.getElementById('btn-export-svg').addEventListener('click', exportarSVG);
+document.getElementById('btn-refresh').addEventListener('click', cargarProyectos);
+
+// ---- Iniciar ----
+cargarProyectos();
+</script>
+</body>
+</html>

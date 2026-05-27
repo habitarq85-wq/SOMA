@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>SOMA - Arquitectura Emergente</title>
+    <style>
+        :root { --beige: #f4f1ea; --ink: #1a1a1a; --gold: #a6937c; --white: #ffffff; }
+        body { font-family: 'Helvetica Neue', sans-serif; background: var(--beige); color: var(--ink); padding: 40px; margin: 0; }
+        header { border-bottom: 1px solid var(--ink); padding-bottom: 20px; margin-bottom: 50px; }
+        h1 { text-transform: uppercase; letter-spacing: 5px; font-weight: 300; margin: 0; }
+        
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .block { background: var(--white); border: 1px solid #ddd; padding: 30px; position: relative; }
+        .block h2 { font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        
+        .category { margin-top: 20px; }
+        .category h3 { font-size: 1rem; margin-bottom: 10px; }
+        ul { list-style: none; padding: 0; font-size: 0.9rem; line-height: 1.8; }
+        li::before { content: "• "; color: var(--gold); }
+        
+        .highlight-box { grid-column: 1 / -1; background: var(--ink); color: var(--white); padding: 20px; text-align: center; font-style: italic; }
+        
+        .tag { display: inline-block; background: #eee; padding: 2px 8px; font-size: 0.7rem; margin-top: 5px; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>SOMA Taller Virtual de Arquitectura</h1>
+    <p>Lo protocolario se programa, lo creativo se libera.</p>
+</header>
+
+<div class="grid-container">
+
+    <!-- ADMINISTRACIÓN -->
+    <div class="block">
+        <h2>01. Gestión del Entorno (Adm)</h2>
+        <div class="category">
+            <h3>Estructura de Negocio</h3>
+            <ul>
+                <li>Modelo de Negocio & Tesis AaaP</li>
+                <li>Inversiones y Compras Técnicas</li>
+                <li>Gestión de Impuestos y Gastos</li>
+            </ul>
+        </div>
+        <div class="category">
+            <h3>Protocolos Operativos</h3>
+            <ul>
+                <li><strong>Protocolo de Presupuestos</strong></li>
+                <li><strong>Organización de Carpetas (Data)</strong></li>
+                <li>Gestión de Ingresos</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- TALLER SOMA -->
+    <div class="block">
+        <h2>02. Taller Virtual SOMA (Operación)</h2>
+        <div class="category">
+            <h3>Análisis de Patrones</h3>
+            <ul>
+                <li><strong>Entrevistas con el Cliente</strong></li>
+                <li>Investigación y Análisis de Realidad</li>
+                <li>Conceptualización del Mensaje</li>
+            </ul>
+        </div>
+        <div class="category">
+            <h3>Surgimiento Creativo</h3>
+            <ul>
+                <li>Modelado 3D & Visualización</li>
+                <li>Representación Gráfica Integral</li>
+                <li>Evaluación de Habitabilidad</li>
+                <li>Anteproyecto</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- INGENIERÍA I+D -->
+    <div class="block">
+        <h2>03. Laboratorio de Herramientas (I+D)</h2>
+        <div class="category">
+            <h3>Automatización</h3>
+            <ul>
+                <li>Desarrollo de Apps en Python</li>
+                <li>Integración de Bases de Datos SQLite</li>
+                <li>Implementación de IA en Procesos</li>
+            </ul>
+        </div>
+        <div class="category">
+            <h3>Protocolos Técnicos</h3>
+            <ul>
+                <li>Planos Técnicos Automatizados</li>
+                <li>Coordinación de Ingenierías</li>
+                <li>Modulización Constructiva Post-Diseño</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- MARKETING -->
+    <div class="block">
+        <h2>04. Comunicación del Mensaje (Mkt)</h2>
+        <div class="category">
+            <h3>Activos de Marca</h3>
+            <ul>
+                <li>Diseño de Página Web</li>
+                <li>Fabricación de Material de Portafolio</li>
+                <li>Redacciones y Tesis de Proyecto</li>
+            </ul>
+        </div>
+        <div class="category">
+            <h3>Relaciones</h3>
+            <ul>
+                <li>Estrategias de Promoción</li>
+                <li>Red de Alianzas y Contactos Industriales</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="highlight-box">
+        "Lo protocolario se programa, lo creativo se libera para que la arquitectura emerja de la realidad."
+    </div>
+
+</div>
+
+</body>
+</html>

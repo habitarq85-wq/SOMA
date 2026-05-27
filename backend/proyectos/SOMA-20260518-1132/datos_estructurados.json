@@ -1,0 +1,206 @@
+{
+  "activity_matrix": [
+    {
+      "nombre": "Carlos",
+      "slots": [
+        {
+          "hora": 0,
+          "zona": "d"
+        },
+        {
+          "hora": 1,
+          "zona": "d"
+        },
+        {
+          "hora": 2,
+          "zona": "d"
+        },
+        {
+          "hora": 3,
+          "zona": "d"
+        },
+        {
+          "hora": 4,
+          "zona": "d"
+        },
+        {
+          "hora": 5,
+          "zona": "d"
+        },
+        {
+          "hora": 6,
+          "zona": "d"
+        },
+        {
+          "hora": 7,
+          "zona": "t"
+        },
+        {
+          "hora": 8,
+          "zona": "s"
+        },
+        {
+          "hora": 9,
+          "zona": "o"
+        },
+        {
+          "hora": 10,
+          "zona": "o"
+        },
+        {
+          "hora": 11,
+          "zona": "o"
+        },
+        {
+          "hora": 12,
+          "zona": "s"
+        },
+        {
+          "hora": 13,
+          "zona": "o"
+        },
+        {
+          "hora": 14,
+          "zona": "o"
+        },
+        {
+          "hora": 15,
+          "zona": "o"
+        },
+        {
+          "hora": 16,
+          "zona": "o"
+        },
+        {
+          "hora": 17,
+          "zona": "o"
+        },
+        {
+          "hora": 18,
+          "zona": "t"
+        },
+        {
+          "hora": 19,
+          "zona": "s"
+        },
+        {
+          "hora": 20,
+          "zona": "s"
+        },
+        {
+          "hora": 21,
+          "zona": "s"
+        },
+        {
+          "hora": 22,
+          "zona": "d"
+        },
+        {
+          "hora": 23,
+          "zona": "d"
+        }
+      ]
+    },
+    {
+      "nombre": "Laura",
+      "slots": [
+        {
+          "hora": 0,
+          "zona": "d"
+        },
+        {
+          "hora": 1,
+          "zona": "d"
+        },
+        {
+          "hora": 2,
+          "zona": "d"
+        },
+        {
+          "hora": 3,
+          "zona": "d"
+        },
+        {
+          "hora": 4,
+          "zona": "d"
+        },
+        {
+          "hora": 5,
+          "zona": "d"
+        },
+        {
+          "hora": 6,
+          "zona": "d"
+        },
+        {
+          "hora": 7,
+          "zona": "t"
+        },
+        {
+          "hora": 8,
+          "zona": "s"
+        },
+        {
+          "hora": 9,
+          "zona": "o"
+        },
+        {
+          "hora": 10,
+          "zona": "o"
+        },
+        {
+          "hora": 11,
+          "zona": "p"
+        },
+        {
+          "hora": 12,
+          "zona": "p"
+        },
+        {
+          "hora": 13,
+          "zona": "s"
+        },
+        {
+          "hora": 14,
+          "zona": "o"
+        },
+        {
+          "hora": 15,
+          "zona": "o"
+        },
+        {
+          "hora": 16,
+          "zona": "o"
+        },
+        {
+          "hora": 17,
+          "zona": "o"
+        },
+        {
+          "hora": 18,
+          "zona": "t"
+        },
+        {
+          "hora": 19,
+          "zona": "s"
+        },
+        {
+          "hora": 20,
+          "zona": "s"
+        },
+        {
+          "hora": 21,
+          "zona": "s"
+        },
+        {
+          "hora": 22,
+          "zona": "d"
+        },
+        {
+          "hora": 23,
+          "zona": "d"
+        }
+      ]
+    }
+  ]
+}

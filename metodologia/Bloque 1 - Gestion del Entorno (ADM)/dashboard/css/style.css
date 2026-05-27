@@ -1,0 +1,168 @@
+:root {
+    --bg-color: #f4f1ea;
+    --ink-color: #1a1a1a;
+    --accent-color: #a6937c;
+    --white: #ffffff;
+    --border-color: #ddd;
+    
+    /* Colores por Bloque según Visual Map */
+    --color-b1: #2c3e50; /* Adm */
+    --color-b2: #b08d57; /* Surgimiento */
+    --color-b3: #5d6d7e; /* Lab */
+    --color-b4: #8d99ae; /* Mensaje */
+    
+    --font-serif: 'Playfair Display', serif;
+    --font-sans: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background-color: var(--bg-color);
+    color: var(--ink-color);
+    font-family: var(--font-sans);
+    padding: 20px;
+    font-size: 14px;
+}
+
+.magazine-header {
+    border-bottom: 2px solid var(--ink-color);
+    padding-bottom: 15px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.logo-area h1 {
+    font-family: var(--font-serif);
+    font-size: 3.5rem;
+    line-height: 0.8;
+}
+
+.logo-area .subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent-color);
+}
+
+/* SISTEMA DE BLOQUES */
+.magazine-layout {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.block-section {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    position: relative;
+}
+
+.block-section.full-width { grid-column: 1 / -1; }
+.block-section.half-width { grid-column: span 2; }
+
+.block-header {
+    border-bottom: 1px solid #eee;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.block-title {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    text-transform: uppercase;
+}
+
+.block-num {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--accent-color);
+}
+
+/* PROTOCOLOS DENTRO DEL TALLER */
+.protocol-step {
+    margin-bottom: 15px;
+    padding-left: 10px;
+    border-left: 2px solid #eee;
+}
+
+.protocol-step.active { border-left-color: var(--color-b2); }
+
+.protocol-step h4 {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: #888;
+}
+
+.status-tag {
+    font-size: 0.6rem;
+    padding: 2px 6px;
+    background: #f0f0f0;
+    border-radius: 3px;
+    text-transform: uppercase;
+}
+
+.status-tag.done { background: #e8f5e9; color: #2e7d32; }
+.status-tag.process { background: #fff3e0; color: #ef6c00; }
+
+/* LEADS / INMERSIONES */
+.leads-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+}
+
+.lead-card {
+    border: 1px solid #eee;
+    padding: 15px;
+    background: #fafafa;
+}
+
+.lead-card h3 { font-family: var(--font-serif); margin-bottom: 10px; }
+
+/* EJES DE DISEÑO (RADAR SIMULADO) */
+.design-axes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    margin-top: 10px;
+    background: #fff;
+    padding: 10px;
+}
+
+.axis-label { color: #999; }
+.axis-value { text-align: right; font-weight: bold; }
+
+/* BOTONES */
+.btn-soma {
+    width: 100%;
+    padding: 10px;
+    background: var(--ink-color);
+    color: white;
+    border: none;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btn-soma:hover { background: var(--color-b2); }
+
+footer {
+    margin-top: 40px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: #999;
+}

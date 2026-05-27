@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10 errores al construir tu primera casa — SOMA</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, 'Inter', 'Helvetica Neue', sans-serif; background: #0a0a0a; color: #e0d8d0; line-height: 1.7; }
+  .wrapper { max-width: 720px; margin: 0 auto; padding: 40px 24px; }
+  h1 { font-size: 2rem; color: #bc4b21; margin-bottom: 8px; font-weight: 300; letter-spacing: -0.02em; }
+  .subtitle { color: #8a8078; font-size: 1rem; margin-bottom: 40px; }
+  h2 { font-size: 1.3rem; color: #bc4b21; margin: 40px 0 12px; font-weight: 400; }
+  h2 .num { color: #6a6058; font-weight: 300; margin-right: 8px; }
+  .error-label { display: inline-block; background: #bc4b2120; color: #bc4b21; font-size: 0.75rem; padding: 2px 10px; border-radius: 3px; margin-bottom: 8px; border: 1px solid #bc4b2140; }
+  p { margin-bottom: 16px; color: #c8c0b8; }
+  strong { color: #e8e0d8; }
+  hr { border: none; border-top: 1px solid #2a2520; margin: 40px 0; }
+  .form-box { background: #141210; border: 1px solid #2a2520; border-radius: 8px; padding: 32px; margin-bottom: 40px; }
+  .form-box h3 { color: #bc4b21; font-weight: 400; margin-bottom: 4px; }
+  .form-box p { color: #8a8078; font-size: 0.9rem; margin-bottom: 20px; }
+  input { width: 100%; padding: 12px 16px; background: #0a0a0a; border: 1px solid #2a2520; border-radius: 6px; color: #e0d8d0; font-size: 1rem; margin-bottom: 12px; }
+  input:focus { outline: none; border-color: #bc4b21; }
+  button { background: #bc4b21; color: #0a0a0a; border: none; padding: 14px 28px; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%; }
+  button:hover { background: #d45a2a; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .success { display: none; text-align: center; padding: 20px; background: #1a2a1a; border: 1px solid #3a5a3a; border-radius: 8px; color: #8ac88a; margin-bottom: 40px; }
+  .success .icon { font-size: 2rem; margin-bottom: 8px; }
+  .guide-content { display: none; }
+  .revealed { display: block; }
+  .intro { color: #a09888; font-size: 1.05rem; margin-bottom: 32px; padding: 20px; background: #141210; border-left: 3px solid #bc4b21; border-radius: 0 6px 6px 0; }
+  .footer { text-align: center; padding: 40px 0; border-top: 1px solid #2a2520; margin-top: 40px; color: #6a6058; font-size: 0.85rem; }
+  .footer strong { color: #bc4b21; }
+  @media (max-width: 600px) { .wrapper { padding: 24px 16px; } h1 { font-size: 1.5rem; } .form-box { padding: 20px; } }
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+
+  <div id="formSection" class="form-box">
+    <h3>📋 Descarga gratis esta guía</h3>
+    <p>Ingresa tu nombre y correo o WhatsApp para recibir la guía completa. Sin spam, solo contenido útil.</p>
+    <input type="text" id="leadName" placeholder="Tu nombre" autocomplete="name">
+    <input type="text" id="leadContact" placeholder="Correo o WhatsApp" autocomplete="email">
+    <button id="downloadBtn" onclick="submitLead()">Descargar guía</button>
+  </div>
+
+  <div id="successMsg" class="success">
+    <div class="icon">✓</div>
+    <strong>¡Gracias!</strong><br>La guía está aquí abajo. También la recibirás en tu correo.
+  </div>
+
+  <div id="guideContent">
+    <h1>10 errores al construir tu primera casa</h1>
+    <p class="subtitle">—y cómo evitarlos—</p>
+
+    <div class="intro">
+      Construir tu primera casa es emocionante, abrumador y, si no tienes cuidado, caro.
+      <br><br>
+      Décadas de experiencia en diseño arquitectónico nos han enseñado que la mayoría de los problemas en obra no son técnicos: son errores de decisión que se pudieron evitar antes de romper el primer suelo.
+      <br><br>
+      Esta guía no es técnica. Es práctica. Son las 10 cosas que más veces vemos repetir.
+    </div>
+
+    <h2><span class="num">01</span>Construir sin plano completo</h2>
+    <span class="error-label">El error</span>
+    <p>"No ocupa, el maestro ya sabe lo que hace."</p>
+    <p><strong>Por qué pasa:</strong> Se confunde experiencia en obra con capacidad de diseño. El maestro de obra sabe construir, pero no necesariamente sabe cómo distribuir espacios para tu forma de vivir.</p>
+    <p><strong>La consecuencia:</strong> Sin plano no hay control de costos, ni de tiempos, ni de resultado. No hay forma de saber si la casa va a quedar como imaginabas hasta que ya está hecha.</p>
+    <p><strong>Cómo evitarlo:</strong> Invierte en el proyecto arquitectónico antes de poner el primer block. El costo del diseño es entre 5 y 10% del total de la obra. El "ahorro" de no hacerlo termina costando mucho más en correcciones y demoliciones.</p>
+
+    <h2><span class="num">02</span>Elegir al más barato sin ver su trabajo</h2>
+    <span class="error-label">El error</span>
+    <p>Contratar al constructor que dio el precio más bajo sin entender por qué es más barato.</p>
+    <p><strong>Por qué pasa:</strong> En la construcción, como en todo, lo barato sale caro. Pero cuando es tu casa, el costo no es solo económico: es emocional.</p>
+    <p><strong>Cómo evitarlo:</strong> Pide referencias. Visita obras terminadas. Pregunta a clientes anteriores. El precio es importante, pero no es lo único.</p>
+
+    <h2><span class="num">03</span>No considerar cómo vives realmente</h2>
+    <span class="error-label">El error</span>
+    <p>Diseñar la casa pensando en cómo se ve, no en cómo se vive.</p>
+    <p><strong>Por qué pasa:</strong> Es fácil enamorarse de fotos de revistas. Pero una casa bonita en foto puede ser incómoda en la vida real.</p>
+    <p><strong>Cómo evitarlo:</strong> Antes de diseñar, haz una lista de cómo es tu día a día. ¿A qué hora te levantas? ¿Dónde desayunas? ¿Trabajas desde casa? El diseño debe nacer de tu rutina, no de una revista.</p>
+
+    <h2><span class="num">04</span>Cambiar decisiones en obra</h2>
+    <span class="error-label">El error</span>
+    <p>"Más vale que aquí mejor ponga una ventana."</p>
+    <p><strong>La consecuencia:</strong> Cada cambio en obra cuesta 3 veces lo que habría costado en el plano. No solo el material: hay que rehacer, comprar extra, pagar más horas.</p>
+    <p><strong>Cómo evitarlo:</strong> Decide todo antes de construir. Revisa los planos con calma. Los cambios en papel son gratis; en obra, no.</p>
+
+    <h2><span class="num">05</span>No tener presupuesto de contingencia</h2>
+    <span class="error-label">El error</span>
+    <p>Calcular los costos al centavo y no dejar margen para imprevistos.</p>
+    <p><strong>La consecuencia:</strong> Cuando surge un gasto no contemplado (y va a surgir), se detiene la obra o se toman decisiones apresuradas.</p>
+    <p><strong>Cómo evitarlo:</strong> Guarda al menos el 10% de tu presupuesto total para imprevistos. Si no lo usas, mejor.</p>
+
+    <h2><span class="num">06</span>No investigar el terreno antes de comprar</h2>
+    <span class="error-label">El error</span>
+    <p>Comprar el terreno solo por ubicación y precio.</p>
+    <p><strong>Cómo evitarlo:</strong> Antes de comprar, revisa el uso de suelo, COS, CUS y restricciones de la zona. Un estudio de factibilidad básico te ahorra dolores de cabeza.</p>
+
+    <h2><span class="num">07</span>Ignorar la orientación solar y los vientos</h2>
+    <span class="error-label">El error</span>
+    <p>Diseñar sin considerar el sol y el viento.</p>
+    <p><strong>La consecuencia:</strong> Casas que se calientan como horno en la tarde, recibos de luz elevados, espacios que no se pueden usar en ciertas horas.</p>
+    <p><strong>Cómo evitarlo:</strong> En Mérida, el sol fuerte viene del poniente. Una casa bien orientada reduce hasta 30% el consumo energético.</p>
+
+    <h2><span class="num">08</span>No planificar el orden de la obra</h2>
+    <span class="error-label">El error</span>
+    <p>Empezar a construir sin un plan de ejecución claro.</p>
+    <p><strong>Cómo evitarlo:</strong> Un cronograma de obra no es lujo. Es la diferencia entre orden y caos. El plano debe venir con un plan de ejecución.</p>
+
+    <h2><span class="num">09</span>No revisar el contrato del constructor</h2>
+    <span class="error-label">El error</span>
+    <p>Apretar manos y confiar.</p>
+    <p><strong>Cómo evitarlo:</strong> Todo por escrito. Alcances, materiales, plazos, forma de pago. Un contrato no es desconfianza — es profesionalismo.</p>
+
+    <h2><span class="num">10</span>No contratar dirección de obra</h2>
+    <span class="error-label">El error</span>
+    <p>Dejar al constructor como única autoridad técnica durante la obra.</p>
+    <p><strong>La consecuencia:</strong> El constructor interpreta los planos a su manera. Las cotas no se respetan, los materiales se cambian sin consultar.</p>
+    <p><strong>Cómo evitarlo:</strong> La dirección de obra vela porque lo que está en el plano se ejecute en obra. Contrátala desde el día 1. Te ahorra más de lo que cuesta.</p>
+
+    <hr>
+
+    <p style="color:#6a6058; font-style:italic; text-align:center; font-size:0.9rem;">Tu primera casa merece más que suerte. Merece un plan.<br><br>
+    <strong style="color:#bc4b21;">SOMA — Taller Virtual de Arquitectura</strong><br>
+    <span style="color:#8a8078;">Lo protocolario se programa, lo creativo se libera.</span></p>
+  </div>
+
+  <div class="footer">
+    <strong>SOMA</strong> — Taller Virtual de Arquitectura<br>
+    Mérida, Yucatán · <span style="color:#bc4b21;">habitarq85@gmail.com</span>
+  </div>
+</div>
+
+<script>
+function submitLead() {
+  const name = document.getElementById('leadName').value.trim();
+  const contact = document.getElementById('leadContact').value.trim();
+  if (!name || !contact) { alert('Completa tu nombre y correo o WhatsApp.'); return; }
+  document.getElementById('downloadBtn').disabled = true;
+  document.getElementById('downloadBtn').textContent = 'Enviando...';
+  fetch('/save_lead_magnet', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nombre: name, contacto: contact, fuente: 'lead_magnet_10_errores' })
+  })
+  .then(r => r.json())
+  .then(d => {
+    document.getElementById('formSection').style.display = 'none';
+    document.getElementById('successMsg').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  })
+  .catch(e => {
+    document.getElementById('downloadBtn').disabled = false;
+    document.getElementById('downloadBtn').textContent = 'Descargar guía';
+    alert('Error al enviar. Intenta de nuevo.');
+  });
+}
+</script>
+</body>
+</html>

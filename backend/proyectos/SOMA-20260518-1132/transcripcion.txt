@@ -1,0 +1,1 @@
+[Error de transcripción: No module named 'faster_whisper']

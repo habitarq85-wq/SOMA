@@ -1,0 +1,182 @@
+{
+  "step1": {
+    "A": {
+      "titulo": "FACHADA ABIERTA (Extroversión Urbana)",
+      "psicologia_ambiental": "Fomento de la 'Vigilancia Natural' (Jane Jacobs) que reduce la ansiedad social. Aplica la Teoría de la Prospección y el Refugio (Appleton), donde el habitante domina visualmente el exterior sin sentirse vulnerable.",
+      "lenguaje_patrones": "Implementación del Patrón 127 (Gradación de Intimidad) y Patrón 165 (Umbral). El acceso no es un punto, sino una secuencia de transición luz-sombra.",
+      "space_syntax": "Alta integración visual con el sistema de calles. Incrementa la inteligibilidad del nodo de acceso y la conectividad del 'VGA' (Visibility Graph Analysis) con el espacio público.",
+      "environmental_behavior": "Territorialidad blanda: el usuario marca su dominio mediante filtros sutiles (cambios de nivel, vegetación) en lugar de barreras físicas, promoviendo conductas de civilidad urbana.",
+      "poe": "Los usuarios reportan mayor satisfacción térmica por ventilación cruzada y una percepción de 'amplitud psicológica' que trasciende los metros cuadrados construidos."
+    },
+    "B": {
+      "titulo": "FACHADA CERRADA (Introspección Radical)",
+      "psicologia_ambiental": "Creación de un 'Oasis Sensorial' (Kaplan) para mitigar el estrés por sobreestimulación. El habitante busca un blindaje cognitivo contra el caos exterior.",
+      "lenguaje_patrones": "Fuerza en el Patrón 106 (Espacios exteriores protegidos). El patio interno se convierte en el centro del sistema respiratorio y lumínico de la casa.",
+      "space_syntax": "Baja conectividad visual externa (Segregación). Prioriza el control estricto del acceso y la creación de una 'isovista' cerrada que protege el núcleo familiar.",
+      "environmental_behavior": "Conducta de refugio: el hogar se percibe como una fortaleza emocional. El usuario regula su interacción con el exterior mediante una única interfaz controlada.",
+      "poe": "Satisfacción crítica en climas con alta contaminación auditiva o visual. Riesgo de sensación de confinamiento si no se compensa con dobles alturas y luz cenital."
+    }
+  },
+  "step2": {
+    "A": {
+      "titulo": "ENTRADA ABIERTA (Transparencia Radical)",
+      "psicologia_ambiental": "Teoría de la Prospección (Appleton): el habitante domina visualmente todo el acceso desde el umbral. La entrada funciona como un mirador interno que elimina la incertidumbre del espacio interior.",
+      "lenguaje_patrones": "Patrón 110 (Entrada principal) en su variante más permeable. Patrón 165 (Umbral) diluido: no hay transición, hay continuidad visual total.",
+      "space_syntax": "Máxima integración visual del nodo de acceso. La isovista desde la entrada cubre la mayor parte del programa social, facilitando la legibilidad instantánea de la casa.",
+      "environmental_behavior": "Conducta de bienvenida sin reservas. El visitante se siente inmediatamente parte del espacio. El habitante proyecta confianza y apertura social.",
+      "poe": "Valorado por la amplitud psicológica y la sensación de control visual. Riesgo: pérdida de privacidad en actividades cotidianas visibles desde la entrada."
+    },
+    "B": {
+      "titulo": "RECIBIDOR VELADO (Gradación de Intimidad)",
+      "psicologia_ambiental": "Teoría del Refugio y la Prospección (Appleton): el recibidor actúa como refugio que protege la intimidad del hogar mientras ofrece vistas parciales que insinúan el resto. Genera misterio y anticipación.",
+      "lenguaje_patrones": "Patrón 127 (Gradación de Intimidad): secuencia de espacios que revelan gradualmente el programa. Patrón 129 (Espacio común en el centro) pospuesto tras un filtro visual.",
+      "space_syntax": "Estructura de alta profundidad: el recorrido desde el umbral hasta el núcleo social pasa por al menos un espacio de transición que segmenta la isovista.",
+      "environmental_behavior": "Conducta de descubrimiento. El visitante no ve todo de inmediato, lo que genera curiosidad y una experiencia espacial más rica. El habitante controla qué se muestra y qué se reserva.",
+      "poe": "Percepción de profundidad y ceremonial en el acceso. Los usuarios reportan que la casa 'se guarda algo' y que el recibidor funciona como filtro social y acústico."
+    }
+  },
+  "step3": {
+    "A": {
+      "titulo": "ESPACIOS INTEGRADOS (Fluidez Adaptativa)",
+      "psicologia_ambiental": "Sensación de libertad y control total del horizonte interno. Reduce la 'Fatiga de Confinamiento' mediante la percepción de un volumen continuo.",
+      "lenguaje_patrones": "Patrón 129 (Espacio común en el centro) combinado con el Patrón 159 (Luz por dos lados). El espacio se lee como una unidad multifuncional.",
+      "space_syntax": "Máxima integración visual. El mapa de convexidad muestra un único espacio dominante que centraliza todas las actividades sociales.",
+      "environmental_behavior": "Fomento de la vida social y encuentros aleatorios. La falta de barreras físicas diluye las jerarquías tradicionales del hogar.",
+      "poe": "Valorado por la flexibilidad para eventos sociales. Crítica recurrente: falta de control de olores de cocina y ruido de áreas operativas."
+    },
+    "B": {
+      "titulo": "ESPACIOS DIVIDIDOS (Jerarquía de Recintos)",
+      "psicologia_ambiental": "Estructuración clara de la psique espacial. El orden físico de los muros facilita la segregación de tareas mentales (trabajo vs descanso).",
+      "lenguaje_patrones": "Patrón 139 (Zonas de estar pequeñas). Cada habitación tiene un propósito sagrado y límites físicos que ritualizan el habitar.",
+      "space_syntax": "Red compleja de espacios segregados. Incrementa el misterio y el descubrimiento al recorrer la casa (Secuencia espacial).",
+      "environmental_behavior": "Especialización funcional: el usuario sabe exactamente qué conducta se espera en cada recinto, reduciendo la ambigüedad conductual.",
+      "poe": "Muy valorado para el Home Office y la lectura. Reto: puede percibirse como una casa más pequeña de lo que realmente es si los umbrales no son amplios."
+    }
+  },
+  "step4": {
+    "A": {
+      "titulo": "MUCHA LUZ NATURAL (Activación Circadiana)",
+      "psicologia_ambiental": "Sincronización del ritmo circadiano y mejora del estado de ánimo. La luz natural actúa como un antidepresivo biológico y regulador de serotonina.",
+      "lenguaje_patrones": "Patrón 161 (Conexión con el paisaje) y Patrón 159 (Luz por dos lados). La luz es el material de construcción principal.",
+      "space_syntax": "La luz jerarquiza los nodos de mayor integración. Los espacios más iluminados se convierten naturalmente en los centros de actividad.",
+      "environmental_behavior": "Incremento de la productividad matutina. El usuario tiende a habitar las zonas soleadas según la hora del día (Helitropismo).",
+      "poe": "Impacto positivo en el ahorro energético. Riesgo: deslumbramiento en pantallas y fatiga visual si no se diseña protección solar adecuada."
+    },
+    "B": {
+      "titulo": "LUZ SUAVE Y CONTROLADA (Regulación Emocional)",
+      "psicologia_ambiental": "Teoría de la Restauración de la Atención (Kaplan). La penumbra reduce la estimulación simpática, induciendo estados de calma y reflexión.",
+      "lenguaje_patrones": "Patrón 193 (Ventanas de media altura) y Patrón 236 (Luz que rebota en los materiales). Creación de atmósferas tipo 'In Praise of Shadows'.",
+      "space_syntax": "Uso dramático de sombras para definir la profundidad. La luz tamizada resalta la tridimensionalidad de los volúmenes.",
+      "environmental_behavior": "Conductas de relajación, intimidad y conversación profunda. El espacio se percibe como un refugio térmico (frescura visual).",
+      "poe": "Excelente para climas extremadamente calurosos. Los usuarios reportan una 'mejor calidad de sueño' y una sensación de 'paz ininterrumpida'."
+    }
+  },
+  "step5": {
+    "A": {
+      "titulo": "TEXTURAS Y ORNAMENTOS (Tectónica Rugosa)",
+      "psicologia_ambiental": "Preferencia biofílica por la complejidad fractal. Los materiales con relieve satisfacen la necesidad ancestral de estímulo táctil y visual.",
+      "lenguaje_patrones": "Patrón 248 (Textura suave y dura) y Patrón 238 (Detalles de borde). El edificio comunica su historia y factura humana.",
+      "space_syntax": "La ornamentación crea 'puntos de atracción' visual que guían el recorrido y dan legibilidad a los elementos estructurales.",
+      "environmental_behavior": "Conducta háptica: el usuario tiende a tocar las superficies. La riqueza del detalle genera un vínculo emocional de 'arraigo' con el edificio.",
+      "poe": "Envejece con dignidad. Los usuarios valoran que el edificio 'tiene alma' y resiste mejor el desgaste visual que las superficies lisas."
+    },
+    "B": {
+      "titulo": "LISOS Y SOBRIOS (Abstracción Geométrica)",
+      "psicologia_ambiental": "Reducción del ruido visual (clutter). La sobriedad formal facilita la concentración y proyecta una imagen de modernidad y eficiencia.",
+      "lenguaje_patrones": "Enfoque en el Patrón 210 (Paredes que comunican) mediante la pureza del color y la junta perfecta. Menos es más (Mies).",
+      "space_syntax": "Énfasis en la geometría pura del espacio. La ausencia de ornamento permite que la 'isovista' se concentre en la proporción y la luz.",
+      "environmental_behavior": "Conducta de orden y pulcritud. El espacio actúa como un lienzo en blanco para que la personalidad del habitante destaque por sí sola.",
+      "poe": "Percepción de 'higiene' y 'precisión'. Crítica: cualquier defecto constructivo es extremadamente visible; requiere un mantenimiento riguroso."
+    }
+  },
+  "step6": {
+    "A": {
+      "titulo": "UN NIVEL (Horizontalidad Democrática)",
+      "psicologia_ambiental": "Eliminación de barreras jerárquicas y físicas. Fomenta la equidad espacial y reduce la ansiedad por accesibilidad (diseño universal).",
+      "lenguaje_patrones": "Patrón 104 (Jardín nivelado) y Patrón 167 (Conexión de planta baja). Integración total con el plano del suelo.",
+      "space_syntax": "Alta integración horizontal. Los recorridos son predecibles y directos, facilitando la navegación cognitiva (Wayfinding).",
+      "environmental_behavior": "Interacción constante entre áreas. No hay 'segregación vertical', lo que mantiene a la familia en un mismo plano comunicativo.",
+      "poe": "Máxima puntuación en comodidad para personas mayores o niños. Reto: requiere terrenos más grandes y mayor inversión en cimentación/techumbres."
+    },
+    "B": {
+      "titulo": "VARIOS NIVELES (Ritual de Ascenso)",
+      "psicologia_ambiental": "Zonificación por 'Estratos de Intimidad'. El ascenso físico se traduce psicológicamente como un tránsito hacia lo privado y sagrado.",
+      "lenguaje_patrones": "Patrón 133 (Escalera como escenario) y Patrón 190 (Diferencias de nivel). La escalera no es solo circulación, es un evento espacial.",
+      "space_syntax": "Estructura jerárquica vertical. Las zonas de mayor profundidad (más privadas) están físicamente más alejadas de la entrada.",
+      "environmental_behavior": "Segregación funcional efectiva. Permite realizar actividades incompatibles (fiesta vs estudio) simultáneamente en distintos planos.",
+      "poe": "Optimización del terreno y mejores vistas. Crítica: puede generar 'pereza de circulación' si las escaleras no están bien diseñadas o iluminadas."
+    }
+  },
+  "step7": {
+    "A": {
+      "titulo": "JARDÍN VERDE (Biofilia Total)",
+      "psicologia_ambiental": "Teoría de la Restauración (Kaplan). El contacto visual con plantas reduce niveles de cortisol y mejora el rendimiento cognitivo.",
+      "lenguaje_patrones": "Patrón 171 (Árboles frutales) y Patrón 174 (Enrejado de madera). El edificio se funde con el ecosistema vivo.",
+      "space_syntax": "El jardín actúa como un 'espacio de transición' que suaviza el límite entre lo público y privado, mejorando la isovista exterior.",
+      "environmental_behavior": "Conductas de cuidado y recreación. El usuario utiliza el exterior para actividades físicas o cultivo personal.",
+      "poe": "Mejora dramática en el microclima (humedad y frescura). Reto: demanda alto mantenimiento y control de insectos/fauna local."
+    },
+    "B": {
+      "titulo": "PLAZA PÉTREA (Abstracción Mineral)",
+      "psicologia_ambiental": "Enfoque en la quietud y la contemplación silenciosa. El entorno mineral evoca permanencia, orden y bajo ruido sensorial.",
+      "lenguaje_patrones": "Patrón 168 (Terrazas y senderos) y Patrón 247 (Pavimento con juntas). El patio se convierte en una sala exterior habitable.",
+      "space_syntax": "El patio pétreo funciona como un nodo articulador claro. Permite un flujo limpio y una percepción nítida de los límites arquitectónicos.",
+      "environmental_behavior": "Uso versátil del espacio exterior para eventos sociales o como extensión del comedor. Conductas de bajo mantenimiento.",
+      "poe": "Muy valorado por la limpieza y la facilidad de uso. Crítica: puede generar 'islas de calor' si no se usan materiales de baja inercia térmica."
+    }
+  },
+  "step8": {
+    "A": {
+      "titulo": "ABIERTOS Y ALTOS (Escala Monumental)",
+      "psicologia_ambiental": "Elevación del espíritu. Los techos altos están asociados psicológicamente con el pensamiento abstracto y la creatividad expansiva.",
+      "lenguaje_patrones": "Patrón 190 (Techos altos en áreas comunes). El vacío se convierte en un material que dignifica el acto de habitar.",
+      "space_syntax": "Alta legibilidad del volumen. El espacio se percibe como un nodo central que organiza visualmente toda la propiedad.",
+      "environmental_behavior": "Conductas de asombro y representatividad social. El usuario siente que el espacio 'respira' y tiene jerarquía.",
+      "poe": "Percepción de lujo y frescura (estratificación térmica). Reto: control acústico (eco) y mayor gasto en iluminación/mantenimiento."
+    },
+    "B": {
+      "titulo": "ACOGEDORES E ÍNTIMOS (Escala Humana)",
+      "psicologia_ambiental": "Fomento de la 'Seguridad Ontológica' y el confort emocional. Las proporciones bajas inducen sentimientos de protección y calma.",
+      "lenguaje_patrones": "Patrón 181 (Altura variable del techo) y Patrón 203 (Rincón de lectura). El espacio 'abraza' al usuario.",
+      "space_syntax": "Estructura de espacios acogedores que invitan a la permanencia. Las isovistas son cortas pero ricas en detalle.",
+      "environmental_behavior": "Conductas de relajación, lectura y conversación íntima. El usuario se siente seguro y 'en su sitio'.",
+      "poe": "Excelente confort térmico y acústico. Valoración máxima en recámaras y estudios. Riesgo: puede sentirse 'apretado' si no hay ventanas grandes."
+    }
+  },
+  "step9": {
+    "A": {
+      "titulo": "VIDA SOCIAL ACTIVA (Plaza Doméstica)",
+      "psicologia_ambiental": "La casa como nodo de intercambio y capital social. El habitante deriva satisfacción de su rol de anfitrión y conector de redes.",
+      "lenguaje_patrones": "Patrón 125 (Entrada principal clara) y Patrón 130 (Áreas sociales al frente). La casa está lista para recibir.",
+      "space_syntax": "Alta conectividad entre el vestíbulo, la sala y la terraza. El diseño facilita el flujo de personas sin invadir la zona íntima.",
+      "environmental_behavior": "Conductas extrovertidas. El mobiliario y los espacios se diseñan para la celebración y el encuentro colectivo.",
+      "poe": "Valorado por la capacidad de albergar eventos. Crítica: requiere una zonificación muy estricta para no desgastar la privacidad familiar."
+    },
+    "B": {
+      "titulo": "INTROVERTIDO (Refugio Privado)",
+      "psicologia_ambiental": "Teoría de la Restauración de la Atención (Kaplan). El hogar es una batería de recarga contra el estrés de la vida moderna.",
+      "lenguaje_patrones": "Patrón 188 (Alcobas protegidas) y Patrón 191 (Vistas al jardín). Blindaje del ser contra el mundo externo.",
+      "space_syntax": "Baja profundidad desde el exterior. El núcleo social es un espacio sagrado reservado solo para los habitantes permanentes.",
+      "environmental_behavior": "Conductas introspectivas y de self-care. El diseño prioriza el silencio, la penumbra y la desconexión digital.",
+      "poe": "Impacto directo en la salud mental. Los usuarios reportan que su casa es el único lugar donde realmente logran desconectarse."
+    }
+  },
+  "step10": {
+    "A": {
+      "titulo": "COLORES NEUTRALES (Silencio Cromático)",
+      "psicologia_ambiental": "Reducción de la fatiga visual. Los tonos neutros facilitan la calma y permiten que el cerebro se enfoque en la luz y la forma.",
+      "lenguaje_patrones": "Patrón 249 (Colores naturales) y Patrón 236 (Luz suave). El color no compite con la arquitectura, la acompaña.",
+      "space_syntax": "La neutralidad unifica los espacios, haciendo que la casa se perciba como un volumen único y coherente.",
+      "environmental_behavior": "Conducta de adaptabilidad: el usuario puede cambiar el mobiliario sin romper la armonía. Es un lienzo para la vida cotidiana.",
+      "poe": "Valoración de 'atemporalidad' y limpieza. Crítica: puede percibirse como 'frío' si no se compensa con texturas cálidas (madera/telas)."
+    },
+    "B": {
+      "titulo": "COLORES LLAMATIVOS (Anclaje Emocional)",
+      "psicologia_ambiental": "Uso del color como señalética emocional. Los acentos vibrantes inyectan energía y definen la personalidad del habitante.",
+      "lenguaje_patrones": "Patrón 250 (Acentos de color). El color se usa para resaltar elementos arquitectónicos o crear focos de atención (Noli).",
+      "space_syntax": "El color jerarquiza los espacios. Una pared de color puede actuar como un hito visual que organiza la navegación interna.",
+      "environmental_behavior": "Conductas creativas y expresivas. El habitante proyecta su identidad de forma audaz sobre el espacio físico.",
+      "poe": "Reportan espacios con 'más carácter'. Riesgo: fatiga cromática si el color es demasiado saturado en zonas de permanencia larga."
+    }
+  }
+}

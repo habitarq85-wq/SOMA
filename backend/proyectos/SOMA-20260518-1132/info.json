@@ -1,0 +1,15 @@
+{
+  "proyecto_id": "SOMA-20260518-1132",
+  "cliente": "Prueba Matrix",
+  "fecha_entrevista": "2026-05-18T11:32:20.597698",
+  "tiene_audio": true,
+  "tiene_transcripcion": true,
+  "tiene_analisis": true,
+  "estado": "datos_capturados",
+  "contacto": "999",
+  "notas_arquitecto": {
+    "habitantes": "Pareja",
+    "programa": "Casa"
+  },
+  "tiene_activity_matrix": true
+}

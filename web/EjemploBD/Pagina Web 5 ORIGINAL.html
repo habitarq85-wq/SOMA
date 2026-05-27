@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SOMA | Taller Virtual de Arquitectura</title>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;700;900&family=JetBrains+Mono:wght@300;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --paper: #f4f1ee;
+            --accent: #bc4b21;
+            --overlay: rgba(10, 10, 10, 0.98);
+            --ease: cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg); color: var(--paper); }
+
+        .scroll-container {
+            height: 100vh;
+            width: 100vw;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        section {
+            height: 100vh;
+            width: 100vw;
+            scroll-snap-align: start;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 10%;
+            overflow: hidden;
+        }
+
+        .light { background: var(--paper); color: var(--bg); }
+        .dark { background: var(--bg); color: var(--paper); }
+
+        h2 { font-family: 'Unbounded', sans-serif; font-size: clamp(1.8rem, 4vw, 2.5rem); text-transform: uppercase; margin-bottom: 15px; position: relative; z-index: 2; line-height: 1.1; }
+        .label { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 4px; color: var(--accent); margin-bottom: 10px; display: block; position: relative; z-index: 2; }
+        
+        .bg-keyword { 
+            position: absolute; left: -2vw; top: 50%; transform: translateY(-50%); 
+            font-family: 'Unbounded', sans-serif; font-size: 25vw; font-weight: 900; 
+            opacity: 0.03; pointer-events: none; white-space: nowrap; z-index: 1;
+        }
+
+        /* --- 00. HOME (TIPOGRAFÍA DE CONTRASTE RESTAURADA) --- */
+        .bg-video {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; object-fit: cover;
+            z-index: 0; opacity: 0.4;
+            transition: opacity 1s ease-in-out;
+            pointer-events: none;
+        }
+        .video-overlay {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; 
+            background: linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,0.95) 100%); 
+            z-index: 1;
+        }
+        .hero-title {
+            margin-bottom: 0;
+        }
+        .soma-main {
+            font-family: 'Unbounded', sans-serif;
+            font-size: clamp(2.5rem, 7vw, 4.5rem); 
+            font-weight: 900;
+            display: block;
+            line-height: 1;
+        }
+        .soma-sub {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(0.8rem, 2vw, 1.2rem); 
+            font-weight: 300;
+            color: var(--accent);
+            display: block;
+            margin-top: 10px;
+            letter-spacing: 2px;
+            text-transform: none;
+        }
+
+        /* --- 01. PROYECTOS (ETIQUETAS A LA IZQUIERDA Y AL RAS) --- */
+        .carousel-area { position: relative; width: 100%; height: auto; min-height: 65vh; display: flex; flex-direction: column; justify-content: center; z-index: 2;}
+        .slider { display: flex; gap: 40px; padding: 40px 0; align-items: flex-end; overflow-x: hidden; }
+        .slide { flex: 0 0 auto; cursor: pointer; transition: transform 0.6s var(--ease); overflow: hidden; position: relative; }
+        
+        .p-16-9 { width: 480px; height: 270px; } 
+        .p-9-16 { width: 300px; height: 500px; } 
+        .p-3-2  { width: 390px; height: 260px; } 
+        
+        .slide img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); opacity: 0.6; transition: 0.8s var(--ease); pointer-events: none; display: block; }
+        
+        .slide-title {
+            position: absolute;
+            bottom: 20px;
+            left: 0; /* Pegado al borde lateral izquierdo */
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--paper);
+            background: rgba(10, 10, 10, 0.8);
+            padding: 8px 16px;
+            backdrop-filter: blur(4px);
+            pointer-events: none;
+            opacity: 0.6;
+            transition: 0.4s var(--ease);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 0 4px 4px 0; 
+        }
+
+        @media (hover: hover) {
+            .slide:hover img { filter: grayscale(0); opacity: 1; transform: scale(1.02) translateY(-10px); }
+            .slide:hover .slide-title { opacity: 1; background: var(--accent); transform: translateY(-10px); }
+        }
+
+        /* --- 02. TRAYECTORIA --- */
+        .trayectoria-layout {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 60px;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            z-index: 2;
+        }
+        .tech-list { 
+            list-style: none; 
+            font-family: 'JetBrains Mono', monospace; 
+            font-size: 0.72rem; 
+            line-height: 1.8; 
+            border-left: 2px solid var(--accent); 
+            padding-left: 30px; 
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .tech-list strong { display: block; color: white; font-size: 0.85rem; margin-bottom: 3px; font-weight: 700; letter-spacing: 1px; }
+        .tech-list span { color: #888; } 
+
+        .portrait-frame {
+            width: 100%;
+            aspect-ratio: 3/4;
+            background: #111;
+            border: 1px solid rgba(255,255,255,0.05);
+            overflow: hidden;
+        }
+        .portrait-frame img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); opacity: 0.8; transition: 0.5s ease; }
+
+        /* --- 03. FILOSOFÍA --- */
+        .philosophy-wrapper { max-width: 1200px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; align-items: center; z-index: 2; }
+        .description-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 25px; width: 100%; margin-top: 40px; }
+        .desc-item { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; line-height: 1.6; text-align: center; color: #555; display: flex; flex-direction: column; align-items: center; }
+        .level-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; margin-bottom: 20px; mix-blend-mode: multiply; opacity: 0.7; transition: opacity 0.4s var(--ease); }
+        .desc-item strong { display: block; color: var(--bg); margin-bottom: 10px; font-size: 0.75rem; letter-spacing: 1px; }
+
+        /* --- 04. SERVICIOS --- */
+        .services-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; width: 100%; align-items: center; z-index: 2; }
+        .interactive-list { list-style: none; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; line-height: 2.5; border-left: 2px solid var(--accent); padding-left: 30px; }
+        .interactive-list li { cursor: pointer; opacity: 0.4; transition: 0.4s var(--ease); }
+        .interactive-list li.active { opacity: 1; color: var(--accent); }
+        .services-visual { position: relative; width: 100%; height: 350px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+        .services-visual img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); opacity: 0; transition: 0.6s var(--ease); }
+        .services-visual img.active-img { opacity: 0.8; }
+
+        /* --- MODAL --- */
+        .inspection-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--overlay); z-index: 2000;
+            display: grid; grid-template-columns: 1fr 320px; 
+            align-items: center; padding: 40px; backdrop-filter: blur(25px);
+            opacity: 0; visibility: hidden; transition: opacity 0.6s var(--ease);
+        }
+        .inspection-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
+        .view-center { position: relative; display: flex; justify-content: center; align-items: center; height: 100%; width: 100%; }
+        #img-focus { max-height: 85vh; max-width: 85%; transform: scale(1.1); object-fit: contain; transition: transform 0.8s var(--ease), opacity 0.5s ease; }
+        .focus-title { position: absolute; bottom: 30px; left: 30px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--paper); background: rgba(10, 10, 10, 0.5); padding: 8px 16px; backdrop-filter: blur(8px); text-transform: uppercase; letter-spacing: 2px; opacity: 0; transition: 0.5s ease; z-index: 10; }
+        
+        .view-side { height: 90vh; display: flex; flex-direction: column; gap: 20px; padding: 20px; align-items: center; overflow-y: hidden; border-left: 1px solid rgba(255,255,255,0.05); }
+        
+        /* EFECTOS DE SELECCIÓN RESTAURADOS (CARRUSEL VERTICAL) */
+        .thumb { flex: 0 0 auto; cursor: pointer; opacity: 0.2; filter: grayscale(1); transition: 0.4s var(--ease); border: 2px solid transparent; overflow: hidden; position: relative; }
+        .t-16-9 { width: 180px; height: 101px; } .t-9-16 { width: 101px; height: 180px; } .t-3-2 { width: 140px; height: 93px; } 
+        .thumb img { width: 100%; height: 100%; object-fit: cover; }
+        
+        @media (hover: hover) {
+            .thumb:hover { opacity: 0.8; filter: grayscale(0); border-color: rgba(255,255,255,0.3); }
+        }
+        
+        .thumb.active { 
+            opacity: 1; 
+            filter: grayscale(0); 
+            transform: scale(1.08); 
+            border-color: var(--accent); 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            z-index: 2; 
+        }
+
+        /* BOTÓN CERRAR (CRECIDO AL 36px) */
+        .btn-close {
+            position: absolute; top: 30px; left: 30px;
+            background: rgba(10, 10, 10, 0.4); border: 1px solid rgba(255,255,255,0.15);
+            color: white; width: 36px; height: 36px; 
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 1rem; 
+            transition: 0.3s var(--ease); z-index: 3000; backdrop-filter: blur(5px);
+        }
+
+        @media (hover: hover) {
+            .btn-close:hover { background: white; color: var(--bg); transform: scale(1.05); }
+        }
+
+        @media (max-width: 768px) {
+            section { padding: 0 5%; }
+            .trayectoria-layout { grid-template-columns: 1fr; gap: 40px; }
+            .description-grid { grid-template-columns: 1fr; gap: 40px; }
+            .services-wrapper { grid-template-columns: 1fr; gap: 20px; }
+            .inspection-overlay { grid-template-columns: 1fr; grid-template-rows: 1fr 130px; }
+            .view-side { flex-direction: row; height: 130px; width: 100%; overflow-x: auto; border-left: none; }
+            .focus-title { bottom: auto; top: 20px; left: 70px; font-size: 0.7rem; } 
+        }
+    </style>
+</head>
+<body>
+
+<div class="scroll-container" id="main-viewport">
+    
+    <section class="dark">
+        <video id="hero-video" class="bg-video" autoplay loop muted playsinline preload="auto">
+            <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/friday.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+        <div class="bg-keyword" style="color: rgba(255,255,255,0.05);">SOMA</div>
+        <div>
+            <span class="label">Estudio 2026</span>
+            <h2 class="hero-title">
+                <span class="soma-main">SOMA</span>
+                <span class="soma-sub">Taller Virtual de Arquitectura</span>
+            </h2>
+        </div>
+    </section>
+
+    <section class="light">
+        <div class="bg-keyword">WORK</div>
+        <div class="carousel-area" id="proximity-horizontal">
+            <span class="label">01. Portafolio</span>
+            <h2>Proyectos.</h2>
+            <div class="slider" id="project-slider">
+                <div class="slide p-16-9" onclick="openModal(this)" data-title="Hotel Progreso"><img src="https://picsum.photos/seed/soma1/1280/720"><div class="slide-title">Hotel Progreso</div></div>
+                <div class="slide p-9-16" onclick="openModal(this)" data-title="Torre Alba"><img src="https://picsum.photos/seed/soma2/720/1280"><div class="slide-title">Torre Alba</div></div>
+                <div class="slide p-3-2" onclick="openModal(this)" data-title="Casa Nórdica"><img src="https://picsum.photos/seed/soma3/1200/800"><div class="slide-title">Casa Nórdica</div></div>
+                <div class="slide p-16-9" onclick="openModal(this)" data-title="Pabellón D5"><img src="https://picsum.photos/seed/soma4/1280/720"><div class="slide-title">Pabellón D5</div></div>
+                <div class="slide p-9-16" onclick="openModal(this)" data-title="Residencial X"><img src="https://picsum.photos/seed/soma5/720/1280"><div class="slide-title">Residencial X</div></div>
+                <div class="slide p-3-2" onclick="openModal(this)" data-title="Villa Mínima"><img src="https://picsum.photos/seed/soma6/1200/800"><div class="slide-title">Villa Mínima</div></div>
+                <div class="slide p-16-9" onclick="openModal(this)" data-title="Complejo Cero"><img src="https://picsum.photos/seed/soma7/1280/720"><div class="slide-title">Complejo Cero</div></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="dark">
+        <div class="bg-keyword">PATH</div>
+        <div class="trayectoria-layout">
+            <div class="trayectoria-text">
+                <span class="label">02. Trayectoria</span>
+                <h2>Evolución.</h2>
+                <ul class="tech-list">
+                    <li>
+                        <strong>FORMACIÓN</strong> 
+                        Introducción a la arquitectura y descubrimiento de la forma-espacio-orden.<br>
+                        <span>(UADY 2004-2010)</span>
+                    </li>
+                    <li>
+                        <strong>MAESTRÍA</strong> 
+                        Desarrollo filosófico y tecnológico.<br>
+                        <span>(UNAM 2014-2016)</span>
+                    </li>
+                    <li>
+                        <strong>PROFESIÓN</strong> 
+                        Aprendizaje profundo y real.<br>
+                        <span>(Duarte Aznar Arquitectos [DAA] 2018-2026)</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="portrait-frame">
+                <img src="https://picsum.photos/seed/portrait/400/533?grayscale" alt="Retrato SOMA">
+            </div>
+        </div>
+    </section>
+
+    <section class="light">
+        <div class="bg-keyword">ETHOS</div>
+        <div style="width: 100%;">
+            <span class="label">03. Filosofía</span>
+            <h2>Niveles de Habitabilidad.</h2>
+        </div>
+        <div class="philosophy-wrapper">
+            <div class="description-grid">
+                <div class="desc-item">
+                    <img src="https://picsum.photos/seed/hab1/400/300?grayscale" class="level-img">
+                    <strong>1. FISIOLÓGICO</strong>
+                    Preservación de la homeostasis biológica mediante el control bioclimático.
+                </div>
+                <div class="desc-item">
+                    <img src="https://picsum.photos/seed/hab2/400/300?grayscale" class="level-img">
+                    <strong>2. PSICOLÓGICO</strong>
+                    Estructuración de la psique espacial; el ambiente como refugio emocional.
+                </div>
+                <div class="desc-item">
+                    <img src="https://picsum.photos/seed/hab3/400/300?grayscale" class="level-img">
+                    <strong>3. SOCIO-CONDUCTUAL</strong>
+                    Diseño de la interfase social que fomenta el tejido comunitario.
+                </div>
+                <div class="desc-item">
+                    <img src="https://picsum.photos/seed/hab4/400/300?grayscale" class="level-img">
+                    <strong>4. PRIVACIDAD</strong>
+                    Orquestación de gradientes de intimidad y filtros espaciales.
+                </div>
+                <div class="desc-item">
+                    <img src="https://picsum.photos/seed/hab5/400/300?grayscale" class="level-img">
+                    <strong>5. CULTURAL</strong>
+                    Síntesis del genio del lugar; integración de materialidad vernácula.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="dark">
+        <div class="bg-keyword" style="font-size: 20vw;">SCOPE</div>
+        <div class="services-wrapper">
+            <div>
+                <span class="label">04. Alcance</span>
+                <h2>Servicios.</h2>
+                <ul class="interactive-list">
+                    <li class="active" onclick="changeService(this, 0)">DISEÑO ARQUITECTÓNICO</li>
+                    <li onclick="changeService(this, 1)">MODELADO BIM LOD 300</li>
+                    <li onclick="changeService(this, 2)">VISUALIZACIÓN ARQUITECTÓNICA D5 RENDER</li>
+                    <li onclick="changeService(this, 3)">PLANOS DE ANTEPROYECTO</li>
+                </ul>
+            </div>
+            <div class="services-visual">
+                <img src="https://picsum.photos/seed/srv1/800/600" class="active-img">
+                <img src="https://picsum.photos/seed/srv2/800/600">
+                <img src="https://picsum.photos/seed/srv3/800/600">
+                <img src="https://picsum.photos/seed/srv4/800/600">
+            </div>
+        </div>
+    </section>
+
+    <section style="background: var(--accent); color: white;">
+        <div class="bg-keyword" style="opacity: 0.1;">TALK</div>
+        <div>
+            <span class="label" style="color: rgba(255,255,255,0.7);">05. Contacto</span>
+            <h2>Mérida, MX.</h2>
+            <p style="font-family: 'JetBrains Mono'; font-size: 0.8rem; margin-top: 20px;">taller@virtual.lab</p>
+        </div>
+    </section>
+</div>
+
+<div class="inspection-overlay" id="inspection-modal" onclick="closeModal()">
+    <button class="btn-close" onclick="closeModal()">←</button>
+    <div class="view-center">
+        <img id="img-focus" src="">
+        <div id="focus-title" class="focus-title"></div>
+    </div>
+    <div class="view-side" id="side-track" onclick="event.stopPropagation()">
+        <div class="thumb t-16-9" onclick="setFocus(this)" data-title="Hotel Progreso"><img src="https://picsum.photos/seed/soma1/1280/720"></div>
+        <div class="thumb t-9-16" onclick="setFocus(this)" data-title="Torre Alba"><img src="https://picsum.photos/seed/soma2/720/1280"></div>
+        <div class="thumb t-3-2" onclick="setFocus(this)" data-title="Casa Nórdica"><img src="https://picsum.photos/seed/soma3/1200/800"></div>
+        <div class="thumb t-16-9" onclick="setFocus(this)" data-title="Pabellón D5"><img src="https://picsum.photos/seed/soma4/1280/720"></div>
+        <div class="thumb t-9-16" onclick="setFocus(this)" data-title="Residencial X"><img src="https://picsum.photos/seed/soma5/720/1280"></div>
+        <div class="thumb t-3-2" onclick="setFocus(this)" data-title="Villa Mínima"><img src="https://picsum.photos/seed/soma6/1200/800"></div>
+        <div class="thumb t-16-9" onclick="setFocus(this)" data-title="Complejo Cero"><img src="https://picsum.photos/seed/soma7/1280/720"></div>
+    </div>
+</div>
+
+<script>
+    const sliderH = document.getElementById('project-slider');
+    const proxH = document.getElementById('proximity-horizontal');
+    const sliderV = document.getElementById('side-track');
+    const modal = document.getElementById('inspection-modal');
+    const imgFocus = document.getElementById('img-focus');
+    const titleFocus = document.getElementById('focus-title');
+    const viewport = document.getElementById('main-viewport');
+
+    let hTarget = 0, hCurrent = 0, vTarget = 0, vCurrent = 0;
+    const lerp = 0.05;
+
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+    if (!isTouchDevice) {
+        proxH.addEventListener('mousemove', (e) => {
+            const rect = proxH.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const edge = rect.width * 0.3;
+            if (x < edge) hTarget = -((edge - x) / edge) * 25;
+            else if (x > rect.width - edge) hTarget = ((x - (rect.width - edge)) / edge) * 25;
+            else hTarget = 0;
+        });
+        proxH.addEventListener('mouseleave', () => hTarget = 0);
+
+        sliderV.addEventListener('mousemove', (e) => {
+            const rect = sliderV.getBoundingClientRect();
+            const y = e.clientY - rect.top;
+            const edge = rect.height * 0.25;
+            if (y < edge) vTarget = -((edge - y) / edge) * 25;
+            else if (y > rect.height - edge) vTarget = ((y - (rect.height - edge)) / edge) * 25;
+            else vTarget = 0;
+        });
+        sliderV.addEventListener('mouseleave', () => vTarget = 0);
+
+        function animate() {
+            hCurrent += (hTarget - hCurrent) * lerp;
+            if (Math.abs(hCurrent) > 0.1) sliderH.scrollLeft += hCurrent;
+            vCurrent += (vTarget - vCurrent) * lerp;
+            if (Math.abs(vCurrent) > 0.1) sliderV.scrollTop += vCurrent;
+            requestAnimationFrame(animate);
+        }
+        animate();
+    }
+
+    function changeService(element, index) {
+        const listItems = element.parentElement.querySelectorAll('li');
+        listItems.forEach(li => li.classList.remove('active'));
+        element.classList.add('active');
+        const images = document.querySelectorAll('.services-visual img');
+        images.forEach(img => img.classList.remove('active-img'));
+        images[index].classList.add('active-img');
+    }
+
+    function openModal(el) {
+        const slides = Array.from(el.parentNode.children);
+        const index = slides.indexOf(el);
+        const thumbs = document.querySelectorAll('.thumb');
+        thumbs.forEach(t => t.classList.remove('active'));
+        if (thumbs[index]) {
+            thumbs[index].classList.add('active');
+            imgFocus.src = thumbs[index].querySelector('img').src;
+            titleFocus.innerText = thumbs[index].getAttribute('data-title');
+            sliderV.scrollTop = thumbs[index].offsetTop - (sliderV.clientHeight / 2) + (thumbs[index].clientHeight / 2);
+        }
+        modal.classList.add('active');
+        titleFocus.style.opacity = '1';
+        viewport.style.overflow = 'hidden'; 
+    }
+
+    function closeModal() {
+        modal.classList.remove('active');
+        titleFocus.style.opacity = '0';
+        setTimeout(() => { viewport.style.overflowY = 'scroll'; }, 600);
+    }
+
+    function setFocus(th) {
+        document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+        th.classList.add('active');
+        imgFocus.style.opacity = '0';
+        titleFocus.style.opacity = '0';
+        setTimeout(() => { 
+            imgFocus.src = th.querySelector('img').src; 
+            titleFocus.innerText = th.getAttribute('data-title');
+            imgFocus.style.opacity = '1'; titleFocus.style.opacity = '1';
+        }, 200);
+    }
+</script>
+</body>
+</html>

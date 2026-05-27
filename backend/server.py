@@ -1,0 +1,890 @@
+from flask import Flask, request, jsonify, send_from_directory
+from flask_cors import CORS
+import sqlite3
+import datetime
+import json
+import os
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from twilio.rest import Client
+
+app = Flask(__name__)
+CORS(app)
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROYECTO_DIR = os.path.dirname(BASE_DIR)
+DB_PATH = os.path.join(PROYECTO_DIR, "web", "EjemploBD", "proyectos_arquitectonicos.db")
+DIAGNOSTICOS_PATH = os.path.join(BASE_DIR, "diagnosticos_master.json")
+REPORTES_DIR = os.path.join(BASE_DIR, "reportes")
+EMAIL_DESTINO = "habitarq85@gmail.com"
+
+SMTP_SERVER = "smtp.gmail.com"
+SMTP_PORT = 587
+SMTP_USER = "habitarq85@gmail.com"
+SMTP_PASSWORD = "cgrf pwrw znch ttub"
+
+TWILIO_SID = "AC1c6d7444290230c0e79bcee5a81e8915"
+TWILIO_TOKEN = "70d66f45903cf0ee1e7d097ce84755be"
+TWILIO_WHATSAPP = "+14155238886"
+NOTIFICACION_WHATSAPP = "+5219993619433"
+
+MINIMO_TALLER = 8000
+RANGOS_OBRA = {
+    250: {"min": 14000, "max": 16500},
+    400: {"min": 18500, "max": 23000},
+    1000: {"min": 28000, "max": 40000}
+}
+
+os.makedirs(REPORTES_DIR, exist_ok=True)
+
+def init_db():
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("""CREATE TABLE IF NOT EXISTS cobros (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        proyecto_id INTEGER,
+        concepto TEXT,
+        monto REAL,
+        fecha_vencimiento TEXT,
+        fecha_pago TEXT,
+        estado TEXT DEFAULT 'pendiente',
+        metodo_pago TEXT,
+        notas TEXT,
+        FOREIGN KEY (proyecto_id) REFERENCES captura_web(id)
+    )""")
+    c.execute("""CREATE TABLE IF NOT EXISTS config_fiscal (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        rfc TEXT,
+        regimen TEXT DEFAULT 'RESICO',
+        pac_api_key TEXT,
+        activo INTEGER DEFAULT 1
+    )""")
+    c.execute("""CREATE TABLE IF NOT EXISTS programa_arquitectonico (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        lead_id INTEGER,
+        tipo TEXT,
+        espacio TEXT,
+        area REAL,
+        zona INTEGER,
+        horario_inicio TEXT,
+        horario_fin TEXT,
+        mobiliario TEXT,
+        acontecimientos TEXT,
+        patrones_espaciales TEXT,
+        usuarios INTEGER,
+        clave TEXT,
+        relacion_directa TEXT,
+        FOREIGN KEY (lead_id) REFERENCES captura_web(id)
+    )""")
+    conn.commit()
+    conn.close()
+
+init_db()
+
+try:
+    with open(DIAGNOSTICOS_PATH, 'r', encoding='utf-8') as f:
+        MASTER_DIAGNOSTICOS = json.load(f)
+except Exception as e:
+    print(f"Error cargando base de conocimiento: {e}")
+    MASTER_DIAGNOSTICOS = {}
+
+def enviar_correo(destinatario, asunto, cuerpo):
+    filename = f"reporte_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+    filepath = os.path.join(REPORTES_DIR, filename)
+    with open(filepath, 'w', encoding='utf-8') as f:
+        f.write(f"Para: {destinatario}\n")
+        f.write(f"Asunto: {asunto}\n")
+        f.write("="*60 + "\n\n")
+        f.write(cuerpo)
+    print(f"\n--- REPORTE GUARDADO: {filepath} ---")
+
+    try:
+        msg = MIMEMultipart()
+        msg["From"] = SMTP_USER
+        msg["To"] = destinatario
+        msg["Subject"] = asunto
+        msg.attach(MIMEText(cuerpo, "plain", "utf-8"))
+
+        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+        server.starttls()
+        server.login(SMTP_USER, SMTP_PASSWORD)
+        server.send_message(msg)
+        server.quit()
+        print(f"--- CORREO ENVIADO a {destinatario} ---")
+        return True
+    except Exception as e:
+        print(f"--- ERROR AL ENVIAR CORREO: {e} ---")
+        return False
+
+def enviar_whatsapp(contacto, temp_id, nivel_key, m2):
+    try:
+        client = Client(TWILIO_SID, TWILIO_TOKEN)
+        mensaje = f"🔔 NUEVO LEAD SOMA\nID: {temp_id}\nCliente: {contacto}\nPaquete: {nivel_key.upper()}\nEscala: {m2:.0f} m²"
+        client.messages.create(
+            body=mensaje,
+            from_=f"whatsapp:{TWILIO_WHATSAPP}",
+            to=f"whatsapp:{NOTIFICACION_WHATSAPP}"
+        )
+        print("--- WHATSAPP ENVIADO ---")
+        return True
+    except Exception as e:
+        print(f"--- ERROR WHATSAPP: {e} ---")
+        return False
+
+@app.route('/save_immersion', methods=['POST'])
+def save_immersion():
+    data = request.json
+    respuestas = data.get('respuestas', {})
+    contacto = data.get('contacto', 'Anónimo')
+    cotizacion = data.get('cotizacion', {})
+    fecha_hoy = datetime.datetime.now().strftime("%Y%m%d-%H%M")
+    temp_id = f"SOMA-{fecha_hoy}"
+
+    m2 = cotizacion.get('m2', 0)
+    precio_diseno_m2 = cotizacion.get('precioDiseno', 0)
+
+    nivel_map = {250: "esencial", 400: "integral", 1000: "ejecutivo"}
+    nivel_key = nivel_map.get(precio_diseno_m2, "esencial")
+
+    total_diseno = m2 * precio_diseno_m2
+    if 0 < total_diseno < MINIMO_TALLER:
+        total_diseno = MINIMO_TALLER
+
+    rango = RANGOS_OBRA.get(precio_diseno_m2, {"min": 18500, "max": 23000})
+    obra_min = m2 * rango["min"]
+    obra_max = m2 * rango["max"]
+
+    # --- CONSTRUCCIÓN DEL REPORTE ---
+    reporte = f"========== REPORTE TÉCNICO DE INMERSIÓN ==========\n"
+    reporte += f"ID: {temp_id}\n"
+    reporte += f"Cliente: {contacto}\n"
+    reporte += f"Fecha: {datetime.datetime.now().strftime('%d/%m/%Y %H:%M')}\n\n"
+
+    reporte += "--- ANÁLISIS MULTIDIMENSIONAL ---\n"
+    for step, val in respuestas.items():
+        if step in MASTER_DIAGNOSTICOS and val in MASTER_DIAGNOSTICOS[step]:
+            d = MASTER_DIAGNOSTICOS[step][val]
+            reporte += f"\n▶ {d['titulo']}\n"
+            reporte += f"   Psicología Ambiental: {d['psicologia_ambiental']}\n"
+            reporte += f"   Lenguaje de Patrones: {d['lenguaje_patrones']}\n"
+            reporte += f"   Space Syntax: {d['space_syntax']}\n"
+            reporte += f"   Conducta Ambiental: {d['environmental_behavior']}\n"
+            reporte += f"   POE: {d['poe']}\n"
+
+    reporte += f"\n--- VIABILIDAD ECONÓMICA (Nivel: {nivel_key.upper()}) ---\n"
+    reporte += f"Escala Estimada: {m2:.2f} m²\n"
+    reporte += f"Honorarios Diseño SOMA: ${total_diseno:,.2f}\n"
+    reporte += f"Inversión de Obra (Paramétrica): ${obra_min:,.2f} - ${obra_max:,.2f}\n"
+    reporte += "\n*Nota: Costos paramétricos regionales para Yucatán.\n"
+
+    # --- GUARDAR EN BASE DE DATOS ---
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("""INSERT INTO captura_web
+                     (temp_id, contacto, m2, honorarios_diseno, inversion_obra_estimada, nivel_proyecto, respuestas_json, analisis_procesado, fecha)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                  (temp_id, contacto, m2, total_diseno, obra_min, nivel_key,
+                   json.dumps(respuestas), reporte, datetime.datetime.now().isoformat()))
+        proyecto_id = c.lastrowid
+
+        obra_promedio = (obra_min + obra_max) / 2
+        inversion_total = total_diseno + obra_promedio
+
+        c.execute("""INSERT INTO matriz_inversion
+                     (proyecto_id, categoria, prioridad_gasto, porcentaje_asignado, monto_estimado)
+                     VALUES (?, ?, ?, ?, ?)""",
+                  (proyecto_id, "Alcance Construcción (Promedio)", 5,
+                   obra_promedio / inversion_total if inversion_total > 0 else 0, obra_promedio))
+
+        c.execute("""INSERT INTO matriz_inversion
+                     (proyecto_id, categoria, prioridad_gasto, porcentaje_asignado, monto_estimado)
+                     VALUES (?, ?, ?, ?, ?)""",
+                  (proyecto_id, f"Diseño SOMA ({nivel_key.capitalize()})", 5,
+                   total_diseno / inversion_total if inversion_total > 0 else 0, total_diseno))
+
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print(f"Error DB: {e}")
+
+    # --- ENVÍO DE CORREO ---
+    asunto = f"NUEVO LEAD SOMA: {temp_id}"
+    cuerpo = f"Se ha registrado una nueva inmersión.\n\nContacto: {contacto}\nID: {temp_id}\n\n{reporte}"
+    email_enviado = enviar_correo(EMAIL_DESTINO, asunto, cuerpo)
+
+    # --- ENVÍO DE WHATSAPP ---
+    whatsapp_enviado = enviar_whatsapp(contacto, temp_id, nivel_key, m2)
+
+    print(f"\n{'='*50}")
+    print(f"🔔 NUEVO LEAD SOMA")
+    print(f"   ID: {temp_id}")
+    print(f"   Contacto: {contacto}")
+    print(f"   Reporte: backend/reportes/")
+    print(f"{'='*50}\n")
+
+    return jsonify({
+        "status": "success",
+        "temp_id": temp_id,
+        "email_status": "sent" if email_enviado else "failed",
+        "whatsapp_status": "sent" if whatsapp_enviado else "failed"
+    }), 200
+
+@app.route('/activity_matrix/<temp_id>', methods=['GET'])
+def get_activity_matrix(temp_id):
+    carpeta = os.path.join(PROYECTO_DIR, "backend", "proyectos", temp_id)
+    datos_path = os.path.join(carpeta, "datos_estructurados.json")
+    try:
+        with open(datos_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        matrix = data.get("activity_matrix", [])
+        if matrix:
+            return jsonify({"status": "success", "matrix": matrix}), 200
+    except FileNotFoundError:
+        pass
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+    # Fallback: leer actividades desde SQLite
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+        c.execute("""
+            SELECT h.nombre, a.hora, a.actividad_principal,
+                   a.aislamiento_necesario, a.iluminacion_deseada, a.espacio_sugerido
+            FROM actividades a
+            JOIN habitantes h ON h.id = a.habitante_id
+            ORDER BY h.id, a.hora
+        """)
+        rows = c.fetchall()
+        conn.close()
+
+        if not rows:
+            return jsonify({"status": "empty", "matrix": []}), 200
+
+        habitantes = {}
+        for r in rows:
+            nombre = r["nombre"] or "Habitante"
+            if nombre not in habitantes:
+                habitantes[nombre] = {"nombre": nombre, "slots": []}
+            z = r["espacio_sugerido"] or ""
+            zona_clave = {
+                "social": "s", "descanso": "d", "operativa": "o",
+                "soporte": "p", "transición": "t", "transicion": "t"
+            }.get(z.lower().strip(), "x")
+            habitantes[nombre]["slots"].append({
+                "hora": r["hora"],
+                "actividad": r["actividad_principal"] or "",
+                "aislamiento": r["aislamiento_necesario"],
+                "iluminacion": r["iluminacion_deseada"] or "",
+                "zona": zona_clave
+            })
+
+        return jsonify({"status": "success", "matrix": list(habitantes.values())}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+# ---- PROGRAMA ARQUITECTONICO ----
+PRECIOS_M2 = {"esencial": 250, "integral": 400, "ejecutivo": 1000}
+
+@app.route('/programa/<int:lead_id>', methods=['GET'])
+def get_programa(lead_id):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+        c.execute("SELECT * FROM programa_arquitectonico WHERE lead_id = ? ORDER BY tipo, id", (lead_id,))
+        rows = c.fetchall()
+        conn.close()
+        return jsonify([dict(row) for row in rows]), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/programa/espacio', methods=['POST'])
+def crear_espacio():
+    try:
+        data = request.json
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("""INSERT INTO programa_arquitectonico
+                     (lead_id, tipo, espacio, area, zona, horario_inicio, horario_fin,
+                      mobiliario, acontecimientos, patrones_espaciales, usuarios, clave, relacion_directa)
+                     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                  (data['lead_id'], data['tipo'], data['espacio'], data.get('area', 0),
+                   data.get('zona', 1), data.get('horario_inicio', ''),
+                   data.get('horario_fin', ''), json.dumps(data.get('mobiliario', [])),
+                   json.dumps(data.get('acontecimientos', [])),
+                   json.dumps(data.get('patrones_espaciales', [])),
+                   data.get('usuarios', 0), data.get('clave', ''),
+                   json.dumps(data.get('relacion_directa', []))))
+        conn.commit()
+        esp_id = c.lastrowid
+        conn.close()
+        return jsonify({"status": "success", "id": esp_id}), 201
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/programa/espacio/<int:espacio_id>', methods=['PUT'])
+def actualizar_espacio(espacio_id):
+    try:
+        data = request.json
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("""UPDATE programa_arquitectonico SET
+                     espacio=?, area=?, zona=?, horario_inicio=?, horario_fin=?,
+                     mobiliario=?, acontecimientos=?, patrones_espaciales=?,
+                     usuarios=?, clave=?, relacion_directa=?
+                     WHERE id=?""",
+                  (data['espacio'], data.get('area', 0), data.get('zona', 1),
+                   data.get('horario_inicio', ''), data.get('horario_fin', ''),
+                   json.dumps(data.get('mobiliario', [])),
+                   json.dumps(data.get('acontecimientos', [])),
+                   json.dumps(data.get('patrones_espaciales', [])),
+                   data.get('usuarios', 0), data.get('clave', ''),
+                   json.dumps(data.get('relacion_directa', [])), espacio_id))
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "success"}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/programa/espacio/<int:espacio_id>', methods=['DELETE'])
+def eliminar_espacio(espacio_id):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("DELETE FROM programa_arquitectonico WHERE id=?", (espacio_id,))
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "success"}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/cotizacion/<int:lead_id>', methods=['GET'])
+def get_cotizacion(lead_id):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("SELECT id, contacto, m2, nivel_proyecto, honorarios_diseno FROM captura_web WHERE id=?", (lead_id,))
+        lead = c.fetchone()
+        if not lead:
+            conn.close()
+            return jsonify({"status": "error", "message": "Lead no encontrado"}), 404
+
+        c.execute("SELECT tipo, SUM(area) FROM programa_arquitectonico WHERE lead_id=? GROUP BY tipo", (lead_id,))
+        totales_por_tipo = {row[0]: row[1] for row in c.fetchall()}
+
+        c.execute("SELECT SUM(area) FROM programa_arquitectonico WHERE lead_id=?", (lead_id,))
+        total_m2 = c.fetchone()[0] or 0
+        conn.close()
+
+        _, contacto, m2_lead, nivel, honorarios_lead = lead
+        nivel_key = nivel or "esencial"
+        precio_m2 = PRECIOS_M2.get(nivel_key, 250)
+        honorarios_reales = max(total_m2 * precio_m2, 8000)
+        rango = RANGOS_OBRA.get(precio_m2, {"min": 18500, "max": 23000})
+
+        return jsonify({
+            "lead_id": lead_id,
+            "contacto": contacto,
+            "nivel": nivel_key,
+            "m2_lead_original": m2_lead,
+            "m2_programa_real": total_m2,
+            "totales_por_tipo": totales_por_tipo,
+            "precio_m2": precio_m2,
+            "honorarios_reales": honorarios_reales,
+            "honorarios_lead_original": honorarios_lead,
+            "obra_min_estimada": total_m2 * rango["min"],
+            "obra_max_estimada": total_m2 * rango["max"]
+        }), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/cotizacion/<int:lead_id>/pdf', methods=['GET'])
+def cotizacion_pdf(lead_id):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("SELECT id, contacto, m2, nivel_proyecto, honorarios_diseno, temp_id FROM captura_web WHERE id=?", (lead_id,))
+        lead = c.fetchone()
+        if not lead:
+            conn.close()
+            return "Lead no encontrado", 404
+        _, contacto, m2_lead, nivel, honorarios_lead, temp_id = lead
+        nivel_key = nivel or "esencial"
+        precio_m2 = PRECIOS_M2.get(nivel_key, 250)
+        c.execute("SELECT tipo, espacio, area, zona, clave FROM programa_arquitectonico WHERE lead_id=? ORDER BY tipo, id", (lead_id,))
+        espacios = c.fetchall()
+        total_m2 = sum(e[2] or 0 for e in espacios)
+        honorarios = max(total_m2 * precio_m2, 8000)
+        rango = RANGOS_OBRA.get(precio_m2, {"min": 18500, "max": 23000})
+        conn.close()
+
+        fecha = datetime.datetime.now().strftime("%d/%m/%Y")
+        filas = "".join(
+            f"<tr><td>{e[0]}</td><td>{e[1] or '?'}</td><td style='text-align:right'>{e[2] or 0:.1f}</td>"
+            f"<td style='text-align:center'>{e[3]}</td><td style='text-align:center'>{e[4] or '--'}</td></tr>"
+            for e in espacios
+        )
+
+        html = f"""<!DOCTYPE html><html><head><meta charset='utf-8'>
+<title>COTIZACIÓN SOMA — {contacto}</title>
+<style>
+@page {{ margin: 2cm; }}
+body {{ font-family: 'Helvetica', 'Arial', sans-serif; color: #1a1a1a; font-size: 11pt; line-height: 1.5; }}
+.header {{ text-align: center; margin-bottom: 30px; }}
+.header h1 {{ font-size: 28pt; letter-spacing: 4px; margin: 0; }}
+.header h2 {{ font-size: 10pt; color: #a6937c; font-weight: normal; margin: 5px 0 0; }}
+hr {{ border: none; border-top: 2px solid #000; margin: 20px 0; }}
+table {{ width: 100%; border-collapse: collapse; font-size: 9pt; margin: 15px 0; }}
+th {{ background: #1a1a1a; color: #fff; padding: 6px; text-align: left; font-size: 8pt; text-transform: uppercase; }}
+td {{ padding: 5px 6px; border-bottom: 1px solid #ddd; }}
+.total-row td {{ border-top: 2px solid #000; font-weight: bold; }}
+.resumen {{ background: #f4f1ea; padding: 15px; margin: 15px 0; }}
+.resumen div {{ display: flex; justify-content: space-between; padding: 3px 0; }}
+.esquema-pagos {{ margin: 15px 0; padding: 12px; border: 1px solid #1a1a1a; }}
+.esquema-pagos h4 {{ margin: 0 0 8px 0; font-size: 9pt; text-transform: uppercase; }}
+.esquema-pagos table {{ font-size: 8.5pt; }}
+.esquema-pagos td {{ padding: 4px 6px; }}
+.footer {{ margin-top: 30px; font-size: 8pt; color: #999; text-align: center; border-top: 1px solid #ddd; padding-top: 10px; }}
+</style></head><body>
+<div class='header'>
+<h1>SOMA</h1>
+<h2>COTIZACIÓN DE DISEÑO ARQUITECTÓNICO</h2>
+<hr>
+</div>
+<p><strong>Cliente:</strong> {contacto}</p>
+<p><strong>ID:</strong> {temp_id or '---'} &nbsp;|&nbsp; <strong>Fecha:</strong> {fecha}</p>
+<p><strong>Paquete:</strong> {nivel_key.upper()} &nbsp;|&nbsp; <strong>m² estimados (web):</strong> {m2_lead or 0}</p>
+<hr>
+<h3>PROGRAMA ARQUITECTÓNICO</h3>
+<table>
+<tr><th>Tipo</th><th>Espacio</th><th style='text-align:right'>m²</th><th style='text-align:center'>Zona</th><th style='text-align:center'>Clave</th></tr>
+{filas}
+<tr class='total-row'><td colspan='2'><strong>TOTAL</strong></td>
+<td style='text-align:right'><strong>{total_m2:.1f} m²</strong></td><td></td><td></td></tr>
+</table>
+<div class='resumen'>
+<div><span>Honorarios de Diseño SOMA ({nivel_key.capitalize()})</span><span><strong>${honorarios:,.2f}</strong></span></div>
+</div>
+<div class='esquema-pagos'>
+<h4>Esquema de Pagos</h4>
+<table>
+<tr><th>Pago</th><th>Porcentaje</th><th style='text-align:right'>Monto</th><th>Disparador</th></tr>
+<tr><td>Anticipo</td><td>30%</td><td style='text-align:right'>${honorarios*0.3:,.2f}</td><td>Firma de contrato</td></tr>
+<tr><td>Segundo pago</td><td>40%</td><td style='text-align:right'>${honorarios*0.4:,.2f}</td><td>Entrega de anteproyecto</td></tr>
+<tr><td>Tercer pago</td><td>30%</td><td style='text-align:right'>${honorarios*0.3:,.2f}</td><td>Entrega final</td></tr>
+<tr style='font-weight:bold;border-top:2px solid #000;'><td>Total</td><td>100%</td><td style='text-align:right'>${honorarios:,.2f}</td><td></td></tr>
+</table>
+</div>
+<div class='footer'>
+<p>SOMA Arquitectura — {fecha}</p>
+<p>Arq. Juan Carlos · habitarq85@gmail.com</p>
+<p style='margin-top:8px;font-size:7.5pt;color:#666;'>Cotización válida por 30 días. Los honorarios se ajustarán si el programa arquitectónico final difiere del presentado. Esta cotización cubre únicamente servicios de diseño arquitectónico; los costos de construcción son estimados paramétricos referenciales.</p>
+</div>
+</body></html>"""
+        return html, 200, {'Content-Type': 'text/html; charset=utf-8'}
+    except Exception as e:
+        return f"Error: {e}", 500
+
+@app.route('/get_leads', methods=['GET'])
+def get_leads():
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+        c.execute("SELECT * FROM captura_web ORDER BY fecha DESC")
+        rows = c.fetchall()
+        conn.close()
+        return jsonify([dict(row) for row in rows]), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+PIPELINE_ESTADOS = ['lead', 'entrevistado', 'programado', 'cotizado', 'contratado', 'pagado']
+
+@app.route('/leads/kanban', methods=['GET'])
+def get_leads_kanban():
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+        c.execute("SELECT * FROM captura_web ORDER BY fecha DESC")
+        leads = [dict(row) for row in c.fetchall()]
+        conn.close()
+        grouped = {e: [] for e in PIPELINE_ESTADOS}
+        for l in leads:
+            st = l.get('pipeline_estado', 'lead') or 'lead'
+            if st not in grouped:
+                st = 'lead'
+            grouped[st].append(l)
+        return jsonify({"grouped": grouped, "estados": PIPELINE_ESTADOS}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/lead/<int:lead_id>/pipeline', methods=['PATCH'])
+def update_pipeline(lead_id):
+    try:
+        data = request.json
+        nuevo_estado = data.get('pipeline_estado', '').strip().lower()
+        if nuevo_estado not in PIPELINE_ESTADOS:
+            return jsonify({"status": "error", "message": f"Estado inválido: {nuevo_estado}"}), 400
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("UPDATE captura_web SET pipeline_estado = ? WHERE id = ?", (nuevo_estado, lead_id))
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "success", "pipeline_estado": nuevo_estado}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/cobros/<int:proyecto_id>', methods=['GET'])
+def get_cobros(proyecto_id):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+        c.execute("SELECT * FROM cobros WHERE proyecto_id = ? ORDER BY fecha_vencimiento ASC", (proyecto_id,))
+        rows = c.fetchall()
+        conn.close()
+        return jsonify([dict(row) for row in rows]), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/cobros', methods=['POST'])
+def crear_cobro():
+    try:
+        data = request.json
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("""INSERT INTO cobros (proyecto_id, concepto, monto, fecha_vencimiento, estado, notas)
+                     VALUES (?, ?, ?, ?, ?, ?)""",
+                  (data['proyecto_id'], data['concepto'], data['monto'],
+                   data.get('fecha_vencimiento', ''), data.get('estado', 'pendiente'), data.get('notas', '')))
+        conn.commit()
+        cobro_id = c.lastrowid
+        conn.close()
+        return jsonify({"status": "success", "id": cobro_id}), 201
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/cobros/generar_esquema/<int:proyecto_id>', methods=['POST'])
+def generar_esquema_pagos(proyecto_id):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("SELECT id, honorarios_diseno, temp_id FROM captura_web WHERE id = ?", (proyecto_id,))
+        proy = c.fetchone()
+        if not proy:
+            conn.close()
+            return jsonify({"status": "error", "message": "Proyecto no encontrado"}), 404
+
+        total = proy[1] or 0
+        if total <= 0:
+            conn.close()
+            return jsonify({"status": "error", "message": "El proyecto no tiene honorarios calculados"}), 400
+
+        # Eliminar cobros anteriores del esquema para evitar duplicados
+        c.execute("DELETE FROM cobros WHERE proyecto_id = ? AND estado = 'pendiente'", (proyecto_id,))
+
+        esquema = [
+            ("Anticipo (30%) — Firma de contrato", round(total * 0.3, 2)),
+            ("Segundo pago (40%) — Entrega de anteproyecto", round(total * 0.4, 2)),
+            ("Tercer pago (30%) — Entrega final", round(total * 0.3, 2)),
+        ]
+
+        creados = []
+        for concepto, monto in esquema:
+            c.execute("""INSERT INTO cobros (proyecto_id, concepto, monto, estado, notas)
+                         VALUES (?, ?, ?, 'pendiente', ?)""",
+                      (proyecto_id, concepto, monto, f"Lead: {proy[2]}"))
+            creados.append(c.lastrowid)
+
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "success", "cobros_ids": creados, "total": total}), 201
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/cobros/<int:cobro_id>/pagar', methods=['PATCH'])
+def pagar_cobro(cobro_id):
+    try:
+        data = request.json
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("""UPDATE cobros SET estado = 'pagado', fecha_pago = ?, metodo_pago = ?
+                     WHERE id = ?""",
+                  (data.get('fecha_pago', datetime.datetime.now().isoformat()),
+                   data.get('metodo_pago', ''), cobro_id))
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "success"}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/resumen_financiero', methods=['GET'])
+def resumen_financiero():
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("""SELECT c.id, c.temp_id, c.contacto, c.m2, c.nivel_proyecto, c.honorarios_diseno,
+                            IFNULL(SUM(CASE WHEN cb.estado = 'pagado' THEN cb.monto ELSE 0 END), 0) as pagado,
+                            IFNULL(SUM(CASE WHEN cb.estado = 'pendiente' THEN cb.monto ELSE 0 END), 0) as pendiente
+                     FROM captura_web c
+                     LEFT JOIN cobros cb ON cb.proyecto_id = c.id
+                     GROUP BY c.id
+                     ORDER BY c.fecha DESC""")
+        rows = c.fetchall()
+        conn.close()
+        total_pagado = sum(r[6] or 0 for r in rows)
+        total_pendiente = sum(r[7] or 0 for r in rows)
+        return jsonify({
+            "proyectos": [{
+                "id": r[0], "temp_id": r[1], "contacto": r[2],
+                "m2": r[3], "nivel": r[4], "honorarios": r[5],
+                "pagado": r[6] or 0, "pendiente": r[7] or 0
+            } for r in rows],
+            "total_pagado": total_pagado,
+            "total_pendiente": total_pendiente
+        }), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/')
+def serve_web():
+    web_path = os.path.join(PROYECTO_DIR, "web", "Pagina Web 6.html")
+    if os.path.exists(web_path):
+        with open(web_path, 'r', encoding='utf-8') as f:
+            return f.read(), 200, {'Content-Type': 'text/html; charset=utf-8'}
+    return "Pagina no encontrada", 404
+
+@app.route('/dashboard')
+def serve_dashboard():
+    dashboard_path = os.path.join(PROYECTO_DIR, "metodologia", "Bloque 1 - Gestion del Entorno (ADM)", "dashboard", "Dashboard.html")
+    if os.path.exists(dashboard_path):
+        with open(dashboard_path, 'r', encoding='utf-8') as f:
+            return f.read(), 200, {'Content-Type': 'text/html; charset=utf-8'}
+    return "Dashboard no encontrado", 404
+
+@app.route('/css/<path:filename>')
+def serve_css(filename):
+    css_path = os.path.join(PROYECTO_DIR, "metodologia", "Bloque 1 - Gestion del Entorno (ADM)", "dashboard", "css", filename)
+    if os.path.exists(css_path):
+        with open(css_path, 'r', encoding='utf-8') as f:
+            return f.read(), 200, {'Content-Type': 'text/css; charset=utf-8'}
+    return "Not found", 404
+
+# Servir recursos estáticos (imágenes, videos, etc.)
+@app.route('/recursos_graficos/<path:filename>')
+def serve_recursos(filename):
+    recursos_dir = os.path.join(PROYECTO_DIR, "recursos_graficos")
+    return send_from_directory(recursos_dir, filename)
+
+@app.route('/backend/<path:filename>')
+def serve_backend_static(filename):
+    return send_from_directory(BASE_DIR, filename)
+
+# ---- DIAGRAMA SOMA (Herramienta de Diseño - Bloque 2) ----
+
+@app.route('/diagrama')
+def serve_diagrama():
+    diagrama_path = os.path.join(PROYECTO_DIR, "metodologia", "Bloque 2 - Taller SOMA (OPERACION)", "02 Análisis", "DiagramaSoma.html")
+    if os.path.exists(diagrama_path):
+        with open(diagrama_path, 'r', encoding='utf-8') as f:
+            return f.read(), 200, {'Content-Type': 'text/html; charset=utf-8'}
+    return "DiagramaSoma no encontrado", 404
+
+@app.route('/carta-presentacion')
+def serve_carta_presentacion():
+    carta_path = os.path.join(PROYECTO_DIR, "metodologia", "Bloque 1 - Gestion del Entorno (ADM)", "CARTA_PRESENTACION_SOMA.html")
+    if os.path.exists(carta_path):
+        with open(carta_path, 'r', encoding='utf-8') as f:
+            return f.read(), 200, {'Content-Type': 'text/html; charset=utf-8'}
+    return "Carta de presentación no encontrada", 404
+
+@app.route('/api/diagrama/proyectos', methods=['GET'])
+def diagrama_proyectos():
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+        c.execute("""
+            SELECT DISTINCT cw.id, cw.temp_id, cw.contacto, cw.fecha
+            FROM captura_web cw
+            INNER JOIN programa_arquitectonico pa ON pa.lead_id = cw.id
+            ORDER BY cw.fecha DESC
+        """)
+        rows = c.fetchall()
+        conn.close()
+        proyectos = []
+        for r in rows:
+            proyectos.append({
+                "id": r["id"],
+                "nombre": r["temp_id"],
+                "cliente": r["contacto"],
+                "fecha": r["fecha"][:10] if r["fecha"] else ""
+            })
+        return jsonify(proyectos), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/api/diagrama/grafo/<int:lead_id>', methods=['GET'])
+def diagrama_grafo(lead_id):
+    try:
+        zona_filtro = request.args.get('zona', type=int)
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+
+        if zona_filtro:
+            c.execute("""
+                SELECT * FROM programa_arquitectonico
+                WHERE lead_id = ? AND zona = ?
+                ORDER BY id
+            """, (lead_id, zona_filtro))
+        else:
+            c.execute("""
+                SELECT * FROM programa_arquitectonico
+                WHERE lead_id = ?
+                ORDER BY id
+            """, (lead_id,))
+
+        espacios = c.fetchall()
+        conn.close()
+
+        if not espacios:
+            return jsonify({"status": "empty", "nodes": [], "edges": []}), 200
+
+        claves_validas = set()
+        for e in espacios:
+            if e["clave"]:
+                claves_validas.add(e["clave"])
+
+        areas = [e["area"] or 30 for e in espacios if e["clave"]]
+        area_min = min(areas) if areas else 30
+        area_max = max(areas) if areas else 30
+        rango = max(area_max - area_min, 1)
+
+        ZONA_COLOR_HEX = {
+            1: "#4d7ae6", 2: "#e6cc33", 3: "#e64d4d",
+            4: "#e68033", 5: "#9933cc"
+        }
+
+        nodes = []
+        edges_set = set()
+        id_map = {}
+
+        for i, e in enumerate(espacios):
+            if not e["clave"]:
+                continue
+            area_val = float(e["area"]) if e["area"] and e["area"] > 0 else 30
+            proporcion = (area_val - area_min) / rango if rango > 0 else 0.5
+            size = 20 + (proporcion * 40)
+            zona = int(e["zona"]) if e["zona"] else 1
+            color = ZONA_COLOR_HEX.get(zona, "#666666")
+
+            label = f"{e['clave']}\n{e['espacio'] or '?'}"
+
+            nodes.append({
+                "id": e["clave"],
+                "label": label,
+                "size": size,
+                "color": color,
+                "zona": zona,
+                "area": round(area_val, 1),
+                "tipo": e["tipo"] or "",
+                "espacio": e["espacio"] or ""
+            })
+            id_map[e["clave"]] = e
+
+        for e in espacios:
+            if not e["clave"] or not e["relacion_directa"]:
+                continue
+            try:
+                relaciones = json.loads(e["relacion_directa"])
+                for rel in relaciones:
+                    if rel and rel != e["clave"] and rel in claves_validas:
+                        edge_key = tuple(sorted([e["clave"], rel]))
+                        if edge_key not in edges_set:
+                            edges_set.add(edge_key)
+            except:
+                pass
+
+        edges = [{"from": u, "to": v} for u, v in edges_set]
+
+        return jsonify({"status": "success", "nodes": nodes, "edges": edges}), 200
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/save_lead_magnet', methods=['POST'])
+def save_lead_magnet():
+    data = request.json
+    nombre = data.get('nombre', 'Anónimo')
+    contacto = data.get('contacto', '')
+    fuente = data.get('fuente', 'lead_magnet')
+    fecha = datetime.datetime.now().isoformat()
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("""INSERT INTO captura_web
+                     (temp_id, contacto, m2, honorarios_diseno, nivel_proyecto, respuestas_json, analisis_procesado, fecha)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                  (f"LM-{datetime.datetime.now().strftime('%Y%m%d-%H%M%S')}", f"{nombre} - {contacto}",
+                   0, 0, 'lead_magnet', json.dumps({"fuente": fuente, "nombre": nombre}),
+                   f"Lead magnet: {fuente}", fecha))
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "ok"}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/fondo_democratizacion', methods=['GET'])
+def fondo_democratizacion():
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("SELECT m2, nivel_proyecto FROM captura_web WHERE nivel_proyecto IS NOT NULL")
+        rows = c.fetchall()
+        conn.close()
+        total_fondo = 0
+        for m2, nivel in rows:
+            m2 = m2 or 0
+            if nivel == "ejecutivo":
+                total_fondo += m2 * 200
+            elif nivel == "integral":
+                total_fondo += m2 * 100
+        return jsonify({"total_fondo": total_fondo}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/notificaciones/status', methods=['GET'])
+def notificaciones_status():
+    status = {
+        "correo": {"configurado": False, "conectado": False},
+        "whatsapp": {"configurado": False, "conectado": False}
+    }
+    if SMTP_USER and SMTP_PASSWORD:
+        status["correo"]["configurado"] = True
+        try:
+            server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=5)
+            server.starttls()
+            server.login(SMTP_USER, SMTP_PASSWORD)
+            server.quit()
+            status["correo"]["conectado"] = True
+        except Exception:
+            status["correo"]["conectado"] = False
+    if TWILIO_SID and TWILIO_TOKEN:
+        status["whatsapp"]["configurado"] = True
+        try:
+            client = Client(TWILIO_SID, TWILIO_TOKEN)
+            client.api.accounts(TWILIO_SID).fetch()
+            status["whatsapp"]["conectado"] = True
+        except Exception:
+            status["whatsapp"]["conectado"] = False
+    return jsonify(status), 200
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 8080))
+    app.run(port=port, debug=False, host='0.0.0.0')

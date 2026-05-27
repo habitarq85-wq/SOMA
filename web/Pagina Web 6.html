@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOMA | Taller Virtual de Arquitectura</title>
+    <meta name="description" content="SOMA Taller Virtual de Arquitectura — Diseño arquitectónico de alta calidad democratizado mediante tecnología. Mérida, Yucatán.">
+    <meta property="og:title" content="SOMA Arquitectura — Taller Virtual">
+    <meta property="og:description" content="Lo protocolario se programa, lo creativo se libera. Arquitectura de alta calidad para todos.">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_MX">
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;700;900&family=JetBrains+Mono:wght@300;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --paper: #f4f1ee;
+            --accent: #bc4b21;
+            --overlay: rgba(10, 10, 10, 0.98);
+            --ease: cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg); color: var(--paper); }
+
+        .scroll-container {
+            height: 100vh; width: 100vw;
+            overflow-y: scroll; overflow-x: hidden;
+            scroll-snap-type: y mandatory; scroll-behavior: smooth;
+        }
+
+        section {
+            height: 100vh; width: 100vw; scroll-snap-align: start;
+            position: relative; display: flex; flex-direction: column;
+            justify-content: center; padding: 0 10%; overflow: hidden;
+        }
+
+        .light { background: var(--paper); color: var(--bg); }
+        .dark { background: var(--bg); color: var(--paper); }
+
+        h2 { font-family: 'Unbounded', sans-serif; font-size: clamp(1.8rem, 4vw, 2.5rem); text-transform: uppercase; margin-bottom: 15px; position: relative; z-index: 2; line-height: 1.1; }
+        .label { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 4px; color: var(--accent); margin-bottom: 10px; display: block; position: relative; z-index: 2; }
+        
+        .bg-keyword { 
+            position: absolute; left: -2vw; top: 50%; transform: translateY(-50%); 
+            font-family: 'Unbounded', sans-serif; font-size: 25vw; font-weight: 900; 
+            opacity: 0.03; pointer-events: none; white-space: nowrap; z-index: 1;
+        }
+
+        /* --- 00. HOME --- */
+        .bg-video {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; object-fit: cover;
+            z-index: 0; opacity: 0.4;
+            transition: opacity 1s ease-in-out;
+            pointer-events: none;
+        }
+        .video-overlay {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; 
+            background: linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,0.95) 100%); 
+            z-index: 1;
+        }
+        .hero-title { margin-bottom: 0; }
+        .soma-main { font-family: 'Unbounded', sans-serif; font-size: clamp(2.5rem, 7vw, 4.5rem); font-weight: 900; display: block; line-height: 1; }
+        .soma-sub { font-family: 'JetBrains Mono', monospace; font-size: clamp(0.8rem, 2vw, 1.2rem); font-weight: 300; color: var(--accent); display: block; margin-top: 10px; letter-spacing: 2px; text-transform: none; }
+        .hero-flex { display: flex; justify-content: space-between; align-items: center; width: 100%; position: relative; z-index: 2; }
+        .hero-quotes { width: 40%; position: relative; min-height: 100px; display: flex; flex-direction: column; justify-content: center; }
+        .hero-quote {
+            position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 100%;
+            font-family: 'JetBrains Mono', monospace; font-size: clamp(0.55rem, 0.9vw, 0.7rem);
+            line-height: 1.7; color: rgba(244,241,238,0.5); font-weight: 300;
+            opacity: 0; transition: opacity 1.2s var(--ease); pointer-events: none;
+        }
+        .hero-quote.active { opacity: 1; }
+
+        /* --- 01. PROYECTOS --- */
+        .carousel-area { position: relative; width: 100%; height: auto; min-height: 500px; display: flex; flex-direction: column; justify-content: center; z-index: 2;}
+        .slider { display: flex; gap: 40px; padding: 40px 0; align-items: flex-end; overflow-x: hidden; }
+        .slide { flex: 0 0 auto; cursor: pointer; transition: transform 0.6s var(--ease); overflow: hidden; position: relative; scroll-snap-align: start; }
+        
+        .p-16-9 { width: 480px; height: 270px; } 
+        .p-9-16 { width: 300px; height: 500px; } 
+        .p-3-2  { width: 390px; height: 260px; } 
+        .p-custom-cristi { width: 483px; height: 270px; }
+        
+        .slide img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); opacity: 0.6; transition: 0.8s var(--ease); pointer-events: none; display: block; }
+        
+        .slide-title {
+            position: absolute; bottom: 20px; left: 0;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+            color: var(--paper); background: rgba(10, 10, 10, 0.8);
+            padding: 8px 16px; backdrop-filter: blur(4px);
+            pointer-events: none; opacity: 0.6;
+            transition: 0.4s var(--ease);
+            text-transform: uppercase; letter-spacing: 1px;
+            border-radius: 0 4px 4px 0; 
+        }
+
+        @media (hover: hover) {
+            .slide:hover img { filter: grayscale(0); opacity: 1; transform: scale(1.02) translateY(-10px); }
+            .slide:hover .slide-title { opacity: 1; background: var(--accent); transform: translateY(-10px); }
+        }
+
+        /* --- 02. TRAYECTORIA --- */
+        .trayectoria-grid { display: grid; grid-template-columns: 1fr 200px; gap: 40px; width: 100%; max-width: 1100px; margin: 0 auto; z-index: 2; align-items: start; }
+
+        .timeline { position: relative; padding-left: 40px; }
+        .timeline::before { content: ''; position: absolute; left: 15px; top: 8px; bottom: 8px; width: 1px; background: linear-gradient(to bottom, var(--accent), rgba(188,75,33,0.05)); }
+
+        .tl-node { position: relative; padding-bottom: 30px; }
+        .tl-node:last-child { padding-bottom: 0; }
+        .tl-dot { position: absolute; left: -26px; top: 5px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); box-shadow: 0 0 0 1px var(--accent); }
+        .tl-dot.current { width: 16px; height: 16px; left: -28px; top: 2px; background: var(--bg); border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent), 0 0 20px rgba(188,75,33,0.3); }
+
+        .tl-year { font-family: 'JetBrains Mono', monospace; font-size: 0.55rem; color: var(--accent); letter-spacing: 2px; margin-bottom: 3px; font-weight: 600; }
+        .tl-title { font-family: 'Unbounded', sans-serif; font-size: 0.75rem; color: white; font-weight: 700; letter-spacing: 1px; margin-bottom: 3px; }
+        .tl-concept { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: #999; line-height: 1.4; margin-bottom: 4px; font-style: italic; }
+        .tl-detail { font-family: 'JetBrains Mono', monospace; font-size: 0.5rem; color: #555; line-height: 1.5; }
+
+        .portrait-frame { width: 100%; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; aspect-ratio: 3/4; }
+        .portrait-frame img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 100%; display: block; filter: grayscale(0.3); transition: filter 0.5s ease, transform 0.5s ease; }
+        .portrait-frame:hover img { filter: grayscale(0); transform: scale(1.03); }
+
+        /* --- 03. FILOSOFÍA --- */
+        .philosophy-wrapper { max-width: 1200px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; align-items: center; z-index: 2; gap: 25px; }
+        .topics-carousel { display: flex; gap: 20px; overflow-x: auto; width: 100%; padding: 20px 5%; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .topics-carousel::-webkit-scrollbar { display: none; }
+        .topic-slide { flex: 0 0 auto; width: 400px; border-left: 3px solid var(--accent); padding: 20px 25px; background: rgba(0,0,0,0.02); }
+        .topic-slide strong { display: block; font-family: 'Unbounded', sans-serif; font-size: 0.7rem; letter-spacing: 1px; color: var(--bg); margin-bottom: 10px; }
+        .topic-slide p { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; line-height: 1.7; color: #555; margin: 0; }
+
+
+        /* --- 04. SERVICIOS --- */
+        .services-wrapper { display: grid; grid-template-columns: 1fr 260px; gap: 20px 60px; width: 100%; align-items: center; z-index: 2; }
+        .interactive-list { list-style: none; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; line-height: 2.5; border-left: 2px solid var(--accent); padding-left: 30px; }
+        .interactive-list li { cursor: pointer; opacity: 0.4; transition: 0.4s var(--ease); }
+        .interactive-list li.active { opacity: 1; color: var(--accent); }
+        .services-visual { position: relative; width: 100%; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+        .services-visual img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); opacity: 0; transition: 0.6s var(--ease); }
+        .services-visual img.active-img { opacity: 0.8; }
+
+        /* --- MODAL PORTAFOLIO --- */
+        .inspection-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--overlay); z-index: 2000;
+            display: grid; grid-template-columns: 1fr 320px; 
+            align-items: center; padding: 40px; backdrop-filter: blur(25px);
+            opacity: 0; visibility: hidden; transition: opacity 0.6s var(--ease);
+        }
+        .inspection-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
+        .view-center { position: relative; display: flex; justify-content: center; align-items: center; height: 100%; width: 100%; }
+        #img-focus { max-height: 85vh; max-width: 85%; transform: scale(1.1); object-fit: contain; transition: transform 0.8s var(--ease), opacity 0.5s ease; }
+        .focus-title { position: absolute; bottom: 30px; left: 30px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--paper); background: rgba(10, 10, 10, 0.5); padding: 8px 16px; backdrop-filter: blur(8px); text-transform: uppercase; letter-spacing: 2px; opacity: 0; transition: 0.5s ease; z-index: 10; }
+        
+        .view-side { height: 90vh; display: flex; flex-direction: column; gap: 20px; padding: 20px; align-items: center; overflow-y: auto; border-left: 1px solid rgba(255,255,255,0.05); justify-content: flex-start; }
+        
+        .thumb { flex: none; cursor: pointer; opacity: 0.25; filter: grayscale(1); transition: 0.4s var(--ease); border: 2px solid transparent; overflow: hidden; width: 130px; height: 87px; }
+        .t-16-9 { width: 160px; height: 90px; }
+        .t-9-16 { width: 90px; height: 160px; }
+        .t-3-2 { width: 130px; height: 87px; }
+        .thumb img { width: 100%; height: 100%; object-fit: cover; }
+        
+        @media (hover: hover) {
+            .thumb:hover { opacity: 0.8; filter: grayscale(0); border-color: rgba(255,255,255,0.3); }
+        }
+        
+        .thumb.active { 
+            opacity: 1; filter: grayscale(0); transform: scale(1.08);
+            border-color: var(--accent); box-shadow: 0 10px 20px rgba(0,0,0,0.5); z-index: 2; 
+        }
+
+        .btn-close {
+            position: absolute; top: 30px; left: 30px;
+            background: rgba(10, 10, 10, 0.4); border: 1px solid rgba(255,255,255,0.15);
+            color: white; width: 36px; height: 36px; 
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 1rem; z-index: 3000; backdrop-filter: blur(5px);
+            transition: 0.3s var(--ease);
+        }
+        @media (hover: hover) {
+            .btn-close:hover { background: white; color: var(--bg); transform: scale(1.05); }
+        }
+
+        /* --- MODAL INMERSIÓN --- */
+        #immersion-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 4000;
+            padding: 20px 5%; display: flex; flex-direction: column;
+            opacity: 0; visibility: hidden; transition: 0.6s var(--ease);
+        }
+        #immersion-modal.active { opacity: 1; visibility: visible; }
+        #immersion-modal .btn-close { z-index: 5000; }
+        
+        .immersion-step { display: none; width: 100%; height: 100%; flex-direction: column; justify-content: center; max-width: 500px; margin: 0 auto; }
+        .immersion-step.active { display: flex; animation: stepFade 0.6s var(--ease); }
+        @keyframes stepFade { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        
+        .img-choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .img-option { cursor: pointer; position: relative; overflow: hidden; aspect-ratio: 3/4; border: 1px solid rgba(255,255,255,0.1); }
+        .img-option img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .img-option:active img { transform: scale(1.05); }
+        .img-option p { position: absolute; bottom: 0; left: 0; width: 100%; font-family: 'JetBrains Mono'; font-size: 0.7rem; text-transform: uppercase; background: rgba(0,0,0,0.8); padding: 10px; text-align: center; }
+
+        .soma-input { background: transparent; border: none; border-bottom: 2px solid var(--paper); color: var(--paper); font-family: 'Unbounded'; font-size: 1.5rem; width: 100%; outline: none; margin: 20px 0; }
+        .btn-soma { background: var(--paper); color: var(--bg); border: none; padding: 15px 30px; font-family: 'Unbounded'; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: 0.3s var(--ease); }
+
+        /* Accent-bg overrides */
+        .accent-bg .interactive-list { border-left-color: rgba(255,255,255,0.25); }
+        .accent-bg .interactive-list li { opacity: 0.55; color: white; }
+        .accent-bg .interactive-list li.active { opacity: 1; color: white; }
+        .accent-bg .services-visual img { filter: grayscale(1) brightness(0.9); }
+        .accent-bg .btn-soma:hover { transform: scale(1.04); opacity: 0.85; }
+        .accent-bg .interactive-list li:hover { opacity: 0.8; }
+
+
+        @media (max-width: 768px) {
+            .scroll-container { scroll-snap-type: none; }
+            section { padding: 0 4%; min-height: 100vh; height: auto; justify-content: flex-start; padding-top: 6vh; padding-bottom: 6vh; overflow: visible; }
+            h2 { font-size: clamp(1.2rem, 5vw, 1.6rem); margin-bottom: 8px; }
+            .label { font-size: 0.5rem; letter-spacing: 2px; margin-bottom: 6px; }
+            .bg-keyword { font-size: 18vw; }
+            .hero-flex { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .hero-quotes { width: 100%; min-height: 50px; text-align: left; }
+            .hero-quote { text-align: left; padding-left: 0; font-size: clamp(0.45rem, 1.2vw, 0.55rem); }
+            .soma-main { font-size: clamp(2rem, 8vw, 3rem); }
+            .soma-sub { font-size: clamp(0.65rem, 2.5vw, 0.9rem); margin-top: 5px; }
+            .trayectoria-grid { grid-template-columns: 1fr; gap: 12px; margin-top: 4px; }
+            .timeline { padding-left: 22px; }
+            .tl-dot { left: -14px; width: 8px; height: 8px; }
+            .tl-dot.current { left: -16px; width: 12px; height: 12px; }
+            .tl-node { padding-bottom: 16px; }
+            .tl-year { font-size: 0.5rem; margin-bottom: 2px; }
+            .tl-title { font-size: 0.6rem; margin-bottom: 2px; }
+            .tl-concept { font-size: 0.5rem; margin-bottom: 2px; }
+            .tl-detail { font-size: 0.45rem; }
+            .portrait-frame { max-width: 140px; margin: 0 auto; }
+
+            .topic-slide { width: 300px; padding: 15px 18px; }
+            .topic-slide strong { font-size: 0.6rem; }
+            .topic-slide p { font-size: 0.55rem; }
+
+            .services-wrapper { grid-template-columns: 1fr auto; gap: 12px; align-items: start; }
+            .interactive-list { font-size: 0.65rem; line-height: 2; padding-left: 15px; }
+            .services-visual { width: 130px !important; height: auto !important; aspect-ratio: 4/3; margin: 0; }
+            .carousel-area { min-height: auto; }
+            .slider { padding: 12px 0; gap: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .slide { flex: 0 0 auto; }
+            .p-16-9 { width: 280px; height: 158px; }
+            .p-9-16 { width: 170px; height: 302px; }
+            .p-3-2 { width: 230px; height: 153px; }
+            .p-custom-cristi { width: 280px; height: 158px; }
+            .inspection-overlay { display: block; padding: 0; }
+            .view-center { position: absolute; inset: 0; bottom: 120px; overflow: hidden; height: auto; }
+            #img-focus { width: 100%; height: 100%; object-fit: contain; transform: none; }
+            .view-side { position: absolute; bottom: 0; left: 0; flex-direction: row; height: 120px; width: 100%; overflow-x: auto; overflow-y: hidden; border-left: none; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.8); padding: 8px 12px; gap: 8px; align-items: center; }
+            .thumb { width: 80px; height: 54px; flex-shrink: 0; }
+            .t-16-9 { width: 96px; height: 54px; }
+            .t-9-16 { width: 44px; height: 78px; }
+            .t-3-2 { width: 80px; height: 54px; }
+            .focus-title { bottom: 15px; left: 15px; font-size: 0.6rem; }
+            .btn-close { top: 15px; left: 15px; width: 32px; height: 32px; }
+            .slide:active img { filter: grayscale(0); opacity: 1; transform: scale(1.02); }
+            .slide:active .slide-title { opacity: 1; background: var(--accent); }
+        }
+
+        @media (hover: none) {
+            .slider { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; scroll-snap-type: x mandatory; }
+            .slider::-webkit-scrollbar { display: none; }
+            .slide img { filter: grayscale(0.4); opacity: 0.8; }
+            .slide-title { opacity: 0.85; }
+            .services-visual img.active-img { opacity: 0.9; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="scroll-container" id="main-viewport">
+    
+    <section class="dark">
+        <video id="hero-video" class="bg-video" autoplay muted playsinline preload="auto"></video>
+        <div class="video-overlay"></div>
+        <div class="bg-keyword" style="color: rgba(255,255,255,0.05);">SOMA</div>
+        <div class="hero-flex">
+            <div>
+                <span class="label">Estudio 2026</span>
+                <h2 class="hero-title">
+                    <span class="soma-main">SOMA</span>
+                    <span class="soma-sub">Taller Virtual de Arquitectura</span>
+                </h2>
+            </div>
+            <div class="hero-quotes">
+                <p class="hero-quote active">"Lo protocolario se programa,<br>lo creativo se libera."</p>
+                <p class="hero-quote">"Que la buena arquitectura no sea la excepción,<br>sino el punto de partida."</p>
+                <p class="hero-quote">"El lujo está en los materiales,<br>lo sublime en la creatividad."</p>
+                <p class="hero-quote">"La IA no debe reemplazar el oficio,<br>sino liberar al diseñador para crear."</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="light">
+        <div class="bg-keyword">WORK</div>
+        <div style="width: 100%; z-index: 2; padding-top: 6vh;">
+            <span class="label">01. Portafolio</span>
+            <h2>Proyectos.</h2>
+        </div>
+        <div class="carousel-area" id="proximity-horizontal">
+            <div class="slider" id="project-slider">
+                <div class="slide p-16-9" onclick="openModal(this)" data-title="Biblioteca FAUADY"><img src="../recursos_graficos/Carrusel_Caratula_proyectos/Biblioteca FAUADY.png"><div class="slide-title">Biblioteca FAUADY</div></div>
+                <div class="slide p-9-16" onclick="openModal(this)" data-title="Hotel Telchac"><img src="../recursos_graficos/Carrusel_Caratula_proyectos/Hotel Telchac.png"><div class="slide-title">Hotel Telchac</div></div>
+                <div class="slide p-16-9" onclick="openModal(this)" data-title="Casa Alina"><img src="../recursos_graficos/Carrusel_Caratula_proyectos/Casa Alina.png"><div class="slide-title">Casa Alina</div></div>
+                <div class="slide p-16-9" onclick="openModal(this)" data-title="Casa-Taller Roma"><img src="../recursos_graficos/Carrusel_Caratula_proyectos/Casa-Taller Roma.png"><div class="slide-title">Casa-Taller Roma</div></div>
+                <div class="slide p-custom-cristi" onclick="openModal(this)" data-title="Casona Cristi"><img src="../recursos_graficos/Carrusel_Caratula_proyectos/Casona Cristi.png"><div class="slide-title">Casona Cristi</div></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="dark">
+        <div class="bg-keyword">PATH</div>
+        <div style="width:100%;z-index:2;">
+            <span class="label">02. Trayectoria</span>
+            <h2>Evolución.</h2>
+        </div>
+        <div class="trayectoria-grid">
+            <div class="timeline">
+
+                <div class="tl-node">
+                    <div class="tl-dot"></div>
+                    <div class="tl-year">2004 – 2010</div>
+                    <div class="tl-title">Arquitecto · UADY</div>
+                    <div class="tl-concept">Introducción a la arquitectura y descubrimiento de la forma, espacio y orden.</div>
+                </div>
+
+                <div class="tl-node">
+                    <div class="tl-dot"></div>
+                    <div class="tl-year">2014 – 2015</div>
+                    <div class="tl-title">Maestro en Arquitectura · UNAM</div>
+                    <div class="tl-concept">Desarrollo filosófico y tecnológico.</div>
+                    <div class="tl-detail">Tesis: Simulador Virtual de Ambientes Arquitectónicos (Mención honorífica del Colegio Yucatanense de Arquitectos)</div>
+                </div>
+
+                <div class="tl-node">
+                    <div class="tl-dot"></div>
+                    <div class="tl-year">2016 – 2017</div>
+                    <div class="tl-title">Proyectista · CDMX</div>
+                    <div class="tl-concept">Ampliar la mirada.</div>
+                    <div class="tl-detail">NODO + Soluciones Señaléticas — señalética y planos ejecutivos de departamentos y centros comerciales.</div>
+                </div>
+
+                <div class="tl-node">
+                    <div class="tl-dot"></div>
+                    <div class="tl-year">2018 – 2026</div>
+                    <div class="tl-title">Proyectista / Renderista · Duarte Aznar</div>
+                    <div class="tl-concept">Aprendizaje profundo de la realidad.</div>
+                    <div class="tl-detail">Casona 333, Neden República Dominicana, Hilton, Intercontinental, Casa Hogar Yucatán, y diversas casas en Mérida.</div>
+                </div>
+
+                <div class="tl-node">
+                    <div class="tl-dot current"></div>
+                    <div class="tl-year">2026</div>
+                    <div class="tl-title">Fundador · SOMA Taller Virtual de Arquitectura</div>
+                    <div class="tl-concept">Automatizar lo técnico, liberar lo creativo.</div>
+                    <div class="tl-detail">Mérida, Yucatán. Tecnología como exoesqueleto del arquitecto.</div>
+                </div>
+
+            </div>
+            <div>
+                <div class="portrait-frame">
+                    <img src="../recursos_graficos/Foto trayectoria/retrato final.png" alt="Juan José Piña May">
+                </div>
+                <p style="font-family:'JetBrains Mono';font-size:0.6rem;color:#ccc;margin-top:10px;text-align:center;line-height:1.4;">Maestro en Arquitectura<br>Juan José Piña May</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="light">
+        <div class="bg-keyword">ETHOS</div>
+        <div style="width: 100%; z-index: 2;">
+            <span class="label">03. Filosofía</span>
+            <h2>Nuestra Tesis.</h2>
+        </div>
+        <div class="philosophy-wrapper">
+            <div class="topics-carousel" id="philosophy-carousel">
+                <div class="topic-slide">
+                    <strong>ARQUITECTURA ACCESIBLE</strong>
+                    <p>El lujo está en los materiales y en el detalle, pero lo sublime está en la creatividad. La calidad en la arquitectura no está en el costo, sino en la claridad del mensaje.</p>
+                </div>
+                <div class="topic-slide">
+                    <strong>TECNOLOGÍA COMO EXOESQUELETO</strong>
+                    <p>El arquitecto no compite con la máquina: la domina. Interfaces digitales, modelos paramétricos y datos que fluyen como extensión de la mano del diseñador.</p>
+                </div>
+                <div class="topic-slide">
+                    <strong>AUTOMATIZACIÓN</strong>
+                    <p>Muros que se generan, pisos que se colocan, ventanas que se repiten solas. El código construye mientras el arquitecto piensa. Lo protocolario se programa.</p>
+                </div>
+                <div class="topic-slide">
+                    <strong>CREATIVIDAD LIBERADA</strong>
+                    <p>Cuando la tecnología hace lo técnico, el arquitecto vuelve a lo esencial: la maqueta física, el boceto a mano, la luz natural, la decisión creativa.</p>
+                </div>
+                <div class="topic-slide">
+                    <strong>HABITABILIDAD</strong>
+                    <p>La conexión entre la expresión y la función. Cinco niveles que estructuran el habitar: 1. Fisiológico, 2. Psicológico, 3. Socio-Conductual, 4. Privacidad, 5. Cultural.</p>
+                </div>
+                <div class="topic-slide">
+                    <strong>TRES NIVELES, UNA CALIDAD</strong>
+                    <p>Esencial, Integral, Ejecutivo. Diferentes escalas, misma atención al detalle. El lujo no está en el tamaño: está en la intención del diseño.</p>
+                </div>
+                <div class="topic-slide">
+                    <strong>CALIDAD SIN JERARQUÍAS</strong>
+                    <p>Cada elemento existe por una razón. La junta donde el concreto encuentra la madera: precisa, limpia, intencional. Nada es decorativo.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="accent-bg" style="background: var(--accent); color: white;">
+        <div class="bg-keyword" style="opacity: 0.1; font-size: 20vw;">TALK</div>
+        <div style="width: 100%; z-index: 2;">
+            <span class="label" style="color: rgba(255,255,255,0.7);">04. Alcance y Contacto</span>
+            <h2>Servicios.</h2>
+        </div>
+        <div class="services-wrapper">
+            <div>
+                <ul class="interactive-list">
+                    <li class="active" onclick="changeService(this, 0)">DISEÑO ARQUITECTÓNICO</li>
+                    <li onclick="changeService(this, 1)">MODELADO BIM LOD 300</li>
+                    <li onclick="changeService(this, 2)">VISUALIZACIÓN ARQUITECTÓNICA D5 RENDER</li>
+                    <li onclick="changeService(this, 3)">PLANOS DE ANTEPROYECTO</li>
+                </ul>
+                <div style="border-top: 1px solid rgba(255,255,255,0.3); margin-top: 35px; padding-top: 25px;">
+                    <h2 style="margin-bottom: 5px;">Contacto</h2>
+                    <p style="font-family: 'JetBrains Mono'; font-size: 0.8rem; margin-top: 15px;">Mérida, Yucatán, MX.</p>
+                    <p style="font-family: 'JetBrains Mono'; font-size: 0.8rem; margin-top: 8px;">habitarq85@gmail.com</p>
+                    <button class="btn-soma" style="margin-top: 25px; background: white; color: var(--accent);" onclick="openImmersion()">COTIZADOR SOMA</button>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: center;">
+                <div class="services-visual" style="width: 200px; height: 280px;">
+                    <img src="../recursos_graficos/Servicios/Diseño arquitectónico.png" class="active-img">
+                    <img src="../recursos_graficos/Servicios/Modelado BIM.png">
+                    <img src="../recursos_graficos/Servicios/Visualización Arquitectónica.png">
+                    <img src="../recursos_graficos/Servicios/Planos de Anteproyecto.png">
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- MODAL PORTAFOLIO -->
+<div class="inspection-overlay" id="inspection-modal" onclick="closeModal()">
+    <button class="btn-close" onclick="closeModal()">←</button>
+    <div class="view-center">
+        <img id="img-focus" src="">
+        <div id="focus-title" class="focus-title"></div>
+    </div>
+    <div class="view-side" id="side-track" onclick="event.stopPropagation()"></div>
+</div>
+
+<!-- MODAL INMERSIÓN -->
+<div id="immersion-modal">
+    <button class="btn-close" onclick="closeImmersion()">×</button>
+    
+    <div class="immersion-step active" id="soma-step-1">
+        <span class="label">Paso 01 / Fachada</span><h2>¿Cómo quieres que se vea tu fachada?</h2>
+        <div class="img-choice-grid">
+            <div class="img-option" onclick="saveAnswer('step1', 'A', 2)"><img src="../recursos_graficos/Inmersion/01. fachada/fachada abierta 1.2.png"><p>Abierta</p></div>
+            <div class="img-option" onclick="saveAnswer('step1', 'B', 2)"><img src="../recursos_graficos/Inmersion/01. fachada/fachada cerrada 2.1.png"><p>Cerrada</p></div>
+        </div>
+    </div>
+    <div class="immersion-step" id="soma-step-2">
+        <span class="label">Paso 02 / Privacidad</span><h2>¿Cómo prefieres que te reciban?</h2>
+        <div class="img-choice-grid">
+            <div class="img-option" onclick="saveAnswer('step2', 'A', 3)"><img src="../recursos_graficos/Inmersion/02.Privacidad/vista franca.png"><p>Abierta — que se vea todo desde la entrada</p></div>
+            <div class="img-option" onclick="saveAnswer('step2', 'B', 3)"><img src="../recursos_graficos/Inmersion/02.Privacidad/vista filtrada.png"><p>Con recibidor — que insinúe lo que hay detrás</p></div>
+        </div>
+    </div>
+    <div class="immersion-step" id="soma-step-3">
+        <span class="label">Paso 03 / Espacios</span><h2>¿Cómo prefieres los espacios?</h2>
+        <div class="img-choice-grid">
+            <div class="img-option" onclick="saveAnswer('step3', 'A', 4)"><img src="../recursos_graficos/Inmersion/03 flexibles/espacios flexibles 2.png"><p>Amplios e integrados</p></div>
+            <div class="img-option" onclick="saveAnswer('step3', 'B', 4)"><img src="../recursos_graficos/Inmersion/03 flexibles/Espacios divididos.png"><p>Divididos por muros</p></div>
+        </div>
+    </div>
+    <div class="immersion-step" id="soma-step-4">
+        <span class="label">Paso 04 / Iluminación</span><h2>¿Qué tipo de iluminación prefieres?</h2>
+        <div class="img-choice-grid">
+            <div class="img-option" onclick="saveAnswer('step4', 'A', 5)"><img src="../recursos_graficos/Inmersion/04. iluminación/Luz directa.png"><p>Mucha luz natural</p></div>
+            <div class="img-option" onclick="saveAnswer('step4', 'B', 5)"><img src="../recursos_graficos/Inmersion/04. iluminación/Interior suave.png"><p>Luz suave</p></div>
+        </div>
+    </div>
+    <div class="immersion-step" id="soma-step-5">
+        <span class="label">Paso 05 / Estilo</span><h2>¿Qué estilo prefieres?</h2>
+        <div class="img-choice-grid">
+            <div class="img-option" onclick="saveAnswer('step5', 'A', 6)"><img src="../recursos_graficos/Inmersion/05.Estilo/fachada texturizada 2.png"><p>Texturas y ornamentos</p></div>
+            <div class="img-option" onclick="saveAnswer('step5', 'B', 6)"><img src="../recursos_graficos/Inmersion/05.Estilo/fachada lisa.png"><p>Lisos y sobrios</p></div>
+        </div>
+    </div>
+    <div class="immersion-step" id="soma-step-6">
+        <span class="label">Paso 06 / Niveles</span><h2>¿En cuántos niveles?</h2>
+        <div class="img-choice-grid">
+            <div class="img-option" onclick="saveAnswer('step6', 'A', 7)"><img src="../recursos_graficos/Inmersion/06.Niveles/Un nivel F.png"><p>Un nivel</p></div>
+            <div class="img-option" onclick="saveAnswer('step6', 'B', 7)"><img src="../recursos_graficos/Inmersion/06.Niveles/varios niveles.png"><p>Varios niveles</p></div>
+        </div>
+    </div>
+    <div class="immersion-step" id="soma-step-7">
+        <span class="label">Paso 07 / Paisaje</span><h2>¿Qué tipo de exteriores prefieres?</h2>
+        <div class="img-choice-grid">
+            <div class="img-option" onclick="saveAnswer('step7', 'A', 8)"><img src="../recursos_graficos/Inmersion/07.Exteriores/terraza jardín.png"><p>Mucho jardín</p></div>
+            <div class="img-option" onclick="saveAnswer('step7', 'B', 8)"><img src="../recursos_graficos/Inmersion/07.Exteriores/patio plaza.png"><p>Tipo plaza pétrea</p></div>
+        </div>
+    </div>
+    <div class="immersion-step" id="soma-step-8">
+        <span class="label">Paso 08 / Sensación</span><h2>¿Cómo te gustan los espacios?</h2>
+        <div class="img-choice-grid">
+            <div class="img-option" onclick="saveAnswer('step8', 'A', 9)"><img src="../recursos_graficos/Inmersion/08.Espacios/espacio amplio.png"><p>Abiertos y altos</p></div>
+            <div class="img-option" onclick="saveAnswer('step8', 'B', 9)"><img src="../recursos_graficos/Inmersion/08.Espacios/espacio intimo.png"><p>Acogedores e íntimos</p></div>
+        </div>
+    </div>
+    <div class="immersion-step" id="soma-step-9">
+        <span class="label">Paso 09 / Vida Social</span><h2>¿Cómo consideras tu vida social?</h2>
+        <div class="img-choice-grid">
+            <div class="img-option" onclick="saveAnswer('step9', 'A', 10)"><img src="../recursos_graficos/Inmersion/09.Socialización/vida social.png"><p>ACTIVA</p></div>
+            <div class="img-option" onclick="saveAnswer('step9', 'B', 10)"><img src="../recursos_graficos/Inmersion/09.Socialización/interior poca gente.png"><p>INTROVERTIDA</p></div>
+        </div>
+    </div>
+    <div class="immersion-step" id="soma-step-10">
+        <span class="label">Paso 10 / Color</span><h2>¿Cómo te gustan los colores?</h2>
+        <div class="img-choice-grid">
+            <div class="img-option" onclick="saveAnswer('step10', 'A', 11)"><img src="../recursos_graficos/Inmersion/10.Color/Casa neutra.png"><p>Neutrales</p></div>
+            <div class="img-option" onclick="saveAnswer('step10', 'B', 11)"><img src="../recursos_graficos/Inmersion/10.Color/Fachada colorida.png"><p>Colores llamativos</p></div>
+        </div>
+    </div>
+    <div class="immersion-step" id="soma-step-11">
+        <span class="label">Paso 11 / Contacto</span>
+        <h2>Casi terminamos.</h2>
+        <p style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: #888; margin-bottom: 20px;">Ingresa tu correo o número de WhatsApp para contactarnos.</p>
+        <input type="text" class="soma-input" placeholder="Correo electrónico o WhatsApp" id="soma-contacto">
+        <p style="font-family: 'JetBrains Mono'; font-size: 0.55rem; color: #666; margin-top: 5px;">Tus datos están protegidos. Solo los usaremos para enviarte información.</p>
+        <button class="btn-soma" style="margin-top:25px; background: var(--accent); color: white;" onclick="registerContact()">Enviar</button>
+    </div>
+    <div class="immersion-step" id="soma-step-12">
+        <span class="label">Paso 12 / Éxito</span>
+        <h2>Inmersión Registrada.</h2>
+        <p style="font-family: 'JetBrains Mono'; font-size: 0.8rem; margin: 20px 0; color: #888;">¿Quieres saber cuánto costaría tu diseño y cuánto podrías invertir en obra?</p>
+        <p style="font-family: 'JetBrains Mono'; font-size: 0.6rem; color: #666; margin-bottom: 20px;">Te damos un estimado paramétrico por m². Nosotros diseñamos, un constructor externo cotiza y ejecuta.</p>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn-soma" onclick="closeImmersion()">Finalizar</button>
+            <button class="btn-soma" style="background: var(--accent); color: white;" onclick="nextStep(13)">Iniciar Cotizador</button>
+        </div>
+    </div>
+    <div class="immersion-step" id="soma-step-13">
+        <span class="label">Cotizador / Parámetros</span>
+        <h2>Escala e Inversión.</h2>
+        <select class="soma-input" id="quote-type" onchange="toggleQuoteType()" style="font-size: 1rem; background: var(--bg); color: white; border-bottom: 2px solid white;">
+            <option value="program">Por Programa (Espacios)</option>
+            <option value="m2">Por Metros Cuadrados</option>
+            <option value="money">Por Cantidad de Inversión</option>
+        </select>
+        <div id="input-m2" style="display:none;">
+            <p class="label" style="color:white; margin-top:20px;">Metros cuadrados estimados:</p>
+            <input type="number" class="soma-input" placeholder="Ej: 200" id="quote-m2-val">
+        </div>
+        <div id="input-program">
+            <p class="label" style="color:white; margin-top:20px;">Selecciona los espacios que necesitas:</p>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px; font-family: 'JetBrains Mono'; font-size: 0.6rem;">
+                <label><input type="checkbox" class="prog-item" data-m2="20"> Sala (20m²)</label>
+                <label><input type="checkbox" class="prog-item" data-m2="15"> Comedor (15m²)</label>
+                <label><input type="checkbox" class="prog-item" data-m2="15"> Cocina (15m²)</label>
+                <label><input type="checkbox" class="prog-item" data-m2="20"> Recámara (20m²)</label>
+                <label><input type="checkbox" class="prog-item" data-m2="15"> Estudio (15m²)</label>
+                <label><input type="checkbox" class="prog-item" data-m2="6"> Baño (6m²)</label>
+                <label><input type="checkbox" class="prog-item" data-m2="3"> 1/2 Baño (3m²)</label>
+                <label><input type="checkbox" class="prog-item" data-m2="30"> Cochera (30m²)</label>
+                <label><input type="checkbox" class="prog-item" data-m2="10"> Bodega (10m²)</label>
+                <label><input type="checkbox" id="prog-otros-check" onchange="document.getElementById('otros-box').style.display = this.checked ? 'block' : 'none'"> Otros</label>
+            </div>
+            <div id="otros-box" style="display:none; margin-top:10px; background: rgba(255,255,255,0.05); padding: 10px; border: 1px solid #333;">
+                <div style="display:flex; gap:5px;">
+                    <input type="number" id="prog-otros-cant" placeholder="Cant." style="width:40%; background: #000; color: white; border: 1px solid #444; font-size: 0.7rem; padding: 5px;">
+                    <input type="number" id="prog-otros-m2" placeholder="m² cada uno" style="width:60%; background: #000; color: white; border: 1px solid #444; font-size: 0.7rem; padding: 5px;">
+                </div>
+            </div>
+        </div>
+        <div id="input-money" style="display:none;">
+            <p class="label" style="color:white; margin-top:20px;">Monto disponible ($):</p>
+            <input type="number" class="soma-input" placeholder="Ej: 3500000" id="quote-money-val">
+        </div>
+        <div style="display: flex; gap: 10px; margin-top:20px;">
+            <button class="btn-soma" style="background:transparent; border:1px solid #333; color: white;" onclick="nextStep(12)">← Volver</button>
+            <button class="btn-soma" style="flex:1;" onclick="goToPackages()">Siguiente</button>
+        </div>
+    </div>
+    <div class="immersion-step" id="soma-step-14">
+        <span class="label">Cotizador / Configuración</span>
+        <h2>Profundidad del Proyecto:</h2>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="package-option" onclick="setSomaLevel(250, 15)" style="background: rgba(255,255,255,0.05); padding: 12px; border: 1px solid #333; cursor: pointer;">
+                <h3 style="color: var(--accent); font-size: 0.8rem; margin-bottom: 5px;">SOMA ESENCIAL</h3>
+                <p style="font-family: 'JetBrains Mono'; font-size: 0.55rem; color: #888; margin: 0;">Diseño arquitectónico completo: plantas, alzados, análisis de sitio y normativa, más una perspectiva general del proyecto.</p>
+            </div>
+            <div class="package-option" onclick="setSomaLevel(400, 15)" style="background: rgba(255,255,255,0.05); padding: 12px; border: 1px solid #333; cursor: pointer;">
+                <h3 style="color: var(--accent); font-size: 0.8rem; margin-bottom: 5px;">SOMA INTEGRAL</h3>
+                <p style="font-family: 'JetBrains Mono'; font-size: 0.55rem; color: #888; margin: 0;">Todo lo del nivel básico más moodboard de acabados, criterios de ingenierías, planos de permiso y perspectivas adicionales.</p>
+            </div>
+            <div class="package-option" onclick="setSomaLevel(1000, 15)" style="background: rgba(255,255,255,0.05); padding: 12px; border: 1px solid #333; cursor: pointer;">
+                <h3 style="color: var(--accent); font-size: 0.8rem; margin-bottom: 5px;">SOMA EJECUTIVO</h3>
+                <p style="font-family: 'JetBrains Mono'; font-size: 0.55rem; color: #888; margin: 0;">Todo lo del nivel integral más planos técnicos ejecutivos, detalles constructivos y coordinación integral de ingenierías.</p>
+            </div>
+            <button class="btn-soma" style="background:transparent; border:1px solid #333; color: white; margin-top:5px; padding: 10px; font-size: 0.7rem;" onclick="nextStep(13)">← Volver</button>
+        </div>
+    </div>
+    <div class="immersion-step" id="soma-step-15">
+        <span class="label">Paso 15 / Resultado</span>
+        <div id="quote-result" style="background: #1a1a1a; padding: 20px; border-left: 4px solid var(--accent); font-family: 'JetBrains Mono'; max-height: 60vh; overflow-y: auto;"></div>
+        <div style="display: flex; gap: 10px; margin-top:20px;">
+            <button class="btn-soma" style="background:transparent; border:1px solid #333; color: white;" onclick="nextStep(14)">← Volver</button>
+            <button class="btn-soma" style="flex:1; background: var(--accent); color: white;" onclick="finishImmersion()">Finalizar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const sliderH = document.getElementById('project-slider');
+    const proxH = document.getElementById('proximity-horizontal');
+    const sliderV = document.getElementById('side-track');
+    const modal = document.getElementById('inspection-modal');
+    const imgFocus = document.getElementById('img-focus');
+    const titleFocus = document.getElementById('focus-title');
+    const viewport = document.getElementById('main-viewport');
+    const immersionModal = document.getElementById('immersion-modal');
+    const heroVideo = document.getElementById('hero-video');
+    const philosophiaCarousel = document.getElementById('philosophy-carousel');
+
+    let hTarget = 0, hCurrent = 0, vTarget = 0, vCurrent = 0, pTarget = 0, pCurrent = 0;
+    const lerp = 0.05;
+
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+    const isNarrow = () => window.innerWidth <= 768;
+    const isHorizontal = (el) => getComputedStyle(el).flexDirection === 'row' || isNarrow();
+
+    if (!isTouchDevice && proxH) {
+        proxH.addEventListener('mousemove', (e) => {
+            const rect = proxH.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const edge = rect.width * 0.3;
+            const maxScroll = isNarrow() ? 80 : 25;
+            if (x < edge) hTarget = -((edge - x) / edge) * maxScroll;
+            else if (x > rect.width - edge) hTarget = ((x - (rect.width - edge)) / edge) * maxScroll;
+            else hTarget = 0;
+        });
+        proxH.addEventListener('mouseleave', () => hTarget = 0);
+
+        if (sliderV) {
+            sliderV.addEventListener('mousemove', (e) => {
+                const rect = sliderV.getBoundingClientRect();
+                const horiz = isHorizontal(sliderV);
+                const pos = horiz ? e.clientX - rect.left : e.clientY - rect.top;
+                const edge = (horiz ? rect.width : rect.height) * 0.25;
+                const maxScroll = isNarrow() ? 60 : 25;
+                if (pos < edge) vTarget = -((edge - pos) / edge) * maxScroll;
+                else if (pos > (horiz ? rect.width : rect.height) - edge) vTarget = ((pos - ((horiz ? rect.width : rect.height) - edge)) / edge) * maxScroll;
+                else vTarget = 0;
+            });
+            sliderV.addEventListener('mouseleave', () => vTarget = 0);
+        }
+
+        if (philosophiaCarousel) {
+            const proxPhil = philosophiaCarousel.parentElement;
+            proxPhil.addEventListener('mousemove', (e) => {
+                const rect = proxPhil.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const edge = rect.width * 0.25;
+                const maxScroll = isNarrow() ? 30 : 8;
+                if (x < edge) pTarget = -((edge - x) / edge) * maxScroll;
+                else if (x > rect.width - edge) pTarget = ((x - (rect.width - edge)) / edge) * maxScroll;
+                else pTarget = 0;
+            });
+            proxPhil.addEventListener('mouseleave', () => pTarget = 0);
+        }
+
+        function animate() {
+            hCurrent += (hTarget - hCurrent) * lerp;
+            if (Math.abs(hCurrent) > 0.1 && sliderH) sliderH.scrollLeft += hCurrent;
+            vCurrent += (vTarget - vCurrent) * lerp;
+            if (Math.abs(vCurrent) > 0.1 && sliderV) {
+                if (isHorizontal(sliderV)) sliderV.scrollLeft += vCurrent;
+                else sliderV.scrollTop += vCurrent;
+            }
+            pCurrent += (pTarget - pCurrent) * lerp;
+            if (Math.abs(pCurrent) > 0.1 && philosophiaCarousel) philosophiaCarousel.scrollLeft += pCurrent;
+            requestAnimationFrame(animate);
+        }
+        animate();
+    }
+
+    // --- ROTACIÓN DE FRASES (HERO) ---
+    const quotes = document.querySelectorAll('.hero-quote');
+    let currentQuote = 0;
+    function rotateQuote() {
+        quotes.forEach(q => q.classList.remove('active'));
+        currentQuote = (currentQuote + 1) % quotes.length;
+        quotes[currentQuote].classList.add('active');
+    }
+    setInterval(rotateQuote, 5000);
+
+    // --- PLAYLIST DE VIDEOS (PLAYLIST CINEMATOGRÁFICA) ---
+    const playlist = [
+        "../recursos_graficos/Video_Fondo/Video_de_mangle.mp4",
+        "../recursos_graficos/Video_Fondo/Video de cuarto telchac.mp4",
+        "../recursos_graficos/Video_Fondo/Render_Arquitectónico_Atardecer_a_Noche.mp4",
+        "../recursos_graficos/Video_Fondo/Vista noctura telchac.mp4"
+    ];
+    let currentVideoIndex = 0;
+
+    function playNextVideo() {
+        if (!heroVideo) return;
+        heroVideo.src = playlist[currentVideoIndex];
+        currentVideoIndex = (currentVideoIndex + 1) % playlist.length;
+    }
+    if (heroVideo) {
+        heroVideo.onended = playNextVideo;
+        heroVideo.onloadeddata = () => heroVideo.play().catch(() => {});
+        playNextVideo();
+    }
+
+    // --- SERVICIOS ---
+    function changeService(element, index) {
+        const listItems = element.parentElement.querySelectorAll('li');
+        listItems.forEach(li => li.classList.remove('active'));
+        element.classList.add('active');
+        const images = document.querySelectorAll('.services-visual img');
+        images.forEach(img => img.classList.remove('active-img'));
+        images[index].classList.add('active-img');
+    }
+
+    // --- PORTAFOLIO / MODAL ---
+    let focusTimeout = null;
+    function fileNameFromPath(path) {
+        return decodeURIComponent(path.split('/').pop().replace(/\.[^.]+$/, '')).trim();
+    }
+    const projectAssets = {
+        "Biblioteca FAUADY": [
+            "../recursos_graficos/Carrusel_Caratula_proyectos/Biblioteca FAUADY.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Biblioteca FAUADY/Claustro.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Biblioteca FAUADY/Fachada norte.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Biblioteca FAUADY/Jardín.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Biblioteca FAUADY/Lectura.png"
+        ],
+        "Casa Alina": [
+            "../recursos_graficos/Carrusel_Caratula_proyectos/Casa Alina.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Casa Alina/Cocina.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Casa Alina/Comedor.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Casa Alina/Fachada.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Casa Alina/Sala.png"
+        ],
+        "Casa-Taller Roma": [
+            "../recursos_graficos/Carrusel_Caratula_proyectos/Casa-Taller Roma.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Casa-Taller Roma/Interior.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Casa-Taller Roma/Lateral.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Casa-Taller Roma/Pasillo.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Casa-Taller Roma/Vertical.png"
+        ],
+        "Casona Cristi": [
+            "../recursos_graficos/Carrusel_Caratula_proyectos/Casona Cristi.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Casona Cristi/Lateral.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Casona Cristi/Salón.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Casona Cristi/Tragaluz.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Casona Cristi/Cocina.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Casona Cristi/Comedor.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Casona Cristi/Escalera.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Casona Cristi/Patio.png"
+        ],
+        "Hotel Telchac": [
+            "../recursos_graficos/Carrusel_Caratula_proyectos/Hotel Telchac.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Hotel Telchac/Habitación.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Hotel Telchac/Acceso.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Hotel Telchac/Andador.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Hotel Telchac/Duna.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Hotel Telchac/Lateral.png",
+            "../recursos_graficos/Carrusel_por_proyecto/Hotel Telchac/Playa.png"
+        ]
+    };
+
+    function openModal(el) {
+        if (focusTimeout) clearTimeout(focusTimeout);
+        const title = el.getAttribute('data-title');
+        const assets = projectAssets[title] || [];
+        imgFocus.style.opacity = '0';
+        sliderV.innerHTML = '';
+        const loaded = assets.map(src => new Promise(resolve => {
+            const preloader = new Image();
+            preloader.onload = () => {
+                const ratio = preloader.naturalWidth / preloader.naturalHeight;
+                resolve({ src, cls: ratio > 1.6 ? 't-16-9' : ratio < 0.8 ? 't-9-16' : 't-3-2' });
+            };
+            preloader.onerror = () => resolve({ src, cls: 't-3-2' });
+            preloader.src = src;
+        }));
+        Promise.all(loaded).then(results => {
+            results.forEach(({ src, cls }, idx) => {
+                const thumb = document.createElement('div');
+                thumb.className = `thumb ${cls} ${idx === 0 ? 'active' : ''}`;
+                thumb.setAttribute('onclick', 'setFocus(this)');
+                thumb.setAttribute('data-title', title);
+                const img = document.createElement('img');
+                img.src = src;
+                thumb.appendChild(img);
+                sliderV.appendChild(thumb);
+            });
+            sliderV.scrollTop = 0;
+        });
+        modal.classList.add('active');
+        titleFocus.style.opacity = '1';
+        viewport.style.overflow = 'hidden';
+        const preloader = new Image();
+        preloader.onload = () => {
+            imgFocus.src = assets[0];
+            titleFocus.innerText = fileNameFromPath(assets[0]);
+            imgFocus.style.opacity = '1';
+        };
+        preloader.src = assets[0];
+    }
+
+    function closeModal() {
+        modal.classList.remove('active');
+        titleFocus.style.opacity = '0';
+        setTimeout(() => { viewport.style.overflowY = 'scroll'; }, 600);
+    }
+
+    function setFocus(th) {
+        if (focusTimeout) clearTimeout(focusTimeout);
+        document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+        th.classList.add('active');
+        imgFocus.style.opacity = '0';
+        titleFocus.style.opacity = '0';
+        const newSrc = th.querySelector('img').src;
+        const preloader = new Image();
+        preloader.onload = () => {
+            focusTimeout = setTimeout(() => {
+                imgFocus.src = newSrc;
+                titleFocus.innerText = fileNameFromPath(newSrc);
+                imgFocus.style.opacity = '1';
+                titleFocus.style.opacity = '1';
+            }, 50);
+        };
+        preloader.src = newSrc;
+    }
+
+    // --- INMERSIÓN SOMA ---
+    let somaData = { respuestas: {}, contacto: '', cotizacion: { m2: 0, precioDiseno: 0 } };
+
+    function openImmersion() {
+        somaData.respuestas = {};
+        nextStep(1);
+        immersionModal.classList.add('active');
+        viewport.style.overflow = 'hidden';
+    }
+
+    function closeImmersion() {
+        immersionModal.classList.remove('active');
+        viewport.style.overflowY = 'scroll';
+    }
+
+    function nextStep(n) {
+        document.querySelectorAll('.immersion-step').forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
+        const target = document.getElementById('soma-step-' + n);
+        if (target) { target.classList.add('active'); target.style.display = 'flex'; }
+    }
+
+    function saveAnswer(step, key, next) {
+        somaData.respuestas[step] = key;
+        nextStep(next);
+    }
+
+    function registerContact() {
+        const val = document.getElementById('soma-contacto').value.trim();
+        if (!val) return alert("Ingresa tu correo o WhatsApp");
+        const esEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+        const esTelefono = /^[\d\s\+\-\(\)]{7,20}$/.test(val);
+        if (!esEmail && !esTelefono) return alert("Ingresa un correo válido o un número de WhatsApp");
+        somaData.contacto = val;
+
+        // Enviar respuestas al servidor
+        fetch('/save_immersion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ respuestas: somaData.respuestas, contacto: somaData.contacto, cotizacion: {} })
+        }).catch(e => console.log("Servidor no disponible"));
+
+        nextStep(12);
+    }
+
+    // --- COTIZADOR ---
+    const MINIMO_TALLER = 8000;
+
+    function toggleQuoteType() {
+        const type = document.getElementById('quote-type').value;
+        document.getElementById('input-program').style.display = type === 'program' ? 'block' : 'none';
+        document.getElementById('input-m2').style.display = type === 'm2' ? 'block' : 'none';
+        document.getElementById('input-money').style.display = type === 'money' ? 'block' : 'none';
+    }
+
+    function goToPackages() {
+        nextStep(14);
+    }
+
+    function setSomaLevel(price, nextStepNum) {
+        somaData.cotizacion.precioDiseno = price;
+        calculateSomaQuote();
+        nextStep(nextStepNum);
+    }
+
+    async function calculateSomaQuote() {
+        const type = document.getElementById('quote-type').value;
+        const pDiseno = somaData.cotizacion.precioDiseno;
+        const resultDiv = document.getElementById('quote-result');
+
+        let m2 = 0;
+        if (type === 'm2') {
+            m2 = parseFloat(document.getElementById('quote-m2-val').value) || 0;
+        } else if (type === 'program') {
+            let base = 0;
+            document.querySelectorAll('.prog-item:checked').forEach(i => base += parseFloat(i.dataset.m2));
+            const otrosCant = parseInt(document.getElementById('prog-otros-cant').value) || 0;
+            const otrosM2 = parseInt(document.getElementById('prog-otros-m2').value) || 0;
+            base += otrosCant * otrosM2;
+            m2 = base * 1.35;
+        } else if (type === 'money') {
+            const inv = parseFloat(document.getElementById('quote-money-val').value) || 0;
+            const promObra = pDiseno === 250 ? 15000 : (pDiseno === 400 ? 20000 : 32000);
+            m2 = inv / (promObra + pDiseno);
+        }
+
+        let totalDiseno = Math.max(m2 * pDiseno, MINIMO_TALLER);
+        const niveles = {
+            250: { nombre: "SOMA Esencial", min: 14000, max: 16500 },
+            400: { nombre: "SOMA Integral", min: 18500, max: 23000 },
+            1000: { nombre: "SOMA Ejecutivo", min: 28000, max: 40000 }
+        };
+        const n = niveles[pDiseno] || niveles[250];
+
+        let html = `<h3 style="color:var(--accent); margin-bottom:15px;">ESCENARIO DE PROYECTO</h3>
+                    <p><b>Nivel:</b> ${n.nombre}</p>
+                    <p><b>Escala Proyectada:</b> ${m2.toFixed(1)} m²</p>
+                    <hr style="border:0; border-top:1px solid #333; margin:15px 0;">
+                    <p style="font-size:0.7rem; color:#888; text-transform:uppercase; letter-spacing:1px;">Inversión en Inteligencia (SOMA):</p>
+                    <p><b>Diseño: $${Math.round(totalDiseno).toLocaleString()}</b></p>
+                    <br>
+                    <p style="font-size:0.7rem; color:#888; text-transform:uppercase; letter-spacing:1px;">Alcance de Construcción (Terceros):</p>
+                    <p><b>$${Math.round(m2 * n.min).toLocaleString()} — $${Math.round(m2 * n.max).toLocaleString()}</b></p>
+                    <p style="font-size:0.6rem; color:#666; margin-top:10px;">*Paramétricos regionales para Yucatán. El lujo compensa la inclusividad.</p>
+                    <hr style="border:0; border-top:1px solid #333; margin:20px 0;">
+                    <h4 style="color:var(--accent); font-size:0.6rem; margin-bottom:10px; text-transform:uppercase;">Cerebro SOMA - Diagnóstico Técnico:</h4>`;
+
+        try {
+            const response = await fetch('/backend/diagnosticos_master.json');
+            const master = await response.json();
+            for (let step in somaData.respuestas) {
+                const val = somaData.respuestas[step];
+                if (master[step] && master[step][val]) {
+                    const d = master[step][val];
+                    html += `<div style="margin-bottom:20px; border-left:2px solid var(--accent); padding-left:15px; font-size:0.65rem;">
+                        <strong style="color:white; display:block; text-transform:uppercase; margin-bottom:8px;">${d.titulo}</strong>
+                        <p style="color:#aaa; margin:4px 0;"><b style="color:#888;">Psicología Ambiental:</b> ${d.psicologia_ambiental}</p>
+                        <p style="color:#aaa; margin:4px 0;"><b style="color:#888;">Lenguaje de Patrones:</b> ${d.lenguaje_patrones}</p>
+                        <p style="color:#aaa; margin:4px 0;"><b style="color:#888;">Space Syntax:</b> ${d.space_syntax}</p>
+                        <p style="color:#aaa; margin:4px 0;"><b style="color:#888;">Conducta Ambiental:</b> ${d.environmental_behavior}</p>
+                        <p style="color:#aaa; margin:4px 0;"><b style="color:#888;">POE:</b> ${d.poe}</p>
+                    </div>`;
+                }
+            }
+        } catch (e) {
+            html += `<p style="font-size:0.6rem; color:#666;">Diagnóstico completo disponible en el reporte del Taller.</p>`;
+        }
+        resultDiv.innerHTML = html;
+        somaData.cotizacion.m2 = m2;
+    }
+
+    async function finishImmersion() {
+        const btn = document.querySelector('#soma-step-15 .btn-soma');
+        if (btn.disabled) return;
+        btn.textContent = "Enviando...";
+        btn.disabled = true;
+        try {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 3000);
+            await fetch('/save_immersion', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(somaData),
+                signal: controller.signal
+            });
+            clearTimeout(timeout);
+        } catch (e) {
+            console.log("Sin servidor, modo local");
+        }
+        btn.textContent = "Finalizar";
+        btn.disabled = false;
+        closeImmersion();
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "proyecto_id": "SOMA-20260518-1018",
+  "cliente": "Prueba Juan",
+  "contacto": "9991112233",
+  "notas_arquitecto": {
+    "habitantes": "Pareja + 2 hijos",
+    "programa": "3 recamaras, 2 banos",
+    "rutinas": "Trabajo en casa 9-6",
+    "inversion": "2.5M"
+  },
+  "tiene_audio": false,
+  "estado": "datos_capturados"
+}

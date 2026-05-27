@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOMA | Protocolo de Entrevista Completa</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;500&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #ffffff;
+            --text: #222;
+            --accent: #bc4b21;
+            --light: #f8f9fa;
+            --border: #e9ecef;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 5%;
+        }
+        .container { max-width: 850px; margin: 0 auto; }
+        
+        header { 
+            margin-bottom: 60px; 
+            padding-bottom: 20px; 
+            border-bottom: 4px solid var(--text);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        .logo { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 600; color: var(--accent); }
+        h1 { font-size: 2.2rem; font-weight: 700; margin: 0; letter-spacing: -1px; }
+
+        .pillar { margin-bottom: 80px; }
+        .pillar-header { 
+            display: flex; 
+            align-items: center; 
+            gap: 20px; 
+            margin-bottom: 30px;
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 10px 0;
+            z-index: 10;
+        }
+        .pillar-num { 
+            font-family: 'JetBrains Mono', monospace; 
+            font-size: 0.8rem; 
+            background: var(--text); 
+            color: white; 
+            padding: 4px 12px; 
+        }
+        .pillar-title { font-size: 1.5rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+        .block { 
+            margin-bottom: 40px; 
+            padding-left: 25px; 
+            border-left: 2px solid var(--border); 
+            transition: border-color 0.3s;
+        }
+        .block:hover { border-left-color: var(--accent); }
+        
+        .question { font-size: 1.15rem; font-weight: 500; margin-bottom: 10px; color: #000; }
+        .tip { font-size: 0.85rem; color: #666; font-family: 'JetBrains Mono', monospace; display: block; }
+        
+        .data-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            background: var(--light);
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+        }
+        .data-grid ul { padding-left: 18px; margin: 5px 0 0 0; }
+        .data-grid strong { color: var(--accent); text-transform: uppercase; font-size: 0.7rem; }
+
+        footer { 
+            margin-top: 100px; 
+            padding-top: 40px; 
+            border-top: 1px solid var(--border);
+            font-size: 0.7rem; 
+            color: #aaa; 
+            text-align: center; 
+            font-family: 'JetBrains Mono'; 
+        }
+
+        @media (max-width: 768px) {
+            .data-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div>
+            <span class="logo">SOMA / TALLER VIRTUAL</span>
+            <h1>Protocolo de Inmersión</h1>
+        </div>
+        <div style="text-align: right; font-family: 'JetBrains Mono'; font-size: 0.7rem;">
+            VERSIÓN 2.0 / 2026<br>MÉRIDA, MX.
+        </div>
+    </header>
+
+    <!-- PILAR 1: PERFIL -->
+    <section class="pillar">
+        <div class="pillar-header">
+            <span class="pillar-num">01</span>
+            <h2 class="pillar-title">Perfil (Estructura y Contexto)</h2>
+        </div>
+        
+        <div class="block">
+            <p class="question">"Para empezar, ¿quiénes van a vivir aquí? Cuéntenme de la familia: edades de los hijos, si viven con algún familiar mayor o si tienen planeado que alguien más se integre pronto."</p>
+            <p class="tip">Definir el núcleo familiar actual y su evolución a 5-10 años.</p>
+        </div>
+
+        <div class="block">
+            <p class="question">"Sobre el personal de apoyo: ¿Van a tener gente viviendo en la casa o solo vienen por día? Esto es clave para diseñar los accesos y las zonas de servicio."</p>
+            <p class="tip">Identificar necesidades de habitación de servicio y flujos de trabajo.</p>
+        </div>
+
+        <div class="block">
+            <p class="question">"Algo muy importante: ¿Hay algún tema de salud o movilidad que deba considerar? Alguna lesión, discapacidad o simplemente pensar en cómo se moverán en la casa a largo plazo."</p>
+            <p class="tip">Crucial para accesibilidad y diseño universal.</p>
+        </div>
+
+        <div class="data-grid">
+            <div>
+                <strong>Usuarios:</strong>
+                <ul>
+                    <li>Núcleo: Padres / Hijos (edades)</li>
+                    <li>Servicio: Fijo / Por día</li>
+                    <li>Movilidad Especial / Salud</li>
+                </ul>
+            </div>
+            <div>
+                <strong>Legales/Sitio:</strong>
+                <ul>
+                    <li>Titulares / Tomador Decisión</li>
+                    <li>Topográfico / Servicios</li>
+                    <li>Restricciones Fracc.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- PILAR 2: CARACTERÍSTICAS -->
+    <section class="pillar">
+        <div class="pillar-header">
+            <span class="pillar-num">02</span>
+            <h2 class="pillar-title">Características (El Programa)</h2>
+        </div>
+
+        <div class="block">
+            <p class="question">"¿Qué idea traen ustedes hoy? Si cierran los ojos, ¿qué espacios son los que no pueden faltar en su planteamiento inicial?"</p>
+            <p class="tip">Anotar la visión previa del cliente sin sesgarla.</p>
+        </div>
+
+        <div class="block">
+            <p class="question">"Sobre las recámaras: ¿Cuántas necesitamos? ¿Alguna debe estar forzosamente en planta baja por comodidad o visitas?"</p>
+            <p class="tip">Definir zonificación vertical primaria.</p>
+        </div>
+
+        <div class="block">
+            <p class="question">"De esas recámaras, ¿cómo quieren los baños y clósets? ¿Todos privados o alguno compartido para los niños?"</p>
+        </div>
+
+        <div class="block">
+            <p class="question">"¿Cuántos coches queremos bajo techo? ¿Necesitan áreas de servicio, bodega o cuarto de máquinas especial?"</p>
+        </div>
+
+        <div class="data-grid">
+            <div>
+                <strong>Zonas:</strong>
+                <ul>
+                    <li>Recámaras / Baños</li>
+                    <li>Estudio / Oficina</li>
+                    <li>Cochera (# autos)</li>
+                </ul>
+            </div>
+            <div>
+                <strong>Extras:</strong>
+                <ul>
+                    <li>Cuarto Servicio</li>
+                    <li>Bodegas / Almacén</li>
+                    <li>Alberca / Terrazas</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- PILAR 3: COMPORTAMIENTOS -->
+    <section class="pillar">
+        <div class="pillar-header">
+            <span class="pillar-num">03</span>
+            <h2 class="pillar-title">Comportamientos (Dinámicas y Ritmos)</h2>
+        </div>
+
+        <div class="block">
+            <p class="question">"Díganme cómo es su ritmo diario. ¿Son de despertarse temprano con la luz del sol o prefieren recámaras que se mantengan oscuras por la mañana?"</p>
+            <p class="tip">Psicología Ambiental: Ritmos circadianos y orientación de vanos.</p>
+        </div>
+
+        <div class="block">
+            <p class="question">"Sobre la privacidad: ¿Buscan una casa donde todos se vean y escuchen (conexión total) o necesitan rincones donde puedan estar en silencio absoluto aunque el resto de la familia esté en la sala?"</p>
+            <p class="tip">Teoría de la Intimidad: Diferenciar privacidad visual de la acústica.</p>
+        </div>
+
+        <div class="block">
+            <p class="question">"Hablemos del orden. En una escala del 1 al 10, ¿qué tan perfeccionistas son con que cada cosa esté en su sitio? ¿O prefieren espacios que 'aguanten' un poco de desorden diario sin verse mal?"</p>
+            <p class="tip">Antropometría del Guardado: Define si usamos estantes abiertos o clósets cerrados.</p>
+        </div>
+
+        <div class="block">
+            <p class="question">"¿Cómo es su proceso al llegar de la calle? ¿Dónde suelen dejar las llaves, el súper o los zapatos? ¿Tienen mascotas que entren y salgan con ustedes?"</p>
+            <p class="tip">Ritual de Transición: Diseño de recibidores técnicos (Mudrooms).</p>
+        </div>
+
+        <div class="block">
+            <p class="question">"¿Tienen algún recuerdo de un lugar donde se hayan sentido especialmente felices o tranquilos? ¿Recuerdan cómo era la luz o los materiales de ese sitio?"</p>
+            <p class="tip">Memoria Espacial: Identificar anclajes emocionales positivos.</p>
+        </div>
+    </section>
+
+    <!-- PILAR 4: NECESIDADES -->
+    <section class="pillar">
+        <div class="pillar-header">
+            <span class="pillar-num">04</span>
+            <h2 class="pillar-title">Necesidades (Inversión y Gustos)</h2>
+        </div>
+
+        <div class="block">
+            <p class="question">"Hablemos de dinero con claridad. Necesito un número realista de inversión para diseñar algo que sí se pueda construir. ¿Cuál es su tope máximo?"</p>
+            <p class="tip">Crucial para equilibrar metros vs calidad.</p>
+        </div>
+
+        <div class="block">
+            <p class="question">"¿Qué prefieren priorizar: tener una casa muy grande con acabados sencillos, o una casa más compacta pero con materiales de muy buena calidad?"</p>
+        </div>
+
+        <div class="block">
+            <p class="question">"Sobre el estilo: ¿Qué materiales les gustan? ¿Piedra, madera, concreto? ¿O prefieren algo muy limpio y blanco?"</p>
+        </div>
+
+        <div class="block">
+            <p class="question">"Y por último, para no errar el camino: ¿Qué es lo que más les preocupa del proceso y qué es lo que de plano NO quieren ver en su casa?"</p>
+        </div>
+    </section>
+
+    <!-- PILAR 5: CIERRE -->
+    <section class="pillar">
+        <div class="pillar-header">
+            <span class="pillar-num">05</span>
+            <h2 class="pillar-title">Cierre (Proceso y Certezas)</h2>
+        </div>
+
+        <div class="block">
+            <p class="question">"Para terminar, les explico cómo trabajamos en el taller. Nosotros no solo diseñamos la parte estética; coordinamos a todo un equipo de especialistas (estructuristas, ingenieros de iluminación, hidrosanitarios) para que el proyecto sea técnicamente impecable."</p>
+            <p class="tip">Establecer el valor de la coordinación técnica integral.</p>
+        </div>
+
+        <div class="block">
+            <p class="question">"Nuestro proceso se divide en etapas claras. Al iniciar formalmente, les entrego un calendario de entregas y un esquema de pagos por adelantos. Así ustedes siempre saben qué sigue y qué están pagando en cada momento."</p>
+            <p class="tip">Definir transparencia administrativa.</p>
+        </div>
+
+        <div class="block">
+            <p class="question">"¿Tienen alguna duda sobre los tiempos de trámite, los honorarios o cómo seleccionamos a los proveedores de obra?"</p>
+        </div>
+
+        <div class="data-grid">
+            <div>
+                <strong>Etapas:</strong>
+                <ul>
+                    <li>Anteproyecto (Diseño)</li>
+                    <li>Proyecto Ejecutivo (Ingenierías)</li>
+                    <li>Gestión de Licencias</li>
+                </ul>
+            </div>
+            <div>
+                <strong>Administración:</strong>
+                <ul>
+                    <li>Esquema de Anticipos</li>
+                    <li>Calendario de Entregas</li>
+                    <li>Coordinación de Especialistas</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        SOMA | PROCESOS TÉCNICOS PARA RESULTADOS HUMANOS | 2026
+    </footer>
+</div>
+
+</body>
+</html>

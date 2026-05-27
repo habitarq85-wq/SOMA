@@ -1,0 +1,9 @@
+{
+  "proyecto_id": "SOMA-20260518-1112",
+  "cliente": "Prueba Juan",
+  "fecha_entrevista": "2026-05-18T11:12:29.527330",
+  "tiene_audio": false,
+  "tiene_transcripcion": false,
+  "tiene_analisis": false,
+  "estado": "entrevista_realizada"
+}
