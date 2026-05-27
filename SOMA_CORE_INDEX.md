@@ -61,3 +61,18 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 - [ ] **Material de Publicación:** Portafolio, Tesis de Proyectos.
 - [x] **Imágenes de Inmersión:** 40 imágenes placeholder en `recursos_graficos/Inmersion/` (2 por opción). HTML actualizado con rutas locales. Pendiente reemplazo por imágenes propias del usuario.
 - [ ] **Estrategias:** Alianzas comerciales, Promoción.
+
+---
+
+## 🎯 PRIORIDADES 27/05/2026 — ROADMAP A PRODUCCIÓN
+
+| Prioridad | Acción | Por qué |
+|-----------|--------|---------|
+| 🔥 Crítica | **Cerrar 1 cliente real** | Probar el ciclo completo valida o rompe supuestos |
+| 🔥 Crítica | **Conseguir RFC en RESICO** | Sin factura no hay cobro formal |
+| 🔥 Crítica | **Revocar credenciales viejas + Railway env vars** | SMTP y Twilio expuestos en git history |
+| Alta | **Subir videos a YouTube (No listado) + embeber** | Hero sin video = mala primera impresión |
+| Alta | **Dominio propio** | `soma.up.railway.app` no inspira confianza |
+| Media | **Migrar a PostgreSQL** | SQLite en Railway se pierde al reiniciar |
+| Media | **faster-whisper + DeepSeek** | Automatización real del análisis |
+| Media | **Optimizar web: CDN o Cloudflare** | Velocidad de carga en celular |
