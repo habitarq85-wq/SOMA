@@ -1,9 +1,10 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, send_file, Response
 from flask_cors import CORS
 import sqlite3
 import datetime
 import json
 import os
+import re
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -679,6 +680,38 @@ def serve_css(filename):
 @app.route('/recursos_graficos/<path:filename>')
 def serve_recursos(filename):
     recursos_dir = os.path.join(PROYECTO_DIR, "recursos_graficos")
+    filepath = os.path.join(recursos_dir, filename)
+    if not os.path.exists(filepath):
+        return "Not found", 404
+
+    ext = os.path.splitext(filename)[1].lower()
+    if ext == '.mp4':
+        size = os.path.getsize(filepath)
+        range_header = request.headers.get('Range')
+        if range_header:
+            match = re.match(r'bytes=(\d+)-(\d*)', range_header)
+            if match:
+                start = int(match.group(1))
+                end = int(match.group(2)) if match.group(2) else size - 1
+                length = end - start + 1
+                with open(filepath, 'rb') as f:
+                    f.seek(start)
+                    data = f.read(length)
+                response = Response(data, 206, mimetype='video/mp4',
+                    content_type='video/mp4',
+                    direct_passthrough=True)
+                response.headers.add('Content-Range', f'bytes {start}-{end}/{size}')
+                response.headers.add('Accept-Ranges', 'bytes')
+                response.headers.add('Content-Length', str(length))
+                response.cache_control.max_age = 86400
+                response.cache_control.public = True
+                return response
+        response = send_file(filepath, mimetype='video/mp4')
+        response.headers.add('Accept-Ranges', 'bytes')
+        response.cache_control.max_age = 86400
+        response.cache_control.public = True
+        return response
+
     response = send_from_directory(recursos_dir, filename)
     response.cache_control.max_age = 86400
     response.cache_control.public = True
