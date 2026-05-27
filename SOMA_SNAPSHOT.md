@@ -138,7 +138,7 @@ Estrategias para redes sociales, Google y otras fuentes de leads. Solo cuando el
 
 ---
 
-## 📅 ÚLTIMA ACTUALIZACIÓN: 26/05/2026 (SESIÓN COMPLETA)
+## 📅 ÚLTIMA ACTUALIZACIÓN: 27/05/2026 (DEPLOY RAILWAY + OPTIMIZACIÓN)
 - **Programa Arquitectónico en Dashboard:** Tabla `programa_arquitectonico` + CRUD endpoints + UI con 3 niveles (Deseado/Complementario/Lujo), clave E{número}, relaciones por 🔗 en mini-modal movible.
 - **Cotización Formal PDF:** Endpoint `/cotizacion/<id>/pdf` con HTML imprimible. **NO muestra** precio/m², mínimo $8,000 ni obra (datos internos del taller).
 - **Cobros y Finanzas:** Tabla `cobros` + `resumen_financiero` + registro de pagos en modal expediente + badges en lead cards.

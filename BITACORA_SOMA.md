@@ -704,3 +704,37 @@ Se creó además `REFERENCIAS_CANONICAS.md` — tabla maestra con las 43 fuentes
 2. **[ALTA] Actualizar CONTRATO_DISENO_SOMA.md** — reemplazar placeholder 6-8 semanas.
 3. **[ALTA] Actualizar PROTOCOLO_ORGANIZACION_PROCESOS.md** — idem.
 4. **[MEDIA] Definir regla de escala** para proyectos grandes.
+
+---
+
+## Sesión: 2026-05-27 — Deploy a Railway + Optimización Web
+
+### 59. LOGROS DE LA SESIÓN
+
+- **Web:** Botón "Iniciar Inmersión SOMA" renombrado a "COTIZADOR SOMA". Texto de opciones de inmersión agrandado (0.5rem → 0.7rem). Texto en paso 12 corregido: "cotiza y ejecuta". Botón "← Volver" agregado al paso 15.
+- **Preparación para Railway:** Se crearon `requirements.txt`, `Procfile`, `railway.json`. `server.py` actualizado para servir `Pagina Web 6.html` en `/`, Dashboard en `/dashboard`, y rutas para assets estáticos (`/recursos_graficos/`, `/backend/`). URLs de frontend cambiadas a rutas relativas. Puerto usa `$PORT`.
+- **GitHub:** Repositorio `habitarq85-wq/SOMA` creado y conectado. Primer push exitoso.
+- **Railway:** Proyecto desplegado en Railway con dominio generado.
+- **Optimización de imágenes:** 55 imágenes PNG (426 MB) convertidas a JPEG (28 MB) — ahorro del 93%. Caché de 24h agregada a rutas estáticas. Servidor con gthread + 4 threads.
+- **Videos:** Archivos renombrados sin espacios ni caracteres especiales. Soporte de Range headers agregado para streaming de video.
+
+### 60. PENDIENTES (nuevos)
+
+1. **[ALTA] Subir videos a YouTube** como "No listado" y embeberlos con iframe (4 videos).
+2. **[MEDIA] Activar WhatsApp** empresarial y actualizar número en la web.
+3. **[BAJA] Migrar contraseñas SMTP/Twilio** a variables de entorno en Railway.
+4. **[BAJA] Considerar PostgreSQL** para datos persistentes en Railway (SQLite es efímero).
+
+### 61. ARCHIVOS MODIFICADOS/CREADOS
+
+| Archivo | Cambio |
+|---------|--------|
+| `web/Pagina Web 6.html` | Botón Cotizador, fuente opciones, volver paso 15, textos paso 12, URLs relativas, videos renombrados |
+| `backend/server.py` | Rutas web estáticas + Range headers video + caché + más threads |
+| `backend/requirements.txt` | Creado — dependencias para Railway |
+| `backend/Procfile` | Creado — gunicorn para Railway |
+| `Procfile` | Creado — gunicorn con gthread |
+| `requirements.txt` | Creado — dependencias en raíz |
+| `railway.json` | Creado — configuración Railway |
+| `.gitignore` | Creado — exclude venv, pycache, db |
+| `SOMA_SNAPSHOT.md` | Actualizado — cambios de deploy
