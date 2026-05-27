@@ -679,11 +679,17 @@ def serve_css(filename):
 @app.route('/recursos_graficos/<path:filename>')
 def serve_recursos(filename):
     recursos_dir = os.path.join(PROYECTO_DIR, "recursos_graficos")
-    return send_from_directory(recursos_dir, filename)
+    response = send_from_directory(recursos_dir, filename)
+    response.cache_control.max_age = 86400
+    response.cache_control.public = True
+    return response
 
 @app.route('/backend/<path:filename>')
 def serve_backend_static(filename):
-    return send_from_directory(BASE_DIR, filename)
+    response = send_from_directory(BASE_DIR, filename)
+    response.cache_control.max_age = 3600
+    response.cache_control.public = True
+    return response
 
 # ---- DIAGRAMA SOMA (Herramienta de Diseño - Bloque 2) ----
 
