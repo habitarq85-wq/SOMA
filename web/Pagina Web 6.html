@@ -266,6 +266,25 @@
             .slide:active .slide-title { opacity: 1; background: var(--accent); }
         }
 
+        @media (max-width: 900px) and (orientation: landscape) {
+            section { min-height: auto; padding: 4vh 4%; height: auto; }
+            .hero-flex { flex-direction: row; align-items: center; gap: 8px; }
+            .hero-quotes { width: 50%; }
+            .p-16-9 { width: 200px; height: 113px; }
+            .p-9-16 { width: 120px; height: 213px; }
+            .p-custom-cristi { width: 200px; height: 113px; }
+            .slide img { object-fit: contain; }
+            .portrait-frame { max-width: 100px; }
+            .topic-slide { width: 240px; padding: 10px 14px; }
+            .services-wrapper { grid-template-columns: 1fr; }
+            .services-visual { width: 100px !important; }
+            .interactive-list { font-size: 0.55rem; line-height: 1.6; }
+            .timeline { padding-left: 16px; }
+            .tl-node { padding-bottom: 10px; }
+            .view-center { position: relative; inset: auto; bottom: auto; height: 50vh; }
+            .view-side { position: relative; height: 100px; }
++        }
+
         @media (hover: none) {
             .slider { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; scroll-snap-type: x mandatory; }
             .slider::-webkit-scrollbar { display: none; }
