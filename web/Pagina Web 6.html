@@ -49,19 +49,8 @@
         /* --- 00. HOME --- */
         .bg-video {
             position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%; z-index: 0;
-            opacity: 0.4; pointer-events: none;
-            overflow: hidden;
-        }
-        .bg-video iframe {
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 100vw;
-            height: 56.25vw;
-            min-height: 100vh;
-            min-width: 177.77vh;
-            transform: translate(-50%, -50%);
-            border: none;
+            width: 100%; height: 100%; object-fit: cover;
+            z-index: 0; opacity: 0.4;
             pointer-events: none;
         }
 
@@ -288,9 +277,7 @@
 <div class="scroll-container" id="main-viewport">
     
     <section class="dark">
-        <div id="hero-video" class="bg-video">
-            <iframe id="yt-bg" src="https://www.youtube.com/embed/2NzxUMIC9Hw?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&disablekb=1&iv_load_policy=3" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
-        </div>
+        <video id="hero-video" class="bg-video" autoplay muted playsinline preload="auto"></video>
         <div class="video-overlay"></div>
         <div class="bg-keyword" style="color: rgba(255,255,255,0.05);">SOMA</div>
         <div class="hero-flex">
@@ -716,17 +703,27 @@
     }
     setInterval(rotateQuote, 5000);
 
-    // --- HERO VIDEO (YouTube playlist rotativo) ---
-    const videoIds = ["2NzxUMIC9Hw", "N0MzNtoyOTk", "lZD7yn-y7S0", "7LJuLEx4ATs"];
-    let vidIdx = 0;
-    function rotateVideo() {
-        const iframe = document.getElementById('yt-bg');
-        if (!iframe) return;
-        vidIdx = (vidIdx + 1) % videoIds.length;
-        iframe.src = "https://www.youtube.com/embed/" + videoIds[vidIdx] + "?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&disablekb=1&iv_load_policy=3&enablejsapi=1";
+    // --- PLAYLIST DE VIDEOS ---
+    const playlist = [
+        "../recursos_graficos/Video_Fondo/v1_mangle.mp4",
+        "../recursos_graficos/Video_Fondo/v2_telchac.mp4",
+        "../recursos_graficos/Video_Fondo/v3_atardecer.mp4",
+        "../recursos_graficos/Video_Fondo/v4_nocturna.mp4"
+    ];
+    let currentVideoIndex = 0;
+
+    function playNextVideo() {
+        const v = document.getElementById('hero-video');
+        if (!v) return;
+        v.src = playlist[currentVideoIndex];
+        currentVideoIndex = (currentVideoIndex + 1) % playlist.length;
     }
-    // Rotar cada 25 segundos (duración aproximada de los clips)
-    setInterval(rotateVideo, 25000);
+    const hv = document.getElementById('hero-video');
+    if (hv) {
+        hv.onended = playNextVideo;
+        hv.onloadeddata = () => hv.play().catch(() => {});
+        playNextVideo();
+    }
 
     // --- SERVICIOS ---
     function changeService(element, index) {
