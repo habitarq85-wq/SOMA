@@ -24,9 +24,10 @@ REPORTES_DIR = os.path.join(BASE_DIR, "reportes")
 EMAIL_DESTINO = "habitarq85@gmail.com"
 
 SMTP_SERVER = os.environ.get("SMTP_SERVER", "smtp.gmail.com").strip()
-SMTP_PORT = int(os.environ.get("SMTP_PORT", "587").strip())
+SMTP_PORT = int(os.environ.get("SMTP_PORT", "465").strip())
 SMTP_USER = os.environ.get("SMTP_USER", "").strip()
 SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD", "").strip()
+SMTP_USE_SSL = os.environ.get("SMTP_USE_SSL", "true").strip().lower() == "true"
 
 TWILIO_SID = os.environ.get("TWILIO_SID", "").strip()
 TWILIO_TOKEN = os.environ.get("TWILIO_TOKEN", "").strip()
@@ -163,8 +164,11 @@ def enviar_correo(destinatario, asunto, cuerpo):
         msg["Subject"] = asunto
         msg.attach(MIMEText(cuerpo, "plain", "utf-8"))
 
-        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
-        server.starttls()
+        if SMTP_USE_SSL:
+            server = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT)
+        else:
+            server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+            server.starttls()
         server.login(SMTP_USER, SMTP_PASSWORD)
         server.send_message(msg)
         server.quit()
@@ -964,8 +968,11 @@ def notificaciones_status():
     if SMTP_USER and SMTP_PASSWORD:
         status["correo"]["configurado"] = True
         try:
-            server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=5)
-            server.starttls()
+            if SMTP_USE_SSL:
+                server = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, timeout=5)
+            else:
+                server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=5)
+                server.starttls()
             server.login(SMTP_USER, SMTP_PASSWORD)
             server.quit()
             status["correo"]["conectado"] = True
