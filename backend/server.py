@@ -960,6 +960,7 @@ def notificaciones_status():
         "correo": {"configurado": False, "conectado": False},
         "whatsapp": {"configurado": False, "conectado": False}
     }
+    import traceback
     if SMTP_USER and SMTP_PASSWORD:
         status["correo"]["configurado"] = True
         try:
@@ -968,8 +969,10 @@ def notificaciones_status():
             server.login(SMTP_USER, SMTP_PASSWORD)
             server.quit()
             status["correo"]["conectado"] = True
-        except Exception:
+        except Exception as e:
             status["correo"]["conectado"] = False
+            status["correo"]["error"] = str(e)
+            status["correo"]["trace"] = traceback.format_exc()
     if TWILIO_SID and TWILIO_TOKEN:
         status["whatsapp"]["configurado"] = True
         try:
