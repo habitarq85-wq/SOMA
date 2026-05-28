@@ -708,7 +708,7 @@
     }
     setInterval(rotateQuote, 5000);
 
-    // --- PLAYLIST DE VIDEOS (YouTube IFrame API) ---
+    // --- HERO VIDEO (YouTube embed con rotación manual) ---
     const youtubeIds = [
         "2NzxUMIC9Hw",
         "N0MzNtoyOTk",
@@ -718,8 +718,15 @@
     let ytIndex = 0;
     let ytPlayer = null;
 
-    function onYouTubeIframeAPIReady() {
-        ytPlayer = new YT.Player('hero-video', {
+    function loadYTPlayer() {
+        if (typeof YT === 'undefined' || !YT.Player) {
+            setTimeout(loadYTPlayer, 500);
+            return;
+        }
+        const div = document.getElementById('hero-video');
+        if (!div) return;
+        div.innerHTML = '';
+        ytPlayer = new YT.Player(div, {
             height: '100%',
             width: '100%',
             videoId: youtubeIds[0],
@@ -727,12 +734,11 @@
                 autoplay: 1,
                 mute: 1,
                 controls: 0,
-                loop: 0,
-                rel: 0,
-                showinfo: 0,
                 modestbranding: 1,
+                rel: 0,
                 disablekb: 1,
-                playlist: youtubeIds.join(',')
+                playsinline: 1,
+                origin: window.location.origin
             },
             events: {
                 onReady: (e) => e.target.playVideo(),
@@ -747,6 +753,7 @@
     }
 
     const tag = document.createElement('script');
+    tag.onload = loadYTPlayer;
     tag.src = "https://www.youtube.com/iframe_api";
     document.head.appendChild(tag);
 
