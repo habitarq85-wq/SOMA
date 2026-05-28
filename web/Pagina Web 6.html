@@ -953,30 +953,7 @@
                     <br>
                     <p style="font-size:0.7rem; color:#888; text-transform:uppercase; letter-spacing:1px;">Alcance de Construcción (Terceros):</p>
                     <p><b>$${Math.round(m2 * n.min).toLocaleString()} — $${Math.round(m2 * n.max).toLocaleString()}</b></p>
-                    <p style="font-size:0.6rem; color:#666; margin-top:10px;">*Paramétricos regionales para Yucatán. El lujo compensa la inclusividad.</p>
-                    <hr style="border:0; border-top:1px solid #333; margin:20px 0;">
-                    <h4 style="color:var(--accent); font-size:0.6rem; margin-bottom:10px; text-transform:uppercase;">Cerebro SOMA - Diagnóstico Técnico:</h4>`;
-
-        try {
-            const response = await fetch('/backend/diagnosticos_master.json');
-            const master = await response.json();
-            for (let step in somaData.respuestas) {
-                const val = somaData.respuestas[step];
-                if (master[step] && master[step][val]) {
-                    const d = master[step][val];
-                    html += `<div style="margin-bottom:20px; border-left:2px solid var(--accent); padding-left:15px; font-size:0.65rem;">
-                        <strong style="color:white; display:block; text-transform:uppercase; margin-bottom:8px;">${d.titulo}</strong>
-                        <p style="color:#aaa; margin:4px 0;"><b style="color:#888;">Psicología Ambiental:</b> ${d.psicologia_ambiental}</p>
-                        <p style="color:#aaa; margin:4px 0;"><b style="color:#888;">Lenguaje de Patrones:</b> ${d.lenguaje_patrones}</p>
-                        <p style="color:#aaa; margin:4px 0;"><b style="color:#888;">Space Syntax:</b> ${d.space_syntax}</p>
-                        <p style="color:#aaa; margin:4px 0;"><b style="color:#888;">Conducta Ambiental:</b> ${d.environmental_behavior}</p>
-                        <p style="color:#aaa; margin:4px 0;"><b style="color:#888;">POE:</b> ${d.poe}</p>
-                    </div>`;
-                }
-            }
-        } catch (e) {
-            html += `<p style="font-size:0.6rem; color:#666;">Diagnóstico completo disponible en el reporte del Taller.</p>`;
-        }
+                    <p style="font-size:0.6rem; color:#666; margin-top:10px;">*Rango de construcción paramétrico: $${n.min.toLocaleString()}/m² — $${n.max.toLocaleString()}/m² (Yucatán).</p>`;
         resultDiv.innerHTML = html;
         somaData.cotizacion.m2 = m2;
     }
