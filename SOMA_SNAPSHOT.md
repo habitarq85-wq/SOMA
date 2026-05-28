@@ -58,7 +58,7 @@
 ### Servidor Web + Dashboard + Notificaciones (puerto 8080)
 - **Archivo:** `backend/server.py` (Flask)
 - **Endpoints:** `/save_immersion`, `/get_leads`, `/leads/kanban`, `/lead/<id>/pipeline`, `/activity_matrix/<temp_id>`, `/programa/<lead_id>`, `/programa/espacio` (POST/PUT/DELETE), `/cotizacion/<lead_id>`, `/cotizacion/<lead_id>/pdf`, `/cobros/<proyecto_id>`, `/cobros` (POST), `/cobros/<id>/pagar`, `/resumen_financiero`, `/` (Dashboard HTML), `/css/<path>` (CSS estático)
-- **SMTP:** Gmail configurado. Reportes a habitarq85@gmail.com.
+- **SMTP:** Gmail configurado vía SSL (puerto 465, variable `SMTP_USE_SSL=true`). Reportes a habitarq85@gmail.com. ⚠️ Railway bloquea outbound en puerto 587, se migró a 465.
 - **WhatsApp:** Twilio Sandbox. Notificaciones al +5219993619433.
 - **Persistencia:** SQLite con tablas: `captura_web`, `matriz_inversion`, `cobros`, `config_fiscal`, `programa_arquitectonico`, `proyectos`, `habitantes`, `actividades`, `ejes_diseno`, `espacios`, `proyecto_datos`.
 - **Diagnósticos:** `diagnosticos_master.json` (10 pasos de inmersión).
@@ -89,8 +89,8 @@
 - **Portafolio:** Carrusel horizontal con 5 proyectos reales. Modal con galería dinámica por proyecto, miniaturas con proporción nativa, títulos por nombre de archivo. Preloader de imágenes para evitar transiciones trabadas.
 - **Inmersión SOMA (10 pasos):** Preguntas visuales A/B sobre fachada, habitaciones, espacios, iluminación, estilo, niveles, paisaje, sensación, vida social y color.
 - **Cotizador:** 3 modalidades (Por Programa, Por m², Por Inversión). 3 niveles de paquete: Esencial ($250/m²), Integral ($400/m²), Ejecutivo ($1,000/m²). Cargo mínimo operativo de $8,000.
-- **Diagnóstico técnico:** Al elegir paquete se muestran los análisis del `diagnosticos_master.json`.
-- **Notificaciones:** Los leads activan: (1) guardado en DB, (2) reporte en `backend/reportes/`, (3) correo SMTP a habitarq85@gmail.com, (4) WhatsApp Twilio a Juan. Integración con App de Entrevista vía carpeta `backend/proyectos/` compartida.
+- **Diagnóstico técnico:** Al elegir paquete se muestran los análisis del `diagnosticos_master.json`. Excluido de la interfaz web (solo correo/WhatsApp).
+- **Notificaciones:** Los leads activan: (1) guardado en DB, (2) reporte en `backend/reportes/`, (3) correo SMTP (puerto 465 SSL) a habitarq85@gmail.com, (4) WhatsApp Twilio a Juan. Integración con App de Entrevista vía carpeta `backend/proyectos/` compartida.
 
 ## 💰 5. ESCALA DE PRECIOS OFICIAL (SOMA v2.1)
 | Paquete | Precio | Entregables |
@@ -138,7 +138,7 @@ Estrategias para redes sociales, Google y otras fuentes de leads. Solo cuando el
 
 ---
 
-## 📅 ÚLTIMA ACTUALIZACIÓN: 27/05/2026 (DEPLOY RAILWAY + OPTIMIZACIÓN)
+## 📅 ÚLTIMA ACTUALIZACIÓN: 28/05/2026 (LANDSCAPE RESPONSIVE + SMTP SSL)
 - **Programa Arquitectónico en Dashboard:** Tabla `programa_arquitectonico` + CRUD endpoints + UI con 3 niveles (Deseado/Complementario/Lujo), clave E{número}, relaciones por 🔗 en mini-modal movible.
 - **Cotización Formal PDF:** Endpoint `/cotizacion/<id>/pdf` con HTML imprimible. **NO muestra** precio/m², mínimo $8,000 ni obra (datos internos del taller).
 - **Cobros y Finanzas:** Tabla `cobros` + `resumen_financiero` + registro de pagos en modal expediente + badges en lead cards.
@@ -172,6 +172,10 @@ Estrategias para redes sociales, Google y otras fuentes de leads. Solo cuando el
 - **[NUEVO 2026-05-26] Protocolos numerados:** Todos los protocolos de Bloque 2 renombrados con prefijo numérico secuencial (01-08 en Diseño, 01 en Análisis). Referencias cruzadas actualizadas.
 - **[NUEVO 2026-05-26] Casona Cristi:** 4 fotos nuevas agregadas a la galería web (Cocina, Comedor, Escalera, Patio).
 - **[2026-05-27] Preparación para Railway:** `requirements.txt`, `Procfile`, `railway.json` creados. `server.py` actualizado: raíz `\` sirve `Pagina Web 6.html`, Dashboard en `/dashboard`, nuevas rutas `/recursos_graficos/` y `/backend/` para assets estáticos. URLs de frontend cambiadas a rutas relativas. Puerto usa `$PORT` de Railway.
+- **[2026-05-28] Landscape responsive:** Nueva media query `max-height: 520px` para celular horizontal. Hero (1ra sección) mantiene 100vh, secciones siguientes auto-height. Slide titles más pequeños, imágenes carrusel con `object-fit: contain`.
+- **[2026-05-28] SMTP Railway fix:** Puerto cambiado de 587 (bloqueado por Railway) a 465 SSL. Nueva variable `SMTP_USE_SSL=true` (default). `.strip()` agregado a todas las env vars.
+- **[2026-05-28] Env vars:** `.strip()` en SMTP_USER, SMTP_PASSWORD, TWILIO_SID, TWILIO_TOKEN, NOTIFICACION_WHATSAPP para evitar trailing spaces en Railway.
+- **[2026-05-28] Debug SMTP:** Endpoint `/notificaciones/status` ahora devuelve `error` y `trace` con el mensaje de error real.
 
 ---
 

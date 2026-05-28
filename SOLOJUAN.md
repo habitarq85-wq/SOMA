@@ -344,3 +344,25 @@ La investigación de sitio y normativa NO va antes de la cotización; se ejecuta
 - Registro RFC de Juan en RESICO para emitir CFDI.
 - Implementar PROTOCOLO_VISUALIZACION.md, plantilla_dossier.html, PROTOCOLO_EVALUACION.md.
 
+---
+
+## [2026-05-28] — Sesión: Landscape responsive + SMTP Railway
+
+"DEBE SER LA DOBLE VERIFICACIÓN, BORRE UNA POR ERROR, AHORA LO CHECO Y TE AVISO."
+
+"VEO UN PROBLEMA EN LA PAGINA, EN CELULAR VERTICAL SE VE BIEN, EN MONITOR DE LAPTOP SE VE BIEN, PERO EN CELULAR HORIZONTAL SE CORTAN LAS IMAGENES, COMO PODEMOS SOLUCIONARLO"
+
+**Decisión:** Nueva media query `max-height: 520px` para landscape. Hero mantiene 100vh, demás secciones auto-height.
+
+"La portada se reduco a la mitad y aparece el letrero de proyectos, ya no hay recortes pero los titulos de las imagenes del carrusel quedan muy encimadas a la imagen. Conviene hacer la actualización en la pagina web 6 antes de actualizarlo en github para no estar recargando a cada rato? o es indiferente."
+
+**Decisión:** Sí, editar local y probar antes de push. Se corrigió selector a `section + section` para no afectar el hero. Slide titles más pequeños en mobile.
+
+"Sigue la portada con los videos recortada como si fuera una banda superior."
+
+**Bug:** El selector `section { min-height: auto; height: auto; }` colapsaba la altura del hero, el video se veía como una banda. **Fix:** `section + section` aplica solo a secciones después de la primera.
+
+"correcto, ya quedo pasalo al github y rainway"
+
+"Pusiste al dia el snapshot y el soma_core_index y pusiste mis instrucciones literales en SOLOJUAN."
+

@@ -50,7 +50,7 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 ## BLOQUE 3: LABORATORIO DE HERRAMIENTAS (I+D)
 - [x] **Aplicaciones:** App de Entrevistas (Ejes de Inmersión y ActivityMatrix operativos en Backend). App de Entrevista v2 con 6 tópicos + grabación + post-formulario.
 - [x] **Automatización:** Procesamiento con DeepSeek Flash (pendiente de API key). Whisper (pendiente de instalación).
-- [x] **Programación:** Backend Flask (Persistencia y Correo reparados, SMTP funcional, Twilio funcional), Persistencia SQLite.
+- [x] **Programación:** Backend Flask (Persistencia y Correo reparados, SMTP SSL puerto 465, Twilio funcional), Persistencia SQLite. Env vars con `.strip()`. Debug endpoint `/notificaciones/status` con error real.
 - [x] **Activity Matrix en Dashboard:** Endpoint `GET /activity_matrix/<temp_id>`, grid 24h interactivo con tooltips y colores SOMA por habitante. Fusión de leads captura_web + proyectos app_inmersion.
 - [x] **Pruebas de Sistema:** Revisión Dashboard y Funcionamiento Cotizador (Finalizado).
 
@@ -64,14 +64,14 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 
 ---
 
-## 🎯 PRIORIDADES 27/05/2026 — ROADMAP A PRODUCCIÓN
+## 🎯 PRIORIDADES 28/05/2026 — ROADMAP A PRODUCCIÓN
 
 | Prioridad | Acción | Por qué |
 |-----------|--------|---------|
 | 🔥 Crítica | **Cerrar 1 cliente real** | Probar el ciclo completo valida o rompe supuestos |
 | 🔥 Crítica | **Conseguir RFC en RESICO** | Sin factura no hay cobro formal |
 | 🔥 Crítica | **Revocar credenciales viejas + Railway env vars** | SMTP y Twilio expuestos en git history |
-| Alta | **Subir videos a YouTube (No listado) + embeber** | Hero sin video = mala primera impresión |
+| Alta | **Verificar SMTP en Railway (puerto 465)** | Último push migró a SSL, falta confirmar conexión |
 | Alta | **Dominio propio** | `soma.up.railway.app` no inspira confianza |
 | Media | **Migrar a PostgreSQL** | SQLite en Railway se pierde al reiniciar |
 | Media | **faster-whisper + DeepSeek** | Automatización real del análisis |
