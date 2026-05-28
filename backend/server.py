@@ -81,6 +81,58 @@ def init_db():
         relacion_directa TEXT,
         FOREIGN KEY (lead_id) REFERENCES captura_web(id)
     )""")
+    c.execute("""CREATE TABLE IF NOT EXISTS captura_web (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        temp_id TEXT,
+        contacto TEXT,
+        presupuesto TEXT,
+        habitantes TEXT,
+        respuestas_json TEXT,
+        analisis_procesado TEXT,
+        fecha TEXT,
+        estado TEXT,
+        m2 REAL,
+        honorarios_diseno REAL,
+        inversion_obra_estimada REAL,
+        nivel_proyecto TEXT,
+        pipeline_estado TEXT DEFAULT 'lead'
+    )""")
+    c.execute("""CREATE TABLE IF NOT EXISTS matriz_inversion (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        proyecto_id INTEGER,
+        categoria TEXT,
+        prioridad_gasto INTEGER,
+        porcentaje_asignado REAL,
+        monto_estimado REAL
+    )""")
+    c.execute("""CREATE TABLE IF NOT EXISTS habitantes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        proyecto_id INTEGER,
+        nombre TEXT,
+        edad INTEGER,
+        genero TEXT,
+        estatura_cm REAL,
+        peso_kg REAL,
+        hobbies TEXT,
+        rol_poder TEXT,
+        observaciones TEXT
+    )""")
+    c.execute("""CREATE TABLE IF NOT EXISTS actividades (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        habitante_id INTEGER,
+        hora INTEGER,
+        actividad_principal TEXT,
+        aislamiento_necesario INTEGER,
+        iluminacion_deseada TEXT,
+        espacio_sugerido TEXT
+    )""")
+    c.execute("""CREATE TABLE IF NOT EXISTS ejes_diseno (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        proyecto_id INTEGER,
+        eje TEXT,
+        valor_polar REAL,
+        justificacion TEXT
+    )""")
     conn.commit()
     conn.close()
 
