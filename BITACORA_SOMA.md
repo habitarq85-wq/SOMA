@@ -738,3 +738,29 @@ Se creó además `REFERENCIAS_CANONICAS.md` — tabla maestra con las 43 fuentes
 | `railway.json` | Creado — configuración Railway |
 | `.gitignore` | Creado — exclude venv, pycache, db |
 | `SOMA_SNAPSHOT.md` | Actualizado — cambios de deploy
+
+---
+
+## Sesión: 2026-05-28 — Landscape responsive + SMTP Railway fix
+
+### 62. LOGROS DE LA SESIÓN
+
+- **Landscape Responsive:** Agregada media query `max-height: 520px` para celular horizontal. Hero (1ra sección) mantiene 100vh, secciones siguientes se adaptan con altura automática. Slide titles con font-size reducido para evitar solapamiento. Imágenes carrusel con `object-fit: contain`.
+- **SMTP Railway:** Puerto cambiado de 587 (TLS) a 465 (SSL) porque Railway bloquea outbound en puerto 587. Agregada variable `SMTP_USE_SSL` (default true) para controlar SSL vs TLS.
+- **Env vars:** `.strip()` agregado a todas las variables de entorno para eliminar trailing spaces del dashboard de Railway.
+- **Debug SMTP:** Endpoint `/notificaciones/status` ahora devuelve `error` y `trace` con el mensaje de error real.
+- **GitHub Token:** Se usó token `ghp_oQi...0QKX` para push (sin credential helper configurado).
+
+### 63. PENDIENTES (nuevos)
+
+1. **[ALTA] Verificar SMTP** — Railway desplegó con puerto 465, falta confirmar si conecta.
+2. **[MEDIA] Migrar a PostgreSQL** — SQLite se pierde en cada reinicio de Railway.
+3. **[MEDIA] Adquirir dominio propio** + Cloudflare CDN.
+4. **[BAJA] Limpiar git history** — remover credenciales expuestas en commits anteriores.
+
+### 64. ARCHIVOS MODIFICADOS
+
+| Archivo | Cambio |
+|---------|--------|
+| `web/Pagina Web 6.html` | Landscape responsive (max-height: 520px), slide titles más pequeños, hero mantiene 100vh |
+| `backend/server.py` | SMTP_SSL puerto 465, .strip() en env vars, debug logging en /notificaciones/status |

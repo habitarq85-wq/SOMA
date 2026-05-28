@@ -53,9 +53,12 @@ SOMA no es un taller de arquitectura tradicional, es un sistema de **Arquitectur
 2. [ ] **Script de Extracción:** Refinar el procesador `extractor.py` con más keywords y lógica de NLP básica.
 3. [ ] **Lógica de Costos:** Implementar la fórmula de presupuesto basada en la Matriz de Inversión.
 4. [ ] **Dashboard:** Crear la vista para visualizar la Matriz de Actividades de 24 slots.
+5. [ ] **SMTP Railway:** Verificar si puerto 465 funciona (Railway bloquea 587).
+6. [ ] **PostgreSQL:** Migrar DB de SQLite a PostgreSQL para persistencia en Railway.
 
 ---
 
 ## 5. HISTORIAL DE DECISIONES
 - **2026-05-11:** Se decide priorizar la estructura de datos sobre la interfaz visual. Se crea este LOG para evitar la pérdida de información valiosa de conversaciones anteriores.
 - **2026-05-18:** Se configura envío de correo vía SMTP Gmail (contraseña de aplicación) y notificación WhatsApp vía Twilio Sandbox +14155238886. Se acuerda migrar a Telegram cuando termine el crédito gratuito de Twilio.
+- **2026-05-28:** Railway bloquea outbound SMTP puerto 587 — se migra a puerto 465 (SSL). Se agrega `.strip()` a env vars. Se corrige responsive landscape: hero mantiene 100vh, secciones siguientes auto-height.
