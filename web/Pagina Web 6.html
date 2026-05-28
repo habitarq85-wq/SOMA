@@ -49,10 +49,15 @@
         /* --- 00. HOME --- */
         .bg-video {
             position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%; object-fit: cover;
-            z-index: 0; opacity: 0.4;
-            transition: opacity 1s ease-in-out;
-            pointer-events: none;
+            width: 100%; height: 100%; z-index: 0;
+            opacity: 0.4; pointer-events: none;
+            overflow: hidden;
+        }
+        .bg-video iframe {
+            position: absolute; top: 50%; left: 50%;
+            width: 200%; height: 200%;
+            transform: translate(-50%, -50%);
+            border: none;
         }
         .video-overlay {
             position: absolute; top: 0; left: 0;
@@ -277,7 +282,7 @@
 <div class="scroll-container" id="main-viewport">
     
     <section class="dark">
-        <video id="hero-video" class="bg-video" autoplay muted playsinline preload="auto"></video>
+        <div id="hero-video" class="bg-video"></div>
         <div class="video-overlay"></div>
         <div class="bg-keyword" style="color: rgba(255,255,255,0.05);">SOMA</div>
         <div class="hero-flex">
@@ -628,7 +633,6 @@
     const titleFocus = document.getElementById('focus-title');
     const viewport = document.getElementById('main-viewport');
     const immersionModal = document.getElementById('immersion-modal');
-    const heroVideo = document.getElementById('hero-video');
     const philosophiaCarousel = document.getElementById('philosophy-carousel');
 
     let hTarget = 0, hCurrent = 0, vTarget = 0, vCurrent = 0, pTarget = 0, pCurrent = 0;
@@ -704,25 +708,47 @@
     }
     setInterval(rotateQuote, 5000);
 
-    // --- PLAYLIST DE VIDEOS (PLAYLIST CINEMATOGRÁFICA) ---
-    const playlist = [
-        "../recursos_graficos/Video_Fondo/v1_mangle.mp4",
-        "../recursos_graficos/Video_Fondo/v2_telchac.mp4",
-        "../recursos_graficos/Video_Fondo/v3_atardecer.mp4",
-        "../recursos_graficos/Video_Fondo/v4_nocturna.mp4"
+    // --- PLAYLIST DE VIDEOS (YouTube IFrame API) ---
+    const youtubeIds = [
+        "2NzxUMIC9Hw",
+        "N0MzNtoyOTk",
+        "lZD7yn-y7S0",
+        "7LJuLEx4ATs"
     ];
-    let currentVideoIndex = 0;
+    let ytIndex = 0;
+    let ytPlayer = null;
 
-    function playNextVideo() {
-        if (!heroVideo) return;
-        heroVideo.src = playlist[currentVideoIndex];
-        currentVideoIndex = (currentVideoIndex + 1) % playlist.length;
+    function onYouTubeIframeAPIReady() {
+        ytPlayer = new YT.Player('hero-video', {
+            height: '100%',
+            width: '100%',
+            videoId: youtubeIds[0],
+            playerVars: {
+                autoplay: 1,
+                mute: 1,
+                controls: 0,
+                loop: 0,
+                rel: 0,
+                showinfo: 0,
+                modestbranding: 1,
+                disablekb: 1,
+                playlist: youtubeIds.join(',')
+            },
+            events: {
+                onReady: (e) => e.target.playVideo(),
+                onStateChange: (e) => {
+                    if (e.data === YT.PlayerState.ENDED) {
+                        ytIndex = (ytIndex + 1) % youtubeIds.length;
+                        ytPlayer.loadVideoById(youtubeIds[ytIndex]);
+                    }
+                }
+            }
+        });
     }
-    if (heroVideo) {
-        heroVideo.onended = playNextVideo;
-        heroVideo.onloadeddata = () => heroVideo.play().catch(() => {});
-        playNextVideo();
-    }
+
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(tag);
 
     // --- SERVICIOS ---
     function changeService(element, index) {
