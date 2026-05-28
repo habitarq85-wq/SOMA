@@ -23,15 +23,15 @@ DIAGNOSTICOS_PATH = os.path.join(BASE_DIR, "diagnosticos_master.json")
 REPORTES_DIR = os.path.join(BASE_DIR, "reportes")
 EMAIL_DESTINO = "habitarq85@gmail.com"
 
-SMTP_SERVER = os.environ.get("SMTP_SERVER", "smtp.gmail.com")
-SMTP_PORT = int(os.environ.get("SMTP_PORT", 587))
-SMTP_USER = os.environ.get("SMTP_USER", "")
-SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD", "")
+SMTP_SERVER = os.environ.get("SMTP_SERVER", "smtp.gmail.com").strip()
+SMTP_PORT = int(os.environ.get("SMTP_PORT", "587").strip())
+SMTP_USER = os.environ.get("SMTP_USER", "").strip()
+SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD", "").strip()
 
-TWILIO_SID = os.environ.get("TWILIO_SID", "")
-TWILIO_TOKEN = os.environ.get("TWILIO_TOKEN", "")
+TWILIO_SID = os.environ.get("TWILIO_SID", "").strip()
+TWILIO_TOKEN = os.environ.get("TWILIO_TOKEN", "").strip()
 TWILIO_WHATSAPP = os.environ.get("TWILIO_WHATSAPP", "+14155238886")
-NOTIFICACION_WHATSAPP = os.environ.get("NOTIFICACION_WHATSAPP", "")
+NOTIFICACION_WHATSAPP = os.environ.get("NOTIFICACION_WHATSAPP", "").strip()
 
 MINIMO_TALLER = 8000
 RANGOS_OBRA = {
