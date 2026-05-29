@@ -32,9 +32,13 @@
         }
 
         section {
-            height: 100vh; width: 100vw; scroll-snap-align: start;
+            min-height: 100vh; width: 100vw; scroll-snap-align: start;
             position: relative; display: flex; flex-direction: column;
             justify-content: center; padding: 0 10%; overflow: hidden;
+        }
+        section:last-of-type {
+            min-height: 100vh; height: auto; overflow-y: auto;
+            justify-content: flex-start; padding: 6vh 10%;
         }
 
         .light { background: var(--paper); color: var(--bg); }
@@ -344,7 +348,7 @@
         @media (max-height: 520px) {
             .scroll-container { scroll-snap-type: none; }
             section { overflow: visible; min-height: 100vh; height: auto; padding-top: 2vh; padding-bottom: 2vh; }
-            section + section { padding: 1.5vh 4%; min-height: auto; height: auto; justify-content: flex-start; }
+            section + section { padding: 1.5vh 4% 3vh; min-height: auto; height: auto; justify-content: flex-start; }
             .hero-flex { flex-direction: row; align-items: center; gap: 6px; }
             .hero-quotes { width: 50%; }
             .soma-main { font-size: clamp(1.4rem, 5vw, 2rem); }
@@ -367,16 +371,19 @@
             .services-visual { width: 120px !important; }
             .services-wrapper > div { position: relative; }
             .services-wrapper > div > div:last-child {
-                border-top: 1px solid rgba(255,255,255,0.2); margin-top: 8px; padding-top: 8px;
-                display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+                border-top: 1px solid rgba(255,255,255,0.2) !important;
+                margin-top: 8px !important; padding: 8px 0 !important;
+                display: flex !important; flex-wrap: wrap; align-items: center; gap: 6px;
             }
-            .services-wrapper > div > div:last-child h2 { font-size: 0.4rem; margin: 0; letter-spacing: 1px; }
+            .services-wrapper > div > div:last-child h2 {
+                font-size: 0.4rem; margin: 0; letter-spacing: 1px; display: inline !important;
+            }
             .services-wrapper > div > div:last-child p {
                 font-size: 0.5rem !important; margin: 0 !important; line-height: 1.3;
                 font-family: 'JetBrains Mono', monospace !important;
             }
             .services-wrapper > div > div:last-child .btn-soma {
-                margin-left: auto; margin-top: 0 !important; padding: 6px 12px; font-size: 0.5rem;
+                margin-left: auto !important; margin-top: 0 !important; padding: 6px 12px; font-size: 0.5rem;
                 flex-shrink: 0;
             }
             .timeline { padding-left: 14px; }
