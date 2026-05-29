@@ -5,9 +5,8 @@ import datetime
 import json
 import os
 import re
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 from twilio.rest import Client
 from dotenv import load_dotenv
 
@@ -24,10 +23,11 @@ REPORTES_DIR = os.path.join(BASE_DIR, "reportes")
 EMAIL_DESTINO = "habitarq85@gmail.com"
 
 SMTP_SERVER = os.environ.get("SMTP_SERVER", "smtp.gmail.com").strip()
-SMTP_PORT = int(os.environ.get("SMTP_PORT", "465").strip())
+SMTP_PORT = int(os.environ.get("SMTP_PORT", "587").strip())
 SMTP_USER = os.environ.get("SMTP_USER", "").strip()
 SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD", "").strip()
-SMTP_USE_SSL = os.environ.get("SMTP_USE_SSL", "true").strip().lower() == "true"
+SMTP_USE_SSL = os.environ.get("SMTP_USE_SSL", "false").strip().lower() == "true"
+SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY", "").strip()
 
 TWILIO_SID = os.environ.get("TWILIO_SID", "").strip()
 TWILIO_TOKEN = os.environ.get("TWILIO_TOKEN", "").strip()
@@ -157,23 +157,25 @@ def enviar_correo(destinatario, asunto, cuerpo):
         f.write(cuerpo)
     print(f"\n--- REPORTE GUARDADO: {filepath} ---")
 
-    try:
-        msg = MIMEMultipart()
-        msg["From"] = SMTP_USER
-        msg["To"] = destinatario
-        msg["Subject"] = asunto
-        msg.attach(MIMEText(cuerpo, "plain", "utf-8"))
+    if not SENDGRID_API_KEY:
+        print("--- SENDGRID_API_KEY no configurada ---")
+        return False, "SENDGRID_API_KEY no configurada"
 
-        if SMTP_USE_SSL:
-            server = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, timeout=10)
+    try:
+        message = Mail(
+            from_email="habitarq85@gmail.com",
+            to_emails=destinatario,
+            subject=asunto,
+            plain_text_content=cuerpo
+        )
+        sg = SendGridAPIClient(SENDGRID_API_KEY)
+        response = sg.send(message)
+        if response.status_code in (200, 201, 202):
+            print(f"--- CORREO ENVIADO a {destinatario} via SendGrid ---")
+            return True, None
         else:
-            server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10)
-            server.starttls()
-        server.login(SMTP_USER, SMTP_PASSWORD)
-        server.send_message(msg)
-        server.quit()
-        print(f"--- CORREO ENVIADO a {destinatario} ---")
-        return True, None
+            print(f"--- ERROR SENDGRID: status {response.status_code} ---")
+            return False, f"SendGrid status {response.status_code}"
     except Exception as e:
         print(f"--- ERROR AL ENVIAR CORREO: {e} ---")
         return False, str(e)
@@ -963,22 +965,14 @@ def notificaciones_status():
         "correo": {"configurado": False, "conectado": False},
         "whatsapp": {"configurado": False, "conectado": False}
     }
-    import traceback
-    if SMTP_USER and SMTP_PASSWORD:
+    if SENDGRID_API_KEY:
         status["correo"]["configurado"] = True
         try:
-            if SMTP_USE_SSL:
-                server = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, timeout=5)
-            else:
-                server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=5)
-                server.starttls()
-            server.login(SMTP_USER, SMTP_PASSWORD)
-            server.quit()
+            sg = SendGridAPIClient(SENDGRID_API_KEY)
             status["correo"]["conectado"] = True
         except Exception as e:
             status["correo"]["conectado"] = False
             status["correo"]["error"] = str(e)
-            status["correo"]["trace"] = traceback.format_exc()
     if TWILIO_SID and TWILIO_TOKEN:
         status["whatsapp"]["configurado"] = True
         try:
