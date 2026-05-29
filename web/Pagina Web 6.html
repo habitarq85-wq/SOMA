@@ -120,7 +120,8 @@
         .tl-concept { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: #999; line-height: 1.4; margin-bottom: 4px; font-style: italic; }
         .tl-detail { font-family: 'JetBrains Mono', monospace; font-size: 0.5rem; color: #555; line-height: 1.5; }
 
-        .portrait-frame { width: 100%; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; aspect-ratio: 3/4; }
+        .portrait-frame { width: 100%; overflow: hidden; aspect-ratio: 3/4; border: 1px solid rgba(255,255,255,0.05); position: relative; }
+        .portrait-frame::after { content: ''; position: absolute; inset: 0; box-shadow: inset 0 0 30px 15px rgba(10,10,10,0.7); pointer-events: none; }
         .portrait-frame img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 100%; display: block; filter: grayscale(0.3); transition: filter 0.5s ease, transform 0.5s ease; }
         .portrait-frame:hover img { filter: grayscale(0); transform: scale(1.03); }
 
@@ -134,11 +135,12 @@
 
 
         /* --- 04. SERVICIOS --- */
-        .services-wrapper { display: grid; grid-template-columns: 1fr 260px; gap: 20px 60px; width: 100%; align-items: center; z-index: 2; }
+        .services-wrapper { width: 100%; z-index: 2; }
+        .services-row { display: grid; grid-template-columns: 1fr 260px; gap: 20px 60px; align-items: center; }
         .interactive-list { list-style: none; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; line-height: 2.5; border-left: 2px solid var(--accent); padding-left: 30px; }
         .interactive-list li { cursor: pointer; opacity: 0.4; transition: 0.4s var(--ease); }
         .interactive-list li.active { opacity: 1; color: var(--accent); }
-        .services-visual { position: relative; width: 100%; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+        .services-visual { position: relative; width: 100%; height: 220px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
         .services-visual img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); opacity: 0; transition: 0.6s var(--ease); }
         .services-visual img.active-img { opacity: 0.8; }
 
@@ -219,6 +221,12 @@
         @media (max-width: 768px) {
             .scroll-container { scroll-snap-type: none; }
             section { padding: 0 4%; min-height: 100vh; height: auto; justify-content: flex-start; padding-top: 6vh; padding-bottom: 6vh; overflow: visible; }
+            section:first-child { padding-top: 15vh; justify-content: flex-start; }
+            section:nth-child(2) { justify-content: center; padding-top: 3vh; padding-bottom: 3vh; }
+            section:nth-child(2) > div:first-of-type { padding-top: 0 !important; }
+            section:first-child .video-overlay {
+                background: linear-gradient(180deg, rgba(10,10,10,0.7) 0%, rgba(10,10,10,0.95) 100%);
+            }
             h2 { font-size: clamp(1.2rem, 5vw, 1.6rem); margin-bottom: 8px; }
             .label { font-size: 0.5rem; letter-spacing: 2px; margin-bottom: 6px; }
             .bg-keyword { font-size: 18vw; }
@@ -241,14 +249,31 @@
             .topic-slide { width: 300px; padding: 15px 18px; }
             .topic-slide strong { font-size: 0.6rem; }
             .topic-slide p { font-size: 0.55rem; }
+            .philosophy-wrapper { position: relative; }
+            .philosophy-wrapper::after {
+                content: '→';
+                position: absolute; right: 20px; bottom: -24px;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 1.8rem; color: var(--accent);
+                opacity: 0.5; pointer-events: none;
+                animation: arrowHint 2s ease-in-out infinite;
+            }
+            @keyframes arrowHint {
+                0%, 100% { transform: translateX(0); opacity: 0.3; }
+                50% { transform: translateX(6px); opacity: 0.7; }
+            }
+            .topics-carousel {
+                -webkit-mask: linear-gradient(90deg, #000 75%, transparent 98%);
+                mask: linear-gradient(90deg, #000 75%, transparent 98%);
+            }
 
-            .services-wrapper { grid-template-columns: 1fr auto; gap: 12px; align-items: start; }
+            .services-row { grid-template-columns: 1fr auto; gap: 12px; }
             .interactive-list { font-size: 0.65rem; line-height: 2; padding-left: 15px; }
-            .services-visual { width: 130px !important; height: auto !important; aspect-ratio: 4/3; margin: 0; }
+            .services-visual { width: 130px !important; height: auto !important; aspect-ratio: 4/3; }
             .carousel-area { min-height: auto; }
             .slider { padding: 12px 0; gap: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
             .slide { flex: 0 0 auto; }
-            .slide-title { font-size: 0.5rem; padding: 5px 12px; bottom: 14px; }
+            .slide-title { font-size: 0.5rem; padding: 4px 10px; bottom: 8px; left: 0; background: rgba(10,10,10,0.6); border-radius: 0 3px 3px 0; }
             .p-16-9 { width: 260px; height: 146px; }
             .p-9-16 { width: 160px; height: 284px; }
             .p-3-2 { width: 210px; height: 140px; }
@@ -265,11 +290,57 @@
             .btn-close { top: 15px; left: 15px; width: 32px; height: 32px; }
             .slide:active img { filter: grayscale(0); opacity: 1; transform: scale(1.02); }
             .slide:active .slide-title { opacity: 1; background: var(--accent); }
+
+            /* Immersion modal en móvil */
+            #immersion-modal { padding: 12px 4%; }
+            .immersion-step { max-width: 100%; }
+            .immersion-step h2 { font-size: clamp(1rem, 4.5vw, 1.4rem); }
+            .img-choice-grid { gap: 10px; }
+            .img-option p { font-size: 0.55rem; padding: 6px; }
+            .soma-input { font-size: 1rem; }
+            #immersion-modal .btn-close { top: 10px; left: 10px; width: 30px; height: 30px; }
+
+            /* Cotizador checks en móvil */
+            #input-program > div { grid-template-columns: 1fr 1fr; gap: 4px; font-size: 0.5rem; }
+            #input-program label input { transform: scale(0.8); }
+            #otros-box { padding: 8px; }
+            #otros-box input { font-size: 0.6rem !important; }
+
+            /* Paquetes en móvil */
+            .package-option { padding: 10px !important; }
+            .package-option h3 { font-size: 0.7rem !important; }
+            .package-option p { font-size: 0.5rem !important; }
+
+            /* Resultado cotización en móvil */
+            #quote-result { padding: 12px; font-size: 0.65rem; max-height: 40vh; }
+            #quote-result h3 { font-size: 0.75rem; }
+        }
+
+        @media (max-width: 480px) {
+            .hero-quotes { min-height: 40px; }
+            .hero-quote { font-size: clamp(0.4rem, 2vw, 0.5rem); line-height: 1.4; }
+            .p-16-9, .p-custom-cristi { width: 200px; height: 113px; }
+            .p-9-16 { width: 120px; height: 213px; }
+            .p-3-2 { width: 160px; height: 107px; }
+            .img-choice-grid { grid-template-columns: 1fr; gap: 8px; }
+            .img-option { aspect-ratio: 4/3; max-height: 160px; }
+            #input-program > div { grid-template-columns: 1fr; }
+            .services-row { grid-template-columns: 1fr; justify-items: center; }
+            .services-visual { max-width: 180px; }
+            .topic-slide { width: 240px; }
+            .inspection-overlay { padding: 0; }
+            .view-side { height: 90px; padding: 6px 8px; gap: 6px; }
+            .thumb { width: 60px; height: 40px; }
+            .t-16-9 { width: 72px; height: 40px; }
+            .t-9-16 { width: 32px; height: 56px; }
+            .t-3-2 { width: 60px; height: 40px; }
+            #immersion-modal { padding: 10px 3%; }
+            .btn-soma { font-size: 0.6rem; padding: 12px 20px; }
         }
 
         @media (max-height: 520px) {
             .scroll-container { scroll-snap-type: none; }
-            section { overflow: visible; }
+            section { overflow: visible; min-height: 100vh; height: auto; padding-top: 4vh; padding-bottom: 4vh; }
             section + section { padding: 2vh 4%; min-height: auto; height: auto; }
             .hero-flex { flex-direction: row; align-items: center; gap: 6px; }
             .hero-quotes { width: 50%; }
@@ -278,12 +349,17 @@
             .p-16-9 { width: 160px; height: 90px; }
             .p-9-16 { width: 100px; height: 178px; }
             .p-custom-cristi { width: 160px; height: 90px; }
-            .slide-title { font-size: 0.45rem; padding: 4px 10px; bottom: 10px; }
+            .slide-title { font-size: 0.45rem; padding: 2px 8px; bottom: 0; left: 0; background: rgba(10,10,10,0.5); border-radius: 0; }
             .slide img { object-fit: contain; }
-            .portrait-frame { max-width: 80px; }
+            .slider { flex-direction: row !important; flex-wrap: nowrap !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
+            .trayectoria-grid { grid-template-columns: 1fr auto; gap: 12px; align-items: start; }
+            .portrait-frame { max-width: 80px; margin: 0 auto; }
+            .trayectoria-grid { padding: 2vh 0; }
+            .trayectoria-grid > div:last-child { text-align: center; }
+            .trayectoria-grid > div:last-child p { text-align: center; font-size: 0.5rem !important; }
             .topic-slide { width: 200px; padding: 8px 12px; }
-            .services-wrapper { grid-template-columns: 1fr; }
-            .services-visual { width: 80px !important; }
+            .services-row { grid-template-columns: 1fr auto; gap: 10px; }
+            .services-visual { width: 80px !important; height: auto !important; aspect-ratio: 4/3; }
             .interactive-list { font-size: 0.5rem; line-height: 1.4; padding-left: 12px; }
             .timeline { padding-left: 14px; }
             .tl-node { padding-bottom: 6px; }
@@ -291,12 +367,28 @@
             .tl-title { font-size: 0.5rem; }
             .tl-concept { font-size: 0.45rem; }
             .tl-detail { font-size: 0.4rem; }
-            .view-center { position: relative; inset: auto; bottom: auto; height: 40vh; }
-            .view-side { position: relative; height: 80px; }
-            .thumb { width: 60px; height: 40px; }
+            .inspection-overlay { display: flex; flex-direction: column; padding: 0; }
+            .view-center { position: relative; inset: auto; bottom: auto; flex: 1; height: auto; min-height: 0; }
+            .view-side { position: relative; height: 70px; flex-shrink: 0; flex-direction: row; overflow-x: auto; overflow-y: hidden; padding: 6px 10px; gap: 6px; align-items: center; border-left: none; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.8); justify-content: flex-start; }
+            .focus-title { bottom: 10px; left: 10px; font-size: 0.5rem; }
+            .thumb { width: 60px; height: 40px; flex-shrink: 0; }
             .bg-keyword { font-size: 14vw; }
             h2 { font-size: clamp(0.9rem, 4vw, 1.2rem); margin-bottom: 4px; }
             .label { font-size: 0.4rem; letter-spacing: 1px; margin-bottom: 3px; }
+
+            /* Immersion landscape compacta */
+            #immersion-modal { padding: 8px 3%; }
+            .immersion-step { justify-content: flex-start; padding-top: 2vh; }
+            .immersion-step h2 { font-size: clamp(0.8rem, 3vw, 1rem); margin-bottom: 4px; }
+            .img-choice-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
+            .img-option { aspect-ratio: 3/2; max-height: 120px; }
+            .img-option p { font-size: 0.45rem; padding: 4px; }
+            .soma-input { font-size: 0.8rem; margin: 8px 0; }
+            #immersion-modal .btn-close { top: 6px; left: 6px; width: 26px; height: 26px; font-size: 0.8rem; }
+            .btn-soma { font-size: 0.55rem; padding: 8px 16px; }
+            .package-option { padding: 6px !important; }
+            #input-program > div { grid-template-columns: 1fr 1fr; gap: 2px; font-size: 0.45rem; }
+            #quote-result { max-height: 30vh; padding: 8px; font-size: 0.55rem; }
         }
 
         @media (hover: none) {
@@ -369,7 +461,7 @@
                 <div class="tl-node">
                     <div class="tl-dot"></div>
                     <div class="tl-year">2014 – 2015</div>
-                    <div class="tl-title">Maestro en Arquitectura · UNAM</div>
+                    <div class="tl-title">M. en Arq. · UNAM</div>
                     <div class="tl-concept">Desarrollo filosófico y tecnológico.</div>
                     <div class="tl-detail">Tesis: Simulador Virtual de Ambientes Arquitectónicos (Mención honorífica del Colegio Yucatanense de Arquitectos)</div>
                 </div>
@@ -403,7 +495,7 @@
                 <div class="portrait-frame">
                     <img loading="lazy" src="../recursos_graficos/Foto trayectoria/retrato final.webp" alt="Juan José Piña May">
                 </div>
-                <p style="font-family:'JetBrains Mono';font-size:0.6rem;color:#ccc;margin-top:10px;text-align:center;line-height:1.4;">Maestro en Arquitectura<br>Juan José Piña May</p>
+                <p style="font-family:'JetBrains Mono';font-size:0.6rem;color:#ccc;margin-top:10px;text-align:center;line-height:1.4;">M. en Arq. Juan José Piña May</p>
             </div>
         </div>
     </section>
@@ -440,10 +532,6 @@
                     <strong>TRES NIVELES, UNA CALIDAD</strong>
                     <p>Esencial, Integral, Ejecutivo. Diferentes escalas, misma atención al detalle. El lujo no está en el tamaño: está en la intención del diseño.</p>
                 </div>
-                <div class="topic-slide">
-                    <strong>CALIDAD SIN JERARQUÍAS</strong>
-                    <p>Cada elemento existe por una razón. La junta donde el concreto encuentra la madera: precisa, limpia, intencional. Nada es decorativo.</p>
-                </div>
             </div>
 
         </div>
@@ -457,25 +545,26 @@
         </div>
         <div class="services-wrapper">
             <div>
-                <ul class="interactive-list">
-                    <li class="active" onclick="changeService(this, 0)">DISEÑO ARQUITECTÓNICO</li>
-                    <li onclick="changeService(this, 1)">MODELADO BIM LOD 300</li>
-                    <li onclick="changeService(this, 2)">VISUALIZACIÓN ARQUITECTÓNICA D5 RENDER</li>
-                    <li onclick="changeService(this, 3)">PLANOS DE ANTEPROYECTO</li>
-                </ul>
+                <div class="services-row">
+                    <ul class="interactive-list">
+                        <li class="active" onclick="changeService(this, 0)">DISEÑO ARQUITECTÓNICO</li>
+                        <li onclick="changeService(this, 1)">MODELADO BIM LOD 300</li>
+                        <li onclick="changeService(this, 2)">VISUALIZACIÓN ARQUITECTÓNICA D5 RENDER</li>
+                        <li onclick="changeService(this, 3)">PLANOS DE ANTEPROYECTO</li>
+                    </ul>
+                    <div class="services-visual">
+                        <img loading="lazy" src="../recursos_graficos/Servicios/Diseño arquitectónico.webp" class="active-img">
+                        <img loading="lazy" src="../recursos_graficos/Servicios/Modelado BIM.webp">
+                        <img loading="lazy" src="../recursos_graficos/Servicios/Visualización Arquitectónica.webp">
+                        <img loading="lazy" src="../recursos_graficos/Servicios/Planos de Anteproyecto.webp">
+                    </div>
+                </div>
                 <div style="border-top: 1px solid rgba(255,255,255,0.3); margin-top: 35px; padding-top: 25px;">
                     <h2 style="margin-bottom: 5px;">Contacto</h2>
                     <p style="font-family: 'JetBrains Mono'; font-size: 0.8rem; margin-top: 15px;">Mérida, Yucatán, MX.</p>
                     <p style="font-family: 'JetBrains Mono'; font-size: 0.8rem; margin-top: 8px;">habitarq85@gmail.com</p>
+                    <p style="font-family: 'JetBrains Mono'; font-size: 0.8rem; margin-top: 8px;">WhatsApp: 999 361 9433</p>
                     <button class="btn-soma" style="margin-top: 25px; background: white; color: var(--accent);" onclick="openImmersion()">COTIZADOR SOMA</button>
-                </div>
-            </div>
-            <div style="display: flex; align-items: center; justify-content: center;">
-                <div class="services-visual" style="width: 200px; height: 280px;">
-                    <img loading="lazy" src="../recursos_graficos/Servicios/Diseño arquitectónico.webp" class="active-img">
-                    <img loading="lazy" src="../recursos_graficos/Servicios/Modelado BIM.webp">
-                    <img loading="lazy" src="../recursos_graficos/Servicios/Visualización Arquitectónica.webp">
-                    <img loading="lazy" src="../recursos_graficos/Servicios/Planos de Anteproyecto.webp">
                 </div>
             </div>
         </div>
@@ -580,7 +669,7 @@
         <p style="font-family: 'JetBrains Mono'; font-size: 0.8rem; margin: 20px 0; color: #888;">¿Quieres saber cuánto costaría tu diseño y cuánto podrías invertir en obra?</p>
         <p style="font-family: 'JetBrains Mono'; font-size: 0.6rem; color: #666; margin-bottom: 20px;">Te damos un estimado paramétrico por m². Nosotros diseñamos, un constructor externo cotiza y ejecuta.</p>
         <div style="display: flex; gap: 10px;">
-            <button class="btn-soma" onclick="closeImmersion()">Finalizar</button>
+            <button class="btn-soma" onclick="finishImmersion(this)">Finalizar</button>
             <button class="btn-soma" style="background: var(--accent); color: white;" onclick="nextStep(13)">Iniciar Cotizador</button>
         </div>
     </div>
@@ -650,7 +739,7 @@
         <div id="quote-result" style="background: #1a1a1a; padding: 20px; border-left: 4px solid var(--accent); font-family: 'JetBrains Mono'; max-height: 60vh; overflow-y: auto;"></div>
         <div style="display: flex; gap: 10px; margin-top:20px;">
             <button class="btn-soma" style="background:transparent; border:1px solid #333; color: white;" onclick="nextStep(14)">← Volver</button>
-            <button class="btn-soma" style="flex:1; background: var(--accent); color: white;" onclick="finishImmersion()">Finalizar</button>
+            <button class="btn-soma" style="flex:1; background: var(--accent); color: white;" onclick="finishImmersion(this)">Finalizar</button>
         </div>
     </div>
 </div>
@@ -917,14 +1006,6 @@
         const esTelefono = /^[\d\s\+\-\(\)]{7,20}$/.test(val);
         if (!esEmail && !esTelefono) return alert("Ingresa un correo válido o un número de WhatsApp");
         somaData.contacto = val;
-
-        // Enviar respuestas al servidor
-        fetch('/save_immersion', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ respuestas: somaData.respuestas, contacto: somaData.contacto, cotizacion: {} })
-        }).catch(e => console.log("Servidor no disponible"));
-
         nextStep(12);
     }
 
@@ -991,26 +1072,18 @@
         somaData.cotizacion.m2 = m2;
     }
 
-    async function finishImmersion() {
-        const btn = document.querySelector('#soma-step-15 .btn-soma');
-        if (btn.disabled) return;
-        btn.textContent = "Enviando...";
-        btn.disabled = true;
+    async function finishImmersion(btn) {
+        if (btn) { btn.textContent = "Enviando..."; btn.disabled = true; }
         try {
-            const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), 3000);
             await fetch('/save_immersion', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(somaData),
-                signal: controller.signal
+                body: JSON.stringify(somaData)
             });
-            clearTimeout(timeout);
         } catch (e) {
             console.log("Sin servidor, modo local");
         }
-        btn.textContent = "Finalizar";
-        btn.disabled = false;
+        if (btn) { btn.textContent = "Finalizar"; btn.disabled = false; }
         closeImmersion();
     }
 </script>
