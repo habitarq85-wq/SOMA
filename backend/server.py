@@ -173,10 +173,10 @@ def enviar_correo(destinatario, asunto, cuerpo):
         server.send_message(msg)
         server.quit()
         print(f"--- CORREO ENVIADO a {destinatario} ---")
-        return True
+        return True, None
     except Exception as e:
         print(f"--- ERROR AL ENVIAR CORREO: {e} ---")
-        return False
+        return False, str(e)
 
 def enviar_whatsapp(contacto, temp_id, nivel_key, m2):
     try:
@@ -273,7 +273,7 @@ def save_immersion():
     # --- ENVÍO SINCRÓNICO (confiable) ---
     asunto = f"NUEVO LEAD SOMA: {temp_id}"
     cuerpo = f"Se ha registrado una nueva inmersión.\n\nContacto: {contacto}\nID: {temp_id}\n\n{reporte}"
-    email_ok = enviar_correo(EMAIL_DESTINO, asunto, cuerpo)
+    email_ok, smtp_error = enviar_correo(EMAIL_DESTINO, asunto, cuerpo)
     whatsapp_ok = enviar_whatsapp(contacto, temp_id, nivel_key, m2)
 
     print(f"\n{'='*50}")
@@ -287,6 +287,7 @@ def save_immersion():
         "status": "success",
         "temp_id": temp_id,
         "email": "sent" if email_ok else "failed",
+        "smtp_error": smtp_error,
         "whatsapp": "sent" if whatsapp_ok else "failed"
     }), 200
 

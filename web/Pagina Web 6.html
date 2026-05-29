@@ -1174,7 +1174,7 @@
             });
             const data = await res.json();
             if (data.status !== 'success') mensaje = "Error al guardar. Intenta de nuevo.";
-            else if (data.email === 'failed') mensaje = "Guardado. El correo no pudo enviarse, te contactaremos pronto.";
+            else if (data.email === 'failed') mensaje = "Guardado. El correo no pudo enviarse (" + (data.smtp_error || "error desconocido") + "). Te contactaremos pronto.";
         } catch (e) {
             mensaje = "No se pudo conectar con el servidor. Tus datos se perderán.";
         }
