@@ -412,3 +412,80 @@ La investigación de sitio y normativa NO va antes de la cotización; se ejecuta
 - **Bug 1:** En celular horizontal no se ve el botón cotizador (revisar z-index, overflow, posición del modal).
 - **Bug 2:** La página se traba en "Enviar" — el fetch a `/save_immersion` cuelga sin respuesta; falta timeout/catch en el cliente.
 
+---
+
+## [2026-05-29] — Sesión: Video crossfade, SendGrid, Landscape compact, Immersion images
+
+### Video
+"más obscuro todavía" (x4 — progresión 0.4 → 0.5 → 0.45 → 0.40)
+
+### Cotizador Email
+"no se pudo conectar con el servidor. tus datos se perderán"
+
+**Decisión:** Timeout cliente 5s → 20s. SMTP seguía fallando en Railway.
+
+"error 101 network is unreachable"
+
+**Decisión:** Railway bloquea todos los puertos SMTP (465, 587, 25). Migrar a SendGrid (API HTTP, puerto 443).
+
+"sigue dando error. lo que hice fue cambiar el port 465 por 587 y modificar el ssl a false"
+
+"es de twilio?" (sobre SendGrid)
+
+"me pide domain" (al configurar SendGrid)
+
+**Decisión:** Usar Single Sender Verification (no Domain). Verificar `habitarq85@gmail.com`.
+
+"que pongo en sender verification"
+"digo en sender autentication" (sic)
+
+**Campos:** From Email `habitarq85@gmail.com`, From Name `SOMA Arquitectura`, Reply To `habitarq85@gmail.com`, Address dirección física, City Mérida, State Yucatán, Country Mexico.
+
+"ok que mas"
+
+**API Key creada:** `SG.<redactado>`
+
+*(Nota: la API key real solo está en .env local y Railway env vars. No pushear a GitHub.)*
+
+"OK, VOY A PROBAR"
+
+"DICE INMERSIÓN REGISTRADA TE CONTACTAREMOS PRONTO, PERO NO LLEGÓ EL CORREO"
+
+"SI SE FUE A SPAM, COMO EVIAR QUE SE VAYA AHI"
+
+**Decisión:** Marcar como "No es spam" por ahora. Para arreglarlo de raíz: autenticar un dominio en SendGrid (Settings → Sender Authentication → Domain Authentication).
+
+"Parece que ya quedo !!!!"
+
+"actualiza la bitacora y todos los documentos del proyecto, entiendo que la pagina web6 local tambien esta actualizada."
+
+### Landscape Mobile (Contacto invisible)
+"en celular horizontal no se ve el contacto" (reporte de sesión anterior)
+
+**Decisión:** Compactación máxima para que quepa sin scroll:
+- Imagen servicios 120px → 90px
+- Fuentes reducidas a 0.45rem
+- Grid gaps a 4px
+- Timeline compacto
+- Removido `display: inline !important` del h2
+
+### Immersion Images
+"las imagenes aparecen cortadas, no respetan su proporción, podrías resolverlo"
+
+**Decisión:** En 480px → `object-fit: contain; height: auto; max-height: 200px`. En 768px → `max-height: 180px`. Imágenes completas sin recorte.
+
+### Desktop Section Contacto
+"la imagen de la pagina ya quedó, ponlo como ito del proyecto"
+
+**Decisión:** `section:last-of-type` centrada como las demás. Título Contacto hereda h2 global. Textos alineados con servicios via `padding-left: 25px`.
+
+"Actualizaste SOLOJUAN CON MIS INSTRUCCIONES LITERALES DE LA SESIÓN?"
+
+### Próxima Sesión
+- **[MEDIA] Autenticar dominio** en SendGrid para que correos no caigan en spam.
+- **[MEDIA] Confirmar landscape mobile** en vivo.
+- **[ALTA] RFC en RESICO** — sin factura no hay cobro formal.
+- **[ALTA] Primer cliente real** — validar el ciclo completo.
+- **[ALTA] Dominio propio** — `soma.up.railway.app` no inspira confianza.
+- **[MEDIA] Migrar a PostgreSQL** — SQLite se pierde al reiniciar Railway.
+
