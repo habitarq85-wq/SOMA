@@ -32,13 +32,14 @@
         }
 
         section {
-            min-height: 100vh; width: 100vw; scroll-snap-align: start;
+            height: 100vh; width: 100vw; scroll-snap-align: start;
             position: relative; display: flex; flex-direction: column;
             justify-content: center; padding: 0 10%; overflow: hidden;
         }
         section:last-of-type {
-            min-height: 100vh; height: auto; overflow-y: auto;
+            height: 100vh; overflow-y: auto; overflow-x: hidden;
             justify-content: flex-start; padding: 6vh 10%;
+            scroll-snap-align: start; overscroll-behavior: contain;
         }
 
         .light { background: var(--paper); color: var(--bg); }
@@ -349,6 +350,7 @@
             .scroll-container { scroll-snap-type: none; }
             section { overflow: visible; min-height: 100vh; height: auto; padding-top: 2vh; padding-bottom: 2vh; }
             section + section { padding: 1.5vh 4% 3vh; min-height: auto; height: auto; justify-content: flex-start; }
+            section:last-of-type { min-height: auto; height: auto; overflow: visible; padding: 1.5vh 4% 3vh; justify-content: flex-start; }
             .hero-flex { flex-direction: row; align-items: center; gap: 6px; }
             .hero-quotes { width: 50%; }
             .soma-main { font-size: clamp(1.4rem, 5vw, 2rem); }
