@@ -50,21 +50,21 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 ## BLOQUE 3: LABORATORIO DE HERRAMIENTAS (I+D)
 - [x] **Aplicaciones:** App de Entrevistas (Ejes de Inmersión y ActivityMatrix operativos en Backend). App de Entrevista v2 con 6 tópicos + grabación + post-formulario.
 - [x] **Automatización:** Procesamiento con DeepSeek Flash (pendiente de API key). Whisper (pendiente de instalación).
-- [x] **Programación:** Backend Flask (Persistencia y Correo reparados, SMTP SSL puerto 465, Twilio funcional), Persistencia SQLite. Env vars con `.strip()`. Debug endpoint `/notificaciones/status` con error real.
+- [x] **Programación:** Backend Flask (Persistencia y Correo reparados, SendGrid API activo, Railway no bloquea HTTPS), Persistencia SQLite. Env vars con `.strip()`. Debug endpoint `/notificaciones/status` (verifica API key).
 - [x] **Activity Matrix en Dashboard:** Endpoint `GET /activity_matrix/<temp_id>`, grid 24h interactivo con tooltips y colores SOMA por habitante. Fusión de leads captura_web + proyectos app_inmersion.
 - [x] **Pruebas de Sistema:** Revisión Dashboard y Funcionamiento Cotizador (Finalizado).
 
 ## BLOQUE 4: MARKETING Y COMUNICACIÓN (MKT)
 - [x] **Presencia Digital:** Página Web V2 (`web/Pagina Web 6.html`), Dashboard Editorial, Dashboard de Gestión.
-- [x] **Hero Web:** 4 frases rotativas de Carta de Presentación. Video playlist rotativa sin loop.
+- [x] **Hero Web:** 4 frases rotativas de Carta de Presentación. Video playlist crossfade (2 players, sin pausa). Opacidad final 0.40.
 - [x] **Carrusel Vertical (Portafolio):** Transition fix con preloader + cleanup. `decodeURIComponent` en títulos. Nombres de archivo sincronizados con disco.
 - [ ] **Material de Publicación:** Portafolio, Tesis de Proyectos.
-- [x] **Imágenes de Inmersión:** 40 imágenes placeholder en `recursos_graficos/Inmersion/` (2 por opción). HTML actualizado con rutas locales. Pendiente reemplazo por imágenes propias del usuario.
+- [x] **Imágenes de Inmersión:** 20 imágenes propias en 10 carpetas. Mobile: `object-fit: contain` sin recorte.
 - [ ] **Estrategias:** Alianzas comerciales, Promoción.
 
 ---
 
-## BLOQUE 5: SITIO WEB (MKT) — Sesión 28/05/2026
+## BLOQUE 5: SITIO WEB (MKT) — Sesión 29/05/2026
 - [x] **Cotizador: single POST** — Eliminado fetch duplicado en paso 12. Solo `finishImmersion()` al final.
 - [x] **Hero mobile vertical:** `padding-top: 15vh`, overlay más oscuro `0.95`.
 - [x] **Portfolio mobile:** Proyectos centrados, títulos carrusel en borde inferior.
@@ -74,18 +74,20 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 - [x] **Trayectoria portrait:** Viñeta `::after` en foto, "M. en Arq." en una línea.
 - [x] **WhatsApp en contacto:** "999 361 9433" visible.
 - [x] **110 imágenes comprimidas:** Pillow quality 80/70, 49→44 MB. Commit `0531ffe`.
-- [ ] **Bug landscape:** Botón cotizador no visible en celular horizontal.
-- [ ] **Bug envío:** Página se traba en "Enviar" (fetch cuelga sin timeout/catch).
+- [x] **Video crossfade:** 2 players, sin pausa entre clips. Opacidad final 0.40.
+- [x] **Email SendGrid:** Reemplazó SMTP (Railway bloquea puertos SMTP). Timeout cliente 20s.
+- [x] **Landscape compact:** Imagen 90px, fuentes 0.45rem, padding reducido. Contacto visible.
+- [x] **Immersion images:** `object-fit: contain` en móvil vertical, sin recorte.
+- [x] **Desktop contacto:** Centrado, alineado con servicios (`padding-left: 25px`).
 
-## 🎯 PRIORIDADES 28/05/2026 — ROADMAP A PRODUCCIÓN
+## 🎯 PRIORIDADES 29/05/2026 — ROADMAP A PRODUCCIÓN
 
 | Prioridad | Acción | Por qué |
 |-----------|--------|---------|
 | 🔥 Crítica | **Cerrar 1 cliente real** | Probar el ciclo completo valida o rompe supuestos |
 | 🔥 Crítica | **Conseguir RFC en RESICO** | Sin factura no hay cobro formal |
-| 🔥 Crítica | **Revocar credenciales viejas + Railway env vars** | SMTP y Twilio expuestos en git history |
-| Alta | **Verificar SMTP en Railway (puerto 465)** | Último push migró a SSL, falta confirmar conexión |
 | Alta | **Dominio propio** | `soma.up.railway.app` no inspira confianza |
+| Alta | **Autenticar dominio en SendGrid** | Evitar que correos caigan en spam |
 | Media | **Migrar a PostgreSQL** | SQLite en Railway se pierde al reiniciar |
 | Media | **faster-whisper + DeepSeek** | Automatización real del análisis |
 | Media | **Optimizar web: CDN o Cloudflare** | Velocidad de carga en celular |

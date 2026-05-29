@@ -793,3 +793,76 @@ Se creó además `REFERENCIAS_CANONICAS.md` — tabla maestra con las 43 fuentes
 | `SOMA_CORE_INDEX.md` | Nuevo Bloque 5 con checklist de sesión + bugs pendientes |
 | `SOMA_SNAPSHOT.md` | 11 nuevos items + 2 bugs registrados |
 | `BITACORA_SOMA.md` | Esta entrada de sesión |
+
+---
+
+## Sesión: 2026-05-29 — Video crossfade, SendGrid, Landscape compact, Immersion images fix
+
+### 68. LOGROS DE LA SESIÓN
+
+#### Video Hero
+- **Crossfade:** Implementados dos elementos `<video>` con transición `opacity 0.8s`. Mientras uno se reproduce, el otro precarga el siguiente clip. Elimina el salto/pausa entre videos de la playlist.
+- **Opacidad final:** Ajustada progresivamente por petición del usuario: 0.4 → 0.5 → 0.45 → **0.40** (filtro más oscuro).
+
+#### Email (SendGrid)
+- **Problema:** Railway bloquea todos los puertos SMTP salientes (587, 465, 25). El envío con `smtplib` fallaba con "Network is unreachable".
+- **Solución:** Reemplazo de SMTP por **SendGrid API** (Twilio). Usa HTTPS (puerto 443), que Railway sí permite.
+- **Cambios:**
+  - `requirements.txt`: agregado `sendgrid>=6.0`
+  - `server.py`: eliminados `smtplib`, `email.mime`; agregados `SendGridAPIClient`, `Mail`
+  - `enviar_correo()` ahora usa SendGrid HTTP API
+  - `notificaciones_status()` ahora verifica API key de SendGrid en vez de conexión SMTP
+  - `smtp_error` incluido en respuesta JSON de `/save_immersion` para diagnóstico
+  - `.env` y `.env.example`: reemplazadas variables SMTP por `SENDGRID_API_KEY`
+- **Timeout cliente:** 5s → 20s para no abortar antes de respuesta del servidor.
+- **Timeout SMTP removido:** Ya no aplica (SendGrid no tiene timeout análogo).
+
+#### Landscape Mobile (Contacto invisible)
+- **Compactación agresiva** para que el botón y textos de contacto quepan sin scroll:
+  - Imagen servicios: 120px → 90px
+  - Fuentes: lista `0.5rem`, contacto p `0.5rem`, botón `0.5rem` → todos a `0.45rem`
+  - Grid gap servicios: 8px → 4px
+  - Padding sección: `1.5vh 4% 4vh` → `1vh 4% 3vh`
+  - Timeline compacto (`padding-bottom: 4px`)
+  - Botón: `padding: 4px 10px`
+- Removido `display: inline !important` del h2 de contacto (posible conflicto flex).
+
+#### Immersion Images (Mobile Portrait)
+- **Problema:** `object-fit: cover` + `aspect-ratio: 3/4` recortaba las imágenes en columna única.
+- **Solución:** En 480px → `object-fit: contain; height: auto; max-height: 200px`. En 768px → mismo approach con `max-height: 180px`. Imágenes se muestran completas sin recorte.
+
+#### Desktop Section:last-of-type
+- Centrado (`justify-content: center; padding: 0 10%`) igual a las otras secciones.
+- Título Contacto hereda `h2` global (`clamp(1.8rem, 4vw, 2.5rem)`) — mismo tamaño que Servicios.
+- Textos contact alineados con lista servicios via `padding-left: 25px`.
+
+### 69. BUGS RESUELTOS
+
+| Bug | Estado |
+|-----|--------|
+| Botón cotizador oculto en landscape mobile | Resuelto (compactación extrema) |
+| Página se traba en "Enviar" | Resuelto (timeout 20s + catch) |
+| SMTP no conecta en Railway | Resuelto (migración a SendGrid) |
+| Imágenes de inmersión recortadas en móvil vertical | Resuelto (object-fit: contain) |
+
+### 70. PENDIENTES (próxima sesión)
+
+1. **[MEDIA] Autenticar dominio** en SendGrid para evitar que correos vayan a spam.
+2. **[MEDIA] Confirmar que landscape mobile** muestra correctamente el contacto en vivo.
+3. **[BAJA] Actualizar contrato** con tiempos de entrega reales (cuando Juan los defina).
+4. **[BAJA] PostgreSQL** en Railway (SQLite se pierde en reinicios).
+
+### 71. ARCHIVOS MODIFICADOS
+
+| Archivo | Cambio |
+|---------|--------|
+| `web/Pagina Web 6.html` | Video crossfade (2 players), landscape compact, immersion images contain, timeout 20s, smtp_error en toast |
+| `backend/server.py` | SendGrid API (eliminado smtplib), respuesta con smtp_error, timeout SMTP 10s |
+| `requirements.txt` | +sendgrid |
+| `.env` / `.env.example` | SMTP_USER/PASSWORD → SENDGRID_API_KEY |
+| `SOMA_SNAPSHOT.md` | Actualizado con todos los cambios de la sesión |
+| `BITACORA_SOMA.md` | Esta entrada |
+
+---
+
+*Sesión cerrada. Sitio web completo y funcional: hero, portafolio, inmersión, cotizador, email, responsive landscape/portrait. Pendiente dominio propio + publicación formal.*
