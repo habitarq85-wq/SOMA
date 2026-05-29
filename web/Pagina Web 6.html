@@ -1138,7 +1138,7 @@
     async function finishImmersion(btn) {
         if (btn) { btn.textContent = "Enviando..."; btn.disabled = true; }
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 8000);
+        const timeout = setTimeout(() => controller.abort(), 5000);
         try {
             await fetch('/save_immersion', {
                 method: 'POST',
@@ -1152,6 +1152,31 @@
         clearTimeout(timeout);
         if (btn) { btn.textContent = "Finalizar"; btn.disabled = false; }
         closeImmersion();
+        mostrarAviso("¡Inmersión registrada! Te contactaremos pronto.");
+    }
+
+    function mostrarAviso(texto) {
+        const el = document.createElement('div');
+        el.textContent = texto;
+        Object.assign(el.style, {
+            position: 'fixed', bottom: '30px', right: '30px', zIndex: '9999',
+            background: 'var(--accent)', color: 'white', padding: '14px 24px',
+            fontFamily: '"JetBrains Mono", monospace', fontSize: '0.8rem',
+            borderRadius: '4px', boxShadow: '0 8px 30px rgba(0,0,0,0.4)',
+            opacity: '0', transform: 'translateY(20px)',
+            transition: 'opacity 0.4s ease, transform 0.4s ease',
+            maxWidth: '320px', lineHeight: '1.4'
+        });
+        document.body.appendChild(el);
+        requestAnimationFrame(() => {
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+        });
+        setTimeout(() => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            setTimeout(() => el.remove(), 500);
+        }, 4000);
     }
 </script>
 </body>
