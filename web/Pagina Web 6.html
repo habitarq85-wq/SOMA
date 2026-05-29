@@ -1160,20 +1160,24 @@
         if (btn) { btn.textContent = "Enviando..."; btn.disabled = true; }
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 5000);
+        let mensaje = "¡Inmersión registrada! Te contactaremos pronto.";
         try {
-            await fetch('/save_immersion', {
+            const res = await fetch('/save_immersion', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(somaData),
                 signal: controller.signal
             });
+            const data = await res.json();
+            if (data.status !== 'success') mensaje = "Error al guardar. Intenta de nuevo.";
+            else if (data.email === 'failed') mensaje = "Guardado. El correo no pudo enviarse, te contactaremos pronto.";
         } catch (e) {
-            console.log("Sin servidor, modo local");
+            mensaje = "No se pudo conectar con el servidor. Tus datos se perderán.";
         }
         clearTimeout(timeout);
         if (btn) { btn.textContent = "Finalizar"; btn.disabled = false; }
         closeImmersion();
-        mostrarAviso("¡Inmersión registrada! Te contactaremos pronto.");
+        mostrarAviso(mensaje);
     }
 
     function mostrarAviso(texto) {

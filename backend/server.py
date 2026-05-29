@@ -5,7 +5,6 @@ import datetime
 import json
 import os
 import re
-import threading
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -271,11 +270,11 @@ def save_immersion():
     except Exception as e:
         print(f"Error DB: {e}")
 
-    # --- ENVÍO EN SEGUNDO PLANO ---
+    # --- ENVÍO SINCRÓNICO (confiable) ---
     asunto = f"NUEVO LEAD SOMA: {temp_id}"
     cuerpo = f"Se ha registrado una nueva inmersión.\n\nContacto: {contacto}\nID: {temp_id}\n\n{reporte}"
-    threading.Thread(target=enviar_correo, args=(EMAIL_DESTINO, asunto, cuerpo), daemon=True).start()
-    threading.Thread(target=enviar_whatsapp, args=(contacto, temp_id, nivel_key, m2), daemon=True).start()
+    email_ok = enviar_correo(EMAIL_DESTINO, asunto, cuerpo)
+    whatsapp_ok = enviar_whatsapp(contacto, temp_id, nivel_key, m2)
 
     print(f"\n{'='*50}")
     print(f"🔔 NUEVO LEAD SOMA")
@@ -284,7 +283,12 @@ def save_immersion():
     print(f"   Reporte: backend/reportes/")
     print(f"{'='*50}\n")
 
-    return jsonify({"status": "success", "temp_id": temp_id}), 200
+    return jsonify({
+        "status": "success",
+        "temp_id": temp_id,
+        "email": "sent" if email_ok else "failed",
+        "whatsapp": "sent" if whatsapp_ok else "failed"
+    }), 200
 
 @app.route('/activity_matrix/<temp_id>', methods=['GET'])
 def get_activity_matrix(temp_id):
