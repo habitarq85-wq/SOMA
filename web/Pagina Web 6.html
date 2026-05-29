@@ -1163,7 +1163,7 @@
     async function finishImmersion(btn) {
         if (btn) { btn.textContent = "Enviando..."; btn.disabled = true; }
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 5000);
+        const timeout = setTimeout(() => controller.abort(), 20000);
         let mensaje = "¡Inmersión registrada! Te contactaremos pronto.";
         try {
             const res = await fetch('/save_immersion', {

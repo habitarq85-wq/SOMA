@@ -165,9 +165,9 @@ def enviar_correo(destinatario, asunto, cuerpo):
         msg.attach(MIMEText(cuerpo, "plain", "utf-8"))
 
         if SMTP_USE_SSL:
-            server = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT)
+            server = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, timeout=10)
         else:
-            server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+            server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10)
             server.starttls()
         server.login(SMTP_USER, SMTP_PASSWORD)
         server.send_message(msg)
