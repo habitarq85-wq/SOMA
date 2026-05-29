@@ -377,7 +377,7 @@
             .label { font-size: 0.4rem; letter-spacing: 1px; margin-bottom: 3px; }
 
             /* Immersion landscape compacta */
-            #immersion-modal { padding: 8px 3%; }
+            #immersion-modal { padding: 8px 3%; overflow-y: auto; }
             .immersion-step { justify-content: flex-start; padding-top: 2vh; }
             .immersion-step h2 { font-size: clamp(0.8rem, 3vw, 1rem); margin-bottom: 4px; }
             .img-choice-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
@@ -1074,15 +1074,19 @@
 
     async function finishImmersion(btn) {
         if (btn) { btn.textContent = "Enviando..."; btn.disabled = true; }
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 8000);
         try {
             await fetch('/save_immersion', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(somaData)
+                body: JSON.stringify(somaData),
+                signal: controller.signal
             });
         } catch (e) {
             console.log("Sin servidor, modo local");
         }
+        clearTimeout(timeout);
         if (btn) { btn.textContent = "Finalizar"; btn.disabled = false; }
         closeImmersion();
     }

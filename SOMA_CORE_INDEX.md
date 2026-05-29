@@ -64,6 +64,19 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 
 ---
 
+## BLOQUE 5: SITIO WEB (MKT) — Sesión 28/05/2026
+- [x] **Cotizador: single POST** — Eliminado fetch duplicado en paso 12. Solo `finishImmersion()` al final.
+- [x] **Hero mobile vertical:** `padding-top: 15vh`, overlay más oscuro `0.95`.
+- [x] **Portfolio mobile:** Proyectos centrados, títulos carrusel en borde inferior.
+- [x] **Portfolio landscape:** Modal flex column, imagen flex:1, thumbnails 70px.
+- [x] **Carrusel filosofía horizontal:** Forzado con `!important`, flecha `→` hint en mobile, slide "CALIDAD SIN JERARQUÍAS" eliminado.
+- [x] **Servicios:** `.services-row` agrupa imagen + lista, contacto debajo.
+- [x] **Trayectoria portrait:** Viñeta `::after` en foto, "M. en Arq." en una línea.
+- [x] **WhatsApp en contacto:** "999 361 9433" visible.
+- [x] **110 imágenes comprimidas:** Pillow quality 80/70, 49→44 MB. Commit `0531ffe`.
+- [ ] **Bug landscape:** Botón cotizador no visible en celular horizontal.
+- [ ] **Bug envío:** Página se traba en "Enviar" (fetch cuelga sin timeout/catch).
+
 ## 🎯 PRIORIDADES 28/05/2026 — ROADMAP A PRODUCCIÓN
 
 | Prioridad | Acción | Por qué |
@@ -76,3 +89,4 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 | Media | **Migrar a PostgreSQL** | SQLite en Railway se pierde al reiniciar |
 | Media | **faster-whisper + DeepSeek** | Automatización real del análisis |
 | Media | **Optimizar web: CDN o Cloudflare** | Velocidad de carga en celular |
+| 📌 Recordatorio | **Migrar a Render (free tier) al acabar crédito Railway** | Railway > $5/mes después del crédito inicial; Render tiene PostgreSQL gratis + 750h/mes |

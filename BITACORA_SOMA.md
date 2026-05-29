@@ -760,7 +760,36 @@ Se creó además `REFERENCIAS_CANONICAS.md` — tabla maestra con las 43 fuentes
 
 ### 64. ARCHIVOS MODIFICADOS
 
+---
+
+## Sesión: 2026-05-28 (Tarde/Noche) — Ajustes responsive + Imágenes comprimidas + Next bugs
+
+### 65. LOGROS DE LA SESIÓN
+
+- **Cotizador single POST:** Eliminado el doble envío. `registerContact()` ya no hace fetch; solo `finishImmersion()` al paso 12 o 15 guarda una vez.
+- **Responsive portrait:** Hero `padding-top: 15vh`, overlay oscuro `0.95`, proyectos centrados, títulos carrusel al borde inferior.
+- **Responsive landscape:** Modal portafolio flex column (imagen flex:1, thumbnails 70px). Carrusel filosofía forzado horizontal con `!important` + flecha `→` hint.
+- **Servicios reestructurados:** `.services-row` agrupa imagen + lista en todas las breakpoints. Contacto fuera del row.
+- **Trayectoria portrait:** Viñeta `::after` con `box-shadow: inset`. "M. en Arq." en una línea tanto en timeline como bajo la foto.
+- **Carrusel filosofía:** Slide "CALIDAD SIN JERARQUÍAS" eliminado. Flecha `→` animada en mobile + máscara gradient fade.
+- **WhatsApp:** Número `999 361 9433` visible en Contacto.
+- **Imágenes comprimidas:** 110 archivos procesados con Pillow (JPG quality 80, WebP quality 70). Reducción 49→44 MB. Commit `0531ffe` pusheado a GitHub.
+
+### 66. PENDIENTES (próxima sesión)
+
+1. **[BUG] Botón cotizador oculto en landscape mobile** — posible z-index/overflow/posición del modal.
+2. **[BUG] Página se traba en "Enviar"** — fetch a `/save_immersion` cuelga sin timeout ni catch. Agregar AbortController o timeout.
+3. **[MEDIA] Instalar ffmpeg** para comprimir los 4 videos MP4 (~19 MB total).
+4. **[BAJA] Probar SMTP en Railway** — confirmar que el puerto 465 SSL funciona en producción.
+
+### 67. ARCHIVOS MODIFICADOS
+
 | Archivo | Cambio |
 |---------|--------|
 | `web/Pagina Web 6.html` | Landscape responsive (max-height: 520px), slide titles más pequeños, hero mantiene 100vh |
 | `backend/server.py` | SMTP_SSL puerto 465, .strip() en env vars, debug logging en /notificaciones/status |
+| `web/Pagina Web 6.html` | Cotizador single POST (eliminado fetch en paso 12), hero padding-top 15vh, overlay 0.95, proyectos centrados, títulos carrusel borde inferior, landscape modal flex, carrusel filosofía horizontal !important + flecha, servicios .services-row, trayectoria viñeta ::after, WhatsApp contacto |
+| `SOLOJUAN.md` | Instrucciones literales de la sesión agregadas |
+| `SOMA_CORE_INDEX.md` | Nuevo Bloque 5 con checklist de sesión + bugs pendientes |
+| `SOMA_SNAPSHOT.md` | 11 nuevos items + 2 bugs registrados |
+| `BITACORA_SOMA.md` | Esta entrada de sesión |

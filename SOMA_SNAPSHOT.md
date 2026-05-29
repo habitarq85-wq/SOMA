@@ -176,6 +176,16 @@ Estrategias para redes sociales, Google y otras fuentes de leads. Solo cuando el
 - **[2026-05-28] SMTP Railway fix:** Puerto cambiado de 587 (bloqueado por Railway) a 465 SSL. Nueva variable `SMTP_USE_SSL=true` (default). `.strip()` agregado a todas las env vars.
 - **[2026-05-28] Env vars:** `.strip()` en SMTP_USER, SMTP_PASSWORD, TWILIO_SID, TWILIO_TOKEN, NOTIFICACION_WHATSAPP para evitar trailing spaces en Railway.
 - **[2026-05-28] Debug SMTP:** Endpoint `/notificaciones/status` ahora devuelve `error` y `trace` con el mensaje de error real.
+- **[2026-05-28] Cotizador single POST:** Eliminado fetch duplicado en `registerContact()`. Ambos pasos (12 y 15) llaman a `finishImmersion()` como único punto de guardado.
+- **[2026-05-28] Hero vertical mobile:** `padding-top: 15vh`, overlay `rgba(10,10,10,0.95)`. Proyectos centrados con `justify-content: center`.
+- **[2026-05-28] Portfolio responsive:** Landscape modal flex column, imagen flex:1, thumbnails 70px. Títulos carrusel en borde inferior mobile/landscape.
+- **[2026-05-28] Filosofía carrusel:** Slide "CALIDAD SIN JERARQUÍAS" eliminado. Flecha `→` pulse en mobile. Forzado horizontal con `!important`.
+- **[2026-05-28] Servicios reestructurados:** `.services-row` agrupa imagen + lista, contacto debajo. Grid desktop `1fr 260px`, mobile `1fr auto`.
+- **[2026-05-28] Trayectoria portrait:** Viñeta `::after { box-shadow: inset 0 0 30px 15px rgba(10,10,10,0.7) }`. "M. en Arq." en una línea.
+- **[2026-05-28] WhatsApp:** "WhatsApp: 999 361 9433" agregado en sección Contacto.
+- **[2026-05-28] Imágenes comprimidas:** 110 imágenes con Pillow (quality 80 JPG, 70 WebP). 49→44 MB. Commit `0531ffe`.
+- **[BUG] Botón cotizador no visible en landscape mobile** — pendiente próxima sesión.
+- **[BUG] Página se traba en "Enviar"** — fetch sin timeout/catch, pendiente próxima sesión.
 
 ---
 

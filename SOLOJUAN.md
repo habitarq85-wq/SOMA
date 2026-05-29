@@ -366,3 +366,49 @@ La investigación de sitio y normativa NO va antes de la cotización; se ejecuta
 
 "Pusiste al dia el snapshot y el soma_core_index y pusiste mis instrucciones literales en SOLOJUAN."
 
+### [2026-05-28] — Sesión: Cotizador (single POST) + Responsive landscape/portrait + Imágenes comprimidas
+
+"el cotizador manda la info dos veces, una en el paso 12 y otra en el 15, debe ser solo al final."
+
+**Decisión:** Se eliminó el fetch de `registerContact()` (paso 12). Ambos pasos (12 y 15) llaman a `finishImmersion(this)` como único punto de guardado. El POST a `/save_immersion` ocurre una sola vez.
+
+"en celular vertical, el título del hero se ve en medio, debería estar en el tercio superior. también el overlay está muy claro."
+
+**Decisión:**
+- Hero `padding-top: 15vh` para subir el título al tercio superior
+- Overlay más oscuro: `rgba(10,10,10,0.7) → rgba(10,10,10,0.95)`
+- Proyectos centrados verticalmente con `justify-content: center`
+- Títulos del carrusel en mobile: `bottom: 8px`, landscape: `bottom: 0` con padding mínimo
+
+"en celular horizontal las imágenes del portafolio se ven recortadas y el carrusel de filosofía no desliza horizontal."
+
+**Decisión:**
+- Modal portafolio en landscape: `display: flex; flex-direction: column`
+- `view-center { flex: 1 }` para que la imagen ocupe el espacio disponible
+- `view-side { height: 70px }` miniaturas más pequeñas
+- Carrusel filosofía forzado horizontal con `!important`: `flex-direction: row; flex-wrap: nowrap; overflow-x: auto`
+
+"en servicios, la imagen se ve separada de la lista, deberían ir juntas."
+
+**Decisión:** HTML reestructurado: `.services-row` envuelve `<ul>` + `.services-visual`. El contacto queda debajo del row. Desktop `grid-template-columns: 1fr 260px`, mobile `1fr auto`, landscape `1fr auto`. Altura base del visual: 220px.
+
+"en trayectoria, en portrait se ve muy plana la foto, necesita un efecto de viñeta."
+
+**Decisión:** `::after` en portrait con `box-shadow: inset 0 0 30px 15px rgba(10,10,10,0.7)`. Texto "M. en Arq." en una sola línea en timeline y bajo la foto.
+
+"quita la diapositiva de 'CALIDAD SIN JERARQUÍAS' del carrusel de filosofía, y agrega una flecha que indique que se puede deslizar en celular."
+
+**Decisión:** Slide 7 eliminado del carrusel. Agregada flecha `→` con animación pulse en mobile, con máscara gradient fade al final del carrusel.
+
+"agrega el WhatsApp en la sección de contacto."
+
+**Decisión:** "WhatsApp: 999 361 9433" agregado en la sección Contacto.
+
+"comprime las imágenes para que pesen menos."
+
+**Decisión:** 110 imágenes comprimidas con Pillow (quality 80 JPG, 70 WebP). 49 MB → 44 MB. Videos no comprimidos (ffmpeg no instalado). Commit `0531ffe` subido a GitHub.
+
+### Próxima Sesión
+- **Bug 1:** En celular horizontal no se ve el botón cotizador (revisar z-index, overflow, posición del modal).
+- **Bug 2:** La página se traba en "Enviar" — el fetch a `/save_immersion` cuelga sin respuesta; falta timeout/catch en el cliente.
+
