@@ -58,7 +58,7 @@
 ### Servidor Web + Dashboard + Notificaciones (puerto 8080)
 - **Archivo:** `backend/server.py` (Flask)
 - **Endpoints:** `/save_immersion`, `/get_leads`, `/leads/kanban`, `/lead/<id>/pipeline`, `/activity_matrix/<temp_id>`, `/programa/<lead_id>`, `/programa/espacio` (POST/PUT/DELETE), `/cotizacion/<lead_id>`, `/cotizacion/<lead_id>/pdf`, `/cobros/<proyecto_id>`, `/cobros` (POST), `/cobros/<id>/pagar`, `/resumen_financiero`, `/` (Dashboard HTML), `/css/<path>` (CSS estático)
-- **SMTP:** Gmail configurado vía SSL (puerto 465, variable `SMTP_USE_SSL=true`). Reportes a habitarq85@gmail.com. ⚠️ Railway bloquea outbound en puerto 587, se migró a 465.
+- **SMTP:** Gmail configurado vía SSL (puerto 465, variable `SMTP_USE_SSL=true`). Reportes a habitarq85@gmail.com. ⚠️ Railway bloquea outbound en puerto 587, se migró a 465. Envío **síncrono** (sin threads) porque Railway elimina hilos en segundo plano. Timeout SMTP 10s.
 - **WhatsApp:** Twilio Sandbox. Notificaciones al +5219993619433.
 - **Persistencia:** SQLite con tablas: `captura_web`, `matriz_inversion`, `cobros`, `config_fiscal`, `programa_arquitectonico`, `proyectos`, `habitantes`, `actividades`, `ejes_diseno`, `espacios`, `proyecto_datos`.
 - **Diagnósticos:** `diagnosticos_master.json` (10 pasos de inmersión).
@@ -116,13 +116,16 @@
 - [x] Clave E{número} y relaciones diferidas (como en Arquiprograma.py original)
 - [x] **Diagrama Espacial SOMA:** Migrado de Tkinter a web (`DiagramaSoma.html` + endpoints Flask). Grafo interactivo con vis-network, arrastre de nodos, filtro por zona, export PNG/SVG.
 
-### PRIORIDAD 2 — PÁGINA WEB ✅ (Paralelo — Avance)
-- [x] **Hero quotes:** 4 frases rotativas con fade (Carta de Presentación). Centradas al título.
-- [x] **Bug carrusel vertical:** Imágenes trabadas por timeout stacking y falta de preloader. Corregido con `Image()` preloader + `clearTimeout` + `decodeURIComponent`.
-- [x] **Video playlist:** `loop` eliminado del `<video>` (impedía que `onended` disparara el siguiente). Agregado `onloadeddata` para play seguro.
-- [x] **Imágenes faltantes:** Agregados archivos `Acceso.png`, `Duna.png`, `Andador.png`, `Lateral.png` a Hotel Telchac. Actualizados todos los projectAssets a nombres reales en disco.
-- [x] **`web/Pagina Web 6.html`** creada con todas las correcciones, 0 funciones perdidas.
-- [x] **Imágenes definitivas:** 20 imágenes propias colocadas en 10 carpetas temáticas. Rutas actualizadas en `Pagina Web 6.html`.
+### PRIORIDAD 2 — PÁGINA WEB ✅ (Completado)
+- [x] Hero quotes rotativas
+- [x] Bug carrusel vertical (preloader + cleanup)
+- [x] Video playlist crossfade (2 players, sin pausa entre clips)
+- [x] Video opacity (0.40 final)
+- [x] Landscape responsive (compactación: imagen 90px, fuentes 0.45rem)
+- [x] Desktop contacto centrado y alineado con servicios
+- [x] Immersion imágenes sin crop en móvil vertical
+- [x] Cotizador: email síncrono, toast feedback, timeout 20s
+- [x] `web/Pagina Web 6.html` creada con todas las correcciones
 
 ### PRIORIDAD 3 — MARKETING (Después de P1 + P2)
 Estrategias para redes sociales, Google y otras fuentes de leads. Solo cuando el embudo completo funcione: lead → cotización → pago → factura.
@@ -138,7 +141,7 @@ Estrategias para redes sociales, Google y otras fuentes de leads. Solo cuando el
 
 ---
 
-## 📅 ÚLTIMA ACTUALIZACIÓN: 28/05/2026 (LANDSCAPE RESPONSIVE + SMTP SSL)
+## 📅 ÚLTIMA ACTUALIZACIÓN: 29/05/2026 (VIDEO CROSSFADE + EMAIL SINCRÓNICO + LANDSCAPE COMPACT)
 - **Programa Arquitectónico en Dashboard:** Tabla `programa_arquitectonico` + CRUD endpoints + UI con 3 niveles (Deseado/Complementario/Lujo), clave E{número}, relaciones por 🔗 en mini-modal movible.
 - **Cotización Formal PDF:** Endpoint `/cotizacion/<id>/pdf` con HTML imprimible. **NO muestra** precio/m², mínimo $8,000 ni obra (datos internos del taller).
 - **Cobros y Finanzas:** Tabla `cobros` + `resumen_financiero` + registro de pagos en modal expediente + badges en lead cards.
@@ -184,8 +187,16 @@ Estrategias para redes sociales, Google y otras fuentes de leads. Solo cuando el
 - **[2026-05-28] Trayectoria portrait:** Viñeta `::after { box-shadow: inset 0 0 30px 15px rgba(10,10,10,0.7) }`. "M. en Arq." en una línea.
 - **[2026-05-28] WhatsApp:** "WhatsApp: 999 361 9433" agregado en sección Contacto.
 - **[2026-05-28] Imágenes comprimidas:** 110 imágenes con Pillow (quality 80 JPG, 70 WebP). 49→44 MB. Commit `0531ffe`.
-- **[BUG] Botón cotizador no visible en landscape mobile** — pendiente próxima sesión.
-- **[BUG] Página se traba en "Enviar"** — fetch sin timeout/catch, pendiente próxima sesión.
+- **[BUG] Botón cotizador no visible en landscape mobile** — resuelto: compactación máxima (imagen 90px, fuentes 0.45rem, padding reducido). Pendiente verificar en vivo.
+- **[BUG] Página se traba en "Enviar"** — resuelto: email revertido a síncrono + timeout 5s en fetch. Pendiente ajustar si Railway persiste.
+- **[2026-05-29] Video crossfade:** Dos elementos `<video>` en vez de uno. Mientras el visible se reproduce, el oculto precarga el siguiente. Transición `opacity 0.8s ease`. Elimina el salto/pausa entre clips.
+- **[2026-05-29] Video opacity:** Ajustada progresivamente: 0.4 → 0.5 → 0.45 → 0.40 (filtro más oscuro, decisión del usuario).
+- **[2026-05-29] Email síncrono (Railway):** Revertido de `threading` a síncrono. Railway eliminaba los hilos antes de completar el envío. Toast ahora responde según estado del servidor (éxito, email falló, error conexión).
+- **[2026-05-29] Cotizador timeout:** fetch timeout 8s → 5s (ahora 20s tras prueba).
+- **[2026-05-29] Desktop contacto:** `section:last-of-type` ahora `justify-content: center; padding: 0 10%` (mismo que otras secciones). Título hereda h2 global. Textos alineados con lista de servicios via `padding-left: 25px`.
+- **[2026-05-29] Landscape responsive (compactación final):** Contacto invisible por falta de espacio. Se redujo: imagen servicios 120→90px, fuentes a 0.45rem, gaps a 4px, padding sección `1vh 4% 3vh`. Timeline más compacto. Botón `padding: 4px 10px`.
+- **[2026-05-29] Immersion images crop fix:** En móvil vertical, `object-fit: cover` + `aspect-ratio: 3/4` recortaban las imágenes. Cambiado a `object-fit: contain; height: auto; max-height: 200px` en 480px (1 columna) y 180px en 768px (2 columnas).
+- **[2026-05-29] Email timeout fix:** Timeout cliente 5s → 20s (SMTP síncrono tardaba más de 5s). Timeout SMTP añadido (10s) para no colgarse.
 
 ---
 
