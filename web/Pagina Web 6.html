@@ -38,7 +38,7 @@
         }
         section:last-of-type {
             height: 100vh; overflow: hidden;
-            justify-content: flex-start; padding: 3vh 8%;
+            justify-content: center; padding: 0 10%;
             scroll-snap-align: start;
         }
 
@@ -141,22 +141,22 @@
 
         /* --- 04. SERVICIOS --- */
         .services-wrapper { width: 100%; z-index: 2; }
-        .services-row { display: grid; grid-template-columns: 1fr 140px; gap: 10px 20px; align-items: center; }
-        .interactive-list { list-style: none; font-family: 'JetBrains Mono', monospace; font-size: 0.55rem; line-height: 1.8; border-left: 2px solid var(--accent); padding-left: 20px; }
+        .services-row { display: grid; grid-template-columns: 1fr auto; gap: 15px 30px; align-items: center; }
+        .interactive-list { list-style: none; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; line-height: 2.2; border-left: 2px solid var(--accent); padding-left: 25px; }
         .interactive-list li { cursor: pointer; opacity: 0.4; transition: 0.4s var(--ease); }
         .interactive-list li.active { opacity: 1; color: var(--accent); }
-        .services-visual { width: 100%; max-width: 140px; border: 1px solid rgba(255,255,255,0.05); background: #1a1a1a; }
+        .services-visual { width: 100%; max-width: 200px; border: 1px solid rgba(255,255,255,0.05); background: #1a1a1a; }
         .services-visual img { width: 100%; height: auto; display: none; filter: grayscale(1); transition: 0.6s var(--ease); }
         .services-visual img.active-img { display: block; opacity: 0.8; }
         .services-wrapper > div > div:last-child {
-            margin-top: 10px !important; padding-top: 8px !important;
+            margin-top: 15px !important; padding-top: 10px !important;
         }
-        .services-wrapper > div > div:last-child h2 { font-size: 0.6rem; margin-bottom: 2px; }
+        .services-wrapper > div > div:last-child h2 { margin-bottom: 2px; }
         .services-wrapper > div > div:last-child p {
-            font-size: 0.5rem !important; margin-top: 3px !important;
+            font-size: 0.65rem !important; margin-top: 5px !important;
         }
         .services-wrapper > div > div:last-child .btn-soma {
-            margin-top: 8px !important; padding: 6px 14px; font-size: 0.5rem;
+            margin-top: 12px !important; padding: 10px 22px; font-size: 0.6rem;
         }
 
         /* --- MODAL PORTAFOLIO --- */
