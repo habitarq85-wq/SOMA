@@ -341,8 +341,8 @@
 
         @media (max-height: 520px) {
             .scroll-container { scroll-snap-type: none; }
-            section { overflow: visible; min-height: auto; height: auto; padding-top: 2vh; padding-bottom: 2vh; justify-content: flex-start; }
-            section + section { padding: 1.5vh 4%; min-height: auto; height: auto; }
+            section { overflow: visible; min-height: 100vh; height: auto; padding-top: 2vh; padding-bottom: 2vh; }
+            section + section { padding: 1.5vh 4%; min-height: auto; height: auto; justify-content: flex-start; }
             .hero-flex { flex-direction: row; align-items: center; gap: 6px; }
             .hero-quotes { width: 50%; }
             .soma-main { font-size: clamp(1.4rem, 5vw, 2rem); }
@@ -360,9 +360,21 @@
             .trayectoria-grid > div:last-child { text-align: center; }
             .trayectoria-grid > div:last-child p { text-align: center; font-size: 0.5rem !important; }
             .topic-slide { width: 200px; padding: 8px 12px; }
-            .services-row { grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
-            .services-visual { width: 120px !important; height: auto !important; aspect-ratio: 4/3; }
-            .interactive-list { font-size: 0.5rem; line-height: 1.5; padding-left: 12px; }
+            .services-wrapper > div { display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 6px; }
+            .services-row { display: contents; }
+            .interactive-list { grid-column: 1; font-size: 0.5rem; line-height: 1.5; padding-left: 12px; }
+            .services-visual { grid-column: 2; grid-row: 1; width: 120px !important; height: auto !important; aspect-ratio: 4/3; }
+            .services-wrapper > div > div:last-child {
+                grid-column: 2; grid-row: 2; border: none; margin: 0; padding: 0;
+                display: flex; flex-direction: column; align-items: center; gap: 2px;
+            }
+            .services-wrapper > div > div:last-child h2 { display: none; }
+            .services-wrapper > div > div:last-child p {
+                font-size: 0.5rem !important; margin: 0 !important; line-height: 1.3;
+            }
+            .services-wrapper > div > div:last-child .btn-soma {
+                margin: 0; padding: 6px 12px; font-size: 0.5rem;
+            }
             .timeline { padding-left: 14px; }
             .tl-node { padding-bottom: 6px; }
             .tl-year { font-size: 0.45rem; }
@@ -975,6 +987,30 @@
         };
         preloader.src = newSrc;
     }
+
+    // --- SWIPE EN MODAL PORTAFOLIO ---
+    let touchStartX = 0;
+    let touchStartY = 0;
+    const SWIPE_THRESHOLD = 40;
+
+    document.getElementById('img-focus').addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
+
+    document.getElementById('img-focus').addEventListener('touchend', function(e) {
+        const dx = e.changedTouches[0].screenX - touchStartX;
+        const dy = e.changedTouches[0].screenY - touchStartY;
+        if (Math.abs(dx) < SWIPE_THRESHOLD || Math.abs(dy) > Math.abs(dx)) return;
+        const thumbs = document.querySelectorAll('.thumb');
+        const active = document.querySelector('.thumb.active');
+        const idx = Array.from(thumbs).indexOf(active);
+        if (idx < 0) return;
+        let next;
+        if (dx < 0) next = thumbs[Math.min(idx + 1, thumbs.length - 1)];
+        else next = thumbs[Math.max(idx - 1, 0)];
+        if (next && next !== active) setFocus(next);
+    }, { passive: true });
 
     // --- INMERSIÓN SOMA ---
     let somaData = { respuestas: {}, contacto: '', cotizacion: { m2: 0, precioDiseno: 0 } };
