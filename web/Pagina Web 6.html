@@ -270,14 +270,14 @@
             .services-row { grid-template-columns: 1fr auto; gap: 12px; }
             .interactive-list { font-size: 0.65rem; line-height: 2; padding-left: 15px; }
             .services-visual { width: 130px !important; height: auto !important; aspect-ratio: 4/3; }
-            .carousel-area { min-height: auto; }
-            .slider { padding: 12px 0; gap: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .carousel-area { min-height: auto; max-height: 60vh; }
+            .slider { padding: 16px 0; gap: 16px; overflow-y: auto; overflow-x: hidden; flex-direction: column; align-items: center; -webkit-overflow-scrolling: touch; }
             .slide { flex: 0 0 auto; }
             .slide-title { font-size: 0.5rem; padding: 4px 10px; bottom: 8px; left: 0; background: rgba(10,10,10,0.6); border-radius: 0 3px 3px 0; }
-            .p-16-9 { width: 260px; height: 146px; }
-            .p-9-16 { width: 160px; height: 284px; }
-            .p-3-2 { width: 210px; height: 140px; }
-            .p-custom-cristi { width: 260px; height: 146px; }
+            .p-16-9 { width: 85%; max-width: 420px; height: auto; aspect-ratio: 16/9; }
+            .p-9-16 { width: 65%; max-width: 300px; height: auto; aspect-ratio: 9/16; }
+            .p-3-2 { width: 75%; max-width: 380px; height: auto; aspect-ratio: 3/2; }
+            .p-custom-cristi { width: 85%; max-width: 420px; height: auto; aspect-ratio: 16/9; }
             .inspection-overlay { display: block; padding: 0; }
             .view-center { position: absolute; inset: 0; bottom: 120px; overflow: hidden; height: auto; }
             #img-focus { width: 100%; height: 100%; object-fit: contain; transform: none; }
@@ -325,8 +325,9 @@
             .img-choice-grid { grid-template-columns: 1fr; gap: 8px; }
             .img-option { aspect-ratio: 4/3; max-height: 160px; }
             #input-program > div { grid-template-columns: 1fr; }
-            .services-row { grid-template-columns: 1fr; justify-items: center; }
-            .services-visual { max-width: 180px; }
+            .services-row { grid-template-columns: 1fr auto; gap: 12px; }
+            .services-visual { width: 110px !important; max-width: 110px; }
+            .interactive-list { font-size: 0.55rem; line-height: 1.6; padding-left: 12px; }
             .topic-slide { width: 240px; }
             .inspection-overlay { padding: 0; }
             .view-side { height: 90px; padding: 6px 8px; gap: 6px; }
@@ -346,12 +347,12 @@
             .hero-quotes { width: 50%; }
             .soma-main { font-size: clamp(1.4rem, 5vw, 2rem); }
             .soma-sub { font-size: 0.55rem; margin-top: 2px; }
-            .p-16-9 { width: 160px; height: 90px; }
-            .p-9-16 { width: 100px; height: 178px; }
-            .p-custom-cristi { width: 160px; height: 90px; }
+            .p-16-9 { width: 220px; height: 124px; }
+            .p-9-16 { width: 140px; height: 249px; }
+            .p-custom-cristi { width: 220px; height: 124px; }
             .slide-title { font-size: 0.45rem; padding: 2px 8px; bottom: 0; left: 0; background: rgba(10,10,10,0.5); border-radius: 0; }
-            .slide img { object-fit: contain; }
-            .slider { flex-direction: row !important; flex-wrap: nowrap !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
+            .slide img { object-fit: cover; }
+            .slider { flex-direction: row !important; flex-wrap: nowrap !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch; gap: 24px; padding: 20px 4%; }
             .trayectoria-grid { grid-template-columns: 1fr auto; gap: 12px; align-items: start; }
             .portrait-frame { max-width: 80px; margin: 0 auto; }
             .trayectoria-grid { padding: 2vh 0; }
@@ -367,11 +368,12 @@
             .tl-title { font-size: 0.5rem; }
             .tl-concept { font-size: 0.45rem; }
             .tl-detail { font-size: 0.4rem; }
-            .inspection-overlay { display: flex; flex-direction: column; padding: 0; }
-            .view-center { position: relative; inset: auto; bottom: auto; flex: 1; height: auto; min-height: 0; }
-            .view-side { position: relative; height: 70px; flex-shrink: 0; flex-direction: row; overflow-x: auto; overflow-y: hidden; padding: 6px 10px; gap: 6px; align-items: center; border-left: none; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.8); justify-content: flex-start; }
+            .inspection-overlay { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+            .view-center { position: relative; inset: auto; bottom: auto; flex: 1; height: auto; min-height: 0; overflow: hidden; }
+            #img-focus { max-height: 100%; max-width: 100%; transform: none; }
+            .view-side { position: relative; height: 80px; flex-shrink: 0; flex-direction: row; overflow-x: auto; overflow-y: hidden; padding: 8px 12px; gap: 8px; align-items: center; border-left: none; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.8); justify-content: flex-start; }
             .focus-title { bottom: 10px; left: 10px; font-size: 0.5rem; }
-            .thumb { width: 60px; height: 40px; flex-shrink: 0; }
+            .thumb { width: 80px; height: 50px; flex-shrink: 0; }
             .bg-keyword { font-size: 14vw; }
             h2 { font-size: clamp(0.9rem, 4vw, 1.2rem); margin-bottom: 4px; }
             .label { font-size: 0.4rem; letter-spacing: 1px; margin-bottom: 3px; }
