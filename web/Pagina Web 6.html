@@ -17,7 +17,7 @@
         :root {
             --bg: #0a0a0a;
             --paper: #f4f1ee;
-            --accent: #bc4b21;
+            --accent: #d45e2c;
             --overlay: rgba(10, 10, 10, 0.98);
             --ease: cubic-bezier(0.23, 1, 0.32, 1);
         }
@@ -29,17 +29,17 @@
         .scroll-container {
             height: 100vh; width: 100vw;
             overflow-y: scroll; overflow-x: hidden;
-            scroll-snap-type: y mandatory; scroll-behavior: smooth;
+            scroll-snap-type: y proximity; scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
         }
 
         section {
             height: 100vh; width: 100vw; scroll-snap-align: start;
             position: relative; display: flex; flex-direction: column;
-            justify-content: center; padding: 0 10%; overflow: hidden;
+            justify-content: center; padding: 0 10%; overflow: visible;
         }
         section:last-of-type {
-            height: 100vh; overflow: hidden;
+            height: 100vh; overflow: visible;
             justify-content: flex-start; padding: 8vh 10% 0;
             scroll-snap-align: start;
         }
@@ -110,7 +110,7 @@
             position: absolute; bottom: 20px; left: 0;
             font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
             color: var(--paper); background: rgba(10, 10, 10, 0.8);
-            padding: 8px 16px; backdrop-filter: blur(4px);
+            padding: 8px 16px; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
             pointer-events: none; opacity: 0.6;
             transition: 0.4s var(--ease);
             text-transform: uppercase; letter-spacing: 1px;
@@ -136,7 +136,7 @@
         .tl-year { font-family: 'JetBrains Mono', monospace; font-size: 0.55rem; color: var(--accent); letter-spacing: 2px; margin-bottom: 3px; font-weight: 600; }
         .tl-title { font-family: 'Unbounded', sans-serif; font-size: 0.75rem; color: white; font-weight: 700; letter-spacing: 1px; margin-bottom: 3px; }
         .tl-concept { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: #999; line-height: 1.4; margin-bottom: 4px; font-style: italic; }
-        .tl-detail { font-family: 'JetBrains Mono', monospace; font-size: 0.5rem; color: #555; line-height: 1.5; }
+        .tl-detail { font-family: 'JetBrains Mono', monospace; font-size: 0.5rem; color: #999; line-height: 1.5; }
 
         .portrait-frame { width: 100%; overflow: hidden; aspect-ratio: 3/4; border: 1px solid rgba(255,255,255,0.05); position: relative; }
         .portrait-frame::after { content: ''; position: absolute; inset: 0; box-shadow: inset 0 0 30px 15px rgba(10,10,10,0.7); pointer-events: none; }
@@ -178,13 +178,13 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--overlay); z-index: 2000;
             display: grid; grid-template-columns: 1fr 320px; 
-            align-items: center; padding: 40px; backdrop-filter: blur(25px);
+            align-items: center; padding: 40px; -webkit-backdrop-filter: blur(25px); backdrop-filter: blur(25px);
             opacity: 0; visibility: hidden; transition: opacity 0.6s var(--ease);
         }
         .inspection-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
         .view-center { position: relative; display: flex; justify-content: center; align-items: center; height: 100%; width: 100%; }
         #img-focus { max-height: 85vh; max-width: 85%; transform: scale(1.1); object-fit: contain; transition: transform 0.8s var(--ease), opacity 0.5s ease; }
-        .focus-title { position: absolute; bottom: 30px; left: 30px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--paper); background: rgba(10, 10, 10, 0.5); padding: 8px 16px; backdrop-filter: blur(8px); text-transform: uppercase; letter-spacing: 2px; opacity: 0; transition: 0.5s ease; z-index: 10; }
+        .focus-title { position: absolute; bottom: 30px; left: 30px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--paper); background: rgba(10, 10, 10, 0.5); padding: 8px 16px; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); text-transform: uppercase; letter-spacing: 2px; opacity: 0; transition: 0.5s ease; z-index: 10; }
         
         .view-side { height: 90vh; display: flex; flex-direction: column; gap: 20px; padding: 20px; align-items: center; overflow-y: auto; border-left: 1px solid rgba(255,255,255,0.05); justify-content: flex-start; }
         
@@ -208,7 +208,7 @@
             background: rgba(10, 10, 10, 0.4); border: 1px solid rgba(255,255,255,0.15);
             color: white; min-width: 44px; min-height: 44px;
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; font-size: 1rem; z-index: 3000; backdrop-filter: blur(5px);
+            cursor: pointer; font-size: 1rem; z-index: 3000; -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);
             transition: 0.3s var(--ease);
         }
         @media (hover: hover) {
@@ -228,8 +228,8 @@
             position: absolute; top: 15px; left: 15px; z-index: 5000;
             background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15);
             color: white; min-width: 44px; min-height: 44px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; font-size: 1rem; backdrop-filter: blur(5px);
+            display: flex; align-items: center;             justify-content: center;
+            cursor: pointer; font-size: 1rem; -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);
             transition: 0.3s var(--ease); border-radius: 0;
         }
         .btn-back:hover { background: white; color: var(--bg); }
@@ -245,6 +245,7 @@
         .img-option p { position: absolute; bottom: 0; left: 0; width: 100%; font-family: 'JetBrains Mono'; font-size: 0.7rem; text-transform: uppercase; background: rgba(0,0,0,0.8); padding: 10px; text-align: center; }
 
         .soma-input { background: transparent; border: none; border-bottom: 2px solid var(--paper); color: var(--paper); font-family: 'Unbounded'; font-size: 1.5rem; width: 100%; outline: none; margin: 20px 0; }
+        .soma-input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
         @supports (-webkit-touch-callout: none) { .soma-input { font-size: 16px; } }
         .btn-soma { background: var(--paper); color: var(--bg); border: none; padding: 15px 30px; font-family: 'Unbounded'; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: 0.3s var(--ease); }
 
@@ -311,7 +312,10 @@
             .topic-slide {
                 position: relative; padding: 16px 20px; width: 100%;
                 border-left: none; background: transparent;
+                opacity: 0.5; transform: translateX(-15px);
+                transition: opacity 0.8s ease, transform 0.8s ease;
             }
+            .topic-slide.revealed { opacity: 1; transform: translateX(0); }
             .topic-slide::before {
                 content: ''; position: absolute; left: -13px; top: 22px;
                 width: 8px; height: 8px; border-radius: 50%;
@@ -491,6 +495,7 @@
             .services-visual img.active-img { opacity: 0.9; }
         }
     </style>
+<noscript><div style="position:fixed;inset:0;z-index:99999;background:#0a0a0a;color:#f4f1ee;display:flex;align-items:center;justify-content:center;font-family:sans-serif;padding:20px;text-align:center;">Esta página requiere JavaScript para funcionar correctamente.</div></noscript>
 </head>
 <body>
 
@@ -526,11 +531,11 @@
         </div>
         <div class="carousel-area" id="proximity-horizontal">
             <div class="slider" id="project-slider">
-                <div class="slide p-16-9" onclick="openModal(this)" data-title="Biblioteca FAUADY"><img loading="lazy" src="../recursos_graficos/Carrusel_Caratula_proyectos/Biblioteca FAUADY.webp"><div class="slide-title">Biblioteca FAUADY</div></div>
-                <div class="slide p-9-16" onclick="openModal(this)" data-title="Hotel Telchac"><img loading="lazy" src="../recursos_graficos/Carrusel_Caratula_proyectos/Hotel Telchac.webp"><div class="slide-title">Hotel Telchac</div></div>
-                <div class="slide p-16-9" onclick="openModal(this)" data-title="Casa Alina"><img loading="lazy" src="../recursos_graficos/Carrusel_Caratula_proyectos/Casa Alina.webp"><div class="slide-title">Casa Alina</div></div>
-                <div class="slide p-16-9" onclick="openModal(this)" data-title="Casa-Taller Roma"><img loading="lazy" src="../recursos_graficos/Carrusel_Caratula_proyectos/Casa-Taller Roma.webp"><div class="slide-title">Casa-Taller Roma</div></div>
-                <div class="slide p-custom-cristi" onclick="openModal(this)" data-title="Casona Cristi"><img loading="lazy" src="../recursos_graficos/Carrusel_Caratula_proyectos/Casona Cristi.webp"><div class="slide-title">Casona Cristi</div></div>
+                <div class="slide p-16-9" onclick="openModal(this)" data-title="Biblioteca FAUADY"><img loading="lazy" src="../recursos_graficos/Carrusel_Caratula_proyectos/Biblioteca FAUADY.webp" alt="Biblioteca FAUADY"><div class="slide-title">Biblioteca FAUADY</div></div>
+                <div class="slide p-9-16" onclick="openModal(this)" data-title="Hotel Telchac"><img loading="lazy" src="../recursos_graficos/Carrusel_Caratula_proyectos/Hotel Telchac.webp" alt="Hotel Telchac"><div class="slide-title">Hotel Telchac</div></div>
+                <div class="slide p-16-9" onclick="openModal(this)" data-title="Casa Alina"><img loading="lazy" src="../recursos_graficos/Carrusel_Caratula_proyectos/Casa Alina.webp" alt="Casa Alina"><div class="slide-title">Casa Alina</div></div>
+                <div class="slide p-16-9" onclick="openModal(this)" data-title="Casa-Taller Roma"><img loading="lazy" src="../recursos_graficos/Carrusel_Caratula_proyectos/Casa-Taller Roma.webp" alt="Casa-Taller Roma"><div class="slide-title">Casa-Taller Roma</div></div>
+                <div class="slide p-custom-cristi" onclick="openModal(this)" data-title="Casona Cristi"><img loading="lazy" src="../recursos_graficos/Carrusel_Caratula_proyectos/Casona Cristi.webp" alt="Casona Cristi"><div class="slide-title">Casona Cristi</div></div>
             </div>
         </div>
     </section>
@@ -646,10 +651,10 @@
                         <li onclick="changeService(this, 3)">PLANOS DE ANTEPROYECTO</li>
                     </ul>
                     <div class="services-visual">
-                        <img loading="lazy" src="../recursos_graficos/Servicios/Diseño arquitectónico.webp" class="active-img">
-                        <img loading="lazy" src="../recursos_graficos/Servicios/Modelado BIM.webp">
-                        <img loading="lazy" src="../recursos_graficos/Servicios/Visualización Arquitectónica.webp">
-                        <img loading="lazy" src="../recursos_graficos/Servicios/Planos de Anteproyecto.webp">
+                        <img loading="lazy" src="../recursos_graficos/Servicios/Diseño arquitectónico.webp" class="active-img" alt="Diseño arquitectónico">
+                        <img loading="lazy" src="../recursos_graficos/Servicios/Modelado BIM.webp" alt="Modelado BIM">
+                        <img loading="lazy" src="../recursos_graficos/Servicios/Visualización Arquitectónica.webp" alt="Visualización arquitectónica">
+                        <img loading="lazy" src="../recursos_graficos/Servicios/Planos de Anteproyecto.webp" alt="Planos de anteproyecto">
                     </div>
                 </div>
                 <div class="contacto-block" style="border-top: 1px solid rgba(255,255,255,0.3); margin-top: 35px; padding-top: 25px;">
@@ -668,7 +673,7 @@
 <div class="inspection-overlay" id="inspection-modal" onclick="closeModal()">
     <button type="button" class="btn-close" onclick="closeModal()" aria-label="Cerrar galería">←</button>
     <div class="view-center">
-        <img id="img-focus" src="">
+        <img id="img-focus" src="" alt="">
         <div id="focus-title" class="focus-title"></div>
     </div>
     <div class="view-side" id="side-track" onclick="event.stopPropagation()"></div>
@@ -682,80 +687,80 @@
         <button type="button" class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 01 / Fachada</span><h2>¿Cómo quieres que se vea tu fachada?</h2>
         <div class="img-choice-grid">
-            <div class="img-option" onclick="saveAnswer('step1', 'A', 2)"><img loading="lazy" src="../recursos_graficos/Inmersion/01. fachada/fachada abierta 1.2.webp"><p>Abierta</p></div>
-            <div class="img-option" onclick="saveAnswer('step1', 'B', 2)"><img loading="lazy" src="../recursos_graficos/Inmersion/01. fachada/fachada cerrada 2.1.webp"><p>Cerrada</p></div>
+            <div class="img-option" onclick="saveAnswer('step1', 'A', 2)"><img loading="lazy" src="../recursos_graficos/Inmersion/01. fachada/fachada abierta 1.2.webp" alt="Fachada abierta"><p>Abierta</p></div>
+            <div class="img-option" onclick="saveAnswer('step1', 'B', 2)"><img loading="lazy" src="../recursos_graficos/Inmersion/01. fachada/fachada cerrada 2.1.webp" alt="Fachada cerrada"><p>Cerrada</p></div>
         </div>
     </div>
     <div class="immersion-step" id="soma-step-2">
         <button type="button" class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 02 / Privacidad</span><h2>¿Cómo prefieres los accesos?</h2>
         <div class="img-choice-grid">
-            <div class="img-option" onclick="saveAnswer('step2', 'A', 3)"><img loading="lazy" src="../recursos_graficos/Inmersion/02.Privacidad/vista franca.webp"><p>Abiertos y francos</p></div>
-            <div class="img-option" onclick="saveAnswer('step2', 'B', 3)"><img loading="lazy" src="../recursos_graficos/Inmersion/02.Privacidad/vista filtrada.webp"><p>Protegidos, que insinúan el contenido</p></div>
+            <div class="img-option" onclick="saveAnswer('step2', 'A', 3)"><img loading="lazy" src="../recursos_graficos/Inmersion/02.Privacidad/vista franca.webp" alt="Acceso abierto y franco"><p>Abiertos y francos</p></div>
+            <div class="img-option" onclick="saveAnswer('step2', 'B', 3)"><img loading="lazy" src="../recursos_graficos/Inmersion/02.Privacidad/vista filtrada.webp" alt="Acceso protegido que insinúa"><p>Protegidos, que insinúan el contenido</p></div>
         </div>
     </div>
     <div class="immersion-step" id="soma-step-3">
         <button type="button" class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 03 / Espacios</span><h2>¿Cómo prefieres los espacios?</h2>
         <div class="img-choice-grid">
-            <div class="img-option" onclick="saveAnswer('step3', 'A', 4)"><img loading="lazy" src="../recursos_graficos/Inmersion/03 flexibles/espacios flexibles 2.webp"><p>Amplios e integrados</p></div>
-            <div class="img-option" onclick="saveAnswer('step3', 'B', 4)"><img loading="lazy" src="../recursos_graficos/Inmersion/03 flexibles/Espacios divididos.webp"><p>Divididos por muros</p></div>
+            <div class="img-option" onclick="saveAnswer('step3', 'A', 4)"><img loading="lazy" src="../recursos_graficos/Inmersion/03 flexibles/espacios flexibles 2.webp" alt="Amplios e integrados"><p>Amplios e integrados</p></div>
+            <div class="img-option" onclick="saveAnswer('step3', 'B', 4)"><img loading="lazy" src="../recursos_graficos/Inmersion/03 flexibles/Espacios divididos.webp" alt="Divididos por muros"><p>Divididos por muros</p></div>
         </div>
     </div>
     <div class="immersion-step" id="soma-step-4">
         <button type="button" class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 04 / Iluminación</span><h2>¿Qué tipo de iluminación prefieres?</h2>
         <div class="img-choice-grid">
-            <div class="img-option" onclick="saveAnswer('step4', 'A', 5)"><img loading="lazy" src="../recursos_graficos/Inmersion/04. iluminación/Luz directa.webp"><p>Mucha luz natural</p></div>
-            <div class="img-option" onclick="saveAnswer('step4', 'B', 5)"><img loading="lazy" src="../recursos_graficos/Inmersion/04. iluminación/Interior suave.webp"><p>Luz suave</p></div>
+            <div class="img-option" onclick="saveAnswer('step4', 'A', 5)"><img loading="lazy" src="../recursos_graficos/Inmersion/04. iluminación/Luz directa.webp" alt="Mucha luz natural"><p>Mucha luz natural</p></div>
+            <div class="img-option" onclick="saveAnswer('step4', 'B', 5)"><img loading="lazy" src="../recursos_graficos/Inmersion/04. iluminación/Interior suave.webp" alt="Luz suave"><p>Luz suave</p></div>
         </div>
     </div>
     <div class="immersion-step" id="soma-step-5">
         <button type="button" class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 05 / Estilo</span><h2>¿Qué estilo prefieres?</h2>
         <div class="img-choice-grid">
-            <div class="img-option" onclick="saveAnswer('step5', 'A', 6)"><img loading="lazy" src="../recursos_graficos/Inmersion/05.Estilo/fachada texturizada 2.webp"><p>Texturas y ornamentos</p></div>
-            <div class="img-option" onclick="saveAnswer('step5', 'B', 6)"><img loading="lazy" src="../recursos_graficos/Inmersion/05.Estilo/fachada lisa.webp"><p>Lisos y sobrios</p></div>
+            <div class="img-option" onclick="saveAnswer('step5', 'A', 6)"><img loading="lazy" src="../recursos_graficos/Inmersion/05.Estilo/fachada texturizada 2.webp" alt="Texturas y ornamentos"><p>Texturas y ornamentos</p></div>
+            <div class="img-option" onclick="saveAnswer('step5', 'B', 6)"><img loading="lazy" src="../recursos_graficos/Inmersion/05.Estilo/fachada lisa.webp" alt="Lisos y sobrios"><p>Lisos y sobrios</p></div>
         </div>
     </div>
     <div class="immersion-step" id="soma-step-6">
         <button type="button" class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 06 / Niveles</span><h2>¿En cuántos niveles?</h2>
         <div class="img-choice-grid">
-            <div class="img-option" onclick="saveAnswer('step6', 'A', 7)"><img loading="lazy" src="../recursos_graficos/Inmersion/06.Niveles/Un nivel F.webp"><p>Un nivel</p></div>
-            <div class="img-option" onclick="saveAnswer('step6', 'B', 7)"><img loading="lazy" src="../recursos_graficos/Inmersion/06.Niveles/varios niveles.webp"><p>Varios niveles</p></div>
+            <div class="img-option" onclick="saveAnswer('step6', 'A', 7)"><img loading="lazy" src="../recursos_graficos/Inmersion/06.Niveles/Un nivel F.webp" alt="Un nivel"><p>Un nivel</p></div>
+            <div class="img-option" onclick="saveAnswer('step6', 'B', 7)"><img loading="lazy" src="../recursos_graficos/Inmersion/06.Niveles/varios niveles.webp" alt="Varios niveles"><p>Varios niveles</p></div>
         </div>
     </div>
     <div class="immersion-step" id="soma-step-7">
         <button type="button" class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 07 / Paisaje</span><h2>¿Qué tipo de exteriores prefieres?</h2>
         <div class="img-choice-grid">
-            <div class="img-option" onclick="saveAnswer('step7', 'A', 8)"><img loading="lazy" src="../recursos_graficos/Inmersion/07.Exteriores/terraza jardín.webp"><p>Mucho jardín</p></div>
-            <div class="img-option" onclick="saveAnswer('step7', 'B', 8)"><img loading="lazy" src="../recursos_graficos/Inmersion/07.Exteriores/patio plaza.webp"><p>Tipo plaza pétrea</p></div>
+            <div class="img-option" onclick="saveAnswer('step7', 'A', 8)"><img loading="lazy" src="../recursos_graficos/Inmersion/07.Exteriores/terraza jardín.webp" alt="Jardín"><p>Mucho jardín</p></div>
+            <div class="img-option" onclick="saveAnswer('step7', 'B', 8)"><img loading="lazy" src="../recursos_graficos/Inmersion/07.Exteriores/patio plaza.webp" alt="Plaza pétrea"><p>Tipo plaza pétrea</p></div>
         </div>
     </div>
     <div class="immersion-step" id="soma-step-8">
         <button type="button" class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 08 / Sensación</span><h2>¿Cómo te gustan los espacios?</h2>
         <div class="img-choice-grid">
-            <div class="img-option" onclick="saveAnswer('step8', 'A', 9)"><img loading="lazy" src="../recursos_graficos/Inmersion/08.Espacios/espacio amplio.webp"><p>Abiertos y altos</p></div>
-            <div class="img-option" onclick="saveAnswer('step8', 'B', 9)"><img loading="lazy" src="../recursos_graficos/Inmersion/08.Espacios/espacio intimo.webp"><p>Acogedores e íntimos</p></div>
+            <div class="img-option" onclick="saveAnswer('step8', 'A', 9)"><img loading="lazy" src="../recursos_graficos/Inmersion/08.Espacios/espacio amplio.webp" alt="Espacio abierto y alto"><p>Abiertos y altos</p></div>
+            <div class="img-option" onclick="saveAnswer('step8', 'B', 9)"><img loading="lazy" src="../recursos_graficos/Inmersion/08.Espacios/espacio intimo.webp" alt="Espacio acogedor e íntimo"><p>Acogedores e íntimos</p></div>
         </div>
     </div>
     <div class="immersion-step" id="soma-step-9">
         <button type="button" class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 09 / Vida Social</span><h2>¿Cómo consideras tu vida social?</h2>
         <div class="img-choice-grid">
-            <div class="img-option" onclick="saveAnswer('step9', 'A', 10)"><img loading="lazy" src="../recursos_graficos/Inmersion/09.Socialización/vida social.webp"><p>ACTIVA</p></div>
-            <div class="img-option" onclick="saveAnswer('step9', 'B', 10)"><img loading="lazy" src="../recursos_graficos/Inmersion/09.Socialización/interior poca gente.webp"><p>INTROVERTIDA</p></div>
+            <div class="img-option" onclick="saveAnswer('step9', 'A', 10)"><img loading="lazy" src="../recursos_graficos/Inmersion/09.Socialización/vida social.webp" alt="Vida social activa"><p>ACTIVA</p></div>
+            <div class="img-option" onclick="saveAnswer('step9', 'B', 10)"><img loading="lazy" src="../recursos_graficos/Inmersion/09.Socialización/interior poca gente.webp" alt="Interior introvertido"><p>INTROVERTIDA</p></div>
         </div>
     </div>
     <div class="immersion-step" id="soma-step-10">
         <button type="button" class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 10 / Color</span><h2>¿Cómo te gustan los colores?</h2>
         <div class="img-choice-grid">
-            <div class="img-option" onclick="saveAnswer('step10', 'A', 11)"><img loading="lazy" src="../recursos_graficos/Inmersion/10.Color/Casa neutra.webp"><p>Neutrales</p></div>
-            <div class="img-option" onclick="saveAnswer('step10', 'B', 11)"><img loading="lazy" src="../recursos_graficos/Inmersion/10.Color/Fachada colorida.webp"><p>Colores llamativos</p></div>
+            <div class="img-option" onclick="saveAnswer('step10', 'A', 11)"><img loading="lazy" src="../recursos_graficos/Inmersion/10.Color/Casa neutra.webp" alt="Colores neutros"><p>Neutrales</p></div>
+            <div class="img-option" onclick="saveAnswer('step10', 'B', 11)"><img loading="lazy" src="../recursos_graficos/Inmersion/10.Color/Fachada colorida.webp" alt="Colores llamativos"><p>Colores llamativos</p></div>
         </div>
     </div>
     <div class="immersion-step" id="soma-step-11">
@@ -764,11 +769,11 @@
         <h2>Casi terminamos.</h2>
         <p style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: #888; margin-bottom: 20px;">Ingresa tu correo o número de WhatsApp para contactarnos.</p>
         <input type="text" class="soma-input" placeholder="Correo electrónico o WhatsApp" id="soma-contacto">
-        <p style="font-family: 'JetBrains Mono'; font-size: 0.55rem; color: #666; margin-top: 5px;">Tus datos están protegidos. Solo los usaremos para enviarte información.</p>
+        <p style="font-family: 'JetBrains Mono'; font-size: 0.55rem; color: #aaa; margin-top: 5px;">Tus datos están protegidos. Solo los usaremos para enviarte información.</p>
         <button type="button" class="btn-soma" style="margin-top:25px; background: var(--accent); color: white;" onclick="registerContact()">Enviar</button>
     </div>
     <div class="immersion-step" id="soma-step-12">
-        <button type="button" type="button" class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 12 / Éxito</span>
         <h2>Inmersión Registrada.</h2>
         <p style="font-family: 'JetBrains Mono'; font-size: 0.8rem; margin: 20px 0; color: #888;">¿Quieres saber cuánto costaría tu diseño y cuánto podrías invertir en obra?</p>
@@ -871,12 +876,13 @@
     if ('IntersectionObserver' in window) {
         var revealObserver = new IntersectionObserver(function(entries) {
             entries.forEach(function(entry) {
-                if (entry.isIntersecting) entry.target.classList.add('revealed');
+                entry.target.classList.toggle('revealed', entry.isIntersecting);
             });
-        }, { threshold: 0.4 });
+        }, { threshold: 0.65 });
         document.querySelectorAll('#project-slider .slide').forEach(function(s) { revealObserver.observe(s); });
+        document.querySelectorAll('.topic-slide').forEach(function(s) { revealObserver.observe(s); });
     } else {
-        document.querySelectorAll('#project-slider .slide').forEach(function(s) { s.classList.add('revealed'); });
+        document.querySelectorAll('#project-slider .slide, .topic-slide').forEach(function(s) { s.classList.add('revealed'); });
     }
     const isHorizontal = (el) => getComputedStyle(el).flexDirection === 'row' || isNarrow();
 
