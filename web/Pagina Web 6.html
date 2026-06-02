@@ -269,8 +269,8 @@
             section:nth-child(2) .p-16-9, section:nth-child(2) .p-custom-cristi { width: 85vw; height: auto; aspect-ratio: 16/9; }
             section:nth-child(2) .p-9-16 { width: 55vw; height: auto; aspect-ratio: 9/16; }
             section:nth-child(2) .p-3-2 { width: 75vw; height: auto; aspect-ratio: 3/2; }
-            section:nth-child(2) .slide img { object-fit: cover; filter: grayscale(0.6); opacity: 0.7; transition: filter 0.8s ease, opacity 0.8s ease, transform 0.8s ease; }
-            section:nth-child(2) .slide.revealed img { filter: grayscale(0); opacity: 1; transform: scale(1.02); }
+            section:nth-child(2) .slide img { object-fit: cover; filter: grayscale(0.8); opacity: 0.6; transition: filter 1s ease, opacity 1s ease, transform 1s ease; }
+            section:nth-child(2) .slide.revealed img { filter: grayscale(0); opacity: 1; transform: scale(1.06); }
             section:nth-child(2) .slide .slide-title { transition: opacity 0.6s ease, background 0.6s ease; }
             section:nth-child(2) .slide.revealed .slide-title { opacity: 1; background: var(--accent); }
             section:first-child .video-overlay {
@@ -873,7 +873,7 @@
             entries.forEach(function(entry) {
                 if (entry.isIntersecting) entry.target.classList.add('revealed');
             });
-        }, { threshold: 0.25 });
+        }, { threshold: 0.4 });
         document.querySelectorAll('#project-slider .slide').forEach(function(s) { revealObserver.observe(s); });
     } else {
         document.querySelectorAll('#project-slider .slide').forEach(function(s) { s.classList.add('revealed'); });
