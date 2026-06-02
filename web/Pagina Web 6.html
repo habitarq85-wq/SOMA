@@ -23,12 +23,14 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg); color: var(--paper); }
+        html { height: 100%; background: var(--bg); }
+        body { min-height: 100vh; width: 100%; overflow-y: auto; overflow-x: hidden; background: var(--bg); color: var(--paper); }
 
         .scroll-container {
             height: 100vh; width: 100vw;
             overflow-y: scroll; overflow-x: hidden;
             scroll-snap-type: y mandatory; scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
         }
 
         section {
@@ -204,7 +206,7 @@
         .btn-close {
             position: absolute; top: 30px; left: 30px;
             background: rgba(10, 10, 10, 0.4); border: 1px solid rgba(255,255,255,0.15);
-            color: white; width: 36px; height: 36px; 
+            color: white; min-width: 44px; min-height: 44px;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; font-size: 1rem; z-index: 3000; backdrop-filter: blur(5px);
             transition: 0.3s var(--ease);
@@ -225,7 +227,7 @@
         .btn-back {
             position: absolute; top: 15px; left: 15px; z-index: 5000;
             background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15);
-            color: white; width: 32px; height: 32px;
+            color: white; min-width: 44px; min-height: 44px;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; font-size: 1rem; backdrop-filter: blur(5px);
             transition: 0.3s var(--ease); border-radius: 0;
@@ -243,6 +245,7 @@
         .img-option p { position: absolute; bottom: 0; left: 0; width: 100%; font-family: 'JetBrains Mono'; font-size: 0.7rem; text-transform: uppercase; background: rgba(0,0,0,0.8); padding: 10px; text-align: center; }
 
         .soma-input { background: transparent; border: none; border-bottom: 2px solid var(--paper); color: var(--paper); font-family: 'Unbounded'; font-size: 1.5rem; width: 100%; outline: none; margin: 20px 0; }
+        @supports (-webkit-touch-callout: none) { .soma-input { font-size: 16px; } }
         .btn-soma { background: var(--paper); color: var(--bg); border: none; padding: 15px 30px; font-family: 'Unbounded'; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: 0.3s var(--ease); }
 
         /* Accent-bg overrides */
@@ -340,7 +343,7 @@
             .t-9-16 { width: 44px; height: 78px; }
             .t-3-2 { width: 80px; height: 54px; }
             .focus-title { bottom: 15px; left: 15px; font-size: 0.6rem; }
-            .btn-close { top: 15px; left: 15px; width: 32px; height: 32px; }
+            .btn-close { top: 15px; left: 15px; min-width: 44px; min-height: 44px; }
             .slide:active img { filter: grayscale(0); opacity: 1; transform: scale(1.02); }
             .slide:active .slide-title { opacity: 1; background: var(--accent); }
 
@@ -353,7 +356,7 @@
             .img-option img { object-fit: contain; height: auto; max-height: 180px; }
             .img-option p { font-size: 0.55rem; padding: 6px; }
             .soma-input { font-size: 1rem; }
-            #immersion-modal .btn-close { top: 10px; left: 10px; width: 30px; height: 30px; }
+            #immersion-modal .btn-close { top: 10px; left: 10px; min-width: 44px; min-height: 44px; }
 
             /* Cotizador checks en móvil */
             #input-program > div { grid-template-columns: 1fr 1fr; gap: 4px; font-size: 0.5rem; }
@@ -467,8 +470,8 @@
             .img-option { aspect-ratio: 3/2; max-height: 120px; }
             .img-option p { font-size: 0.45rem; padding: 4px; }
             .soma-input { font-size: 0.8rem; margin: 8px 0; }
-            #immersion-modal .btn-close { top: 6px; left: 6px; width: 26px; height: 26px; font-size: 0.8rem; }
-            .btn-back { top: 8px; left: 40px; width: 26px; height: 26px; font-size: 0.8rem; }
+            #immersion-modal .btn-close { top: 6px; left: 6px; min-width: 44px; min-height: 44px; font-size: 0.9rem; }
+            .btn-back { top: 8px; left: 44px; min-width: 44px; min-height: 44px; font-size: 0.9rem; }
             .btn-soma { font-size: 0.55rem; padding: 8px 16px; }
             .package-option { padding: 6px !important; }
             #input-program > div { grid-template-columns: 1fr 1fr; gap: 2px; font-size: 0.45rem; }
@@ -502,7 +505,7 @@
                     <span class="soma-sub">Taller Virtual de Arquitectura</span>
                 </h2>
             </div>
-            <div class="hero-quotes">
+            <div class="hero-quotes" aria-live="polite">
                 <p class="hero-quote active">"Lo protocolario se programa,<br>lo creativo se libera."</p>
                 <p class="hero-quote">"Que la buena arquitectura no sea la excepción,<br>sino el punto de partida."</p>
                 <p class="hero-quote">"El lujo está en los materiales,<br>lo sublime en la creatividad."</p>
@@ -651,7 +654,7 @@
                     <p style="font-family: 'JetBrains Mono'; font-size: 0.8rem; margin-top: 15px;">Mérida, Yucatán, MX.</p>
                     <p style="font-family: 'JetBrains Mono'; font-size: 0.8rem; margin-top: 8px;">habitarq85@gmail.com</p>
                     <p style="font-family: 'JetBrains Mono'; font-size: 0.8rem; margin-top: 8px;">WhatsApp: 999 361 9433</p>
-                    <button class="btn-soma" style="margin-top: 25px; background: white; color: var(--accent);" onclick="openImmersion()">COTIZADOR SOMA</button>
+                    <button type="button" class="btn-soma" style="margin-top: 25px; background: white; color: var(--accent);" onclick="openImmersion()">COTIZADOR SOMA</button>
                 </div>
             </div>
         </div>
@@ -660,7 +663,7 @@
 
 <!-- MODAL PORTAFOLIO -->
 <div class="inspection-overlay" id="inspection-modal" onclick="closeModal()">
-    <button class="btn-close" onclick="closeModal()">←</button>
+    <button type="button" class="btn-close" onclick="closeModal()" aria-label="Cerrar galería">←</button>
     <div class="view-center">
         <img id="img-focus" src="">
         <div id="focus-title" class="focus-title"></div>
@@ -669,11 +672,11 @@
 </div>
 
 <!-- MODAL INMERSIÓN -->
-<div id="immersion-modal">
-    <button class="btn-close" onclick="closeImmersion()">×</button>
+<div id="immersion-modal" role="dialog" aria-modal="true" aria-label="Cotizador SOMA">
+    <button type="button" class="btn-close" onclick="closeImmersion()" aria-label="Cerrar cotizador">×</button>
     
     <div class="immersion-step active" id="soma-step-1">
-        <button class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 01 / Fachada</span><h2>¿Cómo quieres que se vea tu fachada?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step1', 'A', 2)"><img loading="lazy" src="../recursos_graficos/Inmersion/01. fachada/fachada abierta 1.2.webp"><p>Abierta</p></div>
@@ -681,7 +684,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-2">
-        <button class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 02 / Privacidad</span><h2>¿Cómo prefieres los accesos?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step2', 'A', 3)"><img loading="lazy" src="../recursos_graficos/Inmersion/02.Privacidad/vista franca.webp"><p>Abiertos y francos</p></div>
@@ -689,7 +692,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-3">
-        <button class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 03 / Espacios</span><h2>¿Cómo prefieres los espacios?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step3', 'A', 4)"><img loading="lazy" src="../recursos_graficos/Inmersion/03 flexibles/espacios flexibles 2.webp"><p>Amplios e integrados</p></div>
@@ -697,7 +700,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-4">
-        <button class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 04 / Iluminación</span><h2>¿Qué tipo de iluminación prefieres?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step4', 'A', 5)"><img loading="lazy" src="../recursos_graficos/Inmersion/04. iluminación/Luz directa.webp"><p>Mucha luz natural</p></div>
@@ -705,7 +708,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-5">
-        <button class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 05 / Estilo</span><h2>¿Qué estilo prefieres?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step5', 'A', 6)"><img loading="lazy" src="../recursos_graficos/Inmersion/05.Estilo/fachada texturizada 2.webp"><p>Texturas y ornamentos</p></div>
@@ -713,7 +716,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-6">
-        <button class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 06 / Niveles</span><h2>¿En cuántos niveles?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step6', 'A', 7)"><img loading="lazy" src="../recursos_graficos/Inmersion/06.Niveles/Un nivel F.webp"><p>Un nivel</p></div>
@@ -721,7 +724,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-7">
-        <button class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 07 / Paisaje</span><h2>¿Qué tipo de exteriores prefieres?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step7', 'A', 8)"><img loading="lazy" src="../recursos_graficos/Inmersion/07.Exteriores/terraza jardín.webp"><p>Mucho jardín</p></div>
@@ -729,7 +732,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-8">
-        <button class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 08 / Sensación</span><h2>¿Cómo te gustan los espacios?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step8', 'A', 9)"><img loading="lazy" src="../recursos_graficos/Inmersion/08.Espacios/espacio amplio.webp"><p>Abiertos y altos</p></div>
@@ -737,7 +740,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-9">
-        <button class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 09 / Vida Social</span><h2>¿Cómo consideras tu vida social?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step9', 'A', 10)"><img loading="lazy" src="../recursos_graficos/Inmersion/09.Socialización/vida social.webp"><p>ACTIVA</p></div>
@@ -745,7 +748,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-10">
-        <button class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 10 / Color</span><h2>¿Cómo te gustan los colores?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step10', 'A', 11)"><img loading="lazy" src="../recursos_graficos/Inmersion/10.Color/Casa neutra.webp"><p>Neutrales</p></div>
@@ -753,23 +756,23 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-11">
-        <button class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 11 / Contacto</span>
         <h2>Casi terminamos.</h2>
         <p style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: #888; margin-bottom: 20px;">Ingresa tu correo o número de WhatsApp para contactarnos.</p>
         <input type="text" class="soma-input" placeholder="Correo electrónico o WhatsApp" id="soma-contacto">
         <p style="font-family: 'JetBrains Mono'; font-size: 0.55rem; color: #666; margin-top: 5px;">Tus datos están protegidos. Solo los usaremos para enviarte información.</p>
-        <button class="btn-soma" style="margin-top:25px; background: var(--accent); color: white;" onclick="registerContact()">Enviar</button>
+        <button type="button" class="btn-soma" style="margin-top:25px; background: var(--accent); color: white;" onclick="registerContact()">Enviar</button>
     </div>
     <div class="immersion-step" id="soma-step-12">
-        <button class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" type="button" class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 12 / Éxito</span>
         <h2>Inmersión Registrada.</h2>
         <p style="font-family: 'JetBrains Mono'; font-size: 0.8rem; margin: 20px 0; color: #888;">¿Quieres saber cuánto costaría tu diseño y cuánto podrías invertir en obra?</p>
         <p style="font-family: 'JetBrains Mono'; font-size: 0.6rem; color: #666; margin-bottom: 20px;">Te damos un estimado paramétrico por m². Nosotros diseñamos, un constructor externo cotiza y ejecuta.</p>
         <div style="display: flex; gap: 10px;">
-            <button class="btn-soma" onclick="finishImmersion(this)">Finalizar</button>
-            <button class="btn-soma" style="background: var(--accent); color: white;" onclick="nextStep(13)">Iniciar Cotizador</button>
+            <button type="button" class="btn-soma" onclick="finishImmersion(this)">Finalizar</button>
+            <button type="button" class="btn-soma" style="background: var(--accent); color: white;" onclick="nextStep(13)">Iniciar Cotizador</button>
         </div>
     </div>
     <div class="immersion-step" id="soma-step-13">
@@ -810,8 +813,8 @@
             <input type="number" class="soma-input" placeholder="Ej: 3500000" id="quote-money-val">
         </div>
         <div style="display: flex; gap: 10px; margin-top:20px;">
-            <button class="btn-soma" style="background:transparent; border:1px solid #333; color: white;" onclick="nextStep(12)">← Volver</button>
-            <button class="btn-soma" style="flex:1;" onclick="goToPackages()">Siguiente</button>
+            <button type="button" class="btn-soma" style="background:transparent; border:1px solid #333; color: white;" onclick="nextStep(12)">← Volver</button>
+            <button type="button" class="btn-soma" style="flex:1;" onclick="goToPackages()">Siguiente</button>
         </div>
     </div>
     <div class="immersion-step" id="soma-step-14">
@@ -830,15 +833,15 @@
                 <h3 style="color: var(--accent); font-size: 0.8rem; margin-bottom: 5px;">SOMA EJECUTIVO</h3>
                 <p style="font-family: 'JetBrains Mono'; font-size: 0.55rem; color: #888; margin: 0;">Todo lo del nivel integral más planos técnicos ejecutivos, detalles constructivos y coordinación integral de ingenierías.</p>
             </div>
-            <button class="btn-soma" style="background:transparent; border:1px solid #333; color: white; margin-top:5px; padding: 10px; font-size: 0.7rem;" onclick="nextStep(13)">← Volver</button>
+            <button type="button" class="btn-soma" style="background:transparent; border:1px solid #333; color: white; margin-top:5px; padding: 10px; font-size: 0.7rem;" onclick="nextStep(13)">← Volver</button>
         </div>
     </div>
     <div class="immersion-step" id="soma-step-15">
         <span class="label">Paso 15 / Resultado</span>
         <div id="quote-result" style="background: #1a1a1a; padding: 20px; border-left: 4px solid var(--accent); font-family: 'JetBrains Mono'; max-height: 60vh; overflow-y: auto;"></div>
         <div style="display: flex; gap: 10px; margin-top:20px;">
-            <button class="btn-soma" style="background:transparent; border:1px solid #333; color: white;" onclick="nextStep(14)">← Volver</button>
-            <button class="btn-soma" style="flex:1; background: var(--accent); color: white;" onclick="finishImmersion(this)">Finalizar</button>
+            <button type="button" class="btn-soma" style="background:transparent; border:1px solid #333; color: white;" onclick="nextStep(14)">← Volver</button>
+            <button type="button" class="btn-soma" style="flex:1; background: var(--accent); color: white;" onclick="finishImmersion(this)">Finalizar</button>
         </div>
     </div>
 </div>
@@ -902,6 +905,7 @@
             proxPhil.addEventListener('mouseleave', () => pTarget = 0);
         }
 
+        let animId = null;
         function animate() {
             hCurrent += (hTarget - hCurrent) * lerp;
             if (Math.abs(hCurrent) > 0.1 && sliderH) sliderH.scrollLeft += hCurrent;
@@ -912,9 +916,9 @@
             }
             pCurrent += (pTarget - pCurrent) * lerp;
             if (Math.abs(pCurrent) > 0.1 && philosophiaCarousel) philosophiaCarousel.scrollLeft += pCurrent;
-            requestAnimationFrame(animate);
+            animId = requestAnimationFrame(animate);
         }
-        animate();
+        animId = requestAnimationFrame(animate);
     }
 
     // --- ROTACIÓN DE FRASES (HERO) ---
@@ -925,7 +929,12 @@
         currentQuote = (currentQuote + 1) % quotes.length;
         quotes[currentQuote].classList.add('active');
     }
-    setInterval(rotateQuote, 5000);
+    const quoteInterval = setInterval(rotateQuote, 5000);
+    if (typeof window.__somaCleanup === 'undefined') window.__somaCleanup = [];
+    window.__somaCleanup.push(function() { clearInterval(quoteInterval); if (window.animId) cancelAnimationFrame(window.animId); });
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) window.__somaCleanup.forEach(function(fn) { fn(); });
+    });
 
     // --- PLAYLIST DE VIDEOS (transición suave con 2 players) ---
     const playlist = [
@@ -1125,12 +1134,26 @@
         nextStep(1);
         immersionModal.classList.add('active');
         viewport.style.overflow = 'hidden';
+        setTimeout(function() {
+            var first = immersionModal.querySelector('button, input, select');
+            if (first) first.focus();
+        }, 100);
     }
 
     function closeImmersion() {
         immersionModal.classList.remove('active');
         viewport.style.overflowY = 'scroll';
     }
+
+    immersionModal.addEventListener('keydown', function(e) {
+        if (e.key !== 'Tab') return;
+        var focusable = immersionModal.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled])');
+        if (focusable.length === 0) return;
+        var first = focusable[0];
+        var last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
 
     let currentStep = 1;
     function nextStep(n) {
@@ -1150,10 +1173,10 @@
 
     function registerContact() {
         const val = document.getElementById('soma-contacto').value.trim();
-        if (!val) return alert("Ingresa tu correo o WhatsApp");
+        if (!val) { mostrarAviso("Ingresa tu correo o WhatsApp"); return; }
         const esEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
         const esTelefono = /^[\d\s\+\-\(\)]{7,20}$/.test(val);
-        if (!esEmail && !esTelefono) return alert("Ingresa un correo válido o un número de WhatsApp");
+        if (!esEmail && !esTelefono) { mostrarAviso("Ingresa un correo válido o un número de WhatsApp"); return; }
         somaData.contacto = val;
         nextStep(12);
     }
@@ -1180,7 +1203,7 @@
 
     async function calculateSomaQuote() {
         const type = document.getElementById('quote-type').value;
-        const pDiseno = somaData.cotizacion.precioDiseno;
+        const pDiseno = somaData.cotizacion.precioDiseno || 250;
         const resultDiv = document.getElementById('quote-result');
 
         let m2 = 0;
@@ -1233,11 +1256,13 @@
                 body: JSON.stringify(somaData),
                 signal: controller.signal
             });
+            if (!res.ok) { const text = await res.text(); throw new Error('Error del servidor: ' + res.status); }
             const data = await res.json();
             if (data.status !== 'success') mensaje = "Error al guardar. Intenta de nuevo.";
             else if (data.email === 'failed') mensaje = "Guardado. El correo no pudo enviarse (" + (data.smtp_error || "error desconocido") + "). Te contactaremos pronto.";
         } catch (e) {
             mensaje = "No se pudo conectar con el servidor. Tus datos se perderán.";
+            if (e.message && e.message.startsWith('Error del servidor')) mensaje = e.message;
         }
         clearTimeout(timeout);
         if (btn) { btn.textContent = "Finalizar"; btn.disabled = false; }
