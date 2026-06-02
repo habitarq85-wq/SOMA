@@ -58,25 +58,36 @@
         .bg-video {
             position: absolute; top: 0; left: 0;
             width: 100%; height: 100%; object-fit: cover;
-            z-index: 0; opacity: 0.40;
+            z-index: 0; opacity: 0.25;
             pointer-events: none;
         }
 
         .video-overlay {
             position: absolute; top: 0; left: 0;
             width: 100%; height: 100%; 
-            background: linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,0.4) 100%); 
+            background: linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,0.70) 100%);
             z-index: 1;
         }
         .hero-title { margin-bottom: 0; }
-        .soma-main { font-family: 'Unbounded', sans-serif; font-size: clamp(2.5rem, 7vw, 4.5rem); font-weight: 900; display: block; line-height: 1; }
-        .soma-sub { font-family: 'JetBrains Mono', monospace; font-size: clamp(0.8rem, 2vw, 1.2rem); font-weight: 300; color: var(--accent); display: block; margin-top: 10px; letter-spacing: 2px; text-transform: none; }
+        .scroll-hint {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            z-index: 2; color: rgba(244,241,238,0.3); font-size: 1.8rem;
+            font-family: 'JetBrains Mono', monospace;
+            animation: scrollBounce 2.5s ease-in-out infinite;
+            pointer-events: none; line-height: 1;
+        }
+        @keyframes scrollBounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.3; }
+            50% { transform: translateX(-50%) translateY(8px); opacity: 0.7; }
+        }
+        .soma-main { font-family: 'Unbounded', sans-serif; font-size: clamp(3rem, 8vw, 5rem); font-weight: 900; display: block; line-height: 1; text-shadow: 0 2px 20px rgba(0,0,0,0.6); }
+        .soma-sub { font-family: 'JetBrains Mono', monospace; font-size: clamp(0.9rem, 2.2vw, 1.4rem); font-weight: 300; color: var(--accent); display: block; margin-top: 12px; letter-spacing: 3px; text-transform: none; text-shadow: 0 2px 15px rgba(0,0,0,0.5); }
         .hero-flex { display: flex; justify-content: space-between; align-items: center; width: 100%; position: relative; z-index: 2; }
         .hero-quotes { width: 40%; position: relative; min-height: 100px; display: flex; flex-direction: column; justify-content: center; }
         .hero-quote {
             position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 100%;
-            font-family: 'JetBrains Mono', monospace; font-size: clamp(0.55rem, 0.9vw, 0.7rem);
-            line-height: 1.7; color: rgba(244,241,238,0.5); font-weight: 300;
+            font-family: 'JetBrains Mono', monospace; font-size: clamp(0.7rem, 1.1vw, 0.85rem);
+            line-height: 1.8; color: rgba(244,241,238,0.75); font-weight: 400; text-shadow: 0 1px 12px rgba(0,0,0,0.5);
             opacity: 0; transition: opacity 1.2s var(--ease); pointer-events: none;
         }
         .hero-quote.active { opacity: 1; }
@@ -210,8 +221,17 @@
         }
         #immersion-modal.active { opacity: 1; visibility: visible; }
         #immersion-modal .btn-close { z-index: 5000; }
+        .btn-back {
+            position: absolute; top: 15px; left: 15px; z-index: 5000;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15);
+            color: white; width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 1rem; backdrop-filter: blur(5px);
+            transition: 0.3s var(--ease); border-radius: 0;
+        }
+        .btn-back:hover { background: white; color: var(--bg); }
         
-        .immersion-step { display: none; width: 100%; height: 100%; flex-direction: column; justify-content: center; max-width: 500px; margin: 0 auto; }
+        .immersion-step { display: none; width: 100%; height: 100%; flex-direction: column; justify-content: center; max-width: 500px; margin: 0 auto; position: relative; }
         .immersion-step.active { display: flex; animation: stepFade 0.6s var(--ease); }
         @keyframes stepFade { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
         
@@ -238,19 +258,25 @@
             .scroll-container { scroll-snap-type: none; }
             section { padding: 0 4%; min-height: 100vh; height: auto; justify-content: flex-start; padding-top: 6vh; padding-bottom: 6vh; overflow: visible; }
             section:first-child { padding-top: 15vh; justify-content: flex-start; }
-            section:nth-child(2) { justify-content: center; padding-top: 3vh; padding-bottom: 3vh; }
+            section:nth-child(2) { justify-content: flex-start; padding-top: 3vh; padding-bottom: 3vh; }
             section:nth-child(2) > div:first-of-type { padding-top: 0 !important; }
+            section:nth-child(2) .slider { flex-direction: column; align-items: center; gap: 20px; padding: 20px 0; overflow-x: visible; }
+            section:nth-child(2) .slide { flex: none; }
+            section:nth-child(2) .p-16-9, section:nth-child(2) .p-custom-cristi { width: 85vw; height: auto; aspect-ratio: 16/9; }
+            section:nth-child(2) .p-9-16 { width: 55vw; height: auto; aspect-ratio: 9/16; }
+            section:nth-child(2) .p-3-2 { width: 75vw; height: auto; aspect-ratio: 3/2; }
+            section:nth-child(2) .slide img { object-fit: cover; }
             section:first-child .video-overlay {
-                background: linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,0.4) 100%);
+                background: linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,0.70) 100%);
             }
             h2 { font-size: clamp(1.2rem, 5vw, 1.6rem); margin-bottom: 8px; }
             .label { font-size: 0.5rem; letter-spacing: 2px; margin-bottom: 6px; }
             .bg-keyword { font-size: 18vw; }
             .hero-flex { flex-direction: column; align-items: flex-start; gap: 10px; }
             .hero-quotes { width: 100%; min-height: 50px; text-align: left; }
-            .hero-quote { text-align: left; padding-left: 0; font-size: clamp(0.45rem, 1.2vw, 0.55rem); }
-            .soma-main { font-size: clamp(2rem, 8vw, 3rem); }
-            .soma-sub { font-size: clamp(0.65rem, 2.5vw, 0.9rem); margin-top: 5px; }
+            .hero-quote { text-align: left; padding-left: 0; font-size: clamp(0.55rem, 1.5vw, 0.65rem); }
+            .soma-main { font-size: clamp(2.4rem, 9vw, 3.5rem); }
+            .soma-sub { font-size: clamp(0.75rem, 3vw, 1rem); margin-top: 6px; }
             .trayectoria-grid { grid-template-columns: 1fr; gap: 12px; margin-top: 4px; }
             .timeline { padding-left: 22px; }
             .tl-dot { left: -14px; width: 8px; height: 8px; }
@@ -262,33 +288,41 @@
             .tl-detail { font-size: 0.45rem; }
             .portrait-frame { max-width: 140px; margin: 0 auto; }
 
-            .topic-slide { width: 300px; padding: 15px 18px; }
+            .topic-slide { width: auto; padding: 15px 18px; }
             .topic-slide strong { font-size: 0.6rem; }
             .topic-slide p { font-size: 0.55rem; }
-            .philosophy-wrapper { position: relative; }
-            .philosophy-wrapper::after {
-                content: '→';
-                position: absolute; right: 20px; bottom: -24px;
-                font-family: 'JetBrains Mono', monospace;
-                font-size: 1.8rem; color: var(--accent);
-                opacity: 0.5; pointer-events: none;
-                animation: arrowHint 2s ease-in-out infinite;
-            }
-            @keyframes arrowHint {
-                0%, 100% { transform: translateX(0); opacity: 0.3; }
-                50% { transform: translateX(6px); opacity: 0.7; }
-            }
+            .philosophy-wrapper { position: relative; align-items: flex-start; }
             .topics-carousel {
-                -webkit-mask: linear-gradient(90deg, #000 75%, transparent 98%);
-                mask: linear-gradient(90deg, #000 75%, transparent 98%);
+                flex-direction: column; gap: 0; overflow-x: visible; padding: 20px 0 20px 20px;
+                -webkit-mask: none; mask: none;
+                position: relative;
+            }
+            .topics-carousel::before {
+                content: ''; position: absolute; left: 10px; top: 8px; bottom: 8px;
+                width: 1px; background: linear-gradient(to bottom, var(--accent), rgba(188,75,33,0.05));
+            }
+            .topic-slide {
+                position: relative; padding: 16px 20px; width: 100%;
+                border-left: none; background: transparent;
+            }
+            .topic-slide::before {
+                content: ''; position: absolute; left: -13px; top: 22px;
+                width: 8px; height: 8px; border-radius: 50%;
+                background: var(--accent); border: 2px solid var(--paper);
+                box-shadow: 0 0 0 1px var(--accent);
             }
 
             .services-row { grid-template-columns: 1fr auto; gap: 12px; }
             .interactive-list { font-size: 0.65rem; line-height: 2; padding-left: 15px; }
             .services-visual { width: 130px !important; }
             .services-wrapper > div > div:last-child p { font-size: 0.65rem !important; margin-top: 4px !important; }
+            .services-wrapper > div > div:last-child {
+                border-top: 1px solid rgba(255,255,255,0.3) !important;
+                margin-top: 25px !important; padding-top: 20px !important;
+            }
+
             .carousel-area { min-height: auto; }
-            .slider { padding: 16px 0; gap: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .slider { padding: 16px 0; gap: 16px; }
             .slide { flex: 0 0 auto; }
             .slide-title { font-size: 0.5rem; padding: 4px 10px; bottom: 8px; left: 0; background: rgba(10,10,10,0.6); border-radius: 0 3px 3px 0; }
             .p-16-9 { width: 320px; height: 180px; }
@@ -358,6 +392,7 @@
             .t-3-2 { width: 60px; height: 40px; }
             #immersion-modal { padding: 10px 3%; }
             .btn-soma { font-size: 0.6rem; padding: 12px 20px; }
+            .btn-back { top: 5px; left: 5px; width: 28px; height: 28px; font-size: 0.85rem; }
         }
 
         @media (max-height: 520px) {
@@ -418,6 +453,7 @@
             .bg-keyword { font-size: 14vw; }
             h2 { font-size: clamp(0.9rem, 4vw, 1.2rem); margin-bottom: 4px; }
             .label { font-size: 0.4rem; letter-spacing: 1px; margin-bottom: 3px; }
+            .scroll-hint { display: none; }
 
             /* Immersion landscape compacta */
             #immersion-modal { padding: 8px 3%; overflow-y: auto; }
@@ -428,6 +464,7 @@
             .img-option p { font-size: 0.45rem; padding: 4px; }
             .soma-input { font-size: 0.8rem; margin: 8px 0; }
             #immersion-modal .btn-close { top: 6px; left: 6px; width: 26px; height: 26px; font-size: 0.8rem; }
+            .btn-back { top: 8px; left: 40px; width: 26px; height: 26px; font-size: 0.8rem; }
             .btn-soma { font-size: 0.55rem; padding: 8px 16px; }
             .package-option { padding: 6px !important; }
             #input-program > div { grid-template-columns: 1fr 1fr; gap: 2px; font-size: 0.45rem; }
@@ -435,8 +472,10 @@
         }
 
         @media (hover: none) {
-            .slider { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; scroll-snap-type: x mandatory; }
-            .slider::-webkit-scrollbar { display: none; }
+            @media (min-width: 769px) {
+                .slider { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; scroll-snap-type: x mandatory; }
+                .slider::-webkit-scrollbar { display: none; }
+            }
             .slide img { filter: grayscale(0.4); opacity: 0.8; }
             .slide-title { opacity: 0.85; }
             .services-visual img.active-img { opacity: 0.9; }
@@ -448,7 +487,7 @@
 <div class="scroll-container" id="main-viewport">
     
     <section class="dark">
-        <video id="hero-video" class="bg-video" autoplay muted playsinline preload="auto"></video>
+        <video id="hero-video" class="bg-video" autoplay muted playsinline webkit-playsinline preload="auto"></video>
         <div class="video-overlay"></div>
         <div class="bg-keyword" style="color: rgba(255,255,255,0.05);">SOMA</div>
         <div class="hero-flex">
@@ -466,6 +505,7 @@
                 <p class="hero-quote">"La IA no debe reemplazar el oficio,<br>sino liberar al diseñador para crear."</p>
             </div>
         </div>
+        <div class="scroll-hint">⌄</div>
     </section>
 
     <section class="light">
@@ -629,6 +669,7 @@
     <button class="btn-close" onclick="closeImmersion()">×</button>
     
     <div class="immersion-step active" id="soma-step-1">
+        <button class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 01 / Fachada</span><h2>¿Cómo quieres que se vea tu fachada?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step1', 'A', 2)"><img loading="lazy" src="../recursos_graficos/Inmersion/01. fachada/fachada abierta 1.2.webp"><p>Abierta</p></div>
@@ -636,6 +677,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-2">
+        <button class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 02 / Privacidad</span><h2>¿Cómo prefieres los accesos?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step2', 'A', 3)"><img loading="lazy" src="../recursos_graficos/Inmersion/02.Privacidad/vista franca.webp"><p>Abiertos y francos</p></div>
@@ -643,6 +685,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-3">
+        <button class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 03 / Espacios</span><h2>¿Cómo prefieres los espacios?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step3', 'A', 4)"><img loading="lazy" src="../recursos_graficos/Inmersion/03 flexibles/espacios flexibles 2.webp"><p>Amplios e integrados</p></div>
@@ -650,6 +693,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-4">
+        <button class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 04 / Iluminación</span><h2>¿Qué tipo de iluminación prefieres?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step4', 'A', 5)"><img loading="lazy" src="../recursos_graficos/Inmersion/04. iluminación/Luz directa.webp"><p>Mucha luz natural</p></div>
@@ -657,6 +701,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-5">
+        <button class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 05 / Estilo</span><h2>¿Qué estilo prefieres?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step5', 'A', 6)"><img loading="lazy" src="../recursos_graficos/Inmersion/05.Estilo/fachada texturizada 2.webp"><p>Texturas y ornamentos</p></div>
@@ -664,6 +709,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-6">
+        <button class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 06 / Niveles</span><h2>¿En cuántos niveles?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step6', 'A', 7)"><img loading="lazy" src="../recursos_graficos/Inmersion/06.Niveles/Un nivel F.webp"><p>Un nivel</p></div>
@@ -671,6 +717,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-7">
+        <button class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 07 / Paisaje</span><h2>¿Qué tipo de exteriores prefieres?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step7', 'A', 8)"><img loading="lazy" src="../recursos_graficos/Inmersion/07.Exteriores/terraza jardín.webp"><p>Mucho jardín</p></div>
@@ -678,6 +725,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-8">
+        <button class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 08 / Sensación</span><h2>¿Cómo te gustan los espacios?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step8', 'A', 9)"><img loading="lazy" src="../recursos_graficos/Inmersion/08.Espacios/espacio amplio.webp"><p>Abiertos y altos</p></div>
@@ -685,6 +733,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-9">
+        <button class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 09 / Vida Social</span><h2>¿Cómo consideras tu vida social?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step9', 'A', 10)"><img loading="lazy" src="../recursos_graficos/Inmersion/09.Socialización/vida social.webp"><p>ACTIVA</p></div>
@@ -692,6 +741,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-10">
+        <button class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 10 / Color</span><h2>¿Cómo te gustan los colores?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step10', 'A', 11)"><img loading="lazy" src="../recursos_graficos/Inmersion/10.Color/Casa neutra.webp"><p>Neutrales</p></div>
@@ -699,6 +749,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-11">
+        <button class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 11 / Contacto</span>
         <h2>Casi terminamos.</h2>
         <p style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: #888; margin-bottom: 20px;">Ingresa tu correo o número de WhatsApp para contactarnos.</p>
@@ -707,6 +758,7 @@
         <button class="btn-soma" style="margin-top:25px; background: var(--accent); color: white;" onclick="registerContact()">Enviar</button>
     </div>
     <div class="immersion-step" id="soma-step-12">
+        <button class="btn-back" onclick="prevStep()">←</button>
         <span class="label">Paso 12 / Éxito</span>
         <h2>Inmersión Registrada.</h2>
         <p style="font-family: 'JetBrains Mono'; font-size: 0.8rem; margin: 20px 0; color: #888;">¿Quieres saber cuánto costaría tu diseño y cuánto podrías invertir en obra?</p>
@@ -890,7 +942,7 @@
 
     const v2 = document.createElement('video');
     v2.className = 'bg-video';
-    v2.muted = true; v2.playsinline = true; v2.preload = 'auto';
+    v2.muted = true; v2.playsinline = true; v2.autoplay = true; v2.preload = 'auto'; v2.setAttribute('webkit-playsinline', '');
     v2.style.transition = 'opacity 0.8s ease';
     v2.style.opacity = '0';
     heroSection.insertBefore(v2, heroSection.firstChild);
@@ -901,7 +953,7 @@
             videoIdx++;
             outV.style.opacity = '0';
             inV.style.opacity = '1';
-            inV.play();
+            inV.play().catch(function(){});
             preloadVideo(outV, playlist[videoIdx % playlist.length]);
         };
     }
@@ -912,7 +964,7 @@
     preloadVideo(v1, playlist[0]);
     preloadVideo(v2, playlist[1]);
     videoIdx = 2;
-    v1.onloadeddata = () => { v1.play(); v1.style.opacity = '1'; };
+    v1.onloadeddata = () => { v1.play().catch(function(){}); v1.style.opacity = '1'; };
 
     // --- SERVICIOS ---
     function changeService(element, index) {
@@ -1076,10 +1128,15 @@
         viewport.style.overflowY = 'scroll';
     }
 
+    let currentStep = 1;
     function nextStep(n) {
+        currentStep = n;
         document.querySelectorAll('.immersion-step').forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
         const target = document.getElementById('soma-step-' + n);
         if (target) { target.classList.add('active'); target.style.display = 'flex'; }
+    }
+    function prevStep() {
+        if (currentStep > 1) nextStep(currentStep - 1);
     }
 
     function saveAnswer(step, key, next) {
