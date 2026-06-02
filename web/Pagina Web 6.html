@@ -249,6 +249,11 @@
         .soma-input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
         @supports (-webkit-touch-callout: none) { .soma-input { font-size: 16px; } }
         .btn-soma { background: var(--paper); color: var(--bg); border: none; padding: 15px 30px; font-family: 'Unbounded'; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: 0.3s var(--ease); }
+        .quote-tabs { display: flex; gap: 0; border: 1px solid rgba(255,255,255,0.12); margin: 15px 0; }
+        .quote-tab { flex: 1; padding: 12px 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.55rem; text-transform: uppercase; letter-spacing: 1px; background: transparent; border: none; border-right: 1px solid rgba(255,255,255,0.06); color: rgba(255,255,255,0.25); cursor: pointer; transition: 0.3s var(--ease); line-height: 1.3; }
+        .quote-tab:last-child { border-right: none; }
+        .quote-tab.active { color: var(--accent); font-weight: 700; background: rgba(212,94,44,0.1); }
+        .quote-tab:hover { color: rgba(255,255,255,0.5); }
 
         /* Accent-bg overrides */
         .accent-bg .interactive-list { border-left-color: rgba(255,255,255,0.25); }
@@ -366,6 +371,7 @@
             .soma-input { font-size: 1rem; }
             #immersion-modal .btn-close { top: 10px; left: 10px; min-width: 44px; min-height: 44px; }
 
+            .quote-tab { font-size: 0.45rem; padding: 10px 4px; }
             /* Cotizador checks en móvil */
             #input-program > div { grid-template-columns: 1fr 1fr; gap: 4px; font-size: 0.5rem; }
             #input-program label input { transform: scale(0.8); }
@@ -480,6 +486,7 @@
             .soma-input { font-size: 0.8rem; margin: 8px 0; }
             #immersion-modal .btn-close { top: 6px; left: 6px; min-width: 44px; min-height: 44px; font-size: 0.9rem; }
             .btn-back { bottom: 8px; left: 50%; transform: translateX(-50%); min-width: 44px; min-height: 44px; font-size: 0.7rem; padding: 0 14px; }
+            .quote-tab { font-size: 0.4rem; padding: 6px 4px; }
             .btn-soma { font-size: 0.55rem; padding: 8px 16px; }
             .package-option { padding: 6px !important; }
             #input-program > div { grid-template-columns: 1fr 1fr; gap: 2px; font-size: 0.45rem; }
@@ -787,11 +794,11 @@
     <div class="immersion-step" id="soma-step-13">
         <span class="label">Cotizador / Parámetros</span>
         <h2>Escala e Inversión.</h2>
-        <select class="soma-input" id="quote-type" onchange="toggleQuoteType()" style="font-size: 1rem; background: var(--bg); color: white; border-bottom: 2px solid white;">
-            <option value="program">Por Programa (Espacios)</option>
-            <option value="m2">Por Metros Cuadrados</option>
-            <option value="money">Por Cantidad de Inversión</option>
-        </select>
+        <div class="quote-tabs">
+            <button type="button" class="quote-tab active" data-type="program" onclick="setQuoteType('program')">Por Programa<br><small style="opacity:0.5">(Espacios)</small></button>
+            <button type="button" class="quote-tab" data-type="m2" onclick="setQuoteType('m2')">Por Metros<br><small style="opacity:0.5">Cuadrados</small></button>
+            <button type="button" class="quote-tab" data-type="money" onclick="setQuoteType('money')">Por Cantidad<br><small style="opacity:0.5">de Inversión</small></button>
+        </div>
         <div id="input-m2" style="display:none;">
             <p class="label" style="color:white; margin-top:20px;">Metros cuadrados estimados:</p>
             <input type="number" class="soma-input" placeholder="Ej: 200" id="quote-m2-val">
@@ -1205,9 +1212,13 @@
 
     // --- COTIZADOR ---
     const MINIMO_TALLER = 8000;
+    let currentQuoteType = 'program';
 
-    function toggleQuoteType() {
-        const type = document.getElementById('quote-type').value;
+    function setQuoteType(type) {
+        currentQuoteType = type;
+        document.querySelectorAll('.quote-tab').forEach(function(t) {
+            t.classList.toggle('active', t.dataset.type === type);
+        });
         document.getElementById('input-program').style.display = type === 'program' ? 'block' : 'none';
         document.getElementById('input-m2').style.display = type === 'm2' ? 'block' : 'none';
         document.getElementById('input-money').style.display = type === 'money' ? 'block' : 'none';
@@ -1224,7 +1235,7 @@
     }
 
     async function calculateSomaQuote() {
-        const type = document.getElementById('quote-type').value;
+        const type = currentQuoteType;
         const pDiseno = somaData.cotizacion.precioDiseno || 250;
         const resultDiv = document.getElementById('quote-result');
 
