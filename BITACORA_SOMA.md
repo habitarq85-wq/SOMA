@@ -866,3 +866,81 @@ Se creó además `REFERENCIAS_CANONICAS.md` — tabla maestra con las 43 fuentes
 ---
 
 *Sesión cerrada. Sitio web completo y funcional: hero, portafolio, inmersión, cotizador, email, responsive landscape/portrait. Pendiente dominio propio + publicación formal.*
+
+---
+
+## Sesión: 2026-06-02 — Precios v3.0, UX cotizador, scroll reveal bidireccional, fixes
+
+### 72. LOGROS DE LA SESIÓN
+
+#### Precios actualizados (v3.0)
+- Integral: $400/m² → **$350/m²**
+- Ejecutivo: $1,000/m² → **$850/m²**
+- Mínimo taller: $8,000 → **$6,500**
+
+#### Programa arquitectónico — Espacios mínimos
+- Valores cambiados a dimensiones mínimas funcionales (sala 19, comedor 14, cocina 12, recámara 16, estudio 10, baño 5, 1/2 baño 2, cochera 30, bodega 7) con factor 1.35 **ya integrado**.
+- `* 1.35` eliminado del JS para no duplicar.
+
+#### Quote-type selector (3 tabs visibles)
+- `<select>` reemplazado por 3 botones tipo tab en el paso de parámetros.
+- Activo: acento `#d45e2c` + negrita + fondo tenue. Inactivos: gris translúcido.
+- Nueva variable global `currentQuoteType` y función `setQuoteType()`.
+
+#### Botón "volver" unificado
+- Todos los pasos del cotizador (1–15) ahora usan `btn-back` con estilo: `background: transparent`, `border: 1px solid #333`, texto `← volver`.
+- Posicionado abajo-centro con `left: 50%; transform: translateX(-50%)`.
+- Se eliminó `backdrop-filter` de `.btn-back`.
+
+#### Scroll reveal bidireccional + filosofía
+- Proyectos y filosofía: `classList.toggle('revealed', entry.isIntersecting)` en vez de solo `add()`.
+- Al subir, los elementos vuelven a su estado inicial con animación.
+- Filosofía en mobile: `opacity: 0.5; transform: translateX(-15px)` → `opacity: 1; translateX(0)`.
+
+#### Fixes alta prioridad (11/11)
+| # | Issue | Fix |
+|---|-------|-----|
+| 1 | `type="button"` duplicado step 12 | Eliminado |
+| 2 | `overflow:hidden` corta contenido en sections | → `overflow: visible` |
+| 3 | Contraste `#bc4b21` (3.93:1) falla AA | → `#d45e2c` |
+| 4 | Contraste `#555` (2.66:1) tl-detail | → `#999` |
+| 5 | Contraste `#666` (3.45:1) texto info | → `#aaa` |
+| 6 | 30+ imágenes sin `alt` | 31 con alt descriptivo |
+| 7 | Sin `<noscript>` | Agregado |
+| 8 | `backdrop-filter` sin `-webkit-` (5x) | Ambos prefijos |
+| 9 | `outline:none` sin sustituto foco | `:focus-visible` agregado |
+| 10 | `overflow:hidden` landscape modal | Revisado — era intencional |
+| 11 | `scroll-snap-type: y mandatory` | → `y proximity` |
+
+### 73. ARCHIVOS MODIFICADOS
+
+| Archivo | Cambio |
+|---------|--------|
+| `web/Pagina Web 6.html` | Precios v3.0, quote tabs, btn volver unificado, scroll reveal bidireccional, filosofía reveal, fixes 11/11, programa mínimos, cochera 30m², threshold 0.65 |
+| `SOMA_SNAPSHOT.md` | Precios v3.0, nuevos items sesión, última actualización 02/06/2026 |
+| `SOLOJUAN.md` | Nueva sección [2026-06-02] con precios v3.0 y decisiones |
+| `SOMA_CORE_INDEX.md` | Bloque 6 agregado con checklist 02/06/2026 |
+| `BITACORA_SOMA.md` | Esta entrada de sesión |
+
+---
+
+## [2026-06-02 — Segunda Pasada] Hardening de precios v3.0 en todo el ecosistema
+
+Se detectaron y corrigieron referencias heredadas a precios v2.1 ($400, $1,000, $8,000) que no se habían actualizado en la primera pasada.
+
+| Archivo | Cambio |
+|---------|--------|
+| `backend/server.py` | `MINIMO_TALLER=6500` reemplazó `8000` hardcodeado en 2 `Math.max()` calls |
+| `web/Pagina Web 5.html` | `setSomaLevel(400→350, 1000→850)`, `MINIMO_TALLER=8000→6500`, `promObra 400→350`, tabla de rangos |
+| `Dashboard.html` | 3 ocurrencias de `400→350`, `1000→850`, `8000→6500` en cálculos de honorarios y kanban |
+| `PROTOCOLO_PRESUPUESTO_Y_VIABILIDAD.md` | v2.1→v3.0, precios y mínimo actualizados |
+| `CONVENIO_ANTICIPO_PAGOS.md` | Integral $400→$350, Ejecutivo $1,000→$850 |
+| `CARTA_PRESENTACION_SOMA.html` | Precios y `accent #bc4b21→#d45e2c`, mínimo $8,000→$6,500 |
+| `CARTA_PRESENTACION_SOMA.md` | Integral $400→$350, Ejecutivo $1,000→$850 |
+| `CONTRATO_DISENO_SOMA.md` | Integral $400→$350, Ejecutivo $1,000→$850, mínimo $8,000→$6,500 |
+
+**Resultado:** 8 archivos sincronizados. Cero referencias heredadas a v2.1 en el ecosistema SOMA.
+
+---
+
+*Hardening completado. Ecosistema de precios v3.0 sincronizado al 100%.*

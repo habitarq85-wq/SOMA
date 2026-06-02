@@ -489,3 +489,39 @@ La investigación de sitio y normativa NO va antes de la cotización; se ejecuta
 - **[ALTA] Dominio propio** — `soma.up.railway.app` no inspira confianza.
 - **[MEDIA] Migrar a PostgreSQL** — SQLite se pierde al reiniciar Railway.
 
+---
+
+## [2026-06-02] — Sesión: Precios v3.0, UX cotizador, scroll reveal, fixes
+
+### Nueva Escala de Precios Oficial (SOMA v3.0)
+- **SOMA Esencial:** $250/m² (se mantiene)
+- **SOMA Integral:** $350/m² (bajó de $400)
+- **SOMA Ejecutivo:** $850/m² (bajó de $1,000)
+- **Cargo mínimo operativo:** $6,500 (bajó de $8,000)
+
+"El mínimo del taller va a ser 6,500. El precio integral va a ser 350 por metro cuadrado. El paquete ejecutivo va a ser 850 por metro cuadrado."
+
+### Programa arquitectónico — Espacios mínimos
+"Aquí están los espacios con dimensiones mínimas funcionales + factor 1.35 ya aplicado [...] El de la cochera utiliza el de 2 autos, los demás si modifícalos."
+
+**Decisión:** Los valores de programa se cambiaron a mínimos funcionales con 1.35 integrado. Cochera 30m² (2 autos). Se eliminó `* 1.35` del JS para no duplicar.
+
+### Quote-type tabs
+"En el cotizador, en el apartado cotizador parámetros, necesito que estén visibles los tres tipos que pueden ser marcado con negritas el que está activo, ejemplo esta activo por programa, en transparentes los que no están activos."
+
+**Decisión:** `<select>` reemplazado por 3 botones tipo tab. Activo: acento + negrita + fondo tenue. Inactivos: gris translúcido.
+
+### Botón volver unificado
+"haz el botón volver de las preguntas similar al botón volver del cotizador parámetros escala e inversión, es decir su flecha y tamaño de letra."
+
+**Decisión:** Todos los `.btn-back` ahora estilo `transparent + border #333 + font-family JetBrains Mono` con texto `← volver` y centrados abajo.
+
+### Scroll reveal filosofía + bidireccional
+"haz que se encienda uno y se apague el otro así cuando subes y bajes lo ves animado igual en el apartado proyectos."
+
+**Decisión:** `classList.toggle('revealed', entry.isIntersecting)` en vez de solo `add()`. Filosofía con `opacity: 0.5; transform: translateX(-15px)` → revelado.
+
+### Próxima Sesión
+- Dashboard apunta a `localhost:8080` — reconectar cuando se migre a Render (pendiente).
+- Pendientes de sesiones anteriores sin cambios.
+

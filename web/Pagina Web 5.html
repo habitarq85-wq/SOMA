@@ -482,11 +482,11 @@
                 <h3 style="color: var(--accent); font-size: 0.8rem; margin-bottom: 5px;">SOMA ESENCIAL</h3>
                 <p style="font-family: 'JetBrains Mono'; font-size: 0.55rem; color: #888; margin: 0;">Diseño arquitectónico completo: plantas, alzados, análisis de sitio y normativa, más una perspectiva general del proyecto.</p>
             </div>
-            <div class="package-option" onclick="setSomaLevel(400, 15)" style="background: rgba(255,255,255,0.05); padding: 12px; border: 1px solid #333; cursor: pointer;">
+            <div class="package-option" onclick="setSomaLevel(350, 15)" style="background: rgba(255,255,255,0.05); padding: 12px; border: 1px solid #333; cursor: pointer;">
                 <h3 style="color: var(--accent); font-size: 0.8rem; margin-bottom: 5px;">SOMA INTEGRAL</h3>
                 <p style="font-family: 'JetBrains Mono'; font-size: 0.55rem; color: #888; margin: 0;">Todo lo del nivel básico más moodboard de acabados, criterios de ingenierías, planos de permiso y perspectivas adicionales.</p>
             </div>
-            <div class="package-option" onclick="setSomaLevel(1000, 15)" style="background: rgba(255,255,255,0.05); padding: 12px; border: 1px solid #333; cursor: pointer;">
+            <div class="package-option" onclick="setSomaLevel(850, 15)" style="background: rgba(255,255,255,0.05); padding: 12px; border: 1px solid #333; cursor: pointer;">
                 <h3 style="color: var(--accent); font-size: 0.8rem; margin-bottom: 5px;">SOMA EJECUTIVO</h3>
                 <p style="font-family: 'JetBrains Mono'; font-size: 0.55rem; color: #888; margin: 0;">Todo lo del nivel integral más planos técnicos ejecutivos, detalles constructivos y coordinación integral de ingenierías.</p>
             </div>
@@ -718,7 +718,7 @@
     }
 
     // --- COTIZADOR ---
-    const MINIMO_TALLER = 8000;
+    const MINIMO_TALLER = 6500;
 
     function toggleQuoteType() {
         const type = document.getElementById('quote-type').value;
@@ -754,15 +754,15 @@
             m2 = base * 1.35;
         } else if (type === 'money') {
             const inv = parseFloat(document.getElementById('quote-money-val').value) || 0;
-            const promObra = pDiseno === 250 ? 15000 : (pDiseno === 400 ? 20000 : 32000);
+            const promObra = pDiseno === 250 ? 15000 : (pDiseno === 350 ? 20000 : 32000);
             m2 = inv / (promObra + pDiseno);
         }
 
         let totalDiseno = Math.max(m2 * pDiseno, MINIMO_TALLER);
         const niveles = {
             250: { nombre: "SOMA Esencial", min: 14000, max: 16500 },
-            400: { nombre: "SOMA Integral", min: 18500, max: 23000 },
-            1000: { nombre: "SOMA Ejecutivo", min: 28000, max: 40000 }
+            350: { nombre: "SOMA Integral", min: 18500, max: 23000 },
+            850: { nombre: "SOMA Ejecutivo", min: 28000, max: 40000 }
         };
         const n = niveles[pDiseno] || niveles[250];
 

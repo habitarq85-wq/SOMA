@@ -510,7 +510,7 @@
 <div class="scroll-container" id="main-viewport">
     
     <section class="dark">
-        <video id="hero-video" class="bg-video" autoplay muted playsinline webkit-playsinline preload="auto"></video>
+        <video id="hero-video" class="bg-video" autoplay muted loop playsinline webkit-playsinline preload="auto" src="../recursos_graficos/Video_Fondo/hero_loop.mp4"></video>
         <div class="video-overlay"></div>
         <div class="bg-keyword" style="color: rgba(255,255,255,0.05);">SOMA</div>
         <div class="hero-flex">
@@ -964,49 +964,6 @@
     document.addEventListener('visibilitychange', function() {
         if (document.hidden) window.__somaCleanup.forEach(function(fn) { fn(); });
     });
-
-    // --- PLAYLIST DE VIDEOS (transición suave con 2 players) ---
-    const playlist = [
-        "../recursos_graficos/Video_Fondo/v1_mangle.mp4",
-        "../recursos_graficos/Video_Fondo/v2_telchac.mp4",
-        "../recursos_graficos/Video_Fondo/v3_atardecer.mp4",
-        "../recursos_graficos/Video_Fondo/v4_nocturna.mp4"
-    ];
-    let videoIdx = 0;
-
-    function preloadVideo(v, src) {
-        v.src = src; v.load();
-    }
-
-    const heroSection = document.querySelector('.dark');
-    const v1 = document.getElementById('hero-video');
-    v1.style.transition = 'opacity 0.8s ease';
-
-    const v2 = document.createElement('video');
-    v2.className = 'bg-video';
-    v2.muted = true; v2.playsinline = true; v2.autoplay = true; v2.preload = 'auto'; v2.setAttribute('webkit-playsinline', '');
-    v2.style.transition = 'opacity 0.8s ease';
-    v2.style.opacity = '0';
-    heroSection.insertBefore(v2, heroSection.firstChild);
-
-    function setupSwap(outV, inV) {
-        outV.onended = () => {
-            const src = playlist[videoIdx % playlist.length];
-            videoIdx++;
-            outV.style.opacity = '0';
-            inV.style.opacity = '1';
-            inV.play().catch(function(){});
-            preloadVideo(outV, playlist[videoIdx % playlist.length]);
-        };
-    }
-
-    setupSwap(v1, v2);
-    setupSwap(v2, v1);
-
-    preloadVideo(v1, playlist[0]);
-    preloadVideo(v2, playlist[1]);
-    videoIdx = 2;
-    v1.onloadeddata = () => { v1.play().catch(function(){}); v1.style.opacity = '1'; };
 
     // --- SERVICIOS ---
     function changeService(element, index) {

@@ -30,7 +30,7 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 - [x] **Registro de Pagos:** Resumen financiero en Dashboard, badges de pago por lead, tabla de cobros en expediente.
 - [ ] **Definir Tiempos de Entrega:** Pendiente de definición basada en experiencia de Juan (tamaño + paquete + factores). Estructura base en `TIEMPOS_ENTREGA_BASE.md`.
 - [ ] **Automatización de Impuestos:** Cálculo de ISR/IVA, generación de CFDI, reportes fiscales.
-- [x] **Protocolo de Presupuesto:** Precios oficiales, cargo mínimo, subsidio cruzado. En `metodologia/Bloque 1 - Gestion del Entorno (ADM)/PROTOCOLO_PRESUPUESTO_Y_VIABILIDAD.md`.
+- [x] **Protocolo de Presupuesto:** Precios oficiales v3.0 ($250/$350/$850), cargo mínimo $6,500, subsidio cruzado. En `metodologia/Bloque 1 - Gestion del Entorno (ADM)/PROTOCOLO_PRESUPUESTO_Y_VIABILIDAD.md`.
 
 ## BLOQUE 2: TALLER SOMA (OPERACIÓN)
 - [x] **Recepción de Información:** Pre-filtro Web (Activo) + App de Entrevista con 6 tópicos.
@@ -79,6 +79,14 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 - [x] **Landscape compact:** Imagen 90px, fuentes 0.45rem, padding reducido. Contacto visible.
 - [x] **Immersion images:** `object-fit: contain` en móvil vertical, sin recorte.
 - [x] **Desktop contacto:** Centrado, alineado con servicios (`padding-left: 25px`).
+
+## 🧪 BLOQUE 6: SITIO WEB (MKT) — Sesión 02/06/2026
+- [x] **Precios v3.0:** Integral $350/m², Ejecutivo $850/m², mínimo taller $6,500.
+- [x] **Programa espacios mínimos:** Valores actualizados con factor 1.35 integrado, cochera 30m². `* 1.35` eliminado del JS.
+- [x] **Quote-type tabs:** `<select>` reemplazado por 3 tabs visibles. Activo en acento, inactivos translúcidos.
+- [x] **Botón volver unificado:** Todos los pasos del cotizador con `← volver` estilo transparente + borde #333.
+- [x] **Scroll reveal bidireccional:** `classList.toggle()` en proyectos y filosofía. Efecto agregado a filosofía (opacity + translateX).
+- [x] **Fixes alta prioridad (11/11):** type duplicado, overflow sections, contraste (#bc4b21→#d45e2c, #555→#999, #666→#aaa), alt en 31 imágenes, `<noscript>`, -webkit-backdrop-filter, :focus-visible, scroll-snap-type y proximity. Threshold 0.65.
 
 ## 🎯 PRIORIDADES 29/05/2026 — ROADMAP A PRODUCCIÓN
 

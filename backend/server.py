@@ -34,11 +34,11 @@ TWILIO_TOKEN = os.environ.get("TWILIO_TOKEN", "").strip()
 TWILIO_WHATSAPP = os.environ.get("TWILIO_WHATSAPP", "+14155238886")
 NOTIFICACION_WHATSAPP = os.environ.get("NOTIFICACION_WHATSAPP", "").strip()
 
-MINIMO_TALLER = 8000
+MINIMO_TALLER = 6500
 RANGOS_OBRA = {
     250: {"min": 14000, "max": 16500},
-    400: {"min": 18500, "max": 23000},
-    1000: {"min": 28000, "max": 40000}
+    350: {"min": 18500, "max": 23000},
+    850: {"min": 28000, "max": 40000}
 }
 
 os.makedirs(REPORTES_DIR, exist_ok=True)
@@ -207,7 +207,7 @@ def save_immersion():
     m2 = cotizacion.get('m2', 0)
     precio_diseno_m2 = cotizacion.get('precioDiseno', 0)
 
-    nivel_map = {250: "esencial", 400: "integral", 1000: "ejecutivo"}
+    nivel_map = {250: "esencial", 350: "integral", 850: "ejecutivo"}
     nivel_key = nivel_map.get(precio_diseno_m2, "esencial")
 
     total_diseno = m2 * precio_diseno_m2
@@ -349,7 +349,7 @@ def get_activity_matrix(temp_id):
         return jsonify({"status": "error", "message": str(e)}), 500
 
 # ---- PROGRAMA ARQUITECTONICO ----
-PRECIOS_M2 = {"esencial": 250, "integral": 400, "ejecutivo": 1000}
+PRECIOS_M2 = {"esencial": 250, "integral": 350, "ejecutivo": 850}
 
 @app.route('/programa/<int:lead_id>', methods=['GET'])
 def get_programa(lead_id):
@@ -445,7 +445,7 @@ def get_cotizacion(lead_id):
         _, contacto, m2_lead, nivel, honorarios_lead = lead
         nivel_key = nivel or "esencial"
         precio_m2 = PRECIOS_M2.get(nivel_key, 250)
-        honorarios_reales = max(total_m2 * precio_m2, 8000)
+        honorarios_reales = max(total_m2 * precio_m2, MINIMO_TALLER)
         rango = RANGOS_OBRA.get(precio_m2, {"min": 18500, "max": 23000})
 
         return jsonify({
@@ -480,7 +480,7 @@ def cotizacion_pdf(lead_id):
         c.execute("SELECT tipo, espacio, area, zona, clave FROM programa_arquitectonico WHERE lead_id=? ORDER BY tipo, id", (lead_id,))
         espacios = c.fetchall()
         total_m2 = sum(e[2] or 0 for e in espacios)
-        honorarios = max(total_m2 * precio_m2, 8000)
+        honorarios = max(total_m2 * precio_m2, MINIMO_TALLER)
         rango = RANGOS_OBRA.get(precio_m2, {"min": 18500, "max": 23000})
         conn.close()
 

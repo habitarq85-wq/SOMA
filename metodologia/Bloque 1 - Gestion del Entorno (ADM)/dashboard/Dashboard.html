@@ -370,8 +370,8 @@
                 const m2 = l.m2 || 0;
                 const nivel = l.nivel_proyecto || "esencial";
                 totalM2 += m2;
-                if (nivel === "ejecutivo") totalH += m2 * 1000;
-                else if (nivel === "integral") totalH += m2 * 400;
+                if (nivel === "ejecutivo") totalH += m2 * 850;
+                else if (nivel === "integral") totalH += m2 * 350;
                 else totalH += m2 * 250;
             });
             document.getElementById('total-honorarios').innerText = `$${Math.round(totalH).toLocaleString()}`;
@@ -424,8 +424,8 @@
                     : (cData.pagado > 0 ? `<span class="lead-badge" style="background:#e8f5e9;color:#2e7d32;margin-left:4px;">✓ PAGADO</span>` : '');
 
                 const honorarios = m2 > 0 ? (() => {
-                    const p = nivel === 'ejecutivo' ? 1000 : nivel === 'integral' ? 400 : 250;
-                    const total = Math.max(m2 * p, 8000);
+                    const p = nivel === 'ejecutivo' ? 850 : nivel === 'integral' ? 350 : 250;
+                    const total = Math.max(m2 * p, 6500);
                     return `$${total.toLocaleString()}`;
                 })() : '---';
 
@@ -524,8 +524,8 @@
                             const badgeCls = `badge-${l.nivel_proyecto || 'esencial'}`;
                             const m2 = l.m2 || 0;
                             const nivel = l.nivel_proyecto || 'pendiente';
-                            const p = nivel === 'ejecutivo' ? 1000 : nivel === 'integral' ? 400 : 250;
-                            const hon = m2 > 0 ? Math.max(m2 * p, 8000) : 0;
+                            const p = nivel === 'ejecutivo' ? 850 : nivel === 'integral' ? 350 : 250;
+                            const hon = m2 > 0 ? Math.max(m2 * p, 6500) : 0;
                             const estIdx = PIPELINE_ESTADOS.indexOf(est);
                             html += `<div style="background:#fff;padding:8px;margin-bottom:6px;border-radius:4px;border:1px solid #eee;font-family:\'JetBrains Mono\';font-size:.55rem;">
                                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">

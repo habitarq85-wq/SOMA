@@ -88,18 +88,18 @@
 - **Hero:** Video de fondo con playlist rotativa de 4 videos (mangle, Telchac, atardecer, nocturna). `onloadeddata` para play seguro, sin `loop` para que la playlist avance. 4 frases de la carta de presentación con fade in/out a la derecha del título.
 - **Portafolio:** Carrusel horizontal con 5 proyectos reales. Modal con galería dinámica por proyecto, miniaturas con proporción nativa, títulos por nombre de archivo. Preloader de imágenes para evitar transiciones trabadas.
 - **Inmersión SOMA (10 pasos):** Preguntas visuales A/B sobre fachada, habitaciones, espacios, iluminación, estilo, niveles, paisaje, sensación, vida social y color.
-- **Cotizador:** 3 modalidades (Por Programa, Por m², Por Inversión). 3 niveles de paquete: Esencial ($250/m²), Integral ($400/m²), Ejecutivo ($1,000/m²). Cargo mínimo operativo de $8,000.
+- **Cotizador:** 3 modalidades (Por Programa, Por m², Por Inversión). 3 niveles de paquete: Esencial ($250/m²), Integral ($350/m²), Ejecutivo ($850/m²). Cargo mínimo operativo de $6,500.
 - **Diagnóstico técnico:** Al elegir paquete se muestran los análisis del `diagnosticos_master.json`. Excluido de la interfaz web (solo correo/WhatsApp).
 - **Notificaciones:** Los leads activan: (1) guardado en DB, (2) reporte en `backend/reportes/`, (3) correo SMTP (puerto 465 SSL) a habitarq85@gmail.com, (4) WhatsApp Twilio a Juan. Integración con App de Entrevista vía carpeta `backend/proyectos/` compartida.
 
-## 💰 5. ESCALA DE PRECIOS OFICIAL (SOMA v2.1)
+## 💰 5. ESCALA DE PRECIOS OFICIAL (SOMA v3.0)
 | Paquete | Precio | Entregables |
 |---|---|---|
 | **SOMA Esencial** | $250/m² | Diseño arquitectónico, plantas, alzados, análisis de sitio y normativa, perspectiva de proyecto. |
-| **SOMA Integral** | $400/m² | Básico + moodboard de acabados, criterios de ingenierías, planos de permiso y más perspectivas. |
-| **SOMA Ejecutivo** | $1,000/m² | Integral + planos técnicos, detalles constructivos, coordinación de ingenierías. |
+| **SOMA Integral** | $350/m² | Básico + moodboard de acabados, criterios de ingenierías, planos de permiso y más perspectivas. |
+| **SOMA Ejecutivo** | $850/m² | Integral + planos técnicos, detalles constructivos, coordinación de ingenierías. |
 
-- **Cargo mínimo operativo:** $8,000 MXN (se aplica silenciosamente para proteger la viabilidad de proyectos pequeños).
+- **Cargo mínimo operativo:** $6,500 MXN (se aplica silenciosamente para proteger la viabilidad de proyectos pequeños).
 - **Rangos de obra (terceros):** Esencial $14,000-$16,500/m², Integral $18,500-$23,000/m², Ejecutivo $28,000-$40,000/m².
 
 ## 🚀 6. OBJETIVOS INMEDIATOS (Prioridades 19/05/2026 — Noche)
@@ -141,7 +141,7 @@ Estrategias para redes sociales, Google y otras fuentes de leads. Solo cuando el
 
 ---
 
-## 📅 ÚLTIMA ACTUALIZACIÓN: 29/05/2026 (VIDEO CROSSFADE + EMAIL SINCRÓNICO + LANDSCAPE COMPACT)
+## 📅 ÚLTIMA ACTUALIZACIÓN: 02/06/2026 (PRECIOS V3.0 + QUOTE TABS + SCROLL REVEAL + FIXES)
 - **Programa Arquitectónico en Dashboard:** Tabla `programa_arquitectonico` + CRUD endpoints + UI con 3 niveles (Deseado/Complementario/Lujo), clave E{número}, relaciones por 🔗 en mini-modal movible.
 - **Cotización Formal PDF:** Endpoint `/cotizacion/<id>/pdf` con HTML imprimible. **NO muestra** precio/m², mínimo $8,000 ni obra (datos internos del taller).
 - **Cobros y Finanzas:** Tabla `cobros` + `resumen_financiero` + registro de pagos en modal expediente + badges en lead cards.
@@ -197,6 +197,12 @@ Estrategias para redes sociales, Google y otras fuentes de leads. Solo cuando el
 - **[2026-05-29] Landscape responsive (compactación final):** Contacto invisible por falta de espacio. Se redujo: imagen servicios 120→90px, fuentes a 0.45rem, gaps a 4px, padding sección `1vh 4% 3vh`. Timeline más compacto. Botón `padding: 4px 10px`.
 - **[2026-05-29] Immersion images crop fix:** En móvil vertical, `object-fit: cover` + `aspect-ratio: 3/4` recortaban las imágenes. Cambiado a `object-fit: contain; height: auto; max-height: 200px` en 480px (1 columna) y 180px en 768px (2 columnas).
 - **[2026-05-29] Email timeout fix:** Timeout cliente 5s → 20s (SMTP síncrono tardaba más de 5s). Timeout SMTP añadido (10s) para no colgarse.
+
+**[NUEVO 2026-06-02] Programa espacios mínimos + cotizador:** Valores de programa actualizados a dimensiones mínimas funcionales + factor 1.35 integrado. Cochera 2 autos (30m²). `* 1.35` eliminado del JS.
+- **[NUEVO 2026-06-02] Precios actualizados (v3.0):** Integral $400 → $350/m². Ejecutivo $1,000 → $850/m². Mínimo taller $8,000 → $6,500.
+- **[NUEVO 2026-06-02] Quote-type selector:** Reemplazado `<select>` por 3 tabs visibles con activo resaltado en acento. Botones "← volver" unificados en todos los pasos del cotizador (transparente + borde #333 + flecha).
+- **[NUEVO 2026-06-02] Scroll reveal bidireccional:** `classList.toggle()` en vez de `add()`. Filosofía ahora con mismo efecto que proyectos: opacidad 0.5 + translateX(-15px) → 1 + 0 al entrar/salir del viewport.
+- **[NUEVO 2026-06-02] Fixes alta prioridad (11/11):** type duplicado, overflow sections, contraste #bc4b21→#d45e2c, #555→#999, #666→#aaa, alt en 31 imágenes, `<noscript>`, -webkit-backdrop-filter, :focus-visible, scroll-snap-type y proximity. Threshold scroll-reveal 0.4 → 0.65.
 
 ---
 

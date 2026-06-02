@@ -13,11 +13,11 @@ El Taller se compromete a realizar el diseno arquitectonico del proyecto
 ubicado en [Direccion o Predio], conforme al paquete contratado:
 
 - [ ] SOMA Esencial ($250/m2)
-- [ ] SOMA Integral ($400/m2)
-- [ ] SOMA Ejecutivo ($1,000/m2)
+- [ ] SOMA Integral ($350/m2)
+- [ ] SOMA Ejecutivo ($850/m2)
 
 **Escala estimada:** [   ] m2
-**Honorarios totales:** $[   ] (minimo $8,000 MXN)
+**Honorarios totales:** $[   ] (minimo $6,500 MXN)
 
 ---
 
