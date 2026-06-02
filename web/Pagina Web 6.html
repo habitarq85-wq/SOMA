@@ -225,12 +225,13 @@
         #immersion-modal.active { opacity: 1; visibility: visible; }
         #immersion-modal .btn-close { z-index: 5000; }
         .btn-back {
-            position: absolute; top: 15px; left: 15px; z-index: 5000;
+            position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
+            z-index: 5000;
             background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15);
-            color: white; min-width: 44px; min-height: 44px;
-            display: flex; align-items: center;             justify-content: center;
-            cursor: pointer; font-size: 1rem; -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);
-            transition: 0.3s var(--ease); border-radius: 0;
+            color: white; min-width: 90px; min-height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 0.8rem; -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);
+            transition: 0.3s var(--ease); border-radius: 0; padding: 0 18px;
         }
         .btn-back:hover { background: white; color: var(--bg); }
         
@@ -405,7 +406,7 @@
             .t-3-2 { width: 60px; height: 40px; }
             #immersion-modal { padding: 10px 3%; }
             .btn-soma { font-size: 0.6rem; padding: 12px 20px; }
-            .btn-back { top: 5px; left: 5px; width: 28px; height: 28px; font-size: 0.85rem; }
+            .btn-back { bottom: 5px; left: 50%; transform: translateX(-50%); width: auto; height: auto; font-size: 0.7rem; padding: 0 14px; min-width: 70px; min-height: 36px; }
         }
 
         @media (max-height: 520px) {
@@ -478,7 +479,7 @@
             .img-option p { font-size: 0.45rem; padding: 4px; }
             .soma-input { font-size: 0.8rem; margin: 8px 0; }
             #immersion-modal .btn-close { top: 6px; left: 6px; min-width: 44px; min-height: 44px; font-size: 0.9rem; }
-            .btn-back { top: 8px; left: 44px; min-width: 44px; min-height: 44px; font-size: 0.9rem; }
+            .btn-back { bottom: 8px; left: 50%; transform: translateX(-50%); min-width: 44px; min-height: 44px; font-size: 0.7rem; padding: 0 14px; }
             .btn-soma { font-size: 0.55rem; padding: 8px 16px; }
             .package-option { padding: 6px !important; }
             #input-program > div { grid-template-columns: 1fr 1fr; gap: 2px; font-size: 0.45rem; }
@@ -684,7 +685,7 @@
     <button type="button" class="btn-close" onclick="closeImmersion()" aria-label="Cerrar cotizador">×</button>
     
     <div class="immersion-step active" id="soma-step-1">
-        <button type="button" class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" class="btn-back" onclick="prevStep()">volver</button>
         <span class="label">Paso 01 / Fachada</span><h2>¿Cómo quieres que se vea tu fachada?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step1', 'A', 2)"><img loading="lazy" src="../recursos_graficos/Inmersion/01. fachada/fachada abierta 1.2.webp" alt="Fachada abierta"><p>Abierta</p></div>
@@ -692,7 +693,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-2">
-        <button type="button" class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" class="btn-back" onclick="prevStep()">volver</button>
         <span class="label">Paso 02 / Privacidad</span><h2>¿Cómo prefieres los accesos?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step2', 'A', 3)"><img loading="lazy" src="../recursos_graficos/Inmersion/02.Privacidad/vista franca.webp" alt="Acceso abierto y franco"><p>Abiertos y francos</p></div>
@@ -700,7 +701,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-3">
-        <button type="button" class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" class="btn-back" onclick="prevStep()">volver</button>
         <span class="label">Paso 03 / Espacios</span><h2>¿Cómo prefieres los espacios?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step3', 'A', 4)"><img loading="lazy" src="../recursos_graficos/Inmersion/03 flexibles/espacios flexibles 2.webp" alt="Amplios e integrados"><p>Amplios e integrados</p></div>
@@ -708,7 +709,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-4">
-        <button type="button" class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" class="btn-back" onclick="prevStep()">volver</button>
         <span class="label">Paso 04 / Iluminación</span><h2>¿Qué tipo de iluminación prefieres?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step4', 'A', 5)"><img loading="lazy" src="../recursos_graficos/Inmersion/04. iluminación/Luz directa.webp" alt="Mucha luz natural"><p>Mucha luz natural</p></div>
@@ -716,7 +717,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-5">
-        <button type="button" class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" class="btn-back" onclick="prevStep()">volver</button>
         <span class="label">Paso 05 / Estilo</span><h2>¿Qué estilo prefieres?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step5', 'A', 6)"><img loading="lazy" src="../recursos_graficos/Inmersion/05.Estilo/fachada texturizada 2.webp" alt="Texturas y ornamentos"><p>Texturas y ornamentos</p></div>
@@ -724,7 +725,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-6">
-        <button type="button" class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" class="btn-back" onclick="prevStep()">volver</button>
         <span class="label">Paso 06 / Niveles</span><h2>¿En cuántos niveles?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step6', 'A', 7)"><img loading="lazy" src="../recursos_graficos/Inmersion/06.Niveles/Un nivel F.webp" alt="Un nivel"><p>Un nivel</p></div>
@@ -732,7 +733,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-7">
-        <button type="button" class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" class="btn-back" onclick="prevStep()">volver</button>
         <span class="label">Paso 07 / Paisaje</span><h2>¿Qué tipo de exteriores prefieres?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step7', 'A', 8)"><img loading="lazy" src="../recursos_graficos/Inmersion/07.Exteriores/terraza jardín.webp" alt="Jardín"><p>Mucho jardín</p></div>
@@ -740,7 +741,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-8">
-        <button type="button" class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" class="btn-back" onclick="prevStep()">volver</button>
         <span class="label">Paso 08 / Sensación</span><h2>¿Cómo te gustan los espacios?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step8', 'A', 9)"><img loading="lazy" src="../recursos_graficos/Inmersion/08.Espacios/espacio amplio.webp" alt="Espacio abierto y alto"><p>Abiertos y altos</p></div>
@@ -748,7 +749,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-9">
-        <button type="button" class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" class="btn-back" onclick="prevStep()">volver</button>
         <span class="label">Paso 09 / Vida Social</span><h2>¿Cómo consideras tu vida social?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step9', 'A', 10)"><img loading="lazy" src="../recursos_graficos/Inmersion/09.Socialización/vida social.webp" alt="Vida social activa"><p>ACTIVA</p></div>
@@ -756,7 +757,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-10">
-        <button type="button" class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" class="btn-back" onclick="prevStep()">volver</button>
         <span class="label">Paso 10 / Color</span><h2>¿Cómo te gustan los colores?</h2>
         <div class="img-choice-grid">
             <div class="img-option" onclick="saveAnswer('step10', 'A', 11)"><img loading="lazy" src="../recursos_graficos/Inmersion/10.Color/Casa neutra.webp" alt="Colores neutros"><p>Neutrales</p></div>
@@ -764,7 +765,7 @@
         </div>
     </div>
     <div class="immersion-step" id="soma-step-11">
-        <button type="button" class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" class="btn-back" onclick="prevStep()">volver</button>
         <span class="label">Paso 11 / Contacto</span>
         <h2>Casi terminamos.</h2>
         <p style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: #888; margin-bottom: 20px;">Ingresa tu correo o número de WhatsApp para contactarnos.</p>
@@ -773,7 +774,7 @@
         <button type="button" class="btn-soma" style="margin-top:25px; background: var(--accent); color: white;" onclick="registerContact()">Enviar</button>
     </div>
     <div class="immersion-step" id="soma-step-12">
-        <button type="button" class="btn-back" onclick="prevStep()">←</button>
+        <button type="button" class="btn-back" onclick="prevStep()">volver</button>
         <span class="label">Paso 12 / Éxito</span>
         <h2>Inmersión Registrada.</h2>
         <p style="font-family: 'JetBrains Mono'; font-size: 0.8rem; margin: 20px 0; color: #888;">¿Quieres saber cuánto costaría tu diseño y cuánto podrías invertir en obra?</p>
