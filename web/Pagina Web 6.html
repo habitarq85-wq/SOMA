@@ -38,7 +38,7 @@
         }
         section:last-of-type {
             height: 100vh; overflow: hidden;
-            justify-content: center; padding: 0 10%;
+            justify-content: flex-start; padding: 8vh 10% 0;
             scroll-snap-align: start;
         }
 
@@ -152,6 +152,7 @@
 
         /* --- 04. SERVICIOS --- */
         .services-wrapper { width: 100%; z-index: 2; }
+        .contacto-block.contacto-block { margin-top: clamp(15vh, 22vh, 30vh) !important; }
         .services-row { display: grid; grid-template-columns: 1fr auto; gap: 15px 30px; align-items: center; }
         .interactive-list { list-style: none; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; line-height: 2.2; border-left: 2px solid var(--accent); padding-left: 25px; }
         .interactive-list li { cursor: pointer; opacity: 0.4; transition: 0.4s var(--ease); }
@@ -316,6 +317,7 @@
             .interactive-list { font-size: 0.65rem; line-height: 2; padding-left: 15px; }
             .services-visual { width: 130px !important; }
             .services-wrapper > div > div:last-child p { font-size: 0.65rem !important; margin-top: 4px !important; }
+            .contacto-block.contacto-block { margin-top: 8vh !important; }
             .services-wrapper > div > div:last-child {
                 border-top: 1px solid rgba(255,255,255,0.3) !important;
                 margin-top: 25px !important; padding-top: 20px !important;
@@ -383,6 +385,7 @@
             .services-visual { width: 110px !important; }
             .interactive-list { font-size: 0.55rem; line-height: 1.6; padding-left: 12px; }
             .services-wrapper > div > div:last-child p { font-size: 0.55rem !important; margin-top: 3px !important; }
+            .contacto-block.contacto-block { margin-top: 6vh !important; }
             .topic-slide { width: 240px; }
             .inspection-overlay { padding: 0; }
             .view-side { height: 90px; padding: 6px 8px; gap: 6px; }
@@ -420,6 +423,7 @@
             .services-row { grid-template-columns: 1fr auto; gap: 4px; align-items: center; }
             .interactive-list { font-size: 0.45rem; line-height: 1.4; padding-left: 8px; }
             .services-visual { width: 90px !important; }
+            .contacto-block.contacto-block { margin-top: 4vh !important; }
             .services-wrapper > div { position: relative; }
             .services-wrapper > div > div:last-child {
                 border-top: 1px solid rgba(255,255,255,0.2) !important;
@@ -642,7 +646,7 @@
                         <img loading="lazy" src="../recursos_graficos/Servicios/Planos de Anteproyecto.webp">
                     </div>
                 </div>
-                <div style="border-top: 1px solid rgba(255,255,255,0.3); margin-top: 35px; padding-top: 25px;">
+                <div class="contacto-block" style="border-top: 1px solid rgba(255,255,255,0.3); margin-top: 35px; padding-top: 25px;">
                     <h2 style="margin-bottom: 5px;">Contacto</h2>
                     <p style="font-family: 'JetBrains Mono'; font-size: 0.8rem; margin-top: 15px;">Mérida, Yucatán, MX.</p>
                     <p style="font-family: 'JetBrains Mono'; font-size: 0.8rem; margin-top: 8px;">habitarq85@gmail.com</p>
