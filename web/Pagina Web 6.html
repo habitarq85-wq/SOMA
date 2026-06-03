@@ -56,6 +56,22 @@
             opacity: 0.03; pointer-events: none; white-space: nowrap; z-index: 1;
         }
 
+        /* --- AUDIO CONTROL --- */
+        .audio-btn {
+            position: fixed; top: 20px; left: 20px; z-index: 999;
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15);
+            color: rgba(244,241,238,0.5); font-size: 1rem; cursor: pointer;
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s ease; font-family: 'JetBrains Mono', monospace;
+            backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+        }
+        .audio-btn:hover { background: rgba(255,255,255,0.12); color: var(--accent); border-color: var(--accent); }
+        .audio-btn.playing { color: var(--accent); border-color: var(--accent); }
+        @media (max-width: 480px) {
+            .audio-btn { top: 12px; left: 12px; width: 32px; height: 32px; font-size: 0.85rem; }
+        }
+
         /* --- 00. HOME --- */
         .bg-video {
             position: absolute; top: 0; left: 0;
@@ -512,6 +528,8 @@
     <section class="dark">
         <video id="hero-video" class="bg-video" autoplay muted loop playsinline webkit-playsinline preload="auto" src="../recursos_graficos/Video_Fondo/hero_loop.mp4"></video>
         <div class="video-overlay"></div>
+        <audio id="bg-music" autoplay muted loop preload="auto" src="../recursos_graficos/background_music.mp3"></audio>
+        <button id="audio-toggle" class="audio-btn" aria-label="Activar/desactivar música" title="Música de fondo">♫</button>
         <div class="bg-keyword" style="color: rgba(255,255,255,0.05);">SOMA</div>
         <div class="hero-flex">
             <div>
@@ -963,6 +981,26 @@
     window.__somaCleanup.push(function() { clearInterval(quoteInterval); if (window.animId) cancelAnimationFrame(window.animId); });
     document.addEventListener('visibilitychange', function() {
         if (document.hidden) window.__somaCleanup.forEach(function(fn) { fn(); });
+    });
+
+    // --- MÚSICA DE FONDO ---
+    const bgMusic = document.getElementById('bg-music');
+    const audioBtn = document.getElementById('audio-toggle');
+    let audioActive = false;
+
+    audioBtn.addEventListener('click', function() {
+        if (audioActive) {
+            bgMusic.pause();
+            audioBtn.textContent = '♫';
+            audioBtn.classList.remove('playing');
+        } else {
+            bgMusic.muted = false;
+            bgMusic.volume = 0.25;
+            bgMusic.play().catch(function(){});
+            audioBtn.textContent = '♪';
+            audioBtn.classList.add('playing');
+        }
+        audioActive = !audioActive;
     });
 
     // --- SERVICIOS ---
