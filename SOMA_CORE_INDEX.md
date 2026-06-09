@@ -110,9 +110,10 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 |-----------|--------|---------|
 | 🔥 Crítica | **Cerrar 1 cliente real** | Probar el ciclo completo valida o rompe supuestos |
 | 🔥 Crítica | **Conseguir RFC en RESICO** | Sin factura no hay cobro formal |
-| Alta | **Dominio propio** | `soma.up.railway.app` no inspira confianza |
-| Alta | **Autenticar dominio en SendGrid** | Evitar que correos caigan en spam |
+| ✅ Hecha | **Dominio propio** | `soma-arquitectura.com` registrado + Cloudflare |
+| ✅ Hecha | **Autenticar dominio en SendGrid** | SPF/DKIM configurado. Correos desde `info@...` |
 | ✅ Hecha | **Migrar a PostgreSQL** | SQLite → PostgreSQL vía Render. `db.py` maneja ambos backends |
 | Media | **faster-whisper + DeepSeek** | Automatización real del análisis |
 | Media | **Optimizar web: CDN o Cloudflare** | Velocidad de carga en celular |
-| ✅ Hecha | **Migrar a Render** | Railway → Render con PostgreSQL gratis incluido. `render.yaml` configurado |
+| ✅ Hecha | **Migrar a Render** | Railway → Render con PostgreSQL gratis. `render.yaml` |
+| Alta | **Dashboard con login** | Proteger `/dashboard` con contraseña |

@@ -271,10 +271,11 @@ Estrategias para redes sociales, Google y otras fuentes de leads. Solo cuando el
 - **[NUEVO] Dependencia:** `psycopg2-binary` agregado.
 - **Documentación:** `RUTA_CLIENTE.md` y `SOLOJUAN.md` actualizados (railway.app → onrender.com).
 
-### ⚠️ PARA COMPLETAR EL DEPLOY
+- **[NUEVO 09/06/2026 (tarde)] Deploy completado:** Web en `soma-arquitectura.com` con HTTPS.
+- **[NUEVO] Datos migrados:** 141 registros de SQLite → PostgreSQL exitosamente.
+- **[NUEVO] Dominio:** `soma-arquitectura.com` registrado y apuntando a Render via Cloudflare.
+- **[NUEVO] Email profesional:** Cloudflare Email Routing → Gmail. SendGrid autenticado con SPF/DKIM.
+- **[NUEVO] Web actualizada:** Email cambiado a `info@soma-arquitectura.com`.
 
-1. Conectar repo GitHub en Render (render.com)
-2. Render crea automáticamente: Web Service + PostgreSQL (`soma-db`)
-3. Configurar env vars: `SENDGRID_API_KEY`, `TWILIO_SID`, `TWILIO_TOKEN`, `NOTIFICACION_WHATSAPP`
-4. Migrar datos: `DATABASE_URL=<url_render> python backend/migrate_to_postgres.py`
-5. Push a GitHub → deploy automático
+---
+## 📅 ÚLTIMA ACTUALIZACIÓN: 09/06/2026
