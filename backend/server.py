@@ -4,10 +4,13 @@ import datetime
 import json
 import os
 import re
+import sys
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from twilio.rest import Client
 from dotenv import load_dotenv
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from db import get_connection, execute, fetchone, fetchall, get_lastrowid, dictify, json_loads
 
 load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '.env'))
