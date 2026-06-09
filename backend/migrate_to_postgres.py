@@ -62,16 +62,53 @@ def get_sqlite_schema(conn, table):
 
 def extract_columns(sql):
     """Extrae definiciones de columnas del CREATE TABLE SQL."""
+    # Remove SQL comments (-- to end of line)
+    lines = sql.split('\n')
+    clean_lines = []
+    for line in lines:
+        idx = line.find('--')
+        if idx >= 0:
+            line = line[:idx]
+        clean_lines.append(line)
+    sql = '\n'.join(clean_lines)
+
     cols_start = sql.index("(") + 1
     cols_end = sql.rindex(")")
     cols_section = sql[cols_start:cols_end]
-    lines = [l.strip() for l in cols_section.split(",") if l.strip()]
+
     cols = []
-    for line in lines:
-        if line.upper().startswith("FOREIGN KEY") or line.upper().startswith("PRIMARY KEY"):
+    current = ""
+    depth = 0
+    in_str = None
+    for ch in cols_section:
+        if in_str:
+            current += ch
+            if ch == in_str and (not current or current[-2:-1] != '\\'):
+                in_str = None
+        elif ch in ("'", '"'):
+            current += ch
+            in_str = ch
+        elif ch == '(':
+            current += ch
+            depth += 1
+        elif ch == ')':
+            current += ch
+            depth -= 1
+        elif ch == ',' and depth == 0:
+            cols.append(current.strip())
+            current = ""
+        else:
+            current += ch
+    if current.strip():
+        cols.append(current.strip())
+
+    result = []
+    for col in cols:
+        upper = col.upper().strip()
+        if upper.startswith("FOREIGN KEY") or upper.startswith("PRIMARY KEY"):
             continue
-        cols.append(line)
-    return cols
+        result.append(col)
+    return result
 
 
 def create_pg_table(pg_conn, table_name, columns_defs):
@@ -151,13 +188,13 @@ def migrate_table(sqlite_conn, pg_conn, table):
         count += 1
 
         if len(batch) >= BATCH_SIZE:
-            args_str = ",".join(pg_cur.mogrify(f"({placeholders})", r).decode("utf-8") for r in batch)
-            pg_cur.execute(f"INSERT INTO {table} ({columns}) VALUES {args_str}")
+            for r in batch:
+                pg_cur.execute(f"INSERT INTO {table} ({columns}) VALUES ({placeholders})", r)
             batch = []
 
     if batch:
-        args_str = ",".join(pg_cur.mogrify(f"({placeholders})", r).decode("utf-8") for r in batch)
-        pg_cur.execute(f"INSERT INTO {table} ({columns}) VALUES {args_str}")
+        for r in batch:
+            pg_cur.execute(f"INSERT INTO {table} ({columns}) VALUES ({placeholders})", r)
 
     pg_conn.commit()
     pg_cur.close()
