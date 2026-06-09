@@ -593,3 +593,18 @@ La investigación de sitio y normativa NO va antes de la cotización; se ejecuta
 
 **Próxima sesión:** Revisar protocolos contra 2.0, mapear items a codebase, integrar biblioteca en template de proyecto.
 
+---
+
+## [2026-06-09] — Migración a Render + PostgreSQL + Dominio
+
+**Decisión:** Migrar de Railway a Render por el PostgreSQL gratis y 750h/mes. Dominio `soma-arquitectura.com` registrado en Cloudflare. Email profesional via Cloudflare Email Routing → Gmail. SendGrid autenticado con dominio propio.
+
+"La web ya está en producción con dominio propio. Ahora toca conseguir clientes."
+
+### Nuevos Pendientes Priorizados
+1. **Cerrar 1 cliente real** — probar el ciclo completo
+2. **RFC en RESICO** — sin factura no hay cobro formal
+3. **Dashboard con login** — proteger `/dashboard` con contraseña
+4. **faster-whisper + DeepSeek** — automatizar análisis
+5. **Tiempos de entrega** — definir tabla en TIEMPOS_ENTREGA_BASE.md
+

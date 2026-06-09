@@ -1052,3 +1052,59 @@ Se analizó la disonancia entre el `01_PROTOCOLO_CONCEPTUALIZACION.md` (purament
 2. **[ALTA] Mapear cada item del PROCESO contra protocolos existentes y faltantes.**
 3. **[ALTA] Iniciar diseño del Algoritmo SOMA visual** usando el PROCESO DE DISEÑO como columna vertebral.
 4. **[MEDIA] Resolver correspondencia entre CONTENIDO-DISEÑO (17 pasos) y sección 4 del PROCESO.**
+
+---
+
+## Sesión: 2026-06-09 — Migración a Render + PostgreSQL + Dominio propio
+
+### 81. LOGROS DE LA SESIÓN
+
+#### Infraestructura
+- **Migración Railway → Render:** Creado `render.yaml` con web service + PostgreSQL gratis. Eliminado `railway.json`.
+- **Abstracción DB (`backend/db.py`):** Capa que soporta SQLite (local) y PostgreSQL (producción) con detección automática via `DATABASE_URL`. Maneja placeholders (`?` → `%s`), funciones (`IFNULL` → `COALESCE`), y tipo de filas (dict access siempre).
+- **server.py reescrito:** 30+ operaciones de BD migradas a `db.py`. Sin cambios en lógica de negocio.
+- **Script de migración:** `backend/migrate_to_postgres.py` — exporta datos SQLite → PostgreSQL. Se corrigió parser de esquemas SQLite con comentarios `--`.
+- **Dashboard con URLs relativas:** Usa `window.location.origin` en vez de `localhost:8080` hardcodeado.
+- **Dependencias:** `psycopg2-binary` agregado a `requirements.txt`.
+
+#### Datos
+- **141 registros migrados** exitosamente de SQLite a PostgreSQL:
+  - captura_web: 16, cobros: 9, programa_arquitectonico: 20
+  - matriz_inversion: 26, habitantes: 2, actividades: 48, ejes_diseno: 20
+
+#### Dominio y Email
+- **Dominio registrado:** `soma-arquitectura.com` en Cloudflare (~$12/año).
+- **DNS configurado:** CNAME a `soma.onrender.com` con proxy Cloudflare.
+- **Custom Domain en Render:** `soma-arquitectura.com` + `www.soma-arquitectura.com` verificados.
+- **Email Routing (Cloudflare → Gmail):** Correos a `@soma-arquitectura.com` redirigen a habitarq85@gmail.com.
+- **SendGrid autenticado:** SPF + DKIM + DMARC configurados para `soma-arquitectura.com`. From_email actualizado a `info@soma-arquitectura.com`.
+- **Web actualizada:** Email de contacto cambiado a `info@soma-arquitectura.com` en página web, lead magnet y PDF cotización.
+
+### 82. ARCHIVOS CREADOS/MODIFICADOS
+
+| Archivo | Cambio |
+|---------|--------|
+| `backend/db.py` | **Creado** — Abstracción SQLite/PostgreSQL |
+| `backend/migrate_to_postgres.py` | **Creado** — Script de migración de datos |
+| `render.yaml` | **Creado** — Configuración Render (web + DB) |
+| `railway.json` | **Eliminado** — Ya no aplica |
+| `backend/server.py` | **Modificado** — DB operations via db.py, from_email actualizado |
+| `requirements.txt` | **Modificado** — +psycopg2-binary |
+| `Procfile` | **Modificado** — Sin --chdir backend |
+| `Dashboard.html` | **Modificado** — URLs relativas con window.location.origin |
+| `Pagina Web 6.html` | **Modificado** — Email actualizado a info@soma-arquitectura.com |
+| `lead_magnet_10_errores.html` | **Modificado** — Email actualizado |
+| `SOLOJUAN.md` | **Modificado** — Referencia railway.app → onrender.com |
+| `RUTA_CLIENTE.md` | **Modificado** — Referencia railway.app → onrender.com |
+| `SOMA_CORE_INDEX.md` | **Modificado** — Prioridades actualizadas |
+| `SOMA_SNAPSHOT.md` | **Modificado** — Sesión registrada con checklist |
+| `BITACORA_SOMA.md` | **Modificado** — Esta entrada de sesión |
+
+### 83. PENDIENTES (PRÓXIMA SESIÓN)
+
+1. **[🔥 Crítica] Cerrar 1 cliente real** — Probar el ciclo completo valida o rompe supuestos.
+2. **[🔥 Crítica] Conseguir RFC en RESICO** — Sin factura no hay cobro formal.
+3. **[Alta] Dashboard con login** — Proteger `/dashboard` con contraseña.
+4. **[Media] faster-whisper + DeepSeek** — Automatización real del análisis de entrevistas.
+5. **[Media] Definir tiempos de entrega** en `TIEMPOS_ENTREGA_BASE.md` (Juan completa con su experiencia).
+6. **[Media] Optimizar web: CDN Cloudflare** — Velocidad de carga en celular.
