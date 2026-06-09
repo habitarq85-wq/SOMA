@@ -502,7 +502,7 @@ td {{ padding: 5px 6px; border-bottom: 1px solid #ddd; }}
 </div>
 <div class='footer'>
 <p>SOMA Arquitectura — {fecha}</p>
-<p>Arq. Juan Carlos · habitarq85@gmail.com</p>
+<p>Arq. Juan Carlos · info@soma-arquitectura.com</p>
 <p style='margin-top:8px;font-size:7.5pt;color:#666;'>Cotización válida por 30 días. Los honorarios se ajustarán si el programa arquitectónico final difiere del presentado. Esta cotización cubre únicamente servicios de diseño arquitectónico; los costos de construcción son estimados paramétricos referenciales.</p>
 </div>
 </body></html>"""
