@@ -129,7 +129,7 @@ def enviar_correo(destinatario, asunto, cuerpo):
 
     try:
         message = Mail(
-            from_email="habitarq85@gmail.com",
+            from_email="info@soma-arquitectura.com",
             to_emails=destinatario,
             subject=asunto,
             plain_text_content=cuerpo
