@@ -10,7 +10,8 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 | `/dashboard` | Dashboard de gestión de leads y proyectos |
 | `/backend` | Servidor Flask, SQLite, reportes y proyectos de entrevista |
 | `/aplicaciones_python` | App de Entrevista y herramientas de programa arquitectónico |
-| `/metodologia` | Protocolos de diseño organizados por bloque |
+| `/metodologia` | Protocolos de diseño organizados por bloque (incluye RUTA_CLIENTE.md, RUTA_ARQUITECTO.md y RUTA_ADMIN.md en Bloque 3) |
+| `/scripts_automatizacion` | Herramientas para pyRevit, Blender y optimización |
 | `/recursos_graficos` | Portafolio, plantillas e imágenes de inmersión |
 | `/scripts_automatizacion` | Herramientas para pyRevit, Blender y optimización |
 
@@ -22,6 +23,11 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 | `BITACORA_SOMA.md` | Memoria evolutiva del proyecto | Contexto histórico |
 | `SOLOJUAN.md` | Instrucciones literales y reflexiones del fundador | Máxima (en su sección) |
 | `SOMA_CORE_INDEX.md` | Índice maestro de desarrollo por bloques | Organizacional |
+| `metodologia/Bloque 2 - Taller SOMA (OPERACION)/PROCESO DE DISEÑO` | Checklist formal original (v1). Eje rector del Algoritmo SOMA | Máxima en Bloque 2 |
+| `metodologia/Bloque 2 - Taller SOMA (OPERACION)/PROCESO DE DISEÑO 2.0` | Versión expandida con INPUT/OPERA/OUTPUT/PROC + referencias bibliográficas + PROTOCOLO cruzados. Clasifica naturaleza y procesador (AI/HUMANO) | Máxima en Bloque 2 |
+| `metodologia/Bloque 2 - Taller SOMA (OPERACION)/protocolos/` | 11 protocolos renombrados con numeración del 2.0 (ej: `protocolo_4.1-4.10_conceptualizacion.md`). Cubren el "cómo" detallado | Operativa
+| `metodologia/Bloque 2 - Taller SOMA (OPERACION)/DIAGNOSTICO_PROCESO_DISEÑO.md` | Análisis crítico del PROCESO DE DISEÑO vs protocolos (05/06/2026) | Organizacional |
+| `/biblioteca` | Repositorio central de fuentes (normativas, clima, diseno, arquetipos, repertorio, patrones) que persiste entre proyectos. Primer proyecto descarga, siguientes copian. | Operativa |
 
 ## BLOQUE 1: GESTIÓN DEL ENTORNO (ADM) — PRIORIDAD #1
 - [x] **Modelo Empresarial:** Carta de presentación con visión, misión, objetivos y valores. En `metodologia/Bloque 1 - Gestion del Entorno (ADM)/CARTA_PRESENTACION_SOMA.md`.
@@ -33,19 +39,26 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 - [x] **Protocolo de Presupuesto:** Precios oficiales v3.0 ($250/$350/$850), cargo mínimo $6,500, subsidio cruzado. En `metodologia/Bloque 1 - Gestion del Entorno (ADM)/PROTOCOLO_PRESUPUESTO_Y_VIABILIDAD.md`.
 
 ## BLOQUE 2: TALLER SOMA (OPERACIÓN)
-- [x] **Recepción de Información:** Pre-filtro Web (Activo) + App de Entrevista con 6 tópicos.
-- [x] **Programa Arquitectónico:** Módulo en Dashboard para capturar Deseado + Complementario + Lujo. Endpoints CRUD + cotización formal.
-- [x] **Investigación (recolección de datos):** Protocolo en `01 Recepción e Investigación/PROTOCOLO_INVESTIGACION_PREVIA.md`. Solo dice qué investigar, dónde obtenerlo y cómo registrarlo. Cubre: levantamiento del sitio, infraestructura, contexto urbano, parámetros de accesibilidad, historia del lugar, datos climáticos de Mérida (ya disponibles), normativa, perfil del usuario, contexto social, viabilidad y riesgos. Con fuentes citadas.
-- [x] **Análisis:** Protocolo en `02 Análisis/01_PROTOCOLO_ANALISIS.md` + formato de salida en `02 Análisis/EJEMPLO_GUIA_DISENO.md`. Procesa datos de investigación en decisiones de diseño. Cubre: sitio (bounding box, conflictos, macrozonificación), usuario (UserEntity, 10 ejes → partido arquitectónico, CreativeCore), bioclimático (carta solar, ventilación, selección de estrategias pasivas, zonificación térmica, ciclo diario de aperturas, extracción de malos olores), contextual (tipología, visuales, accesos), programa (zonificación SOMA, matriz de relaciones, Diagrama Espacial, eficiencia), complementarios (iluminación con % óptimo por espacio, acústica, proxémica, ciclo de vida) y síntesis (entrada a Conceptualización).
-- [x] **Conceptualización:** Protocolo en `03 Diseño/PROTOCOLO_CONCEPTUALIZACION.md`. Traduce la síntesis del análisis en: Idea Matriz, Mensaje Arquitectónico, Intenciones de Diseño (espaciales, tectónicas, bioclimáticas), Moldeado Formal (diagrama de masas, operaciones, zonificación SOMA en volumen, recorridos, 3 opciones volumétricas) y Validación del Concepto. Salida → entrada a Modelado.
-- [x] **Diagrama Espacial SOMA:** Migrado de Tkinter a web (`DiagramaSoma.html` + vis-network + endpoints Flask). Filtro por zona, arrastre de nodos, export PNG/SVG.
-- [x] **Modelado:** Protocolo en `03 Diseño/PROTOCOLO_MODELADO.md`. Traduce el concepto a modelo 3D. Cubre: construcción del volumen base, LOD según paquete (200/300/350+), organización por capas y colores SOMA, modelado por sistemas (estructura, arquitectura, circulaciones, instalaciones), verificación vs programa/constraints, checklist y pruebas visuales mínimas. Salida → Visualización y Planos.
-- [x] **Visualización:** Protocolo de Arte y Perspectivas. Planeado (9 secciones: vistas obligatorias, estilo SOMA, flujo Revit→D5→Photoshop, setup de cámaras, catálogo de materiales, postproducción, checklist, archivo). Pendiente de implementar en `03 Diseño/PROTOCOLO_VISUALIZACION.md`.
-- [x] **Representación Integral:** Protocolo de Presentación. Planeado (dossier editorial en HTML con efectos scroll-reveal, template parametrizable, exportación a PDF). Pendiente de implementar en `03 Diseño/dossier/plantilla_dossier.html`.
-- [x] **Evaluación:** Indicadores de Habitabilidad y Rendimiento. Planeado (auditoría de indicadores térmicos, acústicos, iluminación, programa, proxémica y normativos; tabla de resultados ✅/⚠️/❌ con ajustes). Pendiente de implementar en `03 Diseño/PROTOCOLO_EVALUACION.md`.
-- [ ] **Anteproyecto:** Definición de Elementos.
-- [ ] **Planos Técnicos:** Protocolo de Fabricación.
-- [ ] **Coordinación:** Gestión de Ingenierías.
+- [x] **Recepción de Información:** Pre-filtro Web (Activo) + App de Entrevista con 6 tópicos. Protocolo alineado al 2.0.
+- [x] **Programa Arquitectónico:** Módulo en Dashboard. Endpoints CRUD + cotización formal.
+- [x] **Investigación (recolección de datos):** Protocolo en `01 Recepción e Investigación/protocolo_2.1-2.2_investigacion_previa.md`. Cubre levantamiento del sitio, clima, normativa, usuario, contexto. Con fuentes citadas.
+- [x] **Análisis:** Protocolo en `02 Análisis/protocolo_3.1-3.10_analisis.md`. Procesa datos de investigación en decisiones de diseño. Cubre: sitio, usuario, bioclimático, contextual, programa, iluminación, acústica, proxémica y síntesis.
+- [x] **Conceptualización:** Protocolo en `03 Diseño/protocolo_4.1-4.10_conceptualizacion.md`. Idea Matriz, Mensaje Arquitectónico, Intenciones, Moldeado Formal, Validación.
+- [x] **Modelado:** Protocolo en `03 Diseño/protocolo_4.3-5.2_modelado.md`. LOD, organización por capas, ciclos cortos de verificación.
+- [x] **Visualización:** Protocolo en `03 Diseño/protocolo_5.3-5.11_visualizacion.md`. Flujo Revit→D5→Photoshop, estilo SOMA sistemático.
+- [x] **Representación Integral:** Protocolo en `03 Diseño/protocolo_7.1-7.2_representacion.md`. Dossier editorial HTML con identidad SOMA.
+- [x] **Evaluación:** Protocolo en `03 Diseño/protocolo_4.9-4.15_evaluacion.md`. Indicadores térmicos, lumínicos, acústicos, programáticos, proxémicos y normativos con ISO/NOM.
+- [x] **Anteproyecto:** Protocolo en `03 Diseño/protocolo_6-8_anteproyecto.md`. Escalas, contenido de láminas, checklist, naming.
+- [x] **Planos Técnicos:** Protocolo en `03 Diseño/protocolo_9.3_planos_tecnicos.md`. Detalles constructivos capa por capa, ISO 13567.
+- [x] **Coordinación:** Protocolo en `03 Diseño/protocolo_9.1-9.2_coordinacion.md`. Flujo 20/60/100%, resolución de conflictos, bitácora.
+- [x] **Diagrama Espacial SOMA:** `DiagramaSoma.html` + vis-network + endpoints Flask.
+- [x] **Biblioteca SOMA:** Repositorio central de fuentes creado en `/biblioteca/` con 6 subcarpetas pobladas:
+  - `normativas/` — 8 PDFs (reglamento, NTC, NOMs, PMDU, PIMUS, PMD)
+  - `clima/` — Carta solar y rosa de vientos generadas + índice climático
+  - `diseno/` — Referencia bibliográfica (Neufert, Panero, Ching)
+  - `arquetipos/` — Índice con 18 recursos open-access sobre vivienda yucateca
+  - `repertorio/` — 15+ proyectos de referencia filtrados por clima/tipo
+  - `patrones/` — Catálogo SOMA de 42 patrones + referencia Alexander (34 patrones mapeados)
 
 ## BLOQUE 3: LABORATORIO DE HERRAMIENTAS (I+D)
 - [x] **Aplicaciones:** App de Entrevistas (Ejes de Inmersión y ActivityMatrix operativos en Backend). App de Entrevista v2 con 6 tópicos + grabación + post-formulario.
@@ -87,6 +100,9 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 - [x] **Botón volver unificado:** Todos los pasos del cotizador con `← volver` estilo transparente + borde #333.
 - [x] **Scroll reveal bidireccional:** `classList.toggle()` en proyectos y filosofía. Efecto agregado a filosofía (opacity + translateX).
 - [x] **Fixes alta prioridad (11/11):** type duplicado, overflow sections, contraste (#bc4b21→#d45e2c, #555→#999, #666→#aaa), alt en 31 imágenes, `<noscript>`, -webkit-backdrop-filter, :focus-visible, scroll-snap-type y proximity. Threshold 0.65.
+- [x] **Video Hero Optimizado:** Fusión de 4 clips MP4 en `hero_loop.mp4` único de 29s con crossfades. 5.6MB (72% más ligero). Lógica JS compleja de players reemplazada por `<video loop>` nativo.
+- [x] **Rutas Operativas SOMA:** Creados `RUTA_CLIENTE.md`, `RUTA_ARQUITECTO.md` y `RUTA_ADMIN.md` para cubrir todo el modelo de negocio y diseño.
+- [x] **Algoritmo SOMA (Base):** Creado `FUSION_CONCEPTUALIZACION.md` integrando el protocolo teórico con la práctica de 17 pasos. Preparación para el diseño del algoritmo visual.
 
 ## 🎯 PRIORIDADES 29/05/2026 — ROADMAP A PRODUCCIÓN
 
@@ -96,7 +112,7 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 | 🔥 Crítica | **Conseguir RFC en RESICO** | Sin factura no hay cobro formal |
 | Alta | **Dominio propio** | `soma.up.railway.app` no inspira confianza |
 | Alta | **Autenticar dominio en SendGrid** | Evitar que correos caigan en spam |
-| Media | **Migrar a PostgreSQL** | SQLite en Railway se pierde al reiniciar |
+| ✅ Hecha | **Migrar a PostgreSQL** | SQLite → PostgreSQL vía Render. `db.py` maneja ambos backends |
 | Media | **faster-whisper + DeepSeek** | Automatización real del análisis |
 | Media | **Optimizar web: CDN o Cloudflare** | Velocidad de carga en celular |
-| 📌 Recordatorio | **Migrar a Render (free tier) al acabar crédito Railway** | Railway > $5/mes después del crédito inicial; Render tiene PostgreSQL gratis + 750h/mes |
+| ✅ Hecha | **Migrar a Render** | Railway → Render con PostgreSQL gratis incluido. `render.yaml` configurado |

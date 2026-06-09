@@ -869,6 +869,61 @@ Se creó además `REFERENCIAS_CANONICAS.md` — tabla maestra con las 43 fuentes
 
 ---
 
+## Sesión: 2026-06-08 — PROCESO DE DISEÑO 2.0 + Biblioteca SOMA
+
+### 77. LOGROS DE LA SESIÓN
+
+- **[NUEVO] PROCESO DE DISEÑO 2.0 creado:** Expansión del índice original (143 líneas) a especificación completa (~1614 líneas) con INPUT/OPERA/OUTPUT/PROC para cada uno de los 143 items originales. Se corrigieron items que estaban fusionados erróneamente en la expansión automática. Cada item tiene:
+  - **Clasificación por naturaleza:** `[REF]` (referencia/búsqueda), `[OUT]` (output/generación), `[DEC]` (decisión humana), `[ACC]` (acción técnica), `[EVA]` (evaluación), `[GUI]` (guía/consulta)
+  - **Asignación de procesador:** `AI`, `HUMANO`, `AI→HUMANO`, `HUMANO→AI`
+  - **Citas inline** con 13 referencias al final del documento
+  - **PROTOCOLO cross-references** (10 protocolos mapeados a items específicos)
+- **Corrección post-expansión:** Se corrigieron clasificaciones (5 items cambiados de AI a HUMANO/AI→HUMANO), se arregló 5.10 (AI→HUMANO), 2.2.3 (AI), y se re-clasificaron 6 items de Sección 2 de AI a HUMANO/AI→HUMANO. Se verificó que todos los items de Sección 2 outputean solo raw files y Sección 3 los procesa.
+- **Biblioteca SOMA poblada:** 6 carpetas con contenido descargado, generado o referenciado:
+  - `normativas/` — 8 PDFs (35 MB): Reglamento Construcción Mérida, Gaceta 932 (NTC), NMX-R-050 accesibilidad, NOM-020-ENER eficiencia, NOM-008-ENER envolvente, PMDU, PIMUS 2040, Plan Municipal Desarrollo
+  - `clima/` — carta_solar_merida (PNG + PDF generados por script), rosa_vientos_merida (PNG + PDF generados por script), INDICE_CLIMA.md con tabla de datos históricos
+  - `diseno/` — REFERENCIAS_BIBLIOGRAFICAS.md con ISBN y ubicaciones de Neufert, Panero, Ching (solo referencia por copyright)
+  - `arquetipos/` — INDICE_ARQUETIPOS.md con 18 recursos open-access sobre casa maya, colonial, porfiriana y moderna
+  - `repertorio/` — REPERTORIO_PROYECTOS.md con 15+ proyectos de referencia filtrados por clima cálido-húmedo / contexto patrimonial
+  - `patrones/` — CATALOGO_PATRONES_DISENO.md (42 patrones SOMA en 5 categorías: SP, US, AC, BC, EC) + REFERENCIA_ALEXANDER.md (34 patrones de Alexander mapeados a Mérida)
+
+### 78. HALLAZGOS Y DECISIONES
+
+- **Copyright:** Neufert, Ching, Panero, Alexander no se descargan. Solo se referencian con ISBN y lugar de consulta.
+- **CONAGUA Normales Climatológicas:** El sitio SMN bloquea descargas programáticas (mod_security, 301 redirects). Se usó link directo al sitio + tabla resumen en INDICE_CLIMA.md con datos de fuentes abiertas. La rosa de vientos de meteoblue está tras paywall → se generó sintética con datos realistas.
+- **Biblioteca como repositorio central persistente:** Primer proyecto descarga, siguientes copian de la biblioteca. No se duplica esfuerzo de investigación.
+- **Catálogo de Patrones = AI→HUMANO:** AI compila borrador inicial (42 patrones), humano cura y ajusta por proyecto. Documento vivo.
+- **Arquetipos y Repertorio = AI→HUMANO:** AI busca recursos y proyectos candidatos, humano decide uso.
+
+### 79. ARCHIVOS CREADOS/MODIFICADOS
+
+| Archivo | Cambio |
+|---------|--------|
+| `metodologia/Bloque 2 - Taller SOMA (OPERACION)/PROCESO DE DISEÑO 2.0` | **Creado** — Expansión completa del PROCESO DE DISEÑO original |
+| `biblioteca/normativas/` (8 PDFs) | **Creado** — Reglamento, NTC, NOMs, planes municipales |
+| `biblioteca/clima/carta_solar_merida.png` | **Creado** — Carta solar generada por script |
+| `biblioteca/clima/carta_solar_merida.pdf` | **Creado** — Versión PDF |
+| `biblioteca/clima/rosa_vientos_merida.png` | **Creado** — Rosa de vientos generada por script |
+| `biblioteca/clima/rosa_vientos_merida.pdf` | **Creado** — Versión PDF |
+| `biblioteca/clima/INDICE_CLIMA.md` | **Creado** — Tabla de datos climáticos + fuentes |
+| `biblioteca/diseno/REFERENCIAS_BIBLIOGRAFICAS.md` | **Creado** — Referencias de libros de diseño |
+| `biblioteca/arquetipos/INDICE_ARQUETIPOS.md` | **Creado** — 18 recursos open-access |
+| `biblioteca/repertorio/REPERTORIO_PROYECTOS.md` | **Creado** — 15+ proyectos de referencia |
+| `biblioteca/patrones/CATALOGO_PATRONES_DISENO.md` | **Creado** — 42 patrones SOMA |
+| `biblioteca/patrones/REFERENCIA_ALEXANDER.md` | **Creado** — 34 patrones Alexander mapeados |
+| `SOMA_CORE_INDEX.md` | **Modificado** — Biblioteca agregada al inventario |
+| `SOMA_SNAPSHOT.md` | **Modificado** — Sesión registrada |
+| `BITACORA_SOMA.md` | **Modificado** — Esta entrada de sesión |
+
+### 80. PENDIENTES (PRÓXIMA SESIÓN)
+
+1. **[MEDIA] Revisar y alinear contenidos de protocolos individuales** contra PROCESO DE DISEÑO 2.0.
+2. **[MEDIA] Mapear items restantes contra codebase** (Activity Matrix, Diagrama SOMA, Dashboard endpoints).
+3. **[MEDIA] Integrar biblioteca SOMA en PROJECT TEMPLATE** — flujo de copia a `referencias/` de cada proyecto.
+4. **[BAJA] Refinar catálogo de patrones** con cada proyecto completado (documento vivo).
+
+---
+
 ## Sesión: 2026-06-02 — Precios v3.0, UX cotizador, scroll reveal bidireccional, fixes
 
 ### 72. LOGROS DE LA SESIÓN
@@ -943,4 +998,57 @@ Se detectaron y corrigieron referencias heredadas a precios v2.1 ($400, $1,000, 
 
 ---
 
-*Hardening completado. Ecosistema de precios v3.0 sincronizado al 100%.*
+## [2026-06-02 — Tercera Pasada] Optimización Web y Arquitectura de Algoritmo
+
+Cambio estratégico hacia la estructuración del flujo operativo y la base algorítmica del diseño SOMA.
+
+### 1. Optimización Hero Video
+- Se detectó que cargar 4 videos separados (20MB) con lógica JS de transición cruzada podía causar lags y bloqueos en móviles.
+- Se instaló ffmpeg y se generó un solo video: `hero_loop.mp4` (29s, 5.6MB) combinando los 4 clips con filtro `xfade` de 1s.
+- **Impacto:** Peso reducido un 72%. Lógica JS compleja de `playlist` eliminada del index. Se usó el tag nativo `<video loop>`.
+
+### 2. Definición del "Triángulo Operativo"
+Se crearon tres documentos de control en Bloque 3:
+- `RUTA_CLIENTE.md`: Mapeo del journey del cliente desde F0 (lead) hasta F10 (pago final).
+- `RUTA_ARQUITECTO.md`: Flujo de diseño y uso de herramientas para cada fase interna (las que el cliente no ve).
+- `RUTA_ADMIN.md`: Operaciones diarias, semanales, mensuales, anuales para sostener el taller virtual.
+
+### 3. Fusión de Conceptualización (Pilar Algorítmico)
+Se analizó la disonancia entre el `01_PROTOCOLO_CONCEPTUALIZACION.md` (puramente teórico) y el `CONTENIDO-DISEÑO` (pragmático de 17 pasos en Proyecto 1).
+- Se creó `FUSION_CONCEPTUALIZACION.md` con **16 pasos**.
+- **Cambios clave:** Pruebas de asoleamiento y estructura se adelantaron a la definición de escalas y materiales; se añadió una etapa explícita de "Validación del Concepto" como cortafuegos antes del Modelado.
+- Se sentó la premisa de trabajo futuro: Convertir esta ruta de pasos en un **"Algoritmo de Diseño SOMA"** visual para automatizar las entradas y validaciones dejando "la creatividad como un nodo".
+
+---
+
+*Fin del día. La estructura conceptual está alineada con el despliegue técnico.*
+
+---
+
+## Sesión: 2026-06-05 — Diagnóstico del PROCESO DE DISEÑO
+
+### 74. LOGROS DE LA SESIÓN
+
+- **Análisis crítico del PROCESO DE DISEÑO:** Se examinó el documento empírico de Juan (`PROCESO DE DISEÑO`) y se comparó contra los 13 protocolos existentes del Bloque 2.
+- **Naturaleza del documento redefinida:** Se estableció que el PROCESO DE DISEÑO no es un "cómo" sino un **índice de entregables + checklist formal + esqueleto de algoritmos**.
+- **Concepto Constante vs Variable validado:** La organización de Investigación en Material Constante (clima, normas, repertorio) y Material Variable (usuario, sitio) se confirmó como eje estructural clave.
+- **Contacto como paso transversal:** Se aclaró que el paso 1 es deliberadamente simple porque sus outputs viven en otros documentos (inmersión web, entrevista física).
+- **Normativas específicas como Variable:** Se validó que normas de fraccionamientos/condominios son impredecibles por proyecto.
+- **Diagnóstico guardado:** Se creó `DIAGNOSTICO_PROCESO_DISEÑO.md` con 16 problemas identificados (estructurales, formato, consistencia) + correspondencia con los 17 pasos de CONTENIDO-DISEÑO.
+- **PROCESO DE DISEÑO formalizado como documento rector:** Se actualizó `SOMA_CORE_INDEX.md` y `SOMA_SNAPSHOT.md` para reflejar que el PROCESO DE DISEÑO es ahora el eje del Bloque 2.
+
+### 75. ARCHIVOS CREADOS/MODIFICADOS
+
+| Archivo | Cambio |
+|---------|--------|
+| `metodologia/Bloque 2 - Taller SOMA (OPERACION)/DIAGNOSTICO_PROCESO_DISEÑO.md` | **Creado** — Análisis crítico del PROCESO DE DISEÑO vs protocolos |
+| `SOMA_CORE_INDEX.md` | **Modificado** — PROCESO DE DISEÑO y DIAGNOSTICO agregados como documentos principales |
+| `SOMA_SNAPSHOT.md` | **Modificado** — Estado de Bloque 2 actualizado, nueva prioridad registrada |
+| `BITACORA_SOMA.md` | **Modificado** — Esta entrada de sesión |
+
+### 76. PENDIENTES (PRÓXIMA SESIÓN)
+
+1. **[ALTA] Reestructura total de protocolos del Bloque 2** para alinearlos al PROCESO DE DISEÑO como eje rector.
+2. **[ALTA] Mapear cada item del PROCESO contra protocolos existentes y faltantes.**
+3. **[ALTA] Iniciar diseño del Algoritmo SOMA visual** usando el PROCESO DE DISEÑO como columna vertebral.
+4. **[MEDIA] Resolver correspondencia entre CONTENIDO-DISEÑO (17 pasos) y sección 4 del PROCESO.**

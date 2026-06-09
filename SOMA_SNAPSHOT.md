@@ -203,6 +203,9 @@ Estrategias para redes sociales, Google y otras fuentes de leads. Solo cuando el
 - **[NUEVO 2026-06-02] Quote-type selector:** Reemplazado `<select>` por 3 tabs visibles con activo resaltado en acento. Botones "← volver" unificados en todos los pasos del cotizador (transparente + borde #333 + flecha).
 - **[NUEVO 2026-06-02] Scroll reveal bidireccional:** `classList.toggle()` en vez de `add()`. Filosofía ahora con mismo efecto que proyectos: opacidad 0.5 + translateX(-15px) → 1 + 0 al entrar/salir del viewport.
 - **[NUEVO 2026-06-02] Fixes alta prioridad (11/11):** type duplicado, overflow sections, contraste #bc4b21→#d45e2c, #555→#999, #666→#aaa, alt en 31 imágenes, `<noscript>`, -webkit-backdrop-filter, :focus-visible, scroll-snap-type y proximity. Threshold scroll-reveal 0.4 → 0.65.
+- **[NUEVO 2026-06-02] Hero Video Optimizado:** Sustituidos los 4 clips MP4 y la lógica compleja de rotación JS por un solo archivo `hero_loop.mp4` (29s) generado con transiciones xfade nativas. Peso reducido de 20MB a 5.6MB (72% menos).
+- **[NUEVO 2026-06-02] Rutas Operativas (Bloque 3):** Creación de `RUTA_CLIENTE.md` (journey del cliente), `RUTA_ARQUITECTO.md` (workflow de diseño), y `RUTA_ADMIN.md` (operaciones de negocio).
+- **[NUEVO 2026-06-02] Fusión Conceptualización:** Propuesta de unificación del protocolo teórico con el método práctico de 17 pasos. Base para el futuro "Algoritmo SOMA".
 
 ---
 
@@ -211,8 +214,67 @@ Estrategias para redes sociales, Google y otras fuentes de leads. Solo cuando el
 | Bloque | Estado | Crítico para arrancar |
 |--------|--------|----------------------|
 | **1. ADM** | Casi completo. Misión/visión/valores ✅, contrato ✅, convenio de anticipo ✅, dashboard ✅, protocolos ✅. Falta RFC en RESICO. | ⬜ RFC necesario para facturar |
-| **2. Taller** | Protocolos de recepción, entrevista y análisis de sitio ✅. Diagrama espacial ✅. El resto se llena con la experiencia de Juan sobre la marcha. | ✅ Puede operar desde hoy |
+| **2. Taller** | Protocolos de recepción, entrevista y análisis de sitio ✅. Diagrama espacial ✅. PROCESO DE DISEÑO establecido como eje rector del Bloque 2. Diagnóstico completado (05/06/2026). Pendiente reestructura de protocolos contra el PROCESO DE DISEÑO. | ✅ Puede operar desde hoy |
 | **3. I+D** | Server Flask ✅, app de entrevista ✅, DB ✅, lead magnet endpoint ✅. Falta faster-whisper + DeepSeek para IA completo. | ✅ Puede operar sin IA (entrevista manual + guía en plantilla de Word) |
 | **4. MKT** | Buyer persona ✅, manifiesto accesibilidad ✅, Instagram (6 semanas de textos) ✅, lead magnet (guía + HTML) ✅, Google My Business (guía) ✅. Falta publicar web, crear cuentas, subir contenido. | ⬜ Redes + web son el motor de clientes |
 
 **Conclusión:** Lo único que realmente detiene el primer cliente es la web publicada y presencia en redes. El RFC es problema del cobro, no de conseguir el cliente.
+
+---
+
+## 📅 NUEVA PRIORIDAD — 05/06/2026: PROCESO DE DISEÑO COMO EJE RECTOR
+
+- **[NUEVO] PROCESO DE DISEÑO establecido como checklist formal y esqueleto del Algoritmo SOMA.**
+- **[NUEVO] Diagnóstico crítico completado** en `DIAGNOSTICO_PROCESO_DISEÑO.md`. 16 problemas identificados.
+- **[NUEVO 2026-06-08] PROCESO DE DISEÑO 2.0 generado:** Versión expandida de los 143 items originales con estructura INPUT/OPERA/OUTPUT/PROC. Cada item clasificado por:
+  - Naturaleza (`[REF]`, `[OUT]`, `[DEC]`, `[ACC]`, `[EVA]`, `[GUI]`)
+  - Procesador (`AI`, `HUMANO`, `AI→HUMANO`, `HUMANO→AI`)
+  - Dependencias de datos explícitas (inputs desde otros items)
+  - Outputs con variantes según complejidad del proyecto
+  - Citas en línea formato (Autor, Año) + sección de referencias al final
+  - Referencias cruzadas a protocolos (`PROTOCOLO: ruta`) en cada sección
+- **[NUEVO 2026-06-08] Análisis crítico del 2.0:** Identificó 6 problemas (extensión, falta de ramas por paquete, criterio de salida en evaluación, 5.10 mal asignado, estructura estática, 2.2.3 mal marcado). Corregidos 5.10 y 2.2.3.
+- **[NUEVO 2026-06-08] Protocolos renombrados y alineados al 2.0:** Los 11 protocolos existentes fueron renombrados con la numeración del PROCESO DE DISEÑO 2.0:
+  - `01 Recepción e Investigación/`: 3 protocolos (recepcion_usuario, entrevista_inmersion, investigacion_previa)
+  - `02 Análisis/`: 1 protocolo (analisis)
+  - `03 Diseño/`: 8 protocolos (conceptualizacion, modelado, visualizacion, representacion, evaluacion, anteproyecto, planos_tecnicos, coordinacion)
+  - Sin contradicciones — todos los protocolos se alinean al 2.0
+  - Referencias cruzadas agregadas en el PROCESO 2.0
+- **[NUEVO 2026-06-08] Matriz de inventario completa:** 21 archivos inventariados, 11 protocolos mapeados contra 9 secciones del 2.0. Cobertura total — no hay items críticos sin protocolo.
+
+---
+## 📅 SESIÓN 08/06/2026: POBLACIÓN DE BIBLIOTECA SOMA + FLUJO DE TRABAJO REAL
+
+- **[NUEVO] Biblioteca SOMA poblada:** 6 carpetas con contenido descargado, generado o referenciado:
+  - **normativas/ (8 PDFs, 35 MB):** reglamento_construccion_merida.pdf, gaceta_932_ntc_merida.pdf, NMX-R-050-SCFI-2006_accesibilidad.pdf, NOM-020-ENER-2011_eficiencia_energetica.pdf, NOM-008-ENER-2001_envolvente_no_residencial.pdf, PMDU_Merida.pdf, PIMUS_Merida_2040.pdf, Plan_Municipal_Desarrollo_2024-2027.pdf
+  - **clima/:** carta_solar_merida (PNG+PDF generados por AI), rosa_vientos_merida (PNG+PDF generados por AI), INDICE_CLIMA.md con tabla de datos históricos
+  - **diseno/:** REFERENCIAS_BIBLIOGRAFICAS.md con ISBN y dónde consultar Neufert, Panero, Ching (copyright → solo referencia)
+  - **arquetipos/:** INDICE_ARQUETIPOS.md con 18 recursos open-access sobre casa maya, colonial, porfiriana y moderna (todos con links directos a PDFs académicos)
+  - **repertorio/:** REPERTORIO_PROYECTOS.md con 15+ proyectos de referencia (vivienda en clima cálido-húmedo/contexto patrimonial)
+  - **patrones/:** CATALOGO_PATRONES_DISENO.md (42 patrones SOMA propios: espaciales, de uso, tectónicos, bioclimáticos, acontecimiento) + REFERENCIA_ALEXANDER.md (34 patrones de Alexander mapeados a Mérida)
+- **[NUEVO] Estrategia de adquisición definida:** AI descarga/genera lo público (normativas, datos climáticos) y referencias lo comercial (libros copyright, CONAGUA bloqueada por mod_security). AI→HUMANO para el catálogo de patrones (AI compila borrador, humano cura).
+- **[NUEVO] Flujo de trabajo real validado:** El loop INPUT→OPERA→OUTPUT del PROCESO 2.0 se probó con normativas (buscar→descargar→clasificar) y se confirmó que el patrón se replica para todas las carpetas de biblioteca.
+
+**Próxima sesión:** Continuar con protocolos o siguiente proyecto en pipeline.
+
+---
+
+## 📅 SESIÓN 09/06/2026: MIGRACIÓN A RENDER + POSTGRESQL
+
+### ✅ COMPLETADO
+
+- **[NUEVO] Migración Railway → Render:** Creado `render.yaml` (web service + PostgreSQL gratis). Eliminado `railway.json`.
+- **[NUEVO] Abstracción DB (`backend/db.py`):** Soporta SQLite (local) y PostgreSQL (producción). Detecta automáticamente según `DATABASE_URL`.
+- **[NUEVO] server.py reescrito:** 30+ operaciones de BD ahora usan `db.py`. Sin cambios en lógica de negocio.
+- **[NUEVO] Script de migración:** `backend/migrate_to_postgres.py` — exporta SQLite → PostgreSQL.
+- **[NUEVO] Dashboard con URLs relativas:** Usa `window.location.origin` en vez de `localhost:8080`.
+- **[NUEVO] Dependencia:** `psycopg2-binary` agregado.
+- **Documentación:** `RUTA_CLIENTE.md` y `SOLOJUAN.md` actualizados (railway.app → onrender.com).
+
+### ⚠️ PARA COMPLETAR EL DEPLOY
+
+1. Conectar repo GitHub en Render (render.com)
+2. Render crea automáticamente: Web Service + PostgreSQL (`soma-db`)
+3. Configurar env vars: `SENDGRID_API_KEY`, `TWILIO_SID`, `TWILIO_TOKEN`, `NOTIFICACION_WHATSAPP`
+4. Migrar datos: `DATABASE_URL=<url_render> python backend/migrate_to_postgres.py`
+5. Push a GitHub → deploy automático

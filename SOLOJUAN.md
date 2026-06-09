@@ -486,7 +486,7 @@ La investigación de sitio y normativa NO va antes de la cotización; se ejecuta
 - **[MEDIA] Confirmar landscape mobile** en vivo.
 - **[ALTA] RFC en RESICO** — sin factura no hay cobro formal.
 - **[ALTA] Primer cliente real** — validar el ciclo completo.
-- **[ALTA] Dominio propio** — `soma.up.railway.app` no inspira confianza.
+- **[ALTA] Dominio propio** — `soma.onrender.com` no inspira confianza.
 - **[MEDIA] Migrar a PostgreSQL** — SQLite se pierde al reiniciar Railway.
 
 ---
@@ -521,7 +521,75 @@ La investigación de sitio y normativa NO va antes de la cotización; se ejecuta
 
 **Decisión:** `classList.toggle('revealed', entry.isIntersecting)` en vez de solo `add()`. Filosofía con `opacity: 0.5; transform: translateX(-15px)` → revelado.
 
+---
+
+## [2026-06-02] - Hacia el Algoritmo SOMA y Organización de Proyectos
+
+### Sobre la documentación del proceso
+"y es que realmente apenas estoy asentando mis procesos en /04 Proyectos/Proyecto 1/ para que luego busquemos los patrones y alcancemos el algoritmo"
+
+**Decisión:** Flujo inductivo. Documentar primero el proceso real empírico (`CONTENIDO-DISEÑO` de 17 pasos), para luego decantar y refinar la teoría, en lugar de forzar la teoría sobre la práctica. Se generó `FUSION_CONCEPTUALIZACION.md`.
+
+### Sobre el concepto de "Algoritmo de Diseño"
+"Y mas que un check list es un algoritmo soma de diseño, es decir que podamos identificar las variables, y con recursos de programación y por cada etapa hasta que siguiendo el algoritmo tengas un entregable."
+"esacto, esa es la idea de la automatización soma, una guía logica, la creatividad esta adentro, es un nodo."
+"que creo tiene que ser visual porque es para el diseñador, que sepa que pasos debe seguir y ya con que estilo o mensaje sea propio."
+
+**Decisión:** Evolucionar de "Rutas" a "Algoritmo". SOMA no te dice *qué* diseñar (creatividad = nodo), sino *cómo procesar* la información (variables de entrada → pasos lógicos → entregable). Deberá ser un mapa visual nodal para el diseñador.
+
+### Sobre la organización de carpetas
+"Como es mejor para organizar carpetas... opción 1 analisis de sitio - proyecto alina, proyecto telchac, opción 2 - proyecto alina - analisis de sitio, analisis de usuario, etc."
+"En análisis tengo varios materiales, ejemplo relaciones espaciales, analisis del usuario, analisis del sitio, etc. como me conviene ordenarlo si es de diferentes tipos de material."
+
+**Decisión:**
+1. Estructura por Proyecto (Opción 2), no por especialidad. Favorece el contexto y poder comprimir/enviar un proyecto autónomo.
+2. Un solo documento para investigación en crudo (`expediente_sitio.md`), pero un documento de síntesis directiva (`guia_diseno.md`).
+3. Agrupar todo el análisis en una sola carpeta usando prefijos numéricos (`01_analisis_usuario.md`, `01_usuario_matrix.png`, etc.) sin separar por formato de archivo, para contar la historia secuencialmente.
+
+---
+
 ### Próxima Sesión
 - Dashboard apunta a `localhost:8080` — reconectar cuando se migre a Render (pendiente).
-- Pendientes de sesiones anteriores sin cambios.
+- Trazar las variables globales del Algoritmo SOMA y su mapa visual basado en la fusión lograda hoy.
+
+---
+
+## [2026-06-08] — PROCESO DE DISEÑO 2.0 + Biblioteca SOMA
+
+### Expansión del PROCESO DE DISEÑO
+"El PROCESO DE DISEÑO original (143 líneas) debe expandirse a especificación completa con INPUT/OPERA/OUTPUT/PROC para cada item."
+
+**Decisión:** Se creó `PROCESO DE DISEÑO 2.0` (~1614 líneas) con:
+- Cada item clasificado por naturaleza: `[REF]` (buscar/referenciar), `[OUT]` (generar), `[DEC]` (decisión humana), `[ACC]` (acción técnica), `[EVA]` (evaluar), `[GUI]` (consultar/guía)
+- Cada item asignado a procesador: `AI`, `HUMANO`, `AI→HUMANO`, `HUMANO→AI`
+- Citas inline con referencias al final
+- Cross-references a protocolos existentes
+
+**Regla confirmada:** Sección 2 (Investigación) outputea solo raw files. Sección 3 (Análisis) los procesa. No mezclar.
+
+"5.10 debe ser AI→HUMANO (el humano decide). 2.2.3 debe ser AI (automatizable: búsqueda de normativa de fraccionamiento). Los items de Sección 2 que requieren decisión humana deben ser HUMANO o AI→HUMANO, no AI."
+
+### Biblioteca SOMA
+"La biblioteca es el repositorio central de fuentes. El primer proyecto descarga, los siguientes copian de la biblioteca. No duplicar esfuerzo."
+
+**Decisión:** Biblioteca creada en `/biblioteca/` con 6 carpetas:
+- `normativas/` — PDFs descargados (Reglamento, NTC, NOMs, planes)
+- `clima/` — cartas solares y rosa de vientos generadas por script + índice
+- `diseno/` — solo referencias (Neufert, Panero, Ching — copyright, no descargar)
+- `arquetipos/` — índice de recursos open-access (AI busca, humano decide)
+- `repertorio/` — proyectos de referencia filtrados (AI compila, humano cura)
+- `patrones/` — catálogo SOMA de 42 patrones + 34 Alexander mapeados (AI→HUMANO)
+
+**Copyright:** "Neufert, Ching, Panero, Alexander no se descargan. Solo referenciar con ISBN y lugar de consulta."
+
+**CONAGUA:** "El sitio SMN bloquea descargas automáticas. Usar link directo + tabla resumen en su lugar."
+
+### Flujo de trabajo AI→HUMANO
+"Para el catálogo de patrones: AI hace el borrador inicial (42 patrones), humano cura y ajusta por proyecto. Es documento vivo."
+
+"Para arquetipos: AI busca recursos académicos open-access. humano decide cuáles usar."
+
+"Para repertorio: AI compila proyectos candidatos filtrados por clima/tipo. humano selecciona."
+
+**Próxima sesión:** Revisar protocolos contra 2.0, mapear items a codebase, integrar biblioteca en template de proyecto.
 

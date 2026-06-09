@@ -173,17 +173,18 @@
     <footer>"Lo protocolario se programa, lo creativo se libera." | SOMA 2026</footer>
 
     <script>
-        const API_URL = "http://localhost:8080/get_leads";
-        const MATRIX_API = "http://localhost:8080/activity_matrix";
-        const ENTREVISTA_API = "http://localhost:5050";
-        const COBROS_API = "http://localhost:8080/cobros";
-        const FINANZAS_API = "http://localhost:8080/resumen_financiero";
-        const FONDO_API = "http://localhost:8080/fondo_democratizacion";
-        const NOTIF_API = "http://localhost:8080/notificaciones/status";
-        const PROGRAMA_API = "http://localhost:8080/programa";
-        const COTIZACION_API = "http://localhost:8080/cotizacion";
-        const KANBAN_API = "http://localhost:8080/leads/kanban";
-        const PIPELINE_API = "http://localhost:8080/lead";
+        const API_BASE = window.location.origin;
+        const API_URL = API_BASE + "/get_leads";
+        const MATRIX_API = API_BASE + "/activity_matrix";
+        const ENTREVISTA_API = API_BASE + ":5050";
+        const COBROS_API = API_BASE + "/cobros";
+        const FINANZAS_API = API_BASE + "/resumen_financiero";
+        const FONDO_API = API_BASE + "/fondo_democratizacion";
+        const NOTIF_API = API_BASE + "/notificaciones/status";
+        const PROGRAMA_API = API_BASE + "/programa";
+        const COTIZACION_API = API_BASE + "/cotizacion";
+        const KANBAN_API = API_BASE + "/leads/kanban";
+        const PIPELINE_API = API_BASE + "/lead";
         const PIPELINE_ESTADOS = ['lead', 'entrevistado', 'programado', 'cotizado', 'contratado', 'pagado'];
         const ESTADO_LABELS = { lead: 'Lead', entrevistado: 'Entrevistado', programado: 'Programado', cotizado: 'Cotizado', contratado: 'Contratado', pagado: 'Pagado' };
         const ESTADO_COLORS = { lead: '#888', entrevistado: '#f39c12', programado: '#6b8f6b', cotizado: '#d4af37', contratado: '#2e7d32', pagado: '#1b5e20' };

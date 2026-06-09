@@ -1,0 +1,1617 @@
+# PROCESO DE DISEÑO 2.0 — GUÍA EXPANDIDA
+
+## Estructura de cada item
+
+```
+[NATURALEZA] ID. Nombre del Item
+─────────────────────────────────
+INPUT:  Datos/entregables que necesita este paso
+OPERA:  Operación a realizar (criterio, algoritmo o proceso)
+OUTPUT: Lo que se produce (según convenga al proyecto)
+PROC:   Quién lo ejecuta (AI / HUMANO / AI→HUMANO / HUMANO→AI)
+```
+
+**Naturalezas:**
+- `[REF]` **Referencia** — material en bruto que se consulta (archivo, fuente, dato crudo)
+- `[OUT]` **Entregable** — documento procesado que se produce
+- `[DEC]` **Decisión** — se elige entre opciones
+- `[GUI]` **Guía/Criterio** — principios que rigen el diseño
+- `[EVA]` **Evaluación** — verificación de calidad
+- `[ACC]` **Acción/Proceso** — paso metodológico a ejecutar
+
+**Procesadores:**
+- `AI` — la IA ejecuta (búsquedas, cálculos, lookups, generación de documentos utilitarios)
+- `HUMANO` — el arquitecto ejecuta (intención, juicio, creatividad, trabajo de campo)
+- `AI→HUMANO` — IA procesa datos, humano toma decisiones
+- `HUMANO→AI` — humano define parámetros, IA produce entregable base
+
+**Regla fundamental:**
+- **Investigación (2):** todo output es **bruto** — archivos, fotos, grabaciones, tablas de datos sin procesar
+- **Análisis (3):** toma los brutos de 2 y los **transforma** en información de diseño
+- **Conceptualización (4):** toma el análisis y lo convierte en **arquitectura**
+
+---
+
+## 1. Contacto con el Cliente
+
+```
+[OUT] 1. Contacto con el Cliente
+─────────────────────────────────
+INPUT:  Lead de la web (captura_web + cotizador) o contacto directo
+OPERA:  Primer contacto — presentar SOMA, entender alcance general,
+        definir si hay viabilidad, agendar entrevista de inmersión
+OUTPUT: • Lead cualificado en pipeline (estado: "Contactado")
+        • Enlace de Inmersión Web enviado al cliente
+        • Fecha tentativa de entrevista presencial
+        Nota: el output real de contacto son las guías de Inmersión Web
+        + Entrevista Física, que son procesos vivos en otros documentos.
+        Contacto es transversal (ADM + Diseño).
+PROC:   HUMANO
+```
+
+---
+
+## 2. Proceso de Investigación
+*Todo lo que se produce aquí es **material en bruto** — archivos, tablas, fotos, grabaciones.
+Ningún output de esta sección está analizado; eso ocurre en la sección 3.*
+
+### 2.1 Material Constante
+*Fuentes que se recolectan una vez y persisten para todos los proyectos posteriores.
+Si la fuente ya está en la biblioteca SOMA → copiar al proyecto.
+Si es la primera vez o hay una actualización → descargar de la fuente externa y guardar en la biblioteca SOMA + copiar al proyecto.
+PROTOCOLO: 01 Recepción e Investigación/protocolo_2.1-2.2_investigacion_previa.md (secciones de investigación de sitio, clima y normativa)*
+
+#### 2.1.1 Datos Bioclimáticos
+
+```
+[REF] 2.1.1.1 Normales Climatológicas de Mérida
+─────────────────────────────────
+INPUT:  CONAGUA / SMN (fuente externa)
+OPERA:  Buscar en biblioteca SOMA. Si no existe o hay actualización,
+        descargar de CONAGUA/SMN. Guardar en biblioteca SOMA y copiar
+        a `referencias/clima/` del proyecto
+OUTPUT: `normales_climatologicas_merida.pdf` (CONAGUA/SMN, 2024)
+        (archivo en bruto)
+PROC:   AI
+```
+
+```
+[REF] 2.1.1.2 Carta Solar de Mérida
+─────────────────────────────────
+INPUT:  Latitud/longitud de Mérida (20.97°N, 89.62°O)
+OPERA:  Buscar en biblioteca SOMA. Si no existe, generar con software
+        (Ladybug, SunPath, etc.) o descargar de fuente confiable.
+        Guardar en biblioteca SOMA y copiar a `referencias/clima/`
+        del proyecto
+OUTPUT: `carta_solar_merida.pdf` o `carta_solar_merida.png`
+        (archivo en bruto)
+PROC:   AI
+```
+
+```
+[REF] 2.1.1.3 Rosa de los Vientos de Mérida
+─────────────────────────────────
+INPUT:  CONAGUA / SMN (datos históricos de viento)
+OPERA:  Buscar en biblioteca SOMA. Si no existe, generar desde datos
+        históricos de dirección y velocidad del viento o descargar.
+        Guardar en biblioteca SOMA y copiar a `referencias/clima/`
+        del proyecto
+OUTPUT: `rosa_vientos_merida.pdf` o `rosa_vientos_merida.png`
+        (archivo en bruto)
+PROC:   AI
+```
+
+#### 2.1.2 Normativas y Guías de Diseño
+
+```
+[REF] 2.1.2.1 Reglamento de Construcción de Mérida y
+      Normas Técnicas Complementarias
+─────────────────────────────────
+INPUT:  Ayuntamiento de Mérida / IM Plan (fuente externa)
+OPERA:  Buscar en biblioteca SOMA. Si no existe o hay actualización,
+        descargar PDF de la fuente oficial. Guardar en biblioteca
+        SOMA y copiar a `referencias/normativas/` del proyecto
+OUTPUT: `reglamento_construccion_merida.pdf` (Reglamento de
+        Construcción de Mérida, 2023) (archivo en bruto)
+PROC:   AI
+```
+
+```
+[REF] 2.1.2.2 Reglamento de Accesibilidad Universal
+─────────────────────────────────
+INPUT:  Secretaría de Desarrollo Urbano / normas oficiales mexicanas
+OPERA:  Buscar en biblioteca SOMA. Si no existe o hay actualización,
+        descargar PDF (NMX-R-050-SCFI-2015 o equivalente vigente).
+        Guardar en biblioteca SOMA y copiar a `referencias/normativas/`
+OUTPUT: `norma_accesibilidad_universal.pdf` (NMX-R-050-SCFI, 2015)
+        (archivo en bruto)
+PROC:   AI
+```
+
+```
+[REF] 2.1.2.3 Reglamento de Uso de Suelo
+─────────────────────────────────
+INPUT:  Plan de Desarrollo Urbano de Mérida / carta urbana
+OPERA:  Buscar en biblioteca SOMA. Si no existe o hay actualización,
+        descargar PDF (carta urbana o plan de desarrollo vigente).
+        Guardar en biblioteca SOMA y copiar a `referencias/normativas/`
+OUTPUT: `uso_de_suelo_merida.pdf` (Plan de Desarrollo Urbano de
+        Mérida, 2022) (archivo en bruto)
+PROC:   AI
+```
+
+```
+[REF] 2.1.2.4 Parámetros de Diseño: Neufert, Ergonomía y Antropometría
+─────────────────────────────────
+INPUT:  Fuentes bibliográficas externas (Neufert, Panero, Ching, etc.)
+OPERA:  Buscar en biblioteca SOMA. Si no existen, localizar y
+        descargar los PDF de las fuentes bibliográficas de referencia.
+        Guardar en biblioteca SOMA y copiar a `referencias/diseno/`
+        del proyecto
+OUTPUT: `neufert_el_arte_de_proyectar.pdf` (Neufert, 1936),
+        `panero_dimensiones_humanas.pdf` (Panero & Zelnik, 1979),
+        `ching_arquitectura_forma_espacio_orden.pdf` (Ching, 2014)
+        (archivos PDF de referencia en bruto)
+PROC:   AI
+```
+
+```
+[REF] 2.1.2.5 Normativas de Eficiencia Energética
+─────────────────────────────────
+INPUT:  CONUEE / NOM-020-ENER (fuente externa)
+OPERA:  Buscar en biblioteca SOMA. Si no existe o hay actualización,
+        descargar PDF (NOM-020-ENER y normativas locales aplicables).
+        Guardar en biblioteca SOMA y copiar a `referencias/normativas/`
+OUTPUT: `nom_020_ener_eficiencia_energetica.pdf` (NOM-020-ENER, 2011)
+        (archivo en bruto)
+PROC:   AI
+```
+
+#### 2.1.3 Estado del Arte en Vivienda y Repertorio Tipológico
+
+```
+[REF] 2.1.3.1 Arquetipos Históricos de la Vivienda en Yucatán
+─────────────────────────────────
+INPUT:  Fuentes externas (historia, arquitectura, urbanismo)
+OPERA:  Buscar en biblioteca SOMA. Si no existen, investigar y
+        recolectar materiales sobre arquetipos de vivienda en
+        Yucatán (casa maya, colonial, porfiriana, moderna, etc.).
+        Guardar en biblioteca SOMA y copiar a `referencias/arquetipos/`
+OUTPUT: `arquetipo_casa_maya.pdf`, `arquetipo_casa_colonial.pdf`, etc.
+        (archivos de referencia en bruto)
+PROC:   AI
+```
+
+```
+[REF] 2.1.3.2 Repertorio Local, Nacional e Internacional de Vivienda
+─────────────────────────────────
+INPUT:  Fuentes externas (libros, revistas, portafolios digitales)
+OPERA:  Buscar en biblioteca SOMA. Si no existen proyectos de
+        referencia que compartan tipo, escala, clima o programa
+        con el actual, investigar y recolectar. Guardar en
+        biblioteca SOMA y copiar a `referencias/repertorio/`
+OUTPUT: `proyecto_referencia_01.pdf`, `proyecto_referencia_02.jpg`, etc.
+        (archivos de referencia en bruto)
+PROC:   AI
+```
+
+```
+[REF] 2.1.3.3 Patrones Importantes de Diseño
+─────────────────────────────────
+INPUT:  Fuentes externas + experiencia del arquitecto
+OPERA:  Buscar en biblioteca SOMA. Si no existe, construir el
+        catálogo de patrones de diseño (acontecimiento, espaciales,
+        de uso, tectónicos, bioclimáticos) a partir de la
+        experiencia y referencias. Guardar en biblioteca SOMA
+        y copiar a `referencias/patrones/` del proyecto
+OUTPUT: `catalogo_patrones_diseno.pdf` (archivo de referencia
+        en bruto — se construye una vez, se consulta para cada
+        proyecto         y se enriquece con el tiempo)
+PROC:   AI→HUMANO (AI compila primer catálogo, humano cura)
+```
+
+```
+[REF] 2.1.3.4 Patrones Arquitectónicos de Christopher Alexander
+─────────────────────────────────
+INPUT:  "A Pattern Language" — Christopher Alexander (fuente externa)
+OPERA:  Buscar en biblioteca SOMA. Si no existe, adquirir o
+        descargar el libro "A Pattern Language" (253 patrones).
+        Guardar en biblioteca SOMA y copiar a `referencias/patrones/`
+OUTPUT: `a_pattern_language_alexander.pdf` (Alexander et al., 1977)
+        (archivo de referencia en bruto — se adquiere una vez, se
+        consulta para cada proyecto)
+PROC:   AI
+```
+
+### 2.2 Material Variable
+*Datos que se colectan específicamente para cada proyecto.
+Operación: ir al campo, medir, fotografiar, entrevistar, registrar.
+PROTOCOLO: 01 Recepción e Investigación/protocolo_2.2.1-3.10_recepcion_usuario.md (UserEntity, CreativeCore, actividad)
+PROTOCOLO: 01 Recepción e Investigación/protocolo_2.2.1.2_entrevista_inmersion.md (6 tópicos de entrevista)*
+
+#### 2.2.1 Datos del Usuario/Cliente
+
+```
+[REF→OUT] 2.2.1.1 Datos de Inmersión SOMA
+─────────────────────────────────
+INPUT:  Cliente responde Inmersión Web (10 ejes visuales A/B +
+        formulario de contacto con nombre, teléfono, email, etc.)
+OPERA:  El sistema guarda automáticamente las respuestas en la BD
+        (tabla captura_web). Recuperar el registro del cliente.
+        Exportar respuestas crudas a carpeta del proyecto
+OUTPUT: `respuestas_inmersion_web.json` (datos en bruto del cliente)
+        + `datos_contacto_cliente.txt` (nombre, teléfono, email)
+PROC:   AI (recuperación automática desde BD)
+```
+
+```
+[ACC] 2.2.1.2 Entrevista Presencial SOMA
+─────────────────────────────────
+INPUT:  Cita agendada con el cliente + Guía de Entrevista
+        (6 tópicos conversacionales) + respuestas de 2.2.1.1
+OPERA:  Sesión presencial con el cliente. Grabar audio continuo
+        mientras se conversan los 6 tópicos. Tomar notas de
+        observaciones no verbales. El audio se guarda en bruto
+        para transcripción posterior
+OUTPUT: • `entrevista.wav` (audio en bruto de la conversación)
+        • `notas_campo_entrevista.txt` (observaciones del arquitecto)
+        Nota: la transcripción y análisis ocurren en 3.10
+PROC:   HUMANO (entrevista y grabación)
+```
+
+#### 2.2.2 Datos del Sitio
+
+```
+[OUT] 2.2.2.1 Levantamiento Físico del Terreno
+─────────────────────────────────
+INPUT:  Visita al sitio + escrituras / plano catastral del predio
+OPERA:  Medir y registrar en campo:
+        - Dimensiones y forma del terreno (poligonal)
+        - Niveles y pendientes
+        - Tipo de suelo (observación superficial)
+        - Vegetación existente (ubicación, especie, diámetro aprox.)
+        - Construcciones existentes (si las hay)
+        Todo se registra en croquis análogo y fotografías
+OUTPUT: • `croquis_levantamiento.pdf` o imagen escaneada
+        • `fotos_terreno/` (carpeta con fotografías en bruto)
+        • `datos_predio.txt` (dimensiones, área, medidas de escrituras)
+        Nota: el reporte de mecánica de suelos, si aplica, lo
+        genera un laboratorio externo — se guarda como bruto
+PROC:   HUMANO
+```
+
+```
+[OUT] 2.2.2.2 Levantamiento de Elementos Interiores del Predio
+─────────────────────────────────
+INPUT:  Visita al sitio
+OPERA:  Registrar y fotografiar:
+        - Árboles (especie, ubicación, diámetro)
+        - Pozos, cenotes, cuerpos de agua
+        - Construcciones existentes (muros, pisos, losas, vanos,
+          ángulos, estado, materiales)
+        - Acometidas (agua, drenaje, electricidad, gas)
+        Todo se registra en croquis + fotografías georreferenciadas
+OUTPUT: • `fotos_elementos_interiores/` (carpeta con fotos en bruto)
+        • `croquis_elementos_existentes.pdf`
+PROC:   HUMANO
+```
+
+```
+[OUT] 2.2.2.3 Levantamiento de Elementos Exteriores
+─────────────────────────────────
+INPUT:  Visita al sitio + recorrido del entorno inmediato
+OPERA:  Registrar y fotografiar:
+        - Colindancias (alturas, materiales, usos, estado)
+        - Vialidades (ancho, tipo, flujo, velocidad)
+        - Banquetas (ancho, estado, materiales)
+        - Postes (luz, teléfono, CCTV)
+        - Alcantarillas y drenaje pluvial
+        - Árboles públicos
+        Todo se registra en croquis + fotografías
+OUTPUT: • `fotos_entorno/` (carpeta con fotos en bruto)
+        • `croquis_contexto_urbano.pdf`
+PROC:   HUMANO
+```
+
+#### 2.2.3 Normativas Específicas
+
+```
+[REF] 2.2.3 Normativas Específicas del Fraccionamiento/Privada
+─────────────────────────────────
+INPUT:  Administración del fraccionamiento o condominio (si aplica)
+OPERA:  Buscar en biblioteca SOMA. Si no existe, solicitar el
+        reglamento interno a la administración, descargar el PDF.
+        Guardar en biblioteca SOMA y copiar a
+        `referencias/normativas/especificas/` del proyecto
+OUTPUT: `reglamento_fraccionamiento.pdf` (archivo en bruto, si aplica)
+PROC:   AI
+```
+
+#### 2.2.4 Datos Ambientales Específicos
+
+```
+[OUT] 2.2.4.1 Fuentes de Ruido
+─────────────────────────────────
+INPUT:  Visita al sitio en diferentes horarios (mañana, tarde, noche,
+        entre semana, fin de semana)
+OPERA:  Identificar fuentes de ruido en el entorno:
+        vialidades cercanas (flujo, tipo de vehículos), industrias,
+        talleres, escuelas, comercios con música, aires acondicionados,
+        etc. Registrar ubicación en croquis y tipo de ruido.
+        Medición cualitativa (bajo/medio/alto) o cuantitativa si
+        hay equipo de decibelímetro
+OUTPUT: • `mapa_fuentes_ruido.pdf` (croquis con ubicaciones)
+        • `notas_ruido.txt` (horarios críticos, descripciones)
+        Datos en bruto — sin análisis de mitigación
+PROC:   HUMANO
+```
+
+```
+[OUT] 2.2.4.2 Fuentes de Olores
+─────────────────────────────────
+INPUT:  Visita al sitio + preguntar a vecinos (opcional)
+OPERA:  Identificar fuentes de olores: basurero, granja, industria,
+        pozo séptico, quemas, etc. Registrar dirección del viento
+        que trae el olor, horarios y estacionalidad.
+OUTPUT: • `mapa_fuentes_olores.pdf` (croquis con dirección de viento)
+        • `notas_olores.txt` (horarios, descripciones)
+        Datos en bruto — sin análisis de mitigación
+PROC:   HUMANO
+```
+
+---
+
+## 3. Proceso de Análisis
+*Toma los materiales brutos de la sección 2 y los transforma en
+información de diseño procesada. Aquí se cruzan datos, se grafican
+síntesis, se toman decisiones y se generan guías.
+PROTOCOLO: 02 Análisis/protocolo_3.1-3.10_analisis.md*
+
+```
+[OUT] 3.1 Gráfico General del Sitio
+─────────────────────────────────
+INPUT:  2.2.2.1 `croquis_levantamiento.pdf` + `datos_predio.txt`
+        2.2.2.2 `croquis_elementos_existentes.pdf`
+        2.2.2.3 `croquis_contexto_urbano.pdf`
+        2.2.4.1 `mapa_fuentes_ruido.pdf`
+        2.2.4.2 `mapa_fuentes_olores.pdf`
+        2.1.1.1 `normales_climatologicas_merida.pdf`
+        2.1.1.2 `carta_solar_merida.pdf`
+        2.1.1.3 `rosa_vientos_merida.pdf`
+OPERA:  Integrar los croquis y datos brutos del levantamiento en un
+        solo gráfico de síntesis que superponga capas: geometría del
+        terreno, niveles, vegetación, colindancias, vialidades,
+        banquetas, acometidas, fuentes de ruido y olor, recorrido
+        solar (trayectoria), dirección de viento dominante, temperatura
+        crítica y humedad
+OUTPUT: Lámina única de síntesis del sitio — capa base para todo
+        análisis posterior (análoga o digital)
+PROC:   HUMANO
+```
+
+```
+[OUT] 3.2 Gráfico Particular Ambiental
+─────────────────────────────────
+INPUT:  3.1 Gráfico General del Sitio
+        2.2.4.1 `mapa_fuentes_ruido.pdf` + `notas_ruido.txt`
+        2.2.4.2 `mapa_fuentes_olores.pdf`
+        2.2.2.3 `fotos_entorno/` + `croquis_contexto_urbano.pdf`
+OPERA:  Procesar la información ambiental del sitio para generar
+        un gráfico de análisis específico que muestre:
+        - Visuales (desde exterior hacia dentro y viceversa)
+        - Gradiente de ruido (zonas quietas vs ruidosas)
+        - Gradiente de temperatura (islas de calor)
+        - Gradiente de ventilación (canales de viento)
+        - Conflictos de infraestructura
+        - Visuales perjudiciales y colindancias conflictivas
+OUTPUT: Lámina de análisis ambiental particular del sitio
+PROC:   HUMANO
+```
+
+```
+[OUT] 3.3 Programa Arquitectónico
+─────────────────────────────────
+INPUT:  2.2.1.1 `respuestas_inmersion_web.json` (necesidades del cliente)
+        2.2.1.2 `notas_campo_entrevista.txt` (necesidades no dichas)
+        2.1.2.4 `tablas_neufert_ergonomia.pdf` (dimensiones mínimas)
+        Catálogo SOMA de espacios mínimos (actualizado v3.0)
+OPERA:  Desglosar necesidades del usuario en espacios. Clasificar en:
+        - Deseado (lo que el cliente pide explícitamente)
+        - Complementario (lo que necesita pero no sabe: bodega,
+          lavandería, cuarto de instalaciones)
+        - Lujo (aspiracional si el presupuesto lo permite)
+        Cada espacio con: nombre, m², zona SOMA, y observaciones
+OUTPUT: • Tabla de programa arquitectónico (en BD o spreadsheet)
+        • Totales parciales por zona y nivel
+PROC:   AI→HUMANO (AI sugiere espacios mínimos desde catálogo,
+        humano ajusta según entrevista)
+```
+
+```
+[OUT] 3.4 Diagrama de Relaciones Espaciales
+─────────────────────────────────
+INPUT:  3.3 Programa Arquitectónico
+        Zonificación Maestra SOMA (Social, Descanso, Operativa,
+        Soporte, Transición)
+OPERA:  Analizar las conexiones requeridas entre espacios:
+        - Conexión directa (puerta/circulación directa)
+        - Conexión visual (vano, transparencia)
+        - Conexión acústica (abierto/aislado)
+        - Proximidad deseada o requerida
+        - Separación requerida (privacidad, ruido, olores)
+        - Zona SOMA de cada espacio
+OUTPUT: • Diagrama de burbujas con relaciones espaciales
+        • Matriz de relaciones (tabla de doble entrada)
+        • Input para Diagrama Espacial SOMA
+PROC:   HUMANO→AI (humano define relaciones, AI genera diagrama)
+```
+
+```
+[DEC] 3.5 Selección de Patrones Importantes de Diseño
+─────────────────────────────────
+INPUT:  2.1.3.3 `catalogo_patrones_diseno.pdf` (catálogo completo)
+        2.2.1.1 `respuestas_inmersion_web.json` (perfil de diseño)
+        2.2.1.2 `notas_campo_entrevista.txt` (contexto del usuario)
+        3.1 Gráfico General del Sitio (condiciones del sitio)
+        3.3 Programa Arquitectónico (espacios y zonas)
+OPERA:  AI revisa el catálogo de patrones y selecciona los que
+        aplican al proyecto según: clima, cultura, tipología,
+        perfil del usuario, programa y sitio. Humano evalúa si
+        la cantidad y pertinencia son adecuadas, ajusta o agrega
+OUTPUT: • Lista/checklist de patrones aplicables al proyecto
+        • Diagrama de relaciones entre patrones seleccionados
+        • Algoritmo de diseño derivado de patrones (si aplica)
+PROC:   AI→HUMANO
+```
+
+```
+[DEC] 3.6 Selección de Patrones de Christopher Alexander
+─────────────────────────────────
+INPUT:  2.1.3.4 `a_pattern_language_alexander.pdf` (253 patrones)
+        2.2.1 Perfil del usuario
+        3.1 Gráfico del sitio
+        3.3 Programa Arquitectónico
+OPERA:  AI revisa los 253 patrones (Alexander et al., 1977) y
+        preselecciona los aplicables según: escala del espacio,
+        clima, cultura, tipo de relaciones espaciales. Humano
+        evalúa cantidad y pertinencia, ajusta o agrega
+OUTPUT: Checklist de patrones de Alexander aplicables al proyecto
+        (ej: 53. Entrada Gradual, 127. Intimidad Jerarquizada,
+        161. Luz desde Dos Lados, etc.) (Alexander et al., 1977)
+PROC:   AI→HUMANO
+```
+
+```
+[DEC] 3.7 Selección de Normativas Aplicables y Restricciones de Diseño
+─────────────────────────────────
+INPUT:  2.1.2.1 `reglamento_construccion_merida.pdf` (en bruto)
+        2.1.2.3 `uso_de_suelo_merida.pdf` (en bruto)
+        2.2.3 `reglamento_fraccionamiento.pdf` (si aplica)
+        2.2.2.1 `datos_predio.txt` (dimensiones del terreno)
+OPERA:  Leer los reglamentos en bruto y extraer los valores
+        numéricos que aplican al predio concreto del proyecto:
+        - COS (Coeficiente de Ocupación del Suelo)
+        - CUS (Coeficiente de Uso del Suelo)
+        - Área verde obligatoria
+        - Altura máxima permitida
+        - Retiros obligatorios (frontal, laterales, posterior)
+        - Cajones de estacionamiento requeridos
+        - Niveles y densidades máximas
+OUTPUT: • Ficha de restricciones de diseño (valores numéricos
+          por item, específicos para este predio)
+        • Diagrama de envolvente normativa del volumen permitido
+PROC:   AI (lectura de reglamentos y extracción de valores
+        numéricos aplicables al predio)
+```
+
+```
+[GUI] 3.8 Selección de Premisas Ergométricas y Antropométricas
+─────────────────────────────────
+INPUT:  2.1.2.4 `tablas_neufert_ergonomia.pdf` (tablas en bruto)
+        3.3 Programa Arquitectónico (tipos de espacio del proyecto)
+OPERA:  Consultar las tablas de Neufert, Panero y demás referencias.
+        Extraer las dimensiones mínimas y recomendadas que aplican
+        a los espacios concretos del programa:
+        - Ancho de pasillos y circulaciones
+        - Alto de mesetas, barras y planos de trabajo
+        - Áreas útiles de mobiliario por espacio
+        - Espacios de giro y aproximación
+        - Alturas de interruptores, contactos, manijas
+OUTPUT: Tabla de premisas ergométricas y antropométricas por
+        espacio del proyecto (procesada — no el libro completo)
+PROC:   AI (lookup de estándares contra programa)
+```
+
+```
+[GUI] 3.9 Estrategias de Diseño Arquitectónico
+─────────────────────────────────
+INPUT:  Resultados de 3.1, 3.2, 3.5, 3.6, 3.7, 3.8
+OPERA:  Sintetizar los análisis previos en estrategias de diseño
+        concretas, organizadas por tipo de afectación (olores,
+        ruido, clima, contexto urbano)
+OUTPUT: Conjunto de estrategias de diseño para el proyecto
+        (organizadas en sub-secciones 3.9.1 a 3.9.4)
+PROC:   AI→HUMANO (AI propone desde reglas conocidas, humano
+        selecciona y adapta al contexto específico)
+```
+
+```
+[GUI] 3.9.1 Estrategias de Extracción de Malos Olores
+─────────────────────────────────
+INPUT:  2.2.4.2 `mapa_fuentes_olores.pdf` + `notas_olores.txt`
+        3.1 Gráfico del sitio (dirección de vientos)
+        2.1.1.3 `rosa_vientos_merida.pdf`
+OPERA:  Analizar las fuentes de olor registradas y proponer
+        estrategias de mitigación:
+        - Ubicación de ventanas en barlovento o sotavento
+        - Uso de patios como chimeneas de extracción
+        - Barreras vegetales contra olores
+        - Zonificación de espacios sensibles lejos de la fuente
+        - Presión diferencial y ventilación cruzada
+OUTPUT: Lista de estrategias de control de olores aplicables
+        al proyecto (específicas para las fuentes identificadas)
+PROC:   AI→HUMANO
+```
+
+```
+[GUI] 3.9.2 Estrategias de Mitigación de Ruido
+─────────────────────────────────
+INPUT:  2.2.4.1 `mapa_fuentes_ruido.pdf` + `notas_ruido.txt`
+        3.1 Gráfico del sitio
+        3.2 Gráfico ambiental (gradiente de ruido)
+OPERA:  Analizar las fuentes de ruido registradas y proponer
+        estrategias de mitigación (Newman, 1972):
+        - Ubicación de espacios silenciosos vs ruidosos
+        - Barreras acústicas (muros, vegetación, topografía)
+        - Jerarquía de aperturas según exposición
+        - Patios como amortiguadores acústicos
+        - Materiales absorbentes en fachadas expuestas
+OUTPUT: Lista de estrategias de mitigación de ruido aplicables
+        al proyecto (específicas para las fuentes identificadas)
+PROC:   AI→HUMANO
+```
+
+```
+[GUI] 3.9.3 Estrategias Bioclimáticas para Mérida
+─────────────────────────────────
+INPUT:  2.1.1.1 `normales_climatologicas_merida.pdf`
+        2.1.1.2 `carta_solar_merida.pdf`
+        2.1.1.3 `rosa_vientos_merida.pdf`
+        3.1 Gráfico General del Sitio
+        3.2 Gráfico Ambiental
+OPERA:  Seleccionar estrategias bioclimáticas específicas para el
+        clima cálido-húmedo de Mérida (Givoni, 1998), adaptadas
+        al sitio concreto (Olgyay, 1963)
+OUTPUT: Conjunto de estrategias bioclimáticas (4 sub-grupos:
+        3.9.3.1 Estrategias de Orientación, 3.9.3.2 Ventilación,
+        3.9.3.3 Pasivas, 3.9.3.4 Operación Pasiva)
+PROC:   AI→HUMANO
+```
+
+```
+[GUI] 3.9.3.1 Estrategias de Orientación
+─────────────────────────────────
+INPUT:  3.1 Gráfico del sitio (recorrido solar, viento)
+        2.1.2.1 `reglamento_construccion_merida.pdf` (retiros, alturas)
+        2.1.1.2 `carta_solar_merida.pdf`
+OPERA:  Determinar para cada orientación de las fachadas del
+        proyecto:
+        - Tratamiento requerido (aleros, celosías, masa térmica,
+          vegetación, volados)
+        - Ubicación óptima de espacios (dormitorios al E/NE,
+          servicios al W/SW, estar al N, etc.)
+        - Dimensiones de vanos según incidencia solar
+OUTPUT: Tabla de recomendaciones por orientación + diagrama
+PROC:   AI→HUMANO
+```
+
+```
+[GUI] 3.9.3.2 Estrategias de Ventilación
+─────────────────────────────────
+INPUT:  2.1.1.3 `rosa_vientos_merida.pdf`
+        3.1 Gráfico del sitio (dirección de vientos dominantes)
+        3.2 Gráfico ambiental (canales de viento, obstrucciones)
+OPERA:  Determinar estrategias de ventilación natural cruzada:
+        - Ubicación de aperturas de entrada (barlovento)
+        - Ubicación de aperturas de salida (sotavento)
+        - Uso de patios como chimeneas de viento
+        - Altura de dinteles para extracción de aire caliente
+        - Efecto Venturi en pasillos y estrangulamientos
+OUTPUT: Diagrama de estrategias de ventilación sobre planta
+PROC:   AI→HUMANO
+```
+
+```
+[GUI] 3.9.3.3 Estrategias Pasivas
+─────────────────────────────────
+INPUT:  2.1.1.1 `normales_climatologicas_merida.pdf`
+        2.1.1.2 `carta_solar_merida.pdf`
+        3.1 Gráfico del sitio
+OPERA:  Seleccionar estrategias pasivas de climatización:
+        - Tamaño de ventanas según orientación (menor al W/SW)
+        - Dimensiones de aleros (cálculo según ángulo solar crítico)
+        - Utilización de celosías y lamas orientables
+        - Patios interiores como reguladores térmicos
+        - Masa térmica en pisos y muros seleccionados
+        - Colores de acabados según absorción solar
+OUTPUT: Checklist de estrategias pasivas aplicables al proyecto
+PROC:   AI→HUMANO
+```
+
+```
+[GUI] 3.9.3.4 Estrategias de Operación Pasiva
+─────────────────────────────────
+INPUT:  2.1.1.1 `normales_climatologicas_merida.pdf` (temperatura
+        diurna/nocturna por mes)
+        3.9.3.1-3 Estrategias seleccionadas
+OPERA:  Definir horarios de apertura/cierre de vanos para
+        operación óptima sin consumo energético:
+        - Ventanas abiertas en la noche/madrugada (enfriamiento)
+        - Cierre en horas pico de calor (11am-5pm)
+        - Uso de persianas/lamas orientables según sol
+OUTPUT: Tabla de operación pasiva recomendada (por hora y estación)
+PROC:   AI
+```
+
+```
+[GUI] 3.9.4 Estrategias de Integración Urbana
+─────────────────────────────────
+INPUT:  2.2.2.3 `fotos_entorno/` + `croquis_contexto_urbano.pdf`
+        3.1 Gráfico del sitio
+        3.7 Restricciones normativas (alturas, retiros)
+OPERA:  AI propone estrategias desde el análisis de contexto:
+        relación con calle, alturas, materialidad, límites.
+        Humano selecciona y adapta según su lectura del lugar
+OUTPUT: Estrategias de integración urbana (documento/checklist)
+PROC:   AI→HUMANO
+```
+
+```
+[OUT] 3.10 Análisis del Usuario
+─────────────────────────────────
+INPUT:  2.2.1.1 `respuestas_inmersion_web.json`
+        2.2.1.2 `entrevista.wav` + `notas_campo_entrevista.txt`
+OPERA:  Procesar los datos brutos del usuario para extraer un
+        perfil de diseño completo. Incluye transcripción del
+        audio de entrevista y estructuración de datos
+OUTPUT: Conjunto de documentos de análisis del usuario
+        (5 sub-items: 3.10.1 a 3.10.5)
+PROC:   AI→HUMANO
+```
+
+```
+[OUT] 3.10.1 Datos Demográficos
+─────────────────────────────────
+INPUT:  2.2.1.1 `respuestas_inmersion_web.json`
+        2.2.1.2 Transcripción de entrevista
+OPERA:  Extraer y organizar: edad, género, ocupación, composición
+        del hogar (quiénes viven, parentesco), nivel de movilidad,
+        roles dentro del hogar (quién cocina, quién trabaja desde
+        casa, quién recibe visitas, etc.)
+OUTPUT: Ficha de composición del hogar y perfiles de habitante
+PROC:   AI
+```
+
+```
+[OUT] 3.10.2 Matrices de Actividad
+─────────────────────────────────
+INPUT:  2.2.1.2 Transcripción de entrevista + notas
+        3.10.1 Datos demográficos (habitantes identificados)
+OPERA:  Por cada habitante, desglosar 24 slots temporales (1h c/u)
+        con: actividad principal, ubicación probable, necesidad de
+        aislamiento (alta/media/baja), necesidad de iluminación
+        (natural/artificial/ambas), usuarios concurrentes
+OUTPUT: Activity Matrix (grid 24h × N habitantes) almacenada en BD
+        (tabla actividades) con tooltips por celda
+PROC:   AI (estructura desde transcripción) + HUMANO (validación)
+```
+
+```
+[OUT] 3.10.3 Gráficos de Rutinas y Frecuencias de Uso Espacial
+─────────────────────────────────
+INPUT:  3.10.2 Activity Matrix
+        3.3 Programa Arquitectónico (espacios)
+OPERA:  Graficar a partir de la matriz:
+        - Rutinas diarias por habitante
+        - Frecuencias de uso por espacio (alta/media/baja)
+        - Horarios de conflicto (múltiples usuarios simultáneos)
+        - Patrones de uso (entre semana vs fin de semana)
+OUTPUT: Gráficos de rutinas y frecuencias (lámina o dashboard)
+PROC:   AI (generación de gráficos desde datos estructurados)
+```
+
+```
+[OUT] 3.10.4 Perfil de Diseño (Inmersión SOMA)
+─────────────────────────────────
+INPUT:  2.2.1.1 `respuestas_inmersion_web.json` (10 ejes A/B)
+        2.2.1.2 Transcripción de entrevista (matices cualitativos)
+OPERA:  Cruzar datos de inmersión (selecciones A/B visuales) con
+        las observaciones cualitativas de la entrevista para
+        construir un perfil de diseño completo:
+        - Posición en cada uno de los 10 ejes de diseño
+        - Matices, excepciones y contradicciones (desde entrevista)
+        - Síntesis de polaridad dominante del cliente
+OUTPUT: Perfil de diseño del cliente (documento de guía)
+PROC:   AI (ejes) + HUMANO (interpretación de matices)
+```
+
+```
+[DEC] 3.10.5 Selección de Necesidades No Visibles
+─────────────────────────────────
+INPUT:  2.2.1.2 Transcripción y notas de entrevista
+        Catálogo SOMA de necesidades comunes por tipo de proyecto
+OPERA:  AI sugiere lista de necesidades no visibles típicas para
+        el tipo de proyecto (almacenamiento, lavandería, bodega,
+        tendedero, cuarto de instalaciones, etc.). Humano evalúa
+        cuáles aplican y agrega las específicas del cliente
+OUTPUT: Lista de necesidades no visibles integradas al programa
+PROC:   AI→HUMANO
+```
+
+---
+
+## 4. Proceso de Conceptualización
+
+*Síntesis del análisis en partido arquitectónico. Contiene 2 loops de evaluación.
+PROTOCOLO: 03 Diseño/protocolo_4.1-4.10_conceptualizacion.md (intenciones, idea, volumetría, partido)
+PROTOCOLO: 03 Diseño/protocolo_4.3-5.2_modelado.md (modelado 3D desde volumetría)
+PROTOCOLO: 03 Diseño/protocolo_4.9-4.15_evaluacion.md (evaluación de habitabilidad con indicadores)*
+
+```
+[OUT] 4.1 Manifiesto de Intenciones de Diseño
+─────────────────────────────────
+INPUT:  3.1-3.10 (todo el análisis)
+        2.2.1.2 Transcripción de entrevista (expectativas)
+OPERA:  Redactar las intenciones que guiarán todas las decisiones
+        de diseño, organizadas en:
+        - Intenciones formales (lenguaje, proporción, materialidad)
+        - Intenciones funcionales (cómo debe operar la casa)
+        - Intenciones espaciales (cómo debe sentirse la casa)
+        - Intenciones bioclimáticas (relación con el clima)
+OUTPUT: Manifiesto de 3-5 intenciones rectoras del proyecto
+PROC:   HUMANO
+```
+
+```
+[DEC] 4.2 Selección de Idea(s) Rectora(s) — Concepto
+─────────────────────────────────
+INPUT:  4.1 Manifiesto de intenciones
+        3.5 Patrones seleccionados
+        3.6 Patrones de Alexander
+        2.1.3.1 Arquetipos históricos
+        2.1.3.2 Repertorio de referencia
+OPERA:  Destilar las intenciones en una o dos ideas rectoras que
+        sinteticen la esencia del proyecto. El concepto debe ser
+        comunicable en una frase y trazable desde la idea hasta
+        el último detalle constructivo
+OUTPUT: Idea rectora documentada (texto + referencias visuales)
+PROC:   HUMANO
+```
+
+```
+[ACC] 4.3 Volumetrización del Programa
+─────────────────────────────────
+INPUT:  3.3 Programa Arquitectónico (m² por espacio y zona)
+        3.7 Restricciones normativas (COS, CUS, alturas máximas)
+OPERA:  Agrupar espacios del programa en volúmenes primarios según
+        zona SOMA y relaciones del diagrama (3.4). Asignar alturas
+        preliminares por tipo de espacio. Verificar que la huella
+        total no exceda el COS disponible
+OUTPUT: Diagrama de masas inicial (bloques volumétricos sin forma
+        final, solo proporciones de programa)
+PROC:   HUMANO (decisión) → AI (verificación contra COS/CUS)
+```
+
+```
+[ACC] 4.4 Zonificación Volumétrica y del Terreno
+─────────────────────────────────
+INPUT:  3.1 Gráfico del sitio (geometría, niveles)
+        3.2 Gráfico ambiental (viento, sol, ruido)
+        3.9.3 Estrategias bioclimáticas (orientación recomendada)
+        3.7 Restricciones normativas (retiros, alturas)
+        4.3 Volumetrización del programa
+OPERA:  Colocar los volúmenes del programa en el terreno respetando
+        retiros, orientación solar, viento, ruido, accesos y
+        vegetación a conservar
+OUTPUT: Planta de zonificación volumétrica (bloques ubicados en
+        el terreno con orientación)
+PROC:   HUMANO
+```
+
+```
+[ACC] 4.5 Ubicación de la Volumetría en el Terreno
+─────────────────────────────────
+INPUT:  4.4 Zonificación volumétrica
+        3.1 Gráfico del sitio (niveles, pendientes)
+OPERA:  Ubicar exactamente cada volumen en coordenadas del terreno.
+        Decidir nivel de desplante, excavación o relleno según
+        topografía existente
+OUTPUT: Planta de implantación (posición exacta de volúmenes)
+PROC:   HUMANO
+```
+
+```
+[ACC] 4.6 Ubicación de Accesos al Terreno
+─────────────────────────────────
+INPUT:  4.5 Implantación
+        2.2.2.3 Levantamiento de vialidades y banquetas
+        3.9.4 Integración urbana
+OPERA:  Definir acceso peatonal, acceso vehicular y acceso de
+        servicio. Relación con banquetas, niveles de calle y
+        visuales desde el exterior hacia el interior
+OUTPUT: Planta de accesos y circulaciones en el terreno
+PROC:   HUMANO
+```
+
+```
+[ACC] 4.7 Partido Arquitectónico — Desdoblamiento Volumétrico
+─────────────────────────────────
+INPUT:  4.3-4.6 Implantación + accesos + volumetría
+        4.2 Idea rectora
+        3.5-3.6 Patrones seleccionados
+OPERA:  Transformar los volúmenes genéricos en una composición
+        arquitectónica con intención. Aplicar proporciones,
+        módulos, escalas, ritmos, jerarquías y operaciones
+        formales (sustracción, adición, torsión, intersección)
+OUTPUT: Partido arquitectónico — boceto conceptual (plantas,
+        fachadas, maqueta volumétrica)
+PROC:   HUMANO
+```
+
+```
+[ACC] 4.8 Espacialidad Particular de la Volumetría
+─────────────────────────────────
+INPUT:  4.7 Partido arquitectónico
+        3.3 Programa (espacios)
+        3.4 Diagrama de relaciones espaciales
+OPERA:  Configurar la espacialidad interna: dónde va cada espacio,
+        cómo se circula entre ellos, cómo se relacionan con el
+        exterior, qué materiales, qué estructura
+OUTPUT: Configuración espacial detallada (6 sub-items 4.8.1 a 4.8.6)
+PROC:   HUMANO
+```
+
+```
+[ACC] 4.8.1 Ubicación de Espacios
+─────────────────────────────────
+INPUT:  3.3 Programa + 3.4 Diagrama de relaciones + 4.7 Partido
+OPERA:  Colocar cada espacio del programa dentro de los volúmenes
+        del partido, respetando las relaciones definidas
+OUTPUT: Planta(s) esquemática(s) con ubicación de espacios
+PROC:   HUMANO
+```
+
+```
+[ACC] 4.8.2 Sistema de Circulaciones
+─────────────────────────────────
+INPUT:  4.8.1 Ubicación de espacios
+        3.4 Diagrama de relaciones espaciales
+        3.8 Premisas ergométricas (anchos mínimos)
+OPERA:  Definir circulaciones horizontales (pasillos, galerías,
+        puentes) y verticales (escaleras, rampas) con jerarquías
+        (principal, secundario, servicio)
+OUTPUT: Diagrama de circulaciones sobre planta
+PROC:   HUMANO
+```
+
+```
+[ACC] 4.8.3 Aperturas al Exterior
+─────────────────────────────────
+INPUT:  4.8.1 Ubicación de espacios
+        3.9.3 Estrategias bioclimáticas (orientación, ventilación)
+        3.2 Análisis ambiental (visuales, ruido)
+OPERA:  Definir ubicación, tamaño y tipo de ventanas según
+        orientación, relación visual interior-exterior, estrategia
+        de ventilación y protecciones solares
+OUTPUT: Esquema de aperturas y protección solar por fachada
+PROC:   HUMANO
+```
+
+```
+[ACC] 4.8.4 Colocación de Elementos Simbólicos
+─────────────────────────────────
+INPUT:  4.2 Idea rectora
+        2.1.3.1 Arquetipos (referencia cultural)
+OPERA:  Identificar y colocar elementos con carga simbólica:
+        entrada, pórtico, elemento de identidad en fachada,
+        hogar/chimenea, transiciones
+OUTPUT: Planta/lámina con ubicación de elementos simbólicos
+PROC:   HUMANO
+```
+
+```
+[ACC] 4.8.5 Colocación General de Materiales
+─────────────────────────────────
+INPUT:  4.7 Partido + 4.2 Idea rectora
+        2.2.1.1 Inmersión (eje tacto: textura/liso)
+        2.1.3.1 Arquetipos (materiales regionales)
+OPERA:  Definir paleta general de materiales por sistema:
+        pisos, muros, cubiertas y acabados por zona y uso
+OUTPUT: Tabla de paleta de materiales + moodboard preliminar
+PROC:   HUMANO
+```
+
+```
+[ACC] 4.8.6 Propuesta de Sistema Estructural
+─────────────────────────────────
+INPUT:  4.7-4.8 Espacialidad (claros, luces, alturas)
+        3.7 Restricciones normativas
+        2.2.2.1 Reporte de mecánica de suelos (si existe)
+OPERA:  Proponer sistema estructural según claros, alturas,
+        materiales disponibles, presupuesto y condiciones del suelo
+OUTPUT: Esquema estructural preliminar (ejes, columnas, losas)
+PROC:   HUMANO (decisión) → AI (verificación de claros y
+        dimensiones tentativas)
+```
+
+```
+[EVA] 4.9 Evaluación Ambiental I
+─────────────────────────────────
+INPUT:  4.8 Espacialidad (propuesta de diseño)
+        3.1-3.2 Análisis del sitio
+        3.9.3 Estrategias bioclimáticas
+OPERA:  Evaluar diseño propuesto contra 8 criterios ambientales.
+        Cada criterio se evalúa como ✅ (cumple), ⚠️ (ajuste menor),
+        ❌ (requiere rediseño). Si algún criterio es ❌, se ejecuta
+        4.10 (Ajustes) y se repite la evaluación
+OUTPUT: Tabla de evaluación con 8 criterios (4.9.1-8) + decisión
+        de ajuste
+PROC:   AI→HUMANO
+```
+
+```
+[EVA] 4.9.1 Evaluación de Asoleamiento
+─────────────────────────────────
+INPUT:  4.8.3 Aperturas + 4.4 Zonificación
+        2.1.1.2 `carta_solar_merida.pdf`
+OPERA:  Proyectar sombras de la volumetría propuesta en fechas
+        críticas (solsticios, equinoccios) y horarios clave (9am,
+        12pm, 3pm). Verificar: fachadas con exposición crítica,
+        protección de aleros, penetración solar en interiores,
+        sombra sobre colindancias
+OUTPUT: Diagrama de sombras + tabla de horas de sol por fachada
+PROC:   AI (cálculo paramétrico) + HUMANO (interpretación)
+```
+
+```
+[EVA] 4.9.2 Evaluación de Ventilación
+─────────────────────────────────
+INPUT:  4.8.3 Aperturas + 3.9.3.2 Estrategias
+        2.1.1.3 `rosa_vientos_merida.pdf`
+OPERA:  Verificar cruce de viento en espacios principales,
+        ubicación correcta de entradas/salidas de aire, ausencia
+        de obstrucciones al flujo
+OUTPUT: Diagrama de flujo de viento sobre planta + cortes
+PROC:   AI→HUMANO
+```
+
+```
+[EVA] 4.9.3 Evaluación de Accesibilidad y Conectividad
+─────────────────────────────────
+INPUT:  4.8.2 Circulaciones
+        2.1.2.2 `norma_accesibilidad_universal.pdf`
+OPERA:  Verificar anchos de circulación, pendientes, puertas,
+        espacios de giro y conexión entre niveles contra la norma
+OUTPUT: Check de accesibilidad por espacio
+PROC:   AI (verificación contra estándares) + HUMANO (casos borde)
+```
+
+```
+[EVA] 4.9.4 Evaluación de Seguridad, Territorialidad y Privacidad
+─────────────────────────────────
+INPUT:  4.8.1 Ubicación de espacios
+        4.8.3 Aperturas (visuales desde/hacia exterior)
+        3.10.4 Perfil de privacidad del usuario
+OPERA:  Evaluar privacidad visual desde calle y colindancias,
+        gradiente público-privado, territorialidad y seguridad
+        pasiva (Hall, 1966; Newman, 1972) (visibilidad de
+        accesos, iluminación nocturna)
+OUTPUT: Mapa de privacidad y seguridad del proyecto
+PROC:   HUMANO
+```
+
+```
+[EVA] 4.9.5 Evaluación de Comportamiento en Lluvia
+─────────────────────────────────
+INPUT:  4.8 Espacialidad
+        2.1.1.1 `normales_climatologicas_merida.pdf` (lluvias)
+OPERA:  Verificar pendientes de cubierta, canalización pluvial,
+        áreas de inundación, protección de accesos y manejo de
+        agua en patios
+OUTPUT: Diagrama de manejo de agua pluvial
+PROC:   HUMANO
+```
+
+```
+[EVA] 4.9.6 Evaluación de Elementos Simbólicos
+─────────────────────────────────
+INPUT:  4.8.4 Elementos simbólicos + 4.2 Idea rectora
+OPERA:  Verificar legibilidad, ubicación jerárquica, no competencia
+        entre elementos y funcionamiento a escala humana y urbana
+OUTPUT: Verificación de coherencia simbólica
+PROC:   HUMANO
+```
+
+```
+[EVA] 4.9.7 Evaluación Ergonómica, Proxémica y Antropométrica
+─────────────────────────────────
+INPUT:  4.8 Espacialidad
+        3.8 Premisas ergométricas (tabla procesada por espacio)
+        3.10.1 Datos demográficos (edades, movilidad)
+OPERA:  Verificar dimensiones contra estándares (Hall, 1966;
+        Panero & Zelnik, 1979): alturas de planos de trabajo, distancias proxémicas, dimensiones
+        de mobiliario fijo, circulaciones mínimas
+OUTPUT: Checklist ergonómico y proxémico por espacio
+PROC:   AI (vs estándares) + HUMANO (casos atípicos)
+```
+
+```
+[EVA] 4.9.8 Evaluación de Eficiencia del Programa
+─────────────────────────────────
+INPUT:  3.3 Programa (m² previstos) vs 4.8.1 (m² reales)
+        3.7 Restricciones (COS, CUS)
+OPERA:  Verificar que los espacios quepan en la volumetría, no
+        se exceda COS/CUS, no haya espacios perdidos, y la
+        proporción construido/abierto sea coherente
+OUTPUT: Tabla comparativa programa vs diseño (m² previsto vs real)
+PROC:   AI (cálculo)
+```
+
+```
+[ACC] 4.10 Ajustes de la Evaluación Ambiental I
+─────────────────────────────────
+INPUT:  4.9 Resultados (items ❌ y ⚠️)
+OPERA:  Corregir el diseño para resolver items ❌ (obligatorio).
+        Evaluar items ⚠️ (opcional). Volver a 4.4 (o sub-item
+        correspondiente) y repetir hasta que todos sean ✅ o ⚠️
+OUTPUT: Diseño ajustado (nueva iteración de 4.4-4.8)
+PROC:   HUMANO (ajuste) → AI (re-evaluación)
+```
+
+---
+
+```
+[ACC] 4.11 Proceso Avanzado de Configuración
+─────────────────────────────────
+INPUT:  4.8 Espacialidad ajustada + 4.10 Ajustes
+OPERA:  Configuración detallada de elementos específicos. Se ejecuta
+        solo si el paquete lo requiere (Integral o Ejecutivo).
+OUTPUT: Configuración detallada (6 sub-items: 4.11.1 a 4.11.6)
+PROC:   HUMANO
+```
+
+```
+[ACC] 4.11.1 Diseño General de Baños
+─────────────────────────────────
+INPUT:  4.8.1 Ubicación de espacios
+        3.8 Premisas ergométricas
+        2.1.2.4 `tablas_neufert_ergonomia.pdf` (baños)
+        2.2.1.2 Entrevista (número de usuarios, preferencias)
+OPERA:  Diseñar disposición de cada baño: mobiliario (wc, lavabo,
+        regadera, tina), circulaciones, ventilación, iluminación,
+        almacenamiento, según el número de usuarios y sus
+        necesidades específicas
+OUTPUT: Planta de baños con mobiliario y cotas
+PROC:   HUMANO
+```
+
+```
+[ACC] 4.11.2 Diseño General de Cocina
+─────────────────────────────────
+INPUT:  4.8.1 Ubicación + 3.8 Premisas ergo
+        2.1.2.4 `tablas_neufert_ergonomia.pdf` (cocinas)
+        2.2.1.2 Entrevista (hábitos de cocina)
+OPERA:  Diseñar disposición de cocina: triángulo de trabajo
+        (refrigerador, estufa, fregadero), zonificación, mesas,
+        barras, almacenamiento, ventilación e iluminación
+OUTPUT: Planta de cocina con mobiliario y cotas
+PROC:   HUMANO
+```
+
+```
+[ACC] 4.11.3 Diseño General de Escalera
+─────────────────────────────────
+INPUT:  4.8.2 Circulaciones verticales + 3.8 Premisas ergo
+        2.1.2.4 `tablas_neufert_ergonomia.pdf` (escaleras)
+OPERA:  Diseñar escalera: huella y contrahuella, ancho, descansos,
+        barandales, material e iluminación
+OUTPUT: Corte + planta de escalera con cotas
+PROC:   HUMANO
+```
+
+```
+[ACC] 4.11.4 Diseño de Vanos
+─────────────────────────────────
+INPUT:  4.8.3 Aperturas definidas + 3.8 Premisas
+        2.1.2.4 `tablas_neufert_ergonomia.pdf` (puertas, ventanas)
+OPERA:  Definir dimensión, tipo y material de cada vano: puertas
+        (entrada, interiores, servicio), ventanas (fijas, abatibles,
+        corredizas), protecciones (rejas, persianas)
+OUTPUT: Tabla de vanos con dimensiones y tipo
+PROC:   HUMANO
+```
+
+```
+[ACC] 4.11.5 Diseño de Fachadas
+─────────────────────────────────
+INPUT:  4.7 Partido + 4.8.3 Aperturas + 4.11.4 Vanos
+        4.8.5 Materiales + 3.9.3.1 Estrategias de orientación
+OPERA:  Configurar cada fachada: composición (llenos/vacíos, ritmo),
+        materialidad, protecciones solares, color, relación con
+        nivel de calle y colindancias
+OUTPUT: Alzados esquemáticos de fachadas
+PROC:   HUMANO
+```
+
+```
+[ACC] 4.11.6 Diseño de Terrazas
+─────────────────────────────────
+INPUT:  4.4 Zonificación + 4.8.1 Ubicación
+        3.9.3 Estrategias bioclimáticas (exteriores)
+        3.2 Análisis ambiental (visuales, viento, sol)
+OPERA:  Diseñar espacios exteriores: relación con interiores,
+        orientación, protección solar, mobiliario, vegetación
+OUTPUT: Planta y detalle de terraza(s)
+PROC:   HUMANO
+```
+
+```
+[GUI] 4.12 Criterio de Diseño de Iluminación Artificial
+─────────────────────────────────
+INPUT:  4.8.1-3 Espacialidad + 4.9.1 Asoleamiento
+        3.10.4 Perfil de diseño (eje iluminación: directa/tenue)
+OPERA:  Definir por espacio: tipo de iluminación (general, puntual,
+        ambiental), temperatura de color, altura de luminarias,
+        controles, eficiencia energética
+OUTPUT: Criterio de iluminación artificial por espacio
+PROC:   HUMANO
+```
+
+```
+[GUI] 4.13 Criterio de Diseño de Paisaje
+─────────────────────────────────
+INPUT:  4.4 Zonificación (áreas exteriores)
+        2.2.2.1-2 Vegetación existente
+        3.9.4 Integración urbana
+        3.9.3 Estrategias bioclimáticas (vegetación como protección)
+OPERA:  Definir: vegetación a conservar, especies propuestas
+        (locales, bajo consumo de agua), zonificación del jardín,
+        mobiliario exterior, riego e iluminación exterior
+OUTPUT: Criterio de paisaje + propuesta de especies
+PROC:   HUMANO
+```
+
+```
+[EVA] 4.14 Evaluación Ambiental II
+─────────────────────────────────
+INPUT:  4.11 Configuración avanzada + 4.12-4.13 Criterios
+        3.10.4 Perfil de diseño (datos cualitativos del usuario)
+OPERA:  Segunda evaluación, cualitativa, centrada en la experiencia
+        del usuario. Evalúa 5 dimensiones humanas
+OUTPUT: Evaluación cualitativa (4.14.1)
+PROC:   HUMANO
+```
+
+```
+[EVA] 4.14.1 Evaluación Fisiológica, Psicológica, Funcional,
+        Social y Cultural
+─────────────────────────────────
+INPUT:  4.11 Configuración detallada
+        3.10 Análisis del usuario
+        2.2.1.2 Transcripción de entrevista (expectativas, emociones)
+OPERA:  Evaluar el diseño contra:
+        - Fisiológica: confort térmico, lumínico, acústico, salud
+        - Psicológica: seguridad, pertenencia, identidad, privacidad
+        - Funcional: eficiencia de recorridos, mantenimiento, adaptabilidad
+        - Social: espacios de reunión, jerarquías, integración familiar
+        - Cultural: pertinencia tipológica, materialidad local,
+          continuidad de arquetipos
+OUTPUT: Reporte de evaluación cualitativa con items ✅/⚠️/❌
+PROC:   HUMANO
+```
+
+```
+[ACC] 4.15 Ajustes II de la Evaluación Ambiental
+─────────────────────────────────
+INPUT:  4.14 Resultados (items ❌ y ⚠️)
+OPERA:  Corregir configuración avanzada según evaluación cualitativa.
+        Repetir hasta que todos los criterios sean al menos ⚠️.
+        Al pasar, el diseño está listo para visualización
+OUTPUT: Diseño final ajustado → listo para 5. Visualización
+PROC:   HUMANO
+```
+
+---
+
+## 5. Proceso de Visualización Arquitectónica
+*PROTOCOLO: 03 Diseño/protocolo_5.3-5.11_visualizacion.md (flujo Revit→D5→Photoshop, estilo SOMA)*
+
+```
+[DEC] 5.1 Selección de Vista(s)
+─────────────────────────────────
+INPUT:  4.15 Diseño final + 4.2 Idea rectora
+        2.2.1.1 Inmersión (ejes de diseño del cliente)
+OPERA:  Seleccionar las vistas que mejor comuniquen la intención
+        del proyecto: exterior general, fachada principal, espacio
+        interior principal, espacio clave (cocina, baño), zona
+        exterior, corte perspectivado
+OUTPUT: Lista de vistas seleccionadas con ángulo y propósito
+PROC:   HUMANO
+```
+
+```
+[ACC] 5.2 Detallado de Modelado en Vista
+─────────────────────────────────
+INPUT:  4.15 Diseño final + 5.1 Vista(s) seleccionadas
+OPERA:  Modelar en 3D (Revit, SketchUp, Rhino) los elementos
+        visibles en cada vista: geometría arquitectónica, vanos,
+        cancelería, mobiliario, texturas. Nivel de detalle según
+        paquete (LOD 200/300/350)
+OUTPUT: Modelo 3D listo para renderizar
+PROC:   HUMANO
+```
+
+```
+[ACC] 5.3 Iluminación Natural
+─────────────────────────────────
+INPUT:  5.2 Modelo + 2.1.1.2 `carta_solar_merida.pdf`
+        4.9.1 Datos de asoleamiento
+OPERA:  Configurar iluminación natural en motor de render:
+        orientación del sol según hora/fecha, luz de cielo,
+        penetración en interiores, sombras
+OUTPUT: Render con iluminación natural configurada
+PROC:   HUMANO
+```
+
+```
+[ACC] 5.4 Iluminación Artificial
+─────────────────────────────────
+INPUT:  5.2 Modelo + 4.12 Criterio de iluminación artificial
+OPERA:  Colocar y configurar luces artificiales: tipo, temperatura
+        de color, intensidad, sombras, escena nocturna (si aplica)
+OUTPUT: Render con iluminación artificial configurada
+PROC:   HUMANO
+```
+
+```
+[ACC] 5.5 Colocación y Mapeo de Materiales
+─────────────────────────────────
+INPUT:  5.2 Modelo + 4.8.5 Paleta de materiales
+OPERA:  Asignar materiales a superficies: mapas de textura
+        (diffuse, roughness, normal, displacement), escala,
+        rotación, acabados (mate, brillante, rugoso)
+OUTPUT: Modelo con materiales asignados
+PROC:   HUMANO
+```
+
+```
+[ACC] 5.6 Colocación de Mobiliario
+─────────────────────────────────
+INPUT:  5.2 Modelo + 4.11.1-2 Diseño baños/cocina
+        3.10.5 Necesidades no visibles (almacenamiento)
+OPERA:  Colocar mobiliario fijo y móvil en las vistas seleccionadas
+OUTPUT: Escena amueblada
+PROC:   HUMANO
+```
+
+```
+[ACC] 5.7 Colocación de Vegetación
+─────────────────────────────────
+INPUT:  5.2 Modelo + 4.13 Paisaje (especies)
+        2.2.2.1-2 Vegetación existente a conservar
+OPERA:  Colocar árboles existentes, vegetación propuesta, pasto
+OUTPUT: Escena con paisajismo
+PROC:   HUMANO
+```
+
+```
+[ACC] 5.8 Colocación de Decoración
+─────────────────────────────────
+INPUT:  5.6-5.7 Escena + 4.2 Idea rectora (atmósfera deseada)
+OPERA:  Colocar elementos decorativos: cojines, alfombras, cortinas,
+        arte, vajilla, objetos, lámparas decorativas
+OUTPUT: Escena decorada con atmósfera habitable
+PROC:   HUMANO
+```
+
+```
+[ACC] 5.9 Colocación de Personas
+─────────────────────────────────
+INPUT:  5.8 Escena + 3.10.1 Datos demográficos (habitantes reales)
+OPERA:  Colocar figuras humanas realizando actividades del programa
+        para dar escala y vida a la escena
+OUTPUT: Escena con escala humana
+PROC:   HUMANO
+```
+
+```
+[ACC] 5.10 Refinamiento con IA
+─────────────────────────────────
+INPUT:  5.9 Escena renderizada (imagen base)
+OPERA:  Usar IA generativa para refinar la imagen: mejorar
+        iluminación y atmósfera, agregar detalle fino, variaciones
+        de material/color. La IA refina — no crea desde cero
+OUTPUT: Imagen base refinada (humano evalúa y acepta/rechaza cada cambio)
+PROC:   AI→HUMANO
+```
+
+```
+[ACC] 5.11 Postproducción
+─────────────────────────────────
+INPUT:  5.10 Imagen refinada
+OPERA:  Editar imagen final en Photoshop: niveles, curvas, color,
+        exposición, viñeteado, retoque, cielo, formato final
+OUTPUT: Render final listo para entrega
+PROC:   HUMANO
+```
+
+---
+
+## 6. Planimetría — Etapa Básica
+*Corresponde al paquete SOMA Esencial ($250/m²)
+PROTOCOLO: 03 Diseño/protocolo_6-8_anteproyecto.md (escalas, contenido de láminas)*
+
+```
+[HUMANO→AI] 6.1 Plantas Arquitectónicas
+─────────────────────────────────
+INPUT:  4.15 Diseño final (plantas arquitectónicas)
+        Modelo 3D (desde 5.2 o CAD/BIM)
+OPERA:  Generar láminas: planta de conjunto, plantas de
+        distribución por nivel, cotas, ejes, nombres de espacios,
+        norte, escala gráfica
+OUTPUT: Lámina(s) de plantas arquitectónicas (PDF/DWG)
+PROC:   HUMANO (prepara) → AI (genera lámina base desde modelo)
+```
+
+```
+[HUMANO→AI] 6.2 Alzados Arquitectónicos
+─────────────────────────────────
+INPUT:  4.15 Diseño final + Modelo 3D
+        4.11.5 Fachadas + 4.8.5 Materiales
+OPERA:  Generar alzados de todas las fachadas con cotas verticales,
+        materiales anotados y escala gráfica
+OUTPUT: Lámina(s) de alzados arquitectónicos (PDF/DWG)
+PROC:   HUMANO (prepara) → AI (genera lámina base desde modelo)
+```
+
+---
+
+## 7. Representación — Etapa Básica
+*PROTOCOLO: 03 Diseño/protocolo_7.1-7.2_representacion.md (dossier editorial HTML/PDF)*
+
+```
+[HUMANO→AI] 7.1 Documento de Entrega HTML (Estilo SOMA)
+─────────────────────────────────
+INPUT:  6.1-6.2 Planos + 5.11 Renders + 4.1 Manifiesto + 4.2 Idea
+OPERA:  Integrar entregables en documento HTML con identidad SOMA:
+        portada, manifiesto, carrusel de planos, carrusel de
+        perspectivas, animaciones web sutiles
+OUTPUT: Documento HTML de entrega (autocontenido, imprimible a PDF)
+PROC:   HUMANO→AI
+```
+
+```
+[OUT] 7.2 Documento de Entrega PDF
+─────────────────────────────────
+INPUT:  7.1 HTML + 6.1-6.2 Planos + 5.11 Renders
+OPERA:  Compilar plantas, alzados y perspectivas en PDF
+OUTPUT: PDF de entrega (listo para imprimir/enviar)
+PROC:   AI (generación de PDF)
+```
+
+---
+
+## 8. Anteproyecto — Etapa Integral
+*Corresponde al paquete SOMA Integral ($350/m²)*
+*Incluye todo lo básico (6-7) más:
+PROTOCOLO: 03 Diseño/protocolo_6-8_anteproyecto.md*
+
+```
+[DEC] 8.1 Selección Real de Acabados con Proveedores
+─────────────────────────────────
+INPUT:  4.8.5 Paleta de materiales (conceptual)
+        Presupuesto + disponibilidad local
+OPERA:  Convertir paleta conceptual en acabados reales: productos
+        específicos (marca, modelo), proveedores locales, costo
+        por m², tiempo de entrega
+OUTPUT: Tabla de acabados reales con proveedores y costos
+PROC:   HUMANO
+```
+
+```
+[GUI] 8.2 Criterio de Instalaciones Hidrosanitarias
+─────────────────────────────────
+INPUT:  4.15 Diseño final (ubicación de baños, cocina, patio)
+        2.2.2.1 Acometidas existentes (agua, drenaje)
+OPERA:  Definir: bajantes, registros, diámetros tentativos,
+        captación pluvial, cisterna, tinaco, calentador, bombeo
+OUTPUT: Diagrama de criterio hidrosanitario sobre planta
+PROC:   HUMANO (criterio) → AI (verificación dimensional)
+```
+
+```
+[GUI] 8.3 Criterio de Estructura
+─────────────────────────────────
+INPUT:  4.8.6 Sistema estructural propuesto
+        2.2.2.1 Mecánica de suelos (si existe)
+        3.7 Restricciones normativas
+OPERA:  Definir: sistema (losas, pórticos), claros máximos,
+        secciones tentativas, cimentación, material
+OUTPUT: Esquema estructural con ejes y secciones tentativas
+PROC:   HUMANO (decisión) → AI (cálculos preliminares)
+```
+
+```
+[HUMANO→AI] 8.4 Elaboración de Planos de Permiso
+─────────────────────────────────
+INPUT:  6.1-6.2 Plantas y alzados actualizados
+        8.2 Criterio hidrosanitario + 8.3 Criterio estructural
+        3.7 Restricciones normativas
+OPERA:  Generar planos para trámite municipal: plantas, alzados,
+        cortes, cimentación, estructura, instalaciones, fachadas
+OUTPUT: Juego de planos de permiso (PDF, para firma y sello)
+PROC:   HUMANO (prepara) → AI (genera formato desde modelo)
+        HUMANO (revisa y sella)
+```
+
+```
+[ACC] 8.5 Elaboración de Perspectivas Adicionales
+─────────────────────────────────
+INPUT:  8.4 Planos de permiso + 5.1 Vistas seleccionadas
+OPERA:  Generar perspectivas adicionales: fachada con contexto,
+        interiores no renderizados antes, vistas aéreas, esquemas
+OUTPUT: Juego adicional de renders y diagramas
+PROC:   HUMANO (definir) → AI→HUMANO (producción)
+```
+
+```
+[OUT] 8.6 Documento de Entrega Integral
+─────────────────────────────────
+INPUT:  6.1-6.2 Planos + 8.4 Planos de permiso
+        8.1 Tabla de acabados + 8.5 Perspectivas
+        7.1 HTML actualizado
+OPERA:  Compilar todo en carpeta de entrega organizada
+OUTPUT: Carpeta de entrega Integral (digital, por secciones)
+PROC:   AI (compilación)
+```
+
+---
+
+## 9. Proyecto Ejecutivo
+*Corresponde al paquete SOMA Ejecutivo ($850/m²)*
+*Incluye todo lo básico (6-7) e integral (8) más:
+PROTOCOLO: 03 Diseño/protocolo_9.3_planos_tecnicos.md (detalles constructivos)
+PROTOCOLO: 03 Diseño/protocolo_9.1-9.2_coordinacion.md (coordinación con ingenieros)*
+
+```
+[ACC] 9.1 Coordinación con Coadyuvantes de Proyecto
+─────────────────────────────────
+INPUT:  8.4 Planos de permiso + 8.2-8.3 Criterios
+OPERA:  Contactar y coordinar ingenieros especialistas:
+        estructural, hidrosanitario, eléctrico, climatización.
+        Reuniones para integrar propuestas al proyecto
+OUTPUT: Propuestas de ingenierías recibidas y revisadas
+PROC:   HUMANO
+```
+
+```
+[ACC] 9.2 Adecuación del Proyecto a Propuestas de Ingenierías
+─────────────────────────────────
+INPUT:  8.4 Planos SOMA + 9.1 Propuestas de ingenieros
+OPERA:  Integrar ingenierías al proyecto: ajustar estructura,
+        ductos, registros, resolver conflictos, actualizar planos
+OUTPUT: Proyecto actualizado con ingenierías integradas
+PROC:   HUMANO
+```
+
+```
+[OUT] 9.3 Complementos Arquitectónicos
+─────────────────────────────────
+INPUT:  9.2 Proyecto actualizado + Modelo BIM
+OPERA:  Desarrollar planos complementarios de detalle
+OUTPUT: Juego de planos complementarios (5 sub-items: 9.3.1-5)
+PROC:   HUMANO
+```
+
+```
+[OUT] 9.3.1 Plano de Acabados
+─────────────────────────────────
+INPUT:  8.1 Tabla de acabados + 9.2 Proyecto actualizado
+OPERA:  Indicar acabados piso por piso y espacio por espacio:
+        piso, muros, plafones, cubiertas con especificaciones
+OUTPUT: Plano de acabados con cuadro de especificaciones
+PROC:   HUMANO (determinar) → AI (generar lámina)
+```
+
+```
+[OUT] 9.3.2 Plano de Despieces
+─────────────────────────────────
+INPUT:  9.2 Proyecto + especificaciones de materiales
+OPERA:  Generar despieces de piso, muro, plafón y recubrimientos
+        con modulación y cuantificación de piezas
+OUTPUT: Plano(s) de despiece con cuantificación
+PROC:   HUMANO (diseño) → AI (cuantificación)
+```
+
+```
+[OUT] 9.3.3 Planos de Cancelería, Herreros, Carpintería,
+        Barandales y Pérgolas
+─────────────────────────────────
+INPUT:  9.2 Proyecto + 4.11.4 Vanos + 4.11.6 Terrazas
+OPERA:  Generar planos detallados: vistas, cortes, detalles de
+        unión, materiales y acabados de cada elemento fabricado
+OUTPUT: Juego de planos de elementos fabricados
+PROC:   HUMANO
+```
+
+```
+[OUT] 9.3.4 Planos de Detalles de Baño, Cocina, Escalera
+─────────────────────────────────
+INPUT:  4.11.1 Baños + 4.11.2 Cocina + 4.11.3 Escalera
+        8.1 Acabados reales (modelos específicos)
+OPERA:  Generar planos a mayor escala con cotas, cortes, detalles
+        de colocación y unión para baño, cocina y escalera
+OUTPUT: Planos de detalle — baño, cocina, escalera
+PROC:   HUMANO
+```
+
+```
+[OUT] 9.3.5 Planos de Detalles Generales
+─────────────────────────────────
+INPUT:  9.2 Proyecto arquitectónico (zonas críticas)
+OPERA:  Generar detalles constructivos: goteros, juntas, uniones,
+        impermeabilización, anclajes, encuentros de materiales
+OUTPUT: Plano de detalles constructivos generales
+PROC:   HUMANO
+```
+
+```
+[OUT] 9.4 Elaboración de Documentos Ejecutivos
+─────────────────────────────────
+INPUT:  9.2 Proyecto actualizado + 9.3 Complementos
+        9.1 Ingenierías definitivas + 8.5 Perspectivas
+OPERA:  Compilar todo en la entrega final: reunir planos de todos
+        los ingenieros + planos arquitectónicos + complementos +
+        perspectivas. Crear presentación HTML navegable con índice
+OUTPUT: • Carpeta de Proyecto Ejecutivo completa (digital)
+        • Documento HTML de entrega final (navegable)
+        • PDF compilado para impresión
+PROC:   AI (compilación y generación de documentos)
+```
+
+---
+
+*Documento generado como parte de la reestructura del Bloque 2 — Taller SOMA (OPERACION).*
+*Cada item puede ejecutarse de forma independiente o secuencial según la complejidad del proyecto.*
+*Versión 2.0 — Clasificado por naturaleza, procesador y dependencias de datos.*
+*Regla estructural: Investigación (2) produce archivos en bruto → Análisis (3) los procesa en información de diseño → Conceptualización (4) los convierte en arquitectura.*
+
+---
+
+## Referencias
+
+Alexander, C., Ishikawa, S., & Silverstein, M. (1977). *A Pattern Language: Towns, Buildings, Construction*. Oxford University Press.
+
+Ching, F. D. K. (2014). *Arquitectura: Forma, Espacio y Orden* (4ª ed.). Gustavo Gili.
+
+CONAGUA — Servicio Meteorológico Nacional. (2024). *Normales Climatológicas. Estación: Mérida (Observatorio)*. https://smn.conagua.gob.mx/
+
+CONUEE. (2011). *NOM-020-ENER-2011: Eficiencia energética en edificaciones — Envolvente de edificios para uso habitacional*. Diario Oficial de la Federación.
+
+Givoni, B. (1998). *Climate Considerations in Building and Urban Design*. Van Nostrand Reinhold.
+
+Hall, E. T. (1966). *The Hidden Dimension*. Doubleday.
+
+H. Ayuntamiento de Mérida. (2023). *Reglamento de Construcción del Municipio de Mérida y Normas Técnicas Complementarias*. Gaceta Municipal.
+
+IM Plan — Instituto de Planeación de Mérida. (2022). *Plan de Desarrollo Urbano del Municipio de Mérida*. H. Ayuntamiento de Mérida.
+
+Newman, O. (1972). *Defensible Space: Crime Prevention Through Urban Design*. Macmillan.
+
+NMX-R-050-SCFI-2015. (2015). *Norma Mexicana de Accesibilidad Universal — Edificios y espacios públicos*. Secretaría de Economía.
+
+Olgyay, V. (1963). *Design with Climate: Bioclimatic Approach to Architectural Regionalism*. Princeton University Press.
+
+Panero, J., & Zelnik, M. (1979). *Human Dimension & Interior Space: A Source Book of Design Reference Standards*. Whitney Library of Design.
+
+Neufert, E. (1936). *El Arte de Proyectar en Arquitectura* (16ª ed., 2010). Gustavo Gili.

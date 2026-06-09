@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify, send_from_directory, send_file, Response
 from flask_cors import CORS
-import sqlite3
 import datetime
 import json
 import os
@@ -9,6 +8,7 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from twilio.rest import Client
 from dotenv import load_dotenv
+from db import get_connection, execute, fetchone, fetchall, get_lastrowid, dictify, json_loads
 
 load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '.env'))
 
@@ -17,7 +17,6 @@ CORS(app)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROYECTO_DIR = os.path.dirname(BASE_DIR)
-DB_PATH = os.path.join(PROYECTO_DIR, "web", "EjemploBD", "proyectos_arquitectonicos.db")
 DIAGNOSTICOS_PATH = os.path.join(BASE_DIR, "diagnosticos_master.json")
 REPORTES_DIR = os.path.join(BASE_DIR, "reportes")
 EMAIL_DESTINO = "habitarq85@gmail.com"
@@ -44,97 +43,61 @@ RANGOS_OBRA = {
 os.makedirs(REPORTES_DIR, exist_ok=True)
 
 def init_db():
-    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute("""CREATE TABLE IF NOT EXISTS cobros (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        proyecto_id INTEGER,
-        concepto TEXT,
-        monto REAL,
-        fecha_vencimiento TEXT,
-        fecha_pago TEXT,
-        estado TEXT DEFAULT 'pendiente',
-        metodo_pago TEXT,
-        notas TEXT,
-        FOREIGN KEY (proyecto_id) REFERENCES captura_web(id)
-    )""")
-    c.execute("""CREATE TABLE IF NOT EXISTS config_fiscal (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        rfc TEXT,
-        regimen TEXT DEFAULT 'RESICO',
-        pac_api_key TEXT,
-        activo INTEGER DEFAULT 1
-    )""")
-    c.execute("""CREATE TABLE IF NOT EXISTS programa_arquitectonico (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        lead_id INTEGER,
-        tipo TEXT,
-        espacio TEXT,
-        area REAL,
-        zona INTEGER,
-        horario_inicio TEXT,
-        horario_fin TEXT,
-        mobiliario TEXT,
-        acontecimientos TEXT,
-        patrones_espaciales TEXT,
-        usuarios INTEGER,
-        clave TEXT,
-        relacion_directa TEXT,
-        FOREIGN KEY (lead_id) REFERENCES captura_web(id)
-    )""")
-    c.execute("""CREATE TABLE IF NOT EXISTS captura_web (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        temp_id TEXT,
-        contacto TEXT,
-        presupuesto TEXT,
-        habitantes TEXT,
-        respuestas_json TEXT,
-        analisis_procesado TEXT,
-        fecha TEXT,
-        estado TEXT,
-        m2 REAL,
-        honorarios_diseno REAL,
-        inversion_obra_estimada REAL,
-        nivel_proyecto TEXT,
-        pipeline_estado TEXT DEFAULT 'lead'
-    )""")
-    c.execute("""CREATE TABLE IF NOT EXISTS matriz_inversion (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        proyecto_id INTEGER,
-        categoria TEXT,
-        prioridad_gasto INTEGER,
-        porcentaje_asignado REAL,
-        monto_estimado REAL
-    )""")
-    c.execute("""CREATE TABLE IF NOT EXISTS habitantes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        proyecto_id INTEGER,
-        nombre TEXT,
-        edad INTEGER,
-        genero TEXT,
-        estatura_cm REAL,
-        peso_kg REAL,
-        hobbies TEXT,
-        rol_poder TEXT,
-        observaciones TEXT
-    )""")
-    c.execute("""CREATE TABLE IF NOT EXISTS actividades (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        habitante_id INTEGER,
-        hora INTEGER,
-        actividad_principal TEXT,
-        aislamiento_necesario INTEGER,
-        iluminacion_deseada TEXT,
-        espacio_sugerido TEXT
-    )""")
-    c.execute("""CREATE TABLE IF NOT EXISTS ejes_diseno (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        proyecto_id INTEGER,
-        eje TEXT,
-        valor_polar REAL,
-        justificacion TEXT
-    )""")
+    conn = get_connection()
+    use_pg = bool(os.environ.get('DATABASE_URL', ''))
+    tables = {
+        'captura_web': [
+            ('id', 'SERIAL PRIMARY KEY' if use_pg else 'INTEGER PRIMARY KEY AUTOINCREMENT'),
+            ('temp_id', 'TEXT'), ('contacto', 'TEXT'), ('presupuesto', 'TEXT'),
+            ('habitantes', 'TEXT'), ('respuestas_json', 'TEXT'), ('analisis_procesado', 'TEXT'),
+            ('fecha', 'TEXT'), ('estado', 'TEXT'), ('m2', 'REAL'),
+            ('honorarios_diseno', 'REAL'), ('inversion_obra_estimada', 'REAL'),
+            ('nivel_proyecto', 'TEXT'), ("pipeline_estado", "TEXT DEFAULT 'lead'"),
+        ],
+        'cobros': [
+            ('id', 'SERIAL PRIMARY KEY' if use_pg else 'INTEGER PRIMARY KEY AUTOINCREMENT'),
+            ('proyecto_id', 'INTEGER'), ('concepto', 'TEXT'), ('monto', 'REAL'),
+            ('fecha_vencimiento', 'TEXT'), ('fecha_pago', 'TEXT'),
+            ("estado", "TEXT DEFAULT 'pendiente'"), ('metodo_pago', 'TEXT'), ('notas', 'TEXT'),
+        ],
+        'config_fiscal': [
+            ('id', 'SERIAL PRIMARY KEY' if use_pg else 'INTEGER PRIMARY KEY AUTOINCREMENT'),
+            ('rfc', 'TEXT'), ("regimen", "TEXT DEFAULT 'RESICO'"),
+            ('pac_api_key', 'TEXT'), ('activo', 'INTEGER DEFAULT 1'),
+        ],
+        'programa_arquitectonico': [
+            ('id', 'SERIAL PRIMARY KEY' if use_pg else 'INTEGER PRIMARY KEY AUTOINCREMENT'),
+            ('lead_id', 'INTEGER'), ('tipo', 'TEXT'), ('espacio', 'TEXT'), ('area', 'REAL'),
+            ('zona', 'INTEGER'), ('horario_inicio', 'TEXT'), ('horario_fin', 'TEXT'),
+            ('mobiliario', 'TEXT'), ('acontecimientos', 'TEXT'), ('patrones_espaciales', 'TEXT'),
+            ('usuarios', 'INTEGER'), ('clave', 'TEXT'), ('relacion_directa', 'TEXT'),
+        ],
+        'matriz_inversion': [
+            ('id', 'SERIAL PRIMARY KEY' if use_pg else 'INTEGER PRIMARY KEY AUTOINCREMENT'),
+            ('proyecto_id', 'INTEGER'), ('categoria', 'TEXT'), ('prioridad_gasto', 'INTEGER'),
+            ('porcentaje_asignado', 'REAL'), ('monto_estimado', 'REAL'),
+        ],
+        'habitantes': [
+            ('id', 'SERIAL PRIMARY KEY' if use_pg else 'INTEGER PRIMARY KEY AUTOINCREMENT'),
+            ('proyecto_id', 'INTEGER'), ('nombre', 'TEXT'), ('edad', 'INTEGER'),
+            ('genero', 'TEXT'), ('estatura_cm', 'REAL'), ('peso_kg', 'REAL'),
+            ('hobbies', 'TEXT'), ('rol_poder', 'TEXT'), ('observaciones', 'TEXT'),
+        ],
+        'actividades': [
+            ('id', 'SERIAL PRIMARY KEY' if use_pg else 'INTEGER PRIMARY KEY AUTOINCREMENT'),
+            ('habitante_id', 'INTEGER'), ('hora', 'INTEGER'), ('actividad_principal', 'TEXT'),
+            ('aislamiento_necesario', 'INTEGER'), ('iluminacion_deseada', 'TEXT'),
+            ('espacio_sugerido', 'TEXT'),
+        ],
+        'ejes_diseno': [
+            ('id', 'SERIAL PRIMARY KEY' if use_pg else 'INTEGER PRIMARY KEY AUTOINCREMENT'),
+            ('proyecto_id', 'INTEGER'), ('eje', 'TEXT'), ('valor_polar', 'REAL'),
+            ('justificacion', 'TEXT'),
+        ],
+    }
+    for table_name, columns in tables.items():
+        cols_sql = ", ".join(f"{name} {typ}" for name, typ in columns)
+        execute(conn, f"CREATE TABLE IF NOT EXISTS {table_name} ({cols_sql})")
     conn.commit()
     conn.close()
 
@@ -243,25 +206,24 @@ def save_immersion():
 
     # --- GUARDAR EN BASE DE DATOS ---
     try:
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("""INSERT INTO captura_web
+        conn = get_connection()
+        cur = execute(conn, """INSERT INTO captura_web
                      (temp_id, contacto, m2, honorarios_diseno, inversion_obra_estimada, nivel_proyecto, respuestas_json, analisis_procesado, fecha)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                   (temp_id, contacto, m2, total_diseno, obra_min, nivel_key,
                    json.dumps(respuestas), reporte, datetime.datetime.now().isoformat()))
-        proyecto_id = c.lastrowid
+        proyecto_id = get_lastrowid(cur)
 
         obra_promedio = (obra_min + obra_max) / 2
         inversion_total = total_diseno + obra_promedio
 
-        c.execute("""INSERT INTO matriz_inversion
+        execute(conn, """INSERT INTO matriz_inversion
                      (proyecto_id, categoria, prioridad_gasto, porcentaje_asignado, monto_estimado)
                      VALUES (?, ?, ?, ?, ?)""",
                   (proyecto_id, "Alcance Construcción (Promedio)", 5,
                    obra_promedio / inversion_total if inversion_total > 0 else 0, obra_promedio))
 
-        c.execute("""INSERT INTO matriz_inversion
+        execute(conn, """INSERT INTO matriz_inversion
                      (proyecto_id, categoria, prioridad_gasto, porcentaje_asignado, monto_estimado)
                      VALUES (?, ?, ?, ?, ?)""",
                   (proyecto_id, f"Diseño SOMA ({nivel_key.capitalize()})", 5,
@@ -308,19 +270,16 @@ def get_activity_matrix(temp_id):
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
-    # Fallback: leer actividades desde SQLite
+    # Fallback: leer actividades desde DB
     try:
-        conn = sqlite3.connect(DB_PATH)
-        conn.row_factory = sqlite3.Row
-        c = conn.cursor()
-        c.execute("""
+        conn = get_connection()
+        rows = fetchall(conn, """
             SELECT h.nombre, a.hora, a.actividad_principal,
                    a.aislamiento_necesario, a.iluminacion_deseada, a.espacio_sugerido
             FROM actividades a
             JOIN habitantes h ON h.id = a.habitante_id
             ORDER BY h.id, a.hora
         """)
-        rows = c.fetchall()
         conn.close()
 
         if not rows:
@@ -354,13 +313,10 @@ PRECIOS_M2 = {"esencial": 250, "integral": 350, "ejecutivo": 850}
 @app.route('/programa/<int:lead_id>', methods=['GET'])
 def get_programa(lead_id):
     try:
-        conn = sqlite3.connect(DB_PATH)
-        conn.row_factory = sqlite3.Row
-        c = conn.cursor()
-        c.execute("SELECT * FROM programa_arquitectonico WHERE lead_id = ? ORDER BY tipo, id", (lead_id,))
-        rows = c.fetchall()
+        conn = get_connection()
+        rows = fetchall(conn, "SELECT * FROM programa_arquitectonico WHERE lead_id = ? ORDER BY tipo, id", (lead_id,))
         conn.close()
-        return jsonify([dict(row) for row in rows]), 200
+        return jsonify([dictify(row) for row in rows]), 200
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
@@ -368,9 +324,8 @@ def get_programa(lead_id):
 def crear_espacio():
     try:
         data = request.json
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("""INSERT INTO programa_arquitectonico
+        conn = get_connection()
+        cur = execute(conn, """INSERT INTO programa_arquitectonico
                      (lead_id, tipo, espacio, area, zona, horario_inicio, horario_fin,
                       mobiliario, acontecimientos, patrones_espaciales, usuarios, clave, relacion_directa)
                      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""",
@@ -382,7 +337,7 @@ def crear_espacio():
                    data.get('usuarios', 0), data.get('clave', ''),
                    json.dumps(data.get('relacion_directa', []))))
         conn.commit()
-        esp_id = c.lastrowid
+        esp_id = get_lastrowid(cur)
         conn.close()
         return jsonify({"status": "success", "id": esp_id}), 201
     except Exception as e:
@@ -392,9 +347,8 @@ def crear_espacio():
 def actualizar_espacio(espacio_id):
     try:
         data = request.json
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("""UPDATE programa_arquitectonico SET
+        conn = get_connection()
+        execute(conn, """UPDATE programa_arquitectonico SET
                      espacio=?, area=?, zona=?, horario_inicio=?, horario_fin=?,
                      mobiliario=?, acontecimientos=?, patrones_espaciales=?,
                      usuarios=?, clave=?, relacion_directa=?
@@ -415,9 +369,8 @@ def actualizar_espacio(espacio_id):
 @app.route('/programa/espacio/<int:espacio_id>', methods=['DELETE'])
 def eliminar_espacio(espacio_id):
     try:
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("DELETE FROM programa_arquitectonico WHERE id=?", (espacio_id,))
+        conn = get_connection()
+        execute(conn, "DELETE FROM programa_arquitectonico WHERE id=?", (espacio_id,))
         conn.commit()
         conn.close()
         return jsonify({"status": "success"}), 200
@@ -427,22 +380,23 @@ def eliminar_espacio(espacio_id):
 @app.route('/cotizacion/<int:lead_id>', methods=['GET'])
 def get_cotizacion(lead_id):
     try:
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("SELECT id, contacto, m2, nivel_proyecto, honorarios_diseno FROM captura_web WHERE id=?", (lead_id,))
-        lead = c.fetchone()
+        conn = get_connection()
+        lead = fetchone(conn, "SELECT id, contacto, m2, nivel_proyecto, honorarios_diseno FROM captura_web WHERE id=?", (lead_id,))
         if not lead:
             conn.close()
             return jsonify({"status": "error", "message": "Lead no encontrado"}), 404
 
-        c.execute("SELECT tipo, SUM(area) FROM programa_arquitectonico WHERE lead_id=? GROUP BY tipo", (lead_id,))
-        totales_por_tipo = {row[0]: row[1] for row in c.fetchall()}
+        totales_rows = fetchall(conn, "SELECT tipo, SUM(area) as total FROM programa_arquitectonico WHERE lead_id=? GROUP BY tipo", (lead_id,))
+        totales_por_tipo = {r["tipo"]: r["total"] for r in totales_rows}
 
-        c.execute("SELECT SUM(area) FROM programa_arquitectonico WHERE lead_id=?", (lead_id,))
-        total_m2 = c.fetchone()[0] or 0
+        total_m2_row = fetchone(conn, "SELECT SUM(area) as total FROM programa_arquitectonico WHERE lead_id=?", (lead_id,))
+        total_m2 = (total_m2_row["total"] or 0) if total_m2_row else 0
         conn.close()
 
-        _, contacto, m2_lead, nivel, honorarios_lead = lead
+        contacto = lead["contacto"]
+        m2_lead = lead["m2"]
+        nivel = lead["nivel_proyecto"]
+        honorarios_lead = lead["honorarios_diseno"]
         nivel_key = nivel or "esencial"
         precio_m2 = PRECIOS_M2.get(nivel_key, 250)
         honorarios_reales = max(total_m2 * precio_m2, MINIMO_TALLER)
@@ -467,18 +421,20 @@ def get_cotizacion(lead_id):
 @app.route('/cotizacion/<int:lead_id>/pdf', methods=['GET'])
 def cotizacion_pdf(lead_id):
     try:
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("SELECT id, contacto, m2, nivel_proyecto, honorarios_diseno, temp_id FROM captura_web WHERE id=?", (lead_id,))
-        lead = c.fetchone()
+        conn = get_connection()
+        lead = fetchone(conn, "SELECT id, contacto, m2, nivel_proyecto, honorarios_diseno, temp_id FROM captura_web WHERE id=?", (lead_id,))
         if not lead:
             conn.close()
             return "Lead no encontrado", 404
-        _, contacto, m2_lead, nivel, honorarios_lead, temp_id = lead
+        contacto = lead["contacto"]
+        m2_lead = lead["m2"]
+        nivel = lead["nivel_proyecto"]
+        honorarios_lead = lead["honorarios_diseno"]
+        temp_id = lead["temp_id"]
         nivel_key = nivel or "esencial"
         precio_m2 = PRECIOS_M2.get(nivel_key, 250)
-        c.execute("SELECT tipo, espacio, area, zona, clave FROM programa_arquitectonico WHERE lead_id=? ORDER BY tipo, id", (lead_id,))
-        espacios = c.fetchall()
+        espacios_rows = fetchall(conn, "SELECT tipo, espacio, area, zona, clave FROM programa_arquitectonico WHERE lead_id=? ORDER BY tipo, id", (lead_id,))
+        espacios = [(r["tipo"], r["espacio"], r["area"], r["zona"], r["clave"]) for r in espacios_rows]
         total_m2 = sum(e[2] or 0 for e in espacios)
         honorarios = max(total_m2 * precio_m2, MINIMO_TALLER)
         rango = RANGOS_OBRA.get(precio_m2, {"min": 18500, "max": 23000})
@@ -554,13 +510,10 @@ td {{ padding: 5px 6px; border-bottom: 1px solid #ddd; }}
 @app.route('/get_leads', methods=['GET'])
 def get_leads():
     try:
-        conn = sqlite3.connect(DB_PATH)
-        conn.row_factory = sqlite3.Row
-        c = conn.cursor()
-        c.execute("SELECT * FROM captura_web ORDER BY fecha DESC")
-        rows = c.fetchall()
+        conn = get_connection()
+        rows = fetchall(conn, "SELECT * FROM captura_web ORDER BY fecha DESC")
         conn.close()
-        return jsonify([dict(row) for row in rows]), 200
+        return jsonify([dictify(row) for row in rows]), 200
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
@@ -569,11 +522,9 @@ PIPELINE_ESTADOS = ['lead', 'entrevistado', 'programado', 'cotizado', 'contratad
 @app.route('/leads/kanban', methods=['GET'])
 def get_leads_kanban():
     try:
-        conn = sqlite3.connect(DB_PATH)
-        conn.row_factory = sqlite3.Row
-        c = conn.cursor()
-        c.execute("SELECT * FROM captura_web ORDER BY fecha DESC")
-        leads = [dict(row) for row in c.fetchall()]
+        conn = get_connection()
+        leads_raw = fetchall(conn, "SELECT * FROM captura_web ORDER BY fecha DESC")
+        leads = [dictify(row) for row in leads_raw]
         conn.close()
         grouped = {e: [] for e in PIPELINE_ESTADOS}
         for l in leads:
@@ -592,9 +543,8 @@ def update_pipeline(lead_id):
         nuevo_estado = data.get('pipeline_estado', '').strip().lower()
         if nuevo_estado not in PIPELINE_ESTADOS:
             return jsonify({"status": "error", "message": f"Estado inválido: {nuevo_estado}"}), 400
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("UPDATE captura_web SET pipeline_estado = ? WHERE id = ?", (nuevo_estado, lead_id))
+        conn = get_connection()
+        execute(conn, "UPDATE captura_web SET pipeline_estado = ? WHERE id = ?", (nuevo_estado, lead_id))
         conn.commit()
         conn.close()
         return jsonify({"status": "success", "pipeline_estado": nuevo_estado}), 200
@@ -604,13 +554,10 @@ def update_pipeline(lead_id):
 @app.route('/cobros/<int:proyecto_id>', methods=['GET'])
 def get_cobros(proyecto_id):
     try:
-        conn = sqlite3.connect(DB_PATH)
-        conn.row_factory = sqlite3.Row
-        c = conn.cursor()
-        c.execute("SELECT * FROM cobros WHERE proyecto_id = ? ORDER BY fecha_vencimiento ASC", (proyecto_id,))
-        rows = c.fetchall()
+        conn = get_connection()
+        rows = fetchall(conn, "SELECT * FROM cobros WHERE proyecto_id = ? ORDER BY fecha_vencimiento ASC", (proyecto_id,))
         conn.close()
-        return jsonify([dict(row) for row in rows]), 200
+        return jsonify([dictify(row) for row in rows]), 200
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
@@ -618,14 +565,13 @@ def get_cobros(proyecto_id):
 def crear_cobro():
     try:
         data = request.json
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("""INSERT INTO cobros (proyecto_id, concepto, monto, fecha_vencimiento, estado, notas)
+        conn = get_connection()
+        cur = execute(conn, """INSERT INTO cobros (proyecto_id, concepto, monto, fecha_vencimiento, estado, notas)
                      VALUES (?, ?, ?, ?, ?, ?)""",
                   (data['proyecto_id'], data['concepto'], data['monto'],
                    data.get('fecha_vencimiento', ''), data.get('estado', 'pendiente'), data.get('notas', '')))
         conn.commit()
-        cobro_id = c.lastrowid
+        cobro_id = get_lastrowid(cur)
         conn.close()
         return jsonify({"status": "success", "id": cobro_id}), 201
     except Exception as e:
@@ -634,21 +580,18 @@ def crear_cobro():
 @app.route('/cobros/generar_esquema/<int:proyecto_id>', methods=['POST'])
 def generar_esquema_pagos(proyecto_id):
     try:
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("SELECT id, honorarios_diseno, temp_id FROM captura_web WHERE id = ?", (proyecto_id,))
-        proy = c.fetchone()
+        conn = get_connection()
+        proy = fetchone(conn, "SELECT id, honorarios_diseno, temp_id FROM captura_web WHERE id = ?", (proyecto_id,))
         if not proy:
             conn.close()
             return jsonify({"status": "error", "message": "Proyecto no encontrado"}), 404
 
-        total = proy[1] or 0
+        total = proy["honorarios_diseno"] or 0
         if total <= 0:
             conn.close()
             return jsonify({"status": "error", "message": "El proyecto no tiene honorarios calculados"}), 400
 
-        # Eliminar cobros anteriores del esquema para evitar duplicados
-        c.execute("DELETE FROM cobros WHERE proyecto_id = ? AND estado = 'pendiente'", (proyecto_id,))
+        execute(conn, "DELETE FROM cobros WHERE proyecto_id = ? AND estado = 'pendiente'", (proyecto_id,))
 
         esquema = [
             ("Anticipo (30%) — Firma de contrato", round(total * 0.3, 2)),
@@ -658,10 +601,10 @@ def generar_esquema_pagos(proyecto_id):
 
         creados = []
         for concepto, monto in esquema:
-            c.execute("""INSERT INTO cobros (proyecto_id, concepto, monto, estado, notas)
+            cur = execute(conn, """INSERT INTO cobros (proyecto_id, concepto, monto, estado, notas)
                          VALUES (?, ?, ?, 'pendiente', ?)""",
-                      (proyecto_id, concepto, monto, f"Lead: {proy[2]}"))
-            creados.append(c.lastrowid)
+                      (proyecto_id, concepto, monto, f"Lead: {proy['temp_id']}"))
+            creados.append(get_lastrowid(cur))
 
         conn.commit()
         conn.close()
@@ -673,9 +616,8 @@ def generar_esquema_pagos(proyecto_id):
 def pagar_cobro(cobro_id):
     try:
         data = request.json
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("""UPDATE cobros SET estado = 'pagado', fecha_pago = ?, metodo_pago = ?
+        conn = get_connection()
+        execute(conn, """UPDATE cobros SET estado = 'pagado', fecha_pago = ?, metodo_pago = ?
                      WHERE id = ?""",
                   (data.get('fecha_pago', datetime.datetime.now().isoformat()),
                    data.get('metodo_pago', ''), cobro_id))
@@ -688,24 +630,22 @@ def pagar_cobro(cobro_id):
 @app.route('/resumen_financiero', methods=['GET'])
 def resumen_financiero():
     try:
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("""SELECT c.id, c.temp_id, c.contacto, c.m2, c.nivel_proyecto, c.honorarios_diseno,
+        conn = get_connection()
+        rows = fetchall(conn, """SELECT c.id, c.temp_id, c.contacto, c.m2, c.nivel_proyecto, c.honorarios_diseno,
                             IFNULL(SUM(CASE WHEN cb.estado = 'pagado' THEN cb.monto ELSE 0 END), 0) as pagado,
                             IFNULL(SUM(CASE WHEN cb.estado = 'pendiente' THEN cb.monto ELSE 0 END), 0) as pendiente
                      FROM captura_web c
                      LEFT JOIN cobros cb ON cb.proyecto_id = c.id
                      GROUP BY c.id
                      ORDER BY c.fecha DESC""")
-        rows = c.fetchall()
         conn.close()
-        total_pagado = sum(r[6] or 0 for r in rows)
-        total_pendiente = sum(r[7] or 0 for r in rows)
+        total_pagado = sum(r["pagado"] or 0 for r in rows)
+        total_pendiente = sum(r["pendiente"] or 0 for r in rows)
         return jsonify({
             "proyectos": [{
-                "id": r[0], "temp_id": r[1], "contacto": r[2],
-                "m2": r[3], "nivel": r[4], "honorarios": r[5],
-                "pagado": r[6] or 0, "pendiente": r[7] or 0
+                "id": r["id"], "temp_id": r["temp_id"], "contacto": r["contacto"],
+                "m2": r["m2"], "nivel": r["nivel_proyecto"], "honorarios": r["honorarios_diseno"],
+                "pagado": r["pagado"] or 0, "pendiente": r["pendiente"] or 0
             } for r in rows],
             "total_pagado": total_pagado,
             "total_pendiente": total_pendiente
@@ -806,16 +746,13 @@ def serve_carta_presentacion():
 @app.route('/api/diagrama/proyectos', methods=['GET'])
 def diagrama_proyectos():
     try:
-        conn = sqlite3.connect(DB_PATH)
-        conn.row_factory = sqlite3.Row
-        c = conn.cursor()
-        c.execute("""
+        conn = get_connection()
+        rows = fetchall(conn, """
             SELECT DISTINCT cw.id, cw.temp_id, cw.contacto, cw.fecha
             FROM captura_web cw
             INNER JOIN programa_arquitectonico pa ON pa.lead_id = cw.id
             ORDER BY cw.fecha DESC
         """)
-        rows = c.fetchall()
         conn.close()
         proyectos = []
         for r in rows:
@@ -833,24 +770,21 @@ def diagrama_proyectos():
 def diagrama_grafo(lead_id):
     try:
         zona_filtro = request.args.get('zona', type=int)
-        conn = sqlite3.connect(DB_PATH)
-        conn.row_factory = sqlite3.Row
-        c = conn.cursor()
+        conn = get_connection()
 
         if zona_filtro:
-            c.execute("""
+            espacios = fetchall(conn, """
                 SELECT * FROM programa_arquitectonico
                 WHERE lead_id = ? AND zona = ?
                 ORDER BY id
             """, (lead_id, zona_filtro))
         else:
-            c.execute("""
+            espacios = fetchall(conn, """
                 SELECT * FROM programa_arquitectonico
                 WHERE lead_id = ?
                 ORDER BY id
             """, (lead_id,))
 
-        espacios = c.fetchall()
         conn.close()
 
         if not espacios:
@@ -926,9 +860,8 @@ def save_lead_magnet():
     fuente = data.get('fuente', 'lead_magnet')
     fecha = datetime.datetime.now().isoformat()
     try:
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("""INSERT INTO captura_web
+        conn = get_connection()
+        execute(conn, """INSERT INTO captura_web
                      (temp_id, contacto, m2, honorarios_diseno, nivel_proyecto, respuestas_json, analisis_procesado, fecha)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
                   (f"LM-{datetime.datetime.now().strftime('%Y%m%d-%H%M%S')}", f"{nombre} - {contacto}",
@@ -943,14 +876,13 @@ def save_lead_magnet():
 @app.route('/fondo_democratizacion', methods=['GET'])
 def fondo_democratizacion():
     try:
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("SELECT m2, nivel_proyecto FROM captura_web WHERE nivel_proyecto IS NOT NULL")
-        rows = c.fetchall()
+        conn = get_connection()
+        rows = fetchall(conn, "SELECT m2, nivel_proyecto FROM captura_web WHERE nivel_proyecto IS NOT NULL")
         conn.close()
         total_fondo = 0
-        for m2, nivel in rows:
-            m2 = m2 or 0
+        for r in rows:
+            m2 = r["m2"] or 0
+            nivel = r["nivel_proyecto"]
             if nivel == "ejecutivo":
                 total_fondo += m2 * 200
             elif nivel == "integral":
