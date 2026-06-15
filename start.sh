@@ -5,6 +5,10 @@ set -e
 echo "=== Iniciando servicio WhatsApp (Baileys) ==="
 WA_DIR="backend/whatsapp_service"
 if command -v node &>/dev/null; then
+    if [ ! -d "$WA_DIR/node_modules/@whiskeysockets/baileys" ]; then
+        echo "Instalando dependencias Node.js..."
+        cd "$WA_DIR" && npm install && cd "$OLDPWD"
+    fi
     cd "$WA_DIR"
     node server.js &
     WA_PID=$!
