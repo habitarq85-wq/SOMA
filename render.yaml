@@ -2,8 +2,11 @@ services:
   - type: web
     name: soma
     env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn backend.server:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120 --worker-class=gthread --threads=4
+    buildCommand: |
+      curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs
+      cd backend/whatsapp_service && npm install
+      pip install -r requirements.txt
+    startCommand: bash start.sh
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -29,6 +32,10 @@ services:
         value: "true"
       - key: RENDER
         value: "true"
+      - key: WA_SERVICE_HOST
+        value: http://127.0.0.1:3001
+      - key: VINCULAR_NUMERO
+        value: "5219993619433"
 
 databases:
   - name: soma-db

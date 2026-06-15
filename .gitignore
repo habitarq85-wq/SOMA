@@ -8,3 +8,5 @@ backend/reportes/
 *.db
 .DS_Store
 .env
+backend/whatsapp_service/session-data/
+backend/whatsapp_service/node_modules/

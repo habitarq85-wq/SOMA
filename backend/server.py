@@ -5,6 +5,8 @@ import json
 import os
 import re
 import sys
+import urllib.request
+import urllib.error
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from twilio.rest import Client
@@ -147,18 +149,35 @@ def enviar_correo(destinatario, asunto, cuerpo):
         return False, str(e)
 
 def enviar_whatsapp(contacto, temp_id, nivel_key, m2):
+    mensaje = f"🔔 NUEVO LEAD SOMA\nID: {temp_id}\nCliente: {contacto}\nPaquete: {nivel_key.upper()}\nEscala: {m2:.0f} m²"
+    # Intentar con Baileys (servicio Node.js local)
+    wa_host = os.environ.get("WA_SERVICE_HOST", "http://127.0.0.1:3001")
+    try:
+        payload = json.dumps({"message": mensaje}).encode()
+        req = urllib.request.Request(
+            f"{wa_host}/send",
+            data=payload,
+            headers={"Content-Type": "application/json"},
+            method="POST"
+        )
+        resp = urllib.request.urlopen(req, timeout=5)
+        if resp.status == 200:
+            print("--- WHATSAPP ENVIADO (Baileys) ---")
+            return True
+    except Exception as e:
+        print(f"--- Baileys no disponible ({e}), fallback a Twilio ---")
+    # Fallback: Twilio
     try:
         client = Client(TWILIO_SID, TWILIO_TOKEN)
-        mensaje = f"🔔 NUEVO LEAD SOMA\nID: {temp_id}\nCliente: {contacto}\nPaquete: {nivel_key.upper()}\nEscala: {m2:.0f} m²"
         client.messages.create(
             body=mensaje,
             from_=f"whatsapp:{TWILIO_WHATSAPP}",
             to=f"whatsapp:{NOTIFICACION_WHATSAPP}"
         )
-        print("--- WHATSAPP ENVIADO ---")
+        print("--- WHATSAPP ENVIADO (Twilio) ---")
         return True
     except Exception as e:
-        print(f"--- ERROR WHATSAPP: {e} ---")
+        print(f"--- ERROR WHATSAPP (Twilio): {e} ---")
         return False
 
 @app.route('/save_immersion', methods=['POST'])
