@@ -4,6 +4,22 @@ set -e
 # Iniciar servicio WhatsApp (Baileys) en segundo plano
 echo "=== Iniciando servicio WhatsApp (Baileys) ==="
 WA_DIR="backend/whatsapp_service"
+
+# Instalar Node.js via NVM si no está disponible
+if ! command -v node &>/dev/null; then
+    export NVM_DIR="$HOME/.nvm"
+    if [ ! -d "$NVM_DIR" ]; then
+        echo "Instalando NVM + Node.js..."
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash 2>/dev/null
+    fi
+    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+    if command -v node &>/dev/null; then
+        echo "Node.js listo: $(node --version)"
+    else
+        echo "⚠️  No se pudo instalar Node.js — WhatsApp desactivado"
+    fi
+fi
+
 if command -v node &>/dev/null; then
     if [ ! -d "$WA_DIR/node_modules/@whiskeysockets/baileys" ]; then
         echo "Instalando dependencias Node.js..."
@@ -15,8 +31,6 @@ if command -v node &>/dev/null; then
     cd "$OLDPWD"
     echo "WhatsApp service PID: $WA_PID"
     sleep 3
-else
-    echo "⚠️  Node.js no disponible — WhatsApp desactivado"
 fi
 
 # Iniciar servidor Flask en primer plano
