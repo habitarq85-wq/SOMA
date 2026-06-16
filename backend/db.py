@@ -34,6 +34,8 @@ def adapt_sql(sql):
         sql = sql.replace('?', '%s')
         sql = sql.replace('IFNULL(', 'COALESCE(')
         sql = sql.replace("datetime('now')", "NOW()")
+        if sql.lstrip().upper().startswith("INSERT") and "RETURNING ID" not in sql.upper():
+            sql += " RETURNING id"
     return sql
 
 def execute(conn, sql, params=None):

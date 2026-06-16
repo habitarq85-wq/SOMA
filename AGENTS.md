@@ -1,46 +1,43 @@
 # Contexto de Sesión — Algoritmo SOMA
 
-## Última sesión: 15 Jun 2026 ✅
+## Última sesión: 16 Jun 2026 (Parte 2) ✅
 
-### Tema: Reparación de notificación WhatsApp en cotizador
+### Tema: Flujo Momento 1 a Momento 2, Reestructuración del Dashboard, Fix DB Postgres
 
-### Problema
-El cotizador de `Pagina Web 6.html` dejó de enviar WhatsApp a Juan al registrarse un nuevo lead. La causa fue que **Twilio Sandbox expiró** (error 63015 — destinatario no ha hecho opt-in).
+### Qué se hizo en esta sesión
+1. **Reestructuración del Dashboard:**
+   - División en 3 bloques principales: **CANDIDATOS — MOMENTO 1** (Leads), **CLIENTES — MOMENTO 2** (Contratados), y **BLOQUE 02: TALLER SOMA** (Vista detallada operativa).
+   - Actualización de las tarjetas de leads para incluir botones consistentes: `[ EXPEDIENTE ] [ PROGRAMA ] [ CONTRATAR ]`.
+2. **Flujo de Contratación (Momento 1 -> Momento 2):**
+   - El botón **CONTRATAR** ahora sirve únicamente para confirmar el pase a Momento 2 (cambia el pipeline a `contratado`).
+   - Se agregó validación: no permite contratar si los "Datos del Proyecto" no están completos.
+3. **Datos del Proyecto y Autoguardado en PROGRAMA:**
+   - Se movieron los campos de configuración (Nombre Cliente, Proyecto, Tipo, Nivel, Ubicación) a la cabecera del modal **PROGRAMA**.
+   - Se implementó **autoguardado inteligente**: cambiar de pestaña hacia "Cotización" guarda automáticamente los datos y recalcula los honorarios/obra usando el Nivel seleccionado sin recargar.
+4. **Fix Crítico Base de Datos (PostgreSQL):**
+   - Se corrigió un bug en `db.py` al migrar de SQLite a Postgres: se agregó dinámicamente `RETURNING id` a las consultas `INSERT` para que `get_lastrowid()` funcione correctamente. Esto resolvió el problema de creación de espacios en el Programa Arquitectónico.
 
-### Solución implementada
-Se reemplazó Twilio por **Baileys v7** (`@whiskeysockets/baileys`), una implementación pura de Node.js del protocolo WhatsApp Web que:
-- No necesita Chromium/Puppeteer (mucho más ligero)
-- Conexión directa vía WebSocket
-- Sesión persistente (QR solo la primera vez)
-- Sin costos recurrentes
+### Cambios adicionales
+- Limpieza de datos de prueba, manteniendo ejemplos fieles a lo generado por la Inmersión Web (Cotizador).
+- Adición de las columnas de ubicación y nombre_cliente en `captura_web`.
 
-### Archivos creados/modificados
+### Archivos modificados
 | Archivo | Cambio |
 |---------|--------|
-| `backend/whatsapp_service/server.js` | **(Nuevo)** Servicio HTTP con Baileys v7. Endpoints: `GET /status`, `POST /send` |
-| `backend/whatsapp_service/package.json` | **(Nuevo)** Dependencias Node.js |
-| `backend/whatsapp_service/.gitignore` | **(Nuevo)** Excluye session-data y node_modules |
-| `backend/server.py` | **(Modificado)** `enviar_whatsapp()` ahora prueba Baileys primero, fallback a Twilio |
-| `start.sh` | **(Nuevo)** Script para Render que levanta ambos servicios |
-| `start_local.sh` | **(Nuevo)** Script para desarrollo local |
-| `.env` | **(Modificado)** Se agregó `WA_SERVICE_HOST` |
-| `render.yaml` | **(Modificado)** Build ahora instala Node.js + npm; start usa `start.sh` |
-| `Procfile` | **(Modificado)** Apunta a `start.sh` |
+| `metodologia/Bloque 1 - Gestion del Entorno (ADM)/dashboard/Dashboard.html` | **(Modificado)** Reestructura Momento 1 y 2, nuevos modals y validaciones, autoguardado de cotización. |
+| `backend/server.py` | **(Modificado)** Nuevo endpoint `PATCH /lead/<id>/datos-proyecto`. Ajuste en ruta `contratar`. |
+| `backend/db.py` | **(Modificado)** Fix `RETURNING id` en función `adapt_sql` para PostgreSQL. |
 
-### Cómo usar (primera vez)
-1. Ejecutar `./start_local.sh`
-2. Escanear el QR con WhatsApp (válido por única vez)
-3. A partir de ahí, el servicio envía notificaciones automáticas a `+5219995314093`
-4. Si se cierra sesión, eliminar `backend/whatsapp_service/session-data/` y repetir
-
-### Pendientes originales (aún vigentes)
-1. **Extender grafo a secciones 5–9** en `web/algoritmo_soma.html`
-2. **Compuertas condicionales por paquete**
+### Pendientes (PRÓXIMA SESIÓN)
+1. **Continuar trabajando con el Dashboard**.
+2. **Crear los campos de la base de datos "integral"** (expandir las tablas y modelo de datos general del proyecto).
+3. (Opcional) Compuertas condicionales por paquete (Básico/Integral/Ejecutivo) en Algoritmo SOMA.
 
 ### Archivos relevantes
-- `web/algoritmo_soma.html` — archivo principal, producción
-- `web/grafo_conceptual.html` — prototipo standalone del grafo (380 líneas)
-- `backend/whatsapp_service/server.js` — servicio WhatsApp activo
+- `web/algoritmo_soma.html`
+- `backend/server.py` y `backend/db.py`
+- `metodologia/Bloque 1 - Gestion del Entorno (ADM)/dashboard/Dashboard.html`
 
 ### Comandos útiles
-- Validar balance div: `python3 -c "c=open('...').read();print(c.count('<div'),c.count('</div>'))"`
+- Servir local: `cd /home/juan/Documentos/PROYECTO\ SOMA/backend && source venv/bin/activate && DATABASE_URL=postgresql://soma_user:soma_pass@localhost:5432/soma_db python server.py`
+- Dashboard: `http://localhost:8080/dashboard`

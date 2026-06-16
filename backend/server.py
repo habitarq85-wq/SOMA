@@ -558,6 +558,56 @@ def get_leads_kanban():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+@app.route('/lead/<int:lead_id>/estado-contacto', methods=['PATCH'])
+def update_estado_contacto(lead_id):
+    try:
+        data = request.json
+        nuevo = data.get('estado_contacto', '').strip()
+        if nuevo not in ('no programado', 'programado', 'no localizado'):
+            return jsonify({"status": "error", "message": f"Estado inválido: {nuevo}"}), 400
+        conn = get_connection()
+        execute(conn, "UPDATE captura_web SET estado_contacto = ? WHERE id = ?", (nuevo, lead_id))
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "success", "estado_contacto": nuevo}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/lead/<int:lead_id>/contratar', methods=['POST'])
+def contratar_lead(lead_id):
+    try:
+        conn = get_connection()
+        execute(conn, "UPDATE captura_web SET pipeline_estado='contratado' WHERE id=?", (lead_id,))
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "success", "pipeline_estado": "contratado"}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/lead/<int:lead_id>/datos-proyecto', methods=['PATCH'])
+def update_datos_proyecto(lead_id):
+    try:
+        data = request.json
+        nombre_cliente = (data.get('nombre_cliente') or '').strip()
+        nombre_proyecto = (data.get('nombre_proyecto') or '').strip()
+        tipo_proyecto = (data.get('tipo_proyecto') or '').strip()
+        nivel_proyecto = (data.get('nivel_proyecto') or '').strip()
+        ubicacion = data.get('ubicacion', {})
+        ubicacion_json = json.dumps(ubicacion) if ubicacion else None
+        
+        conn = get_connection()
+        if nivel_proyecto:
+            execute(conn, "UPDATE captura_web SET nombre_cliente=?, nombre_proyecto=?, tipo_proyecto=?, nivel_proyecto=?, ubicacion=? WHERE id=?",
+                    (nombre_cliente, nombre_proyecto, tipo_proyecto, nivel_proyecto, ubicacion_json, lead_id))
+        else:
+            execute(conn, "UPDATE captura_web SET nombre_cliente=?, nombre_proyecto=?, tipo_proyecto=?, ubicacion=? WHERE id=?",
+                    (nombre_cliente, nombre_proyecto, tipo_proyecto, ubicacion_json, lead_id))
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "success"}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 @app.route('/lead/<int:lead_id>/pipeline', methods=['PATCH'])
 def update_pipeline(lead_id):
     try:
@@ -755,6 +805,14 @@ def serve_diagrama():
     if os.path.exists(diagrama_path):
         with open(diagrama_path, 'r', encoding='utf-8') as f:
             return f.read(), 200, {'Content-Type': 'text/html; charset=utf-8'}
+
+@app.route('/algoritmo')
+def serve_algoritmo():
+    algo_path = os.path.join(PROYECTO_DIR, "web", "algoritmo_soma.html")
+    if os.path.exists(algo_path):
+        with open(algo_path, 'r', encoding='utf-8') as f:
+            return f.read(), 200, {'Content-Type': 'text/html; charset=utf-8'}
+    return "Not found", 404
     return "DiagramaSoma no encontrado", 404
 
 @app.route('/carta-presentacion')

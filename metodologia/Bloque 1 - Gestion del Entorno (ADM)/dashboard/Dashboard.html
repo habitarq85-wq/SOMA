@@ -40,6 +40,18 @@
         .filter-bar input, .filter-bar select { padding: 8px 12px; font-family: 'Inter', sans-serif; font-size: 0.75rem; border: 1px solid #ddd; background: #fff; }
         .filter-bar input { flex: 1; min-width: 200px; }
 
+        .candidatos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-bottom:10px}
+        .cand-card{background:#fff;border:1px solid #e0d5c1;border-radius:6px;padding:16px;position:relative}
+        .cand-card .cand-id{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:#d4af37;font-weight:600}
+        .cand-card .cand-field{display:flex;align-items:center;gap:8px;margin-top:8px;font-family:'Inter',sans-serif;font-size:.75rem}
+        .cand-card .cand-field .label{color:#888;min-width:80px;font-size:.65rem;text-transform:uppercase;letter-spacing:.5px}
+        .cand-card .cand-field .value{font-weight:500}
+        .cand-card .cand-inmersion{color:#2e7d32;font-weight:600}
+        .cand-card .cand-cotizacion{color:#333}
+        .cand-card select.cand-estado{padding:4px 8px;font-family:'Inter',sans-serif;font-size:.7rem;border:1px solid #ddd;border-radius:3px;background:#fff}
+        .cand-card .cand-btn{background:#d4af37;color:#fff;border:none;padding:6px 16px;border-radius:4px;font-family:'Inter',sans-serif;font-size:.7rem;cursor:pointer;margin-top:10px;font-weight:600}
+        .cand-card .cand-btn:hover{background:#b8962e}
+
         @media (max-width: 768px) {
             .magazine-layout { grid-template-columns: 1fr; }
             .block-section.half-width { grid-column: span 1; }
@@ -74,6 +86,34 @@
                 <div class="admin-card"><span class="label" style="color:#a6937c;">Fondo Democratización</span><p id="fondo-social" class="admin-val" style="color:#a6937c;">$0</p></div>
                 <div class="admin-card"><span class="label">Total Clientes</span><p id="total-leads" class="admin-val">0</p></div>
                 <div class="admin-card"><span class="label">M² en Proyectos</span><p id="total-m2" class="admin-val">0 m²</p></div>
+            </div>
+        </section>
+
+        <!-- BLOQUE 1b: CANDIDATOS (MOMENTO 1) -->
+        <section class="block-section full-width" style="border-top:4px solid #d4af37;padding-top:20px;">
+            <div class="block-header">
+                <h2 class="block-title">CANDIDATOS — MOMENTO 1</h2>
+                <span class="block-num">INMERSIÓN</span>
+            </div>
+            <p style="font-family:'JetBrains Mono';font-size:.6rem;color:#999;margin-bottom:15px;">
+                Leads registrados vía página web. Pendientes de contacto y contratación.
+            </p>
+            <div id="candidatos-container" class="candidatos-grid">
+                <p style="font-family:'JetBrains Mono';font-size:.6rem;color:#999;">Cargando candidatos...</p>
+            </div>
+        </section>
+
+        <!-- CLIENTES — MOMENTO 2 -->
+        <section class="block-section full-width" style="border-top:4px solid #2e7d32;padding-top:20px;">
+            <div class="block-header">
+                <h2 class="block-title">CLIENTES — MOMENTO 2</h2>
+                <span class="block-num">CONTRATADO</span>
+            </div>
+            <p style="font-family:'JetBrains Mono';font-size:.6rem;color:#999;margin-bottom:15px;">
+                Proyectos contratados con datos completos de entrevista y ubicación.
+            </p>
+            <div id="clientes-momento2-container" class="candidatos-grid">
+                <p style="font-family:'JetBrains Mono';font-size:.6rem;color:#999;">Cargando clientes...</p>
             </div>
         </section>
 
@@ -156,12 +196,27 @@
         </div>
     </div>
 
+    <!-- MODAL CONTRATAR (MOMENTO 2) -->
+    <div id="modal-contratar" class="modal-overlay">
+        <div class="modal-content" style="max-width:400px;">
+            <button class="modal-close" onclick="cerrarContratar()">✕</button>
+            <h2 style="font-family:'Playfair Display';font-size:1.8rem;margin-bottom:5px;">Confirmar Contratación</h2>
+            <p style="font-family:'JetBrains Mono';font-size:.65rem;color:#999;margin-bottom:20px;">¿Estás seguro de pasar este lead a <strong>Momento 2 (Clientes)</strong>?</p>
+            <div style="font-family:'Inter',sans-serif;text-align:center;">
+                <p style="font-size:.8rem;margin-bottom:20px;" id="cont-resumen">Cargando...</p>
+                <button onclick="confirmarContratar()" style="width:100%;padding:10px;background:#2e7d32;color:#fff;border:none;border-radius:4px;font-size:.85rem;font-weight:600;cursor:pointer;">✓ Sí, pasar a Momento 2</button>
+                <button onclick="cerrarContratar()" style="width:100%;padding:8px;background:transparent;color:#888;border:none;font-size:.75rem;cursor:pointer;margin-top:8px;">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL PROGRAMA ARQUITECTONICO -->
     <div id="modal-programa" class="modal-overlay">
         <div class="modal-content" style="max-width:900px;">
             <button class="modal-close" onclick="cerrarModalPrograma()">✕</button>
             <h2 style="font-family:'Playfair Display';font-size:1.8rem;margin-bottom:5px;" id="modal-prog-titulo">Programa Arquitectónico</h2>
             <p style="font-family:'JetBrains Mono';font-size:.65rem;color:#999;margin-bottom:10px;" id="modal-prog-id"></p>
+            <div id="modal-prog-header"></div>
             <div style="display:flex;gap:8px;margin-bottom:15px;">
                 <button class="btn-soma" style="margin:0;font-size:.6rem;flex:1;background:#6b8f6b;color:#fff;" onclick="mostrarSeccionPrograma('programa')">📐 Programa</button>
                 <button class="btn-soma" style="margin:0;font-size:.6rem;flex:1;background:#d4af37;color:#fff;" onclick="mostrarSeccionPrograma('cotizacion')">💰 Cotización</button>
@@ -350,9 +405,137 @@
                 }
             });
             document.getElementById('status-diag').innerHTML = `<span style="color:#27ae60;">${leadsData.length} REGISTROS</span>`;
+            renderCandidatos();
+            renderClientesMomento2();
             renderLeads();
             renderAdmin();
             verificarNotificaciones();
+        }
+
+        function renderCandidatos() {
+            const container = document.getElementById('candidatos-container');
+            const candidatos = leadsData.filter(l => (l.pipeline_estado||'lead') === 'lead' || l.pipeline_estado === 'entrevistado');
+            if (candidatos.length === 0) {
+                container.innerHTML = '<p style="font-family:\'JetBrains Mono\';font-size:.6rem;color:#999;">Sin candidatos por el momento.</p>';
+                return;
+            }
+            container.innerHTML = candidatos.map(l => {
+                const resp = (() => { try { return JSON.parse(l.respuestas_json || '{}'); } catch { return {}; } })();
+                const countResp = Object.keys(resp).length;
+                const inmersiónOk = countResp >= 10 ? '<span style="color:#2e7d32;">● Completada</span>' : '<span style="color:#f39c12;">● Incompleta</span>';
+                const m2 = l.m2 || 0;
+                const nivel = l.nivel_proyecto || 'esencial';
+                const precioM2 = nivel === 'ejecutivo' ? 850 : nivel === 'integral' ? 350 : 250;
+                const honorarios = Math.max(m2 * precioM2, 6500);
+                const presupuesto = Number(l.presupuesto) || 0;
+                const estContacto = l.estado_contacto || 'no programado';
+                return `<div class="cand-card">
+                    <div class="cand-id">${l.temp_id||'---'}</div>
+                    <div class="cand-field"><span class="label">Inmersión</span><span class="cand-inmersion">${inmersiónOk}</span></div>
+                    <div class="cand-field"><span class="label">Cotización</span><span class="cand-cotizacion">${m2} m² · ${nivel.charAt(0).toUpperCase()+nivel.slice(1)} · <strong>$${honorarios.toLocaleString()} diseño</strong></span></div>
+                    ${presupuesto ? `<div class="cand-field"><span class="label">Presupuesto</span><span>$${presupuesto.toLocaleString()} MXN</span></div>` : ''}
+                    <div class="cand-field">
+                        <span class="label">Contacto</span>
+                        <select class="cand-estado" data-lead-id="${l.id}" onchange="actualizarEstadoContacto(this, '${l.id}')">
+                            <option value="no programado" ${estContacto==='no programado'?'selected':''}>No programado</option>
+                            <option value="programado" ${estContacto==='programado'?'selected':''}>Programado</option>
+                            <option value="no localizado" ${estContacto==='no localizado'?'selected':''}>No localizado</option>
+                        </select>
+                    </div>
+                    <div style="display:flex;gap:6px;margin-top:10px;">
+                        <button class="cand-btn" style="flex:1;font-size:.65rem;background:#555;" onclick='abrirModal(${JSON.stringify(l).replace(/'/g, "\\'")})'>EXPEDIENTE</button>
+                        <button class="cand-btn" style="flex:1;font-size:.65rem;background:#6b8f6b;color:#fff;" onclick='abrirPrograma(${JSON.stringify(l).replace(/'/g, "\\'")})'>PROGRAMA</button>
+                        <button class="cand-btn" style="flex:1;font-size:.65rem;" onclick="abrirContratar(${l.id}, '${(l.contacto||'').replace(/'/g,"\\'")}')">CONTRATAR</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function renderClientesMomento2() {
+            const container = document.getElementById('clientes-momento2-container');
+            const clientes = leadsData.filter(l => (l.pipeline_estado||'') === 'contratado' || l.pipeline_estado === 'pagado');
+            if (clientes.length === 0) {
+                container.innerHTML = '<p style="font-family:\'JetBrains Mono\';font-size:.6rem;color:#999;">Ningún proyecto contratado aún.</p>';
+                return;
+            }
+            container.innerHTML = clientes.map(l => {
+                const ubic = (() => { try { return JSON.parse(l.ubicacion||'{}'); } catch { return {}; } })();
+                const dirParts = [ubic.calle_numero, ubic.colonia].filter(Boolean).join(', ');
+                const ciudadPart = [ubic.ciudad, ubic.estado].filter(Boolean).join(', ');
+                return `<div class="cand-card" style="border-color:#2e7d32;">
+                    <div class="cand-id" style="color:#2e7d32;">${l.temp_id||'---'}</div>
+                    <div class="cand-field"><span class="label">Cliente</span><span class="value">${l.nombre_cliente || '---'}</span></div>
+                    <div class="cand-field"><span class="label">Teléfono</span><span>${l.contacto || '---'}</span></div>
+                    <div class="cand-field"><span class="label">Proyecto</span><span class="value">${l.nombre_proyecto || '---'}</span></div>
+                    <div class="cand-field"><span class="label">Tipo</span><span>${l.tipo_proyecto || '---'}</span></div>
+                    <div class="cand-field"><span class="label">Nivel</span><span>${(l.nivel_proyecto||'').charAt(0).toUpperCase()+(l.nivel_proyecto||'').slice(1)} · ${l.m2||0} m²</span></div>
+                    ${dirParts ? `<div class="cand-field"><span class="label">Dirección</span><span>${dirParts}</span></div>` : ''}
+                    ${ciudadPart ? `<div class="cand-field"><span class="label">Ciudad</span><span>${ciudadPart}</span></div>` : ''}
+                    <div style="display:flex;gap:6px;margin-top:10px;">
+                        <button class="cand-btn" style="flex:1;font-size:.65rem;background:#555;" onclick='abrirModal(${JSON.stringify(l).replace(/'/g, "\\'")})'>EXPEDIENTE</button>
+                        <button class="cand-btn" style="flex:1;font-size:.65rem;background:#6b8f6b;color:#fff;" onclick='abrirPrograma(${JSON.stringify(l).replace(/'/g, "\\'")})'>PROGRAMA</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function actualizarEstadoContacto(el, id) {
+            const val = el.value;
+            fetch('/lead/'+id+'/estado-contacto', {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ estado_contacto: val })
+            }).catch(() => {});
+        }
+
+        let contratarLeadId = null;
+
+        function abrirContratar(id, contacto) {
+            const lead = leadsData.find(l => l.id === id);
+            if (!lead) return;
+
+            // Validación de campos obligatorios
+            const faltantes = [];
+            if (!(lead.nombre_cliente || '').trim()) faltantes.push("Nombre del Cliente");
+            if (!(lead.nombre_proyecto || '').trim()) faltantes.push("Nombre del Proyecto");
+            if (!(lead.tipo_proyecto || '').trim()) faltantes.push("Tipo de Proyecto");
+            
+            const ubic = (() => { try { return JSON.parse(lead.ubicacion||'{}'); } catch { return {}; } })();
+            if (!(ubic.calle_numero || '').trim()) faltantes.push("Calle y Número (Ubicación)");
+            if (!(ubic.colonia || '').trim()) faltantes.push("Colonia (Ubicación)");
+            if (!(ubic.ciudad || '').trim()) faltantes.push("Ciudad (Ubicación)");
+            if (!(ubic.estado || '').trim()) faltantes.push("Estado (Ubicación)");
+
+            if (faltantes.length > 0) {
+                alert("Para contratar este proyecto primero debes llenar los datos en el botón PROGRAMA.\n\nFalta por llenar:\n- " + faltantes.join("\n- "));
+                return;
+            }
+
+            contratarLeadId = id;
+            document.getElementById('cont-resumen').innerHTML = `${lead.temp_id}<br><strong>${lead.nombre_cliente}</strong><br><span style="font-size:0.7rem;color:#666;">${lead.nombre_proyecto}</span>`;
+            document.getElementById('modal-contratar').classList.add('active');
+        }
+
+        function cerrarContratar() {
+            document.getElementById('modal-contratar').classList.remove('active');
+            contratarLeadId = null;
+        }
+
+        function confirmarContratar() {
+            const id = contratarLeadId;
+            if (!id) return;
+            fetch('/lead/'+id+'/contratar', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({})
+            }).then(r => r.json()).then(res => {
+                if (res.status === 'success') {
+                    cerrarContratar();
+                    cargarLeads();
+                } else {
+                    alert('Error: ' + (res.message || 'desconocido'));
+                }
+            }).catch(() => { alert('Error de conexión'); });
         }
 
         function getFilteredLeads() {
@@ -436,11 +619,10 @@
                         <span>${lead.fecha ? new Date(lead.fecha).toLocaleDateString() : '---'}</span>
                     </div>
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-                        <h3 style="font-family:'Playfair Display';font-size:1.2rem;margin:0;">${lead.contacto || 'Anónimo'}</h3>
+                        <h3 style="font-family:'Playfair Display';font-size:1.2rem;margin:0;">${lead.nombre_cliente || lead.contacto || 'Anónimo'}</h3>
                         <div><span class="lead-badge ${badgeClass}">${nivel}</span>${badgePago}</div>
                     </div>
                     ${lead.m2 ? `<div style="font-family:'JetBrains Mono';font-size:.65rem;margin-bottom:8px;"><span style="color:#999;">${m2.toFixed(0)} m² · </span><span style="font-weight:600;">${honorarios}</span></div>` : ''}
-                    <div style="border-top:1px solid #eee;padding-top:8px;margin-bottom:10px;">${ejesHtml}</div>
                     <div style="display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap;">
                         <span class="status-tag done" style="font-size:.55rem;">🌐 WEB</span>
                         <span class="status-tag done" style="font-size:.55rem;background:${pipelineColor};">▶ ${pipelineLabel}</span>
@@ -530,7 +712,7 @@
                             const estIdx = PIPELINE_ESTADOS.indexOf(est);
                             html += `<div style="background:#fff;padding:8px;margin-bottom:6px;border-radius:4px;border:1px solid #eee;font-family:\'JetBrains Mono\';font-size:.55rem;">
                                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-                                    <strong style="font-size:.65rem;">${l.contacto || 'Anónimo'}</strong>
+                                    <strong style="font-size:.65rem;">${l.nombre_cliente || l.contacto || 'Anónimo'}</strong>
                                     <span class="lead-badge ${badgeCls}" style="font-size:.45rem;">${nivel}</span>
                                 </div>
                                 <div style="color:#999;">${l.temp_id || '---'}</div>
@@ -664,7 +846,17 @@
             document.getElementById('modal-titulo').textContent = lead.contacto || 'Anónimo';
             document.getElementById('modal-id').textContent = `${lead.temp_id || '---'} · ${lead.fecha ? new Date(lead.fecha).toLocaleString() : ''}`;
             const analisis = lead.analisis_procesado || 'Sin análisis disponible.';
-            const respuestas = (() => { try { return JSON.stringify(JSON.parse(lead.respuestas_json || '{}'), null, 2); } catch { return lead.respuestas_json || '{}'; } })();
+            const respuestas = (() => {
+                try {
+                    const raw = JSON.parse(lead.respuestas_json || '{}');
+                    const traducidas = {};
+                    Object.keys(raw).forEach(k => {
+                        const num = k.replace('step', '');
+                        traducidas[`Pregunta ${num}`] = raw[k];
+                    });
+                    return JSON.stringify(traducidas, null, 2);
+                } catch { return lead.respuestas_json || '{}'; }
+            })();
             const cData = cobrosData[lead.id] || { pagado: 0, pendiente: 0, honorarios: 0 };
             document.getElementById('modal-body').innerHTML = `
                 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;">
@@ -978,8 +1170,50 @@
 
         function abrirPrograma(lead) {
             modalProgramaLeadId = lead.id;
-            document.getElementById('modal-prog-titulo').textContent = `Programa: ${lead.contacto || 'Anónimo'}`;
+            document.getElementById('modal-prog-titulo').textContent = `Programa: ${lead.nombre_cliente || lead.contacto || 'Anónimo'}`;
             document.getElementById('modal-prog-id').textContent = `${lead.temp_id || '---'}`;
+            const leadData = lead;
+            const progHeader = document.getElementById('modal-prog-header');
+            if (progHeader) {
+                const ubic = (() => { try { return JSON.parse(leadData.ubicacion||'{}'); } catch { return {}; } })();
+                progHeader.innerHTML = `
+                    <div style="font-family:'Inter',sans-serif;margin-bottom:20px;padding:15px;background:#f9f9f9;border-radius:6px;border:1px solid #eee;">
+                        <h4 style="font-family:'JetBrains Mono';font-size:.65rem;color:#a6937c;text-transform:uppercase;margin-bottom:12px;">Datos del Proyecto</h4>
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+                            <div><label style="font-size:.65rem;color:#666;">Nombre del Cliente</label>
+                                <input type="text" id="prog-nombre-cliente" value="${(leadData.nombre_cliente||'').replace(/"/g,'&quot;')}" placeholder="Ej. María Fernández" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;box-sizing:border-box;"></div>
+                            <div><label style="font-size:.65rem;color:#666;">Teléfono</label>
+                                <input type="text" readonly value="${(leadData.contacto||'').replace(/"/g,'&quot;')}" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;background:#f4f4f4;box-sizing:border-box;"></div>
+                            <div><label style="font-size:.65rem;color:#666;">Nombre del Proyecto</label>
+                                <input type="text" id="prog-nombre-proyecto" value="${(leadData.nombre_proyecto||'').replace(/"/g,'&quot;')}" placeholder="Ej. Casa Alina" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;box-sizing:border-box;"></div>
+                            <div style="grid-column: span 1;"><label style="font-size:.65rem;color:#666;">Tipo de Proyecto</label>
+                                <select id="prog-tipo-proyecto" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;box-sizing:border-box;">
+                                    <option value="">— Seleccionar —</option>
+                                    ${['Vivienda unifamiliar','Vivienda plurifamiliar','Departamento','Casa habitación','Oficina','Local comercial','Restaurante','Hotel','Otro'].map(t =>
+                                        `<option value="${t}" ${leadData.tipo_proyecto===t?'selected':''}>${t}</option>`
+                                    ).join('')}
+                                </select></div>
+                            <div style="grid-column: span 1;"><label style="font-size:.65rem;color:#666;">Nivel de Proyecto</label>
+                                <select id="prog-nivel-proyecto" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;box-sizing:border-box;">
+                                    <option value="esencial" ${leadData.nivel_proyecto==='esencial'?'selected':''}>Esencial (250/m²)</option>
+                                    <option value="integral" ${leadData.nivel_proyecto==='integral'?'selected':''}>Integral (350/m²)</option>
+                                    <option value="ejecutivo" ${leadData.nivel_proyecto==='ejecutivo'?'selected':''}>Ejecutivo (850/m²)</option>
+                                </select></div>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;">
+                            <div><label style="font-size:.65rem;color:#666;">Calle y Número</label>
+                                <input type="text" id="prog-calle-numero" value="${(ubic.calle_numero||'').replace(/"/g,'&quot;')}" placeholder="Ej. Calle 12 #345" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;box-sizing:border-box;"></div>
+                            <div><label style="font-size:.65rem;color:#666;">Colonia</label>
+                                <input type="text" id="prog-colonia" value="${(ubic.colonia||'').replace(/"/g,'&quot;')}" placeholder="Ej. Montecristo" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;box-sizing:border-box;"></div>
+                            <div><label style="font-size:.65rem;color:#666;">Ciudad</label>
+                                <input type="text" id="prog-ciudad" value="${(ubic.ciudad||'').replace(/"/g,'&quot;')}" placeholder="Ej. Mérida" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;box-sizing:border-box;"></div>
+                            <div><label style="font-size:.65rem;color:#666;">Estado</label>
+                                <input type="text" id="prog-estado" value="${(ubic.estado||'').replace(/"/g,'&quot;')}" placeholder="Ej. Yucatán" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;box-sizing:border-box;"></div>
+                        </div>
+                        <button onclick="guardarDatosProyecto(${leadData.id})" style="margin-top:10px;padding:6px 16px;background:#d4af37;color:#fff;border:none;border-radius:3px;font-size:.7rem;cursor:pointer;font-weight:600;">💾 Guardar Datos</button>
+                        <span id="prog-save-msg" style="font-size:.65rem;color:#2e7d32;margin-left:8px;"></span>
+                    </div>`;
+            }
             document.getElementById('modal-programa').classList.add('active');
             document.body.style.overflow = 'hidden';
             mostrarSeccionPrograma('programa');
@@ -991,9 +1225,54 @@
             modalProgramaLeadId = null;
         }
 
-        function mostrarSeccionPrograma(seccion) {
+        function guardarDatosProyecto(id, silent = false) {
+            const data = {
+                nombre_cliente: document.getElementById('prog-nombre-cliente').value.trim(),
+                nombre_proyecto: document.getElementById('prog-nombre-proyecto').value.trim(),
+                tipo_proyecto: document.getElementById('prog-tipo-proyecto').value.trim(),
+                nivel_proyecto: document.getElementById('prog-nivel-proyecto').value,
+                ubicacion: {
+                    calle_numero: document.getElementById('prog-calle-numero').value.trim(),
+                    colonia: document.getElementById('prog-colonia').value.trim(),
+                    ciudad: document.getElementById('prog-ciudad').value.trim(),
+                    estado: document.getElementById('prog-estado').value.trim()
+                }
+            };
+            return fetch('/lead/'+id+'/datos-proyecto', {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            }).then(r => r.json()).then(res => {
+                if (!silent) {
+                    const msg = document.getElementById('prog-save-msg');
+                    if (msg) {
+                        msg.textContent = res.status === 'success' ? '✓ Guardado' : 'Error: ' + (res.message||'');
+                        msg.style.color = res.status === 'success' ? '#2e7d32' : '#c62828';
+                        setTimeout(() => { msg.textContent = ''; }, 3000);
+                    }
+                }
+                if (res.status === 'success') {
+                    cargarLeads();
+                    if (!silent && document.getElementById('cotizacion-container')) {
+                        generarCotizacion(id, 'cotizacion-container');
+                    }
+                }
+            }).catch(() => {
+                if (!silent) {
+                    const msg = document.getElementById('prog-save-msg');
+                    if (msg) { msg.textContent = 'Error de conexión'; msg.style.color = '#c62828'; }
+                }
+            });
+        }
+
+        async function mostrarSeccionPrograma(seccion) {
             const body = document.getElementById('modal-prog-body');
             if (!modalProgramaLeadId) { body.innerHTML = '<p>Error: sin lead seleccionado</p>'; return; }
+            
+            if (document.getElementById('prog-nivel-proyecto')) {
+                await guardarDatosProyecto(modalProgramaLeadId, true);
+            }
+
             if (seccion === 'programa') {
                 body.innerHTML = '<div id="programa-container"><p style="font-family:\'JetBrains Mono\';font-size:.6rem;color:#999;">Cargando programa...</p></div>';
                 cargarPrograma(modalProgramaLeadId, 'programa-container');
