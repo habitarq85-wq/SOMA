@@ -273,7 +273,7 @@ Los **6-8 semanas** que aparecen en `CONTRATO_DISENO_SOMA.md:55-66` y `PROTOCOLO
 #### `backend/server.py`
 - **Añadido:** `import smtplib`, `from email.mime.text import MIMEText`, `from email.mime.multipart import MIMEMultipart`, `from twilio.rest import Client`
 - **Añadidas constantes:** `SMTP_SERVER`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD` (Gmail app password)
-- **Añadidas constantes:** `TWILIO_SID`, `TWILIO_TOKEN`, `TWILIO_WHATSAPP` (+14155238886), `NOTIFICACION_WHATSAPP` (+5219993619433)
+- **Añadidas constantes:** `TWILIO_SID`, `TWILIO_TOKEN`, `TWILIO_WHATSAPP` (+14155238886), `NOTIFICACION_WHATSAPP` (+5219995314093)
 - **Modificado:** `enviar_correo()` — ahora envía vía SMTP real además de guardar reporte en disco
 - **Añadido:** `enviar_whatsapp(contacto, temp_id, nivel_key, m2)` — notificación Twilio
 - **Modificado:** `/save_immersion` — ahora llama a `enviar_whatsapp()` y devuelve `whatsapp_status` en JSON
@@ -772,7 +772,7 @@ Se creó además `REFERENCIAS_CANONICAS.md` — tabla maestra con las 43 fuentes
 - **Servicios reestructurados:** `.services-row` agrupa imagen + lista en todas las breakpoints. Contacto fuera del row.
 - **Trayectoria portrait:** Viñeta `::after` con `box-shadow: inset`. "M. en Arq." en una línea tanto en timeline como bajo la foto.
 - **Carrusel filosofía:** Slide "CALIDAD SIN JERARQUÍAS" eliminado. Flecha `→` animada en mobile + máscara gradient fade.
-- **WhatsApp:** Número `999 361 9433` visible en Contacto.
+- **WhatsApp:** Número `999 531 4093` visible en Contacto.
 - **Imágenes comprimidas:** 110 archivos procesados con Pillow (JPG quality 80, WebP quality 70). Reducción 49→44 MB. Commit `0531ffe` pusheado a GitHub.
 
 ### 66. PENDIENTES (próxima sesión)
@@ -1108,3 +1108,47 @@ Se analizó la disonancia entre el `01_PROTOCOLO_CONCEPTUALIZACION.md` (purament
 4. **[Media] faster-whisper + DeepSeek** — Automatización real del análisis de entrevistas.
 5. **[Media] Definir tiempos de entrega** en `TIEMPOS_ENTREGA_BASE.md` (Juan completa con su experiencia).
 6. **[Media] Optimizar web: CDN Cloudflare** — Velocidad de carga en celular.
+
+---
+
+## Sesión: 2026-06-10 — Algoritmo SOMA Visual + Últimos Protocolos
+
+### 84. LOGROS DE LA SESIÓN
+
+#### Bloque 2 — Reestructura Completa
+- **Últimos 5 protocolos reestructurados** al formato PROCESO DE DISEÑO 2.0:
+  - `protocolo_5.3-5.11_visualizacion.md` — Exportación D5, iluminación, materiales, mobiliario, vegetación, decoración, personas, IA, postproducción
+  - `protocolo_6-8_anteproyecto.md` — Planimetría básica + integral: plantas, alzados, acabados, ingenierías, planos de permiso
+  - `protocolo_7.1-7.2_representacion.md` — Dossier editorial HTML + PDF con identidad SOMA
+  - `protocolo_9.1-9.2_coordinacion.md` — Coordinación de especialistas externos, resolución de conflictos, bitácora
+  - `protocolo_9.3_planos_tecnicos.md` — Planos ejecutivos, detalles constructivos, estructura de entrega
+
+- **Total: 12 protocolos reestructurados** (7 de la sesión anterior + 5 de esta), todos con formato INPUT/OPERA/OUTPUT/PROC + referencias cruzadas al PROCESO DE DISEÑO 2.0.
+
+#### Algoritmo SOMA Visual
+- **Diseñado desde FUSION_CONCEPTUALIZACION.md:** Los 16 pasos de diseño se visualizaron en 4 fases (Fundamentos Conceptuales, Formalización Volumétrica, Ajuste y Precisión, Especialidades y Cierre).
+- **Formato HTML interactivo:** `web/algoritmo_soma.html` con tarjetas clickeables que despliegan inputs, outputs y protocolos asociados. Etiquetas de procesador (HUMANO/AI/MIXTO). Responsive + print-friendly.
+- **Formato SVG estático:** `recursos_graficos/algoritmo_soma_diagrama.svg` diseñado con la identidad visual SOMA (fondo #0a0a0a, acento #d45e2c, fases con código de color).
+
+### 85. ARCHIVOS CREADOS/MODIFICADOS
+
+| Archivo | Cambio |
+|---------|--------|
+| `03 Diseño/protocolo_5.3-5.11_visualizacion.md` | **Creado** — Visualización (exportación, iluminación, materiales, mobiliario, vegetación, decoración, personas, IA, postproducción) |
+| `03 Diseño/protocolo_6-8_anteproyecto.md` | **Creado** — Anteproyecto (planimetría básica + integral, planos de permiso) |
+| `03 Diseño/protocolo_7.1-7.2_representacion.md` | **Creado** — Representación (dossier HTML + PDF) |
+| `03 Diseño/protocolo_9.1-9.2_coordinacion.md` | **Creado** — Coordinación de ingenierías |
+| `03 Diseño/protocolo_9.3_planos_tecnicos.md` | **Creado** — Planos técnicos ejecutivos |
+| `web/algoritmo_soma.html` | **Creado** — Visualización interactiva del Algoritmo SOMA |
+| `recursos_graficos/algoritmo_soma_diagrama.svg` | **Creado** — Diagrama SVG del Algoritmo SOMA |
+| `SOMA_SNAPSHOT.md` | **Modificado** — Nueva sesión registrada |
+| `SOMA_CORE_INDEX.md` | **Modificado** — Algoritmo SOMA visual marcado como completado |
+| `BITACORA_SOMA.md` | **Modificado** — Esta entrada de sesión |
+
+### 86. PENDIENTES (PRÓXIMA SESIÓN)
+
+1. **[Alta] Mapear items del PROCESO 2.0 contra codebase real** (Activity Matrix, Diagrama SOMA, Dashboard).
+2. **[Alta] Integrar biblioteca SOMA en template de proyecto** — Flujo automático de copia de normativas/clima/patrones.
+3. **[Media] Activar Google My Business** y subir renders como fotos de perfil.
+4. **[Media] Publicar lead magnet** como pop-up en la web.
+5. **[Media] Resolver bug cotizador** — Botón oculto en landscape mobile + página trabada en "Enviar".

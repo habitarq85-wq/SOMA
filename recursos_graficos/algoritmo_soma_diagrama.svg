@@ -1,0 +1,271 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1300" width="1000" height="1300">
+  <rect width="1000" height="1300" fill="#0a0a0a"/>
+
+  <defs>
+    <filter id="glow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <linearGradient id="fade-a" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a2a1a"/><stop offset="100%" stop-color="#0a0a0a"/></linearGradient>
+    <linearGradient id="fade-b" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a1a2a"/><stop offset="100%" stop-color="#0a0a0a"/></linearGradient>
+    <linearGradient id="fade-c" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2a1a1a"/><stop offset="100%" stop-color="#0a0a0a"/></linearGradient>
+    <linearGradient id="fade-d" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a2a2a"/><stop offset="100%" stop-color="#0a0a0a"/></linearGradient>
+  </defs>
+
+  <!-- Title -->
+  <text x="500" y="60" font-family="Georgia,serif" font-size="42" font-weight="bold" fill="#fff" text-anchor="middle" letter-spacing="10">ALGORITMO SOMA</text>
+  <line x1="400" y1="76" x2="600" y2="76" stroke="#d45e2c" stroke-width="1.5"/>
+  <text x="500" y="98" font-family="'Courier New',monospace" font-size="12" fill="#999" text-anchor="middle" letter-spacing="5">PROCESO DE DISEÑO EN 16 PASOS</text>
+  <text x="500" y="118" font-family="Georgia,serif" font-size="11" fill="#666" text-anchor="middle" font-style="italic">De los datos del análisis al documento de concepto listo para modelar</text>
+
+  <!-- Legend -->
+  <g transform="translate(250,138)">
+    <rect x="0" y="-6" width="14" height="14" rx="7" fill="none" stroke="#d45e2c" stroke-width="1.5"/>
+    <text x="20" y="5" font-family="'Courier New',monospace" font-size="9" fill="#999">HUMANO</text>
+    <rect x="120" y="-6" width="14" height="14" rx="7" fill="none" stroke="#4a9eff" stroke-width="1.5"/>
+    <text x="140" y="5" font-family="'Courier New',monospace" font-size="9" fill="#999">AI</text>
+    <rect x="200" y="-6" width="14" height="14" rx="7" fill="none" stroke="#b388ff" stroke-width="1.5"/>
+    <text x="220" y="5" font-family="'Courier New',monospace" font-size="9" fill="#999">HUMANO→AI / AI→HUMANO</text>
+  </g>
+
+  <!-- ===== Phase A ===== -->
+  <rect x="30" y="170" width="940" height="220" rx="8" fill="url(#fade-a)" stroke="rgba(76,175,80,0.15)" stroke-width="1"/>
+  <rect x="30" y="170" width="4" height="220" rx="2" fill="#4caf50"/>
+  <text x="50" y="196" font-family="'Courier New',monospace" font-size="11" fill="#4caf50" font-weight="bold" letter-spacing="2">FASE A</text>
+  <text x="50" y="216" font-family="Georgia,serif" font-size="16" fill="#ccc" font-weight="bold">FUNDAMENTOS CONCEPTUALES</text>
+  <text x="50" y="235" font-family="'Courier New',monospace" font-size="9" fill="#666">Pasos 01 — 04 · De la intuición a la intención</text>
+
+  <!-- Step 01 -->
+  <g transform="translate(50,250)">
+    <rect x="0" y="0" width="195" height="120" rx="6" fill="#141414" stroke="#333" stroke-width="1"/>
+    <circle cx="16" cy="16" r="12" fill="#d45e2c"/>
+    <text x="16" y="20" font-family="'Courier New',monospace" font-size="9" fill="#fff" text-anchor="middle" font-weight="bold">01</text>
+    <rect x="34" y="8" width="58" height="14" rx="3" fill="none" stroke="#d45e2c" stroke-width=".8"/>
+    <text x="37" y="18" font-family="'Courier New',monospace" font-size="7" fill="#d45e2c">HUMANO</text>
+    <text x="16" y="52" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">Herramienta Heurística</text>
+    <text x="16" y="70" font-family="'Courier New',monospace" font-size="8" fill="#999">Primer filtro conceptual.</text>
+    <text x="16" y="84" font-family="'Courier New',monospace" font-size="8" fill="#999">Intuiciones formales, tensiones</text>
+    <text x="16" y="98" font-family="'Courier New',monospace" font-size="8" fill="#999">y direcciones de exploración.</text>
+  </g>
+  <text x="260" y="310" font-family="'Courier New',monospace" font-size="18" fill="#555" text-anchor="middle">→</text>
+
+  <!-- Step 02 -->
+  <g transform="translate(275,250)">
+    <rect x="0" y="0" width="195" height="120" rx="6" fill="#141414" stroke="#333" stroke-width="1"/>
+    <circle cx="16" cy="16" r="12" fill="#d45e2c"/>
+    <text x="16" y="20" font-family="'Courier New',monospace" font-size="9" fill="#fff" text-anchor="middle" font-weight="bold">02</text>
+    <rect x="34" y="8" width="58" height="14" rx="3" fill="none" stroke="#d45e2c" stroke-width=".8"/>
+    <text x="37" y="18" font-family="'Courier New',monospace" font-size="7" fill="#d45e2c">HUMANO</text>
+    <text x="16" y="52" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">Idea Matriz +</text>
+    <text x="16" y="68" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">Adjetivo Rector</text>
+    <text x="16" y="88" font-family="'Courier New',monospace" font-size="8" fill="#999">Frase que condensa la esencia</text>
+    <text x="16" y="102" font-family="'Courier New',monospace" font-size="8" fill="#999">+ palabra de experiencia espacial</text>
+  </g>
+  <text x="485" y="310" font-family="'Courier New',monospace" font-size="18" fill="#555" text-anchor="middle">→</text>
+
+  <!-- Step 03 -->
+  <g transform="translate(500,250)">
+    <rect x="0" y="0" width="195" height="120" rx="6" fill="#141414" stroke="#333" stroke-width="1"/>
+    <circle cx="16" cy="16" r="12" fill="#d45e2c"/>
+    <text x="16" y="20" font-family="'Courier New',monospace" font-size="9" fill="#fff" text-anchor="middle" font-weight="bold">03</text>
+    <rect x="34" y="8" width="58" height="14" rx="3" fill="none" stroke="#d45e2c" stroke-width=".8"/>
+    <text x="37" y="18" font-family="'Courier New',monospace" font-size="7" fill="#d45e2c">HUMANO</text>
+    <text x="16" y="52" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">Intenciones de Diseño</text>
+    <text x="16" y="72" font-family="'Courier New',monospace" font-size="8" fill="#999">Compromisos verificables:</text>
+    <text x="16" y="86" font-family="'Courier New',monospace" font-size="8" fill="#999">espaciales, tectónicas</text>
+    <text x="16" y="100" font-family="'Courier New',monospace" font-size="8" fill="#999">y bioclimáticas</text>
+  </g>
+  <text x="710" y="310" font-family="'Courier New',monospace" font-size="18" fill="#555" text-anchor="middle">→</text>
+
+  <!-- Step 04 -->
+  <g transform="translate(725,250)">
+    <rect x="0" y="0" width="195" height="120" rx="6" fill="#141414" stroke="#333" stroke-width="1"/>
+    <circle cx="16" cy="16" r="12" fill="#d45e2c"/>
+    <text x="16" y="20" font-family="'Courier New',monospace" font-size="9" fill="#fff" text-anchor="middle" font-weight="bold">04</text>
+    <rect x="34" y="8" width="58" height="14" rx="3" fill="none" stroke="#d45e2c" stroke-width=".8"/>
+    <text x="37" y="18" font-family="'Courier New',monospace" font-size="7" fill="#d45e2c">HUMANO</text>
+    <text x="16" y="52" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">Documento de</text>
+    <text x="16" y="68" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">Intenciones</text>
+    <text x="16" y="88" font-family="'Courier New',monospace" font-size="8" fill="#999">Consolidación formal</text>
+    <text x="16" y="102" font-family="'Courier New',monospace" font-size="8" fill="#999">de los pasos 01-03</text>
+  </g>
+
+  <!-- ===== Phase B ===== -->
+  <rect x="30" y="420" width="940" height="220" rx="8" fill="url(#fade-b)" stroke="rgba(92,107,192,0.15)" stroke-width="1"/>
+  <rect x="30" y="420" width="4" height="220" rx="2" fill="#5c6bc0"/>
+  <text x="50" y="446" font-family="'Courier New',monospace" font-size="11" fill="#5c6bc0" font-weight="bold" letter-spacing="2">FASE B</text>
+  <text x="50" y="466" font-family="Georgia,serif" font-size="16" fill="#ccc" font-weight="bold">FORMALIZACIÓN VOLUMÉTRICA</text>
+  <text x="50" y="485" font-family="'Courier New',monospace" font-size="9" fill="#666">Pasos 05 — 08 · Del programa al partido</text>
+
+  <g transform="translate(50,500)">
+    <rect x="0" y="0" width="195" height="120" rx="6" fill="#141414" stroke="#333" stroke-width="1"/>
+    <circle cx="16" cy="16" r="12" fill="#d45e2c"/><text x="16" y="20" font-family="'Courier New',monospace" font-size="9" fill="#fff" text-anchor="middle" font-weight="bold">05</text>
+    <rect x="34" y="8" width="58" height="14" rx="3" fill="none" stroke="#d45e2c" stroke-width=".8"/><text x="37" y="18" font-family="'Courier New',monospace" font-size="7" fill="#d45e2c">HUMANO</text>
+    <text x="16" y="50" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">Volumetrización</text>
+    <text x="16" y="66" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">del Programa</text>
+    <text x="16" y="86" font-family="'Courier New',monospace" font-size="8" fill="#999">Espacios → prismas</text>
+    <text x="16" y="100" font-family="'Courier New',monospace" font-size="8" fill="#999">Verificar que el programa cabe</text>
+  </g>
+  <text x="260" y="560" font-family="'Courier New',monospace" font-size="18" fill="#555" text-anchor="middle">→</text>
+
+  <g transform="translate(275,500)">
+    <rect x="0" y="0" width="195" height="120" rx="6" fill="#141414" stroke="#333" stroke-width="1"/>
+    <circle cx="16" cy="16" r="12" fill="#d45e2c"/><text x="16" y="20" font-family="'Courier New',monospace" font-size="9" fill="#fff" text-anchor="middle" font-weight="bold">06</text>
+    <rect x="34" y="8" width="58" height="14" rx="3" fill="none" stroke="#d45e2c" stroke-width=".8"/><text x="37" y="18" font-family="'Courier New',monospace" font-size="7" fill="#d45e2c">HUMANO</text>
+    <text x="16" y="50" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">Ubicación +</text>
+    <text x="16" y="66" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">Zonificación</text>
+    <text x="16" y="86" font-family="'Courier New',monospace" font-size="8" fill="#999">Según normativa, COS, CUS,</text>
+    <text x="16" y="100" font-family="'Courier New',monospace" font-size="8" fill="#999">zonas SOMA + carta solar</text>
+  </g>
+  <text x="485" y="560" font-family="'Courier New',monospace" font-size="18" fill="#555" text-anchor="middle">→</text>
+
+  <g transform="translate(500,500)">
+    <rect x="0" y="0" width="195" height="120" rx="6" fill="#141414" stroke="#333" stroke-width="1"/>
+    <circle cx="16" cy="16" r="12" fill="#d45e2c"/><text x="16" y="20" font-family="'Courier New',monospace" font-size="9" fill="#fff" text-anchor="middle" font-weight="bold">07</text>
+    <rect x="34" y="8" width="78" height="14" rx="3" fill="none" stroke="#b388ff" stroke-width=".8"/><text x="37" y="18" font-family="'Courier New',monospace" font-size="7" fill="#b388ff">HUMANO→AI</text>
+    <text x="16" y="50" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">Ideas Rectoras +</text>
+    <text x="16" y="66" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">Operaciones</text>
+    <text x="16" y="86" font-family="'Courier New',monospace" font-size="8" fill="#999">Selección + sustracción,</text>
+    <text x="16" y="100" font-family="'Courier New',monospace" font-size="8" fill="#999">adición, torsión, plegado</text>
+  </g>
+  <text x="710" y="560" font-family="'Courier New',monospace" font-size="18" fill="#555" text-anchor="middle">→</text>
+
+  <g transform="translate(725,500)">
+    <rect x="0" y="0" width="195" height="120" rx="6" fill="#141414" stroke="#333" stroke-width="1"/>
+    <circle cx="16" cy="16" r="12" fill="#d45e2c"/><text x="16" y="20" font-family="'Courier New',monospace" font-size="9" fill="#fff" text-anchor="middle" font-weight="bold">08</text>
+    <rect x="34" y="8" width="58" height="14" rx="3" fill="none" stroke="#d45e2c" stroke-width=".8"/><text x="37" y="18" font-family="'Courier New',monospace" font-size="7" fill="#d45e2c">HUMANO</text>
+    <text x="16" y="50" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">Partido</text>
+    <text x="16" y="66" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">Compositivo</text>
+    <text x="16" y="86" font-family="'Courier New',monospace" font-size="8" fill="#999">Desdoblamiento, ejes,</text>
+    <text x="16" y="100" font-family="'Courier New',monospace" font-size="8" fill="#999">simetrías, jerarquía visual</text>
+  </g>
+
+  <!-- ===== Phase C ===== -->
+  <rect x="30" y="670" width="940" height="220" rx="8" fill="url(#fade-c)" stroke="rgba(239,83,80,0.15)" stroke-width="1"/>
+  <rect x="30" y="670" width="4" height="220" rx="2" fill="#ef5350"/>
+  <text x="50" y="696" font-family="'Courier New',monospace" font-size="11" fill="#ef5350" font-weight="bold" letter-spacing="2">FASE C</text>
+  <text x="50" y="716" font-family="Georgia,serif" font-size="16" fill="#ccc" font-weight="bold">AJUSTE Y PRECISIÓN</text>
+  <text x="50" y="735" font-family="'Courier New',monospace" font-size="9" fill="#666">Pasos 09 — 12 · Del espacio al detalle</text>
+
+  <g transform="translate(50,750)">
+    <rect x="0" y="0" width="195" height="120" rx="6" fill="#141414" stroke="#333" stroke-width="1"/>
+    <circle cx="16" cy="16" r="12" fill="#d45e2c"/><text x="16" y="20" font-family="'Courier New',monospace" font-size="9" fill="#fff" text-anchor="middle" font-weight="bold">09</text>
+    <rect x="34" y="8" width="58" height="14" rx="3" fill="none" stroke="#d45e2c" stroke-width=".8"/><text x="37" y="18" font-family="'Courier New',monospace" font-size="7" fill="#d45e2c">HUMANO</text>
+    <text x="16" y="50" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">Espacialidad +</text>
+    <text x="16" y="66" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">Circulaciones</text>
+    <text x="16" y="86" font-family="'Courier New',monospace" font-size="8" fill="#999">Recorridos, nudos, umbrales,</text>
+    <text x="16" y="100" font-family="'Courier New',monospace" font-size="8" fill="#999">visuales en movimiento</text>
+  </g>
+  <text x="260" y="810" font-family="'Courier New',monospace" font-size="18" fill="#555" text-anchor="middle">→</text>
+
+  <g transform="translate(275,750)">
+    <rect x="0" y="0" width="195" height="120" rx="6" fill="#141414" stroke="#333" stroke-width="1"/>
+    <circle cx="16" cy="16" r="12" fill="#d45e2c"/><text x="16" y="20" font-family="'Courier New',monospace" font-size="9" fill="#fff" text-anchor="middle" font-weight="bold">10</text>
+    <rect x="34" y="8" width="58" height="14" rx="3" fill="none" stroke="#d45e2c" stroke-width=".8"/><text x="37" y="18" font-family="'Courier New',monospace" font-size="7" fill="#d45e2c">HUMANO</text>
+    <text x="16" y="50" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">Pruebas de</text>
+    <text x="16" y="66" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">Asoleamiento</text>
+    <text x="16" y="86" font-family="'Courier New',monospace" font-size="8" fill="#999">Sombra en solsticios,</text>
+    <text x="16" y="100" font-family="'Courier New',monospace" font-size="8" fill="#999">ventilación cruzada, autosombra</text>
+  </g>
+  <text x="485" y="810" font-family="'Courier New',monospace" font-size="18" fill="#555" text-anchor="middle">→</text>
+
+  <g transform="translate(500,750)">
+    <rect x="0" y="0" width="195" height="120" rx="6" fill="#141414" stroke="#333" stroke-width="1"/>
+    <circle cx="16" cy="16" r="12" fill="#d45e2c"/><text x="16" y="20" font-family="'Courier New',monospace" font-size="9" fill="#fff" text-anchor="middle" font-weight="bold">11</text>
+    <rect x="34" y="8" width="78" height="14" rx="3" fill="none" stroke="#b388ff" stroke-width=".8"/><text x="37" y="18" font-family="'Courier New',monospace" font-size="7" fill="#b388ff">HUMANO→AI</text>
+    <text x="16" y="50" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">Sistema Estructural</text>
+    <text x="16" y="66" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">+ Fachada</text>
+    <text x="16" y="86" font-family="'Courier New',monospace" font-size="8" fill="#999">Lógica estructural +</text>
+    <text x="16" y="100" font-family="'Courier New',monospace" font-size="8" fill="#999">eficiencia energética</text>
+  </g>
+  <text x="710" y="810" font-family="'Courier New',monospace" font-size="18" fill="#555" text-anchor="middle">→</text>
+
+  <g transform="translate(725,750)">
+    <rect x="0" y="0" width="195" height="120" rx="6" fill="#141414" stroke="#333" stroke-width="1"/>
+    <circle cx="16" cy="16" r="12" fill="#d45e2c"/><text x="16" y="20" font-family="'Courier New',monospace" font-size="9" fill="#fff" text-anchor="middle" font-weight="bold">12</text>
+    <rect x="34" y="8" width="58" height="14" rx="3" fill="none" stroke="#d45e2c" stroke-width=".8"/><text x="37" y="18" font-family="'Courier New',monospace" font-size="7" fill="#d45e2c">HUMANO</text>
+    <text x="16" y="50" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">Escalas +</text>
+    <text x="16" y="66" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">Proporciones</text>
+    <text x="16" y="86" font-family="'Courier New',monospace" font-size="8" fill="#999">Escala humana, proporciones</text>
+    <text x="16" y="100" font-family="'Courier New',monospace" font-size="8" fill="#999">vano/lleno, material dominante</text>
+  </g>
+
+  <!-- ===== Phase D ===== -->
+  <rect x="30" y="920" width="940" height="220" rx="8" fill="url(#fade-d)" stroke="rgba(38,198,218,0.15)" stroke-width="1"/>
+  <rect x="30" y="920" width="4" height="220" rx="2" fill="#26c6da"/>
+  <text x="50" y="946" font-family="'Courier New',monospace" font-size="11" fill="#26c6da" font-weight="bold" letter-spacing="2">FASE D</text>
+  <text x="50" y="966" font-family="Georgia,serif" font-size="16" fill="#ccc" font-weight="bold">ESPECIALIDADES Y CIERRE</text>
+  <text x="50" y="985" font-family="'Courier New',monospace" font-size="9" fill="#666">Pasos 13 — 16 · De la especialidad al documento final</text>
+
+  <g transform="translate(50,1000)">
+    <rect x="0" y="0" width="195" height="120" rx="6" fill="#141414" stroke="#333" stroke-width="1"/>
+    <circle cx="16" cy="16" r="12" fill="#d45e2c"/><text x="16" y="20" font-family="'Courier New',monospace" font-size="9" fill="#fff" text-anchor="middle" font-weight="bold">13</text>
+    <rect x="34" y="8" width="58" height="14" rx="3" fill="none" stroke="#d45e2c" stroke-width=".8"/><text x="37" y="18" font-family="'Courier New',monospace" font-size="7" fill="#d45e2c">HUMANO</text>
+    <text x="16" y="50" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">Iluminación</text>
+    <text x="16" y="66" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">Artificial</text>
+    <text x="16" y="86" font-family="'Courier New',monospace" font-size="8" fill="#999">Zonificación lumínica,</text>
+    <text x="16" y="100" font-family="'Courier New',monospace" font-size="8" fill="#999">temperatura de color</text>
+  </g>
+  <text x="260" y="1060" font-family="'Courier New',monospace" font-size="18" fill="#555" text-anchor="middle">→</text>
+
+  <g transform="translate(275,1000)">
+    <rect x="0" y="0" width="195" height="120" rx="6" fill="#141414" stroke="#333" stroke-width="1"/>
+    <circle cx="16" cy="16" r="12" fill="#d45e2c"/><text x="16" y="20" font-family="'Courier New',monospace" font-size="9" fill="#fff" text-anchor="middle" font-weight="bold">14</text>
+    <rect x="34" y="8" width="58" height="14" rx="3" fill="none" stroke="#d45e2c" stroke-width=".8"/><text x="37" y="18" font-family="'Courier New',monospace" font-size="7" fill="#d45e2c">HUMANO</text>
+    <text x="16" y="50" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">Paisaje</text>
+    <text x="16" y="70" font-family="'Courier New',monospace" font-size="8" fill="#999">Zonas duras/blandas,</text>
+    <text x="16" y="84" font-family="'Courier New',monospace" font-size="8" fill="#999">vegetación, relación</text>
+    <text x="16" y="98" font-family="'Courier New',monospace" font-size="8" fill="#999">visual interior-exterior</text>
+  </g>
+  <text x="485" y="1060" font-family="'Courier New',monospace" font-size="18" fill="#555" text-anchor="middle">→</text>
+
+  <!-- Step 15: Validation Diamond -->
+  <g transform="translate(500,1000)">
+    <rect x="0" y="0" width="195" height="120" rx="6" fill="#141414" stroke="#d45e2c" stroke-width="2" stroke-dasharray="4,2"/>
+    <circle cx="16" cy="16" r="12" fill="#d45e2c" filter="url(#glow)"/><text x="16" y="20" font-family="'Courier New',monospace" font-size="9" fill="#fff" text-anchor="middle" font-weight="bold">15</text>
+    <rect x="34" y="8" width="78" height="14" rx="3" fill="none" stroke="#b388ff" stroke-width=".8"/><text x="37" y="18" font-family="'Courier New',monospace" font-size="7" fill="#b388ff">AI→HUMANO</text>
+    <text x="16" y="50" font-family="Georgia,serif" font-size="12" fill="#d45e2c" font-weight="bold">Validación del</text>
+    <text x="16" y="66" font-family="Georgia,serif" font-size="12" fill="#d45e2c" font-weight="bold">Concepto</text>
+    <text x="16" y="84" font-family="'Courier New',monospace" font-size="7" fill="#999">6 pruebas: cliente, análisis,</text>
+    <text x="16" y="96" font-family="'Courier New',monospace" font-size="7" fill="#999">programa, presupuesto,</text>
+    <text x="16" y="108" font-family="'Courier New',monospace" font-size="7" fill="#999">normativa y clima</text>
+  </g>
+  <text x="710" y="1060" font-family="'Courier New',monospace" font-size="18" fill="#555" text-anchor="middle">→</text>
+
+  <g transform="translate(725,1000)">
+    <rect x="0" y="0" width="195" height="120" rx="6" fill="#141414" stroke="#4a9eff" stroke-width="1"/>
+    <circle cx="16" cy="16" r="12" fill="#4a9eff"/><text x="16" y="20" font-family="'Courier New',monospace" font-size="9" fill="#fff" text-anchor="middle" font-weight="bold">16</text>
+    <rect x="34" y="8" width="30" height="14" rx="3" fill="none" stroke="#4a9eff" stroke-width=".8"/><text x="37" y="18" font-family="'Courier New',monospace" font-size="7" fill="#4a9eff">AI</text>
+    <text x="16" y="50" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">Documento</text>
+    <text x="16" y="66" font-family="Georgia,serif" font-size="12" fill="#f0f0f0" font-weight="bold">de Concepto</text>
+    <text x="16" y="86" font-family="'Courier New',monospace" font-size="8" fill="#999">12 secciones consolidadas</text>
+    <text x="16" y="100" font-family="'Courier New',monospace" font-size="8" fill="#999">→ listo para Modelado 3D</text>
+  </g>
+
+  <!-- Flow arrows between phases -->
+  <g transform="translate(500,395)">
+    <path d="M 0,0 L 0,18" stroke="#555" stroke-width="1.5" fill="none"/>
+    <polygon points="-4,15 0,22 4,15" fill="#555"/>
+  </g>
+  <g transform="translate(500,645)">
+    <path d="M 0,0 L 0,18" stroke="#555" stroke-width="1.5" fill="none"/>
+    <polygon points="-4,15 0,22 4,15" fill="#555"/>
+  </g>
+  <g transform="translate(500,895)">
+    <path d="M 0,0 L 0,18" stroke="#555" stroke-width="1.5" fill="none"/>
+    <polygon points="-4,15 0,22 4,15" fill="#555"/>
+  </g>
+
+  <!-- Validation fail arrows (step 15 back to steps that failed) -->
+  <g transform="translate(597,1060)">
+    <text x="6" y="-10" font-family="'Courier New',monospace" font-size="7" fill="#d45e2c">si falla</text>
+    <path d="M 0,0 C -80,-25 -80,-80 -25,-80" stroke="#d45e2c" stroke-width="1" fill="none" stroke-dasharray="3,2"/>
+    <polygon points="-25,-87 -25,-73 -18,-80" fill="#d45e2c"/>
+  </g>
+
+  <!-- Final output box -->
+  <rect x="300" y="1170" width="400" height="50" rx="25" fill="none" stroke="#d45e2c" stroke-width="2"/>
+  <text x="500" y="1190" font-family="Georgia,serif" font-size="13" fill="#d45e2c" text-anchor="middle" font-weight="bold">→ MODELADO 3D ←</text>
+  <text x="500" y="1208" font-family="'Courier New',monospace" font-size="8" fill="#666" text-anchor="middle">El Documento de Concepto alimenta el protocolo de modelado (Sección 5 del PROCESO DE DISEÑO 2.0)</text>
+
+  <!-- Footer -->
+  <text x="500" y="1270" font-family="'Courier New',monospace" font-size="8" fill="#555" text-anchor="middle">SOMA Taller Virtual de Arquitectura · soma-arquitectura.com · ALGORITMO SOMA v1.0</text>
+  <text x="500" y="1285" font-family="'Courier New',monospace" font-size="7" fill="#444" text-anchor="middle">Basado en FUSIÓN_CONCEPTUALIZACION.md — Fusión del protocolo teórico + CONTENIDO-DISEÑO de 17 pasos</text>
+</svg>

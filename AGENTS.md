@@ -1,6 +1,6 @@
 # Contexto de Sesión — Algoritmo SOMA
 
-## Última sesión: 15 Jun 2026
+## Última sesión: 15 Jun 2026 ✅
 
 ### Tema: Reparación de notificación WhatsApp en cotizador
 
@@ -30,7 +30,7 @@ Se reemplazó Twilio por **Baileys v7** (`@whiskeysockets/baileys`), una impleme
 ### Cómo usar (primera vez)
 1. Ejecutar `./start_local.sh`
 2. Escanear el QR con WhatsApp (válido por única vez)
-3. A partir de ahí, el servicio envía notificaciones automáticas a `+5219993619433`
+3. A partir de ahí, el servicio envía notificaciones automáticas a `+5219995314093`
 4. Si se cierra sesión, eliminar `backend/whatsapp_service/session-data/` y repetir
 
 ### Pendientes originales (aún vigentes)

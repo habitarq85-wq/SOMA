@@ -58,7 +58,8 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
   - `diseno/` — Referencia bibliográfica (Neufert, Panero, Ching)
   - `arquetipos/` — Índice con 18 recursos open-access sobre vivienda yucateca
   - `repertorio/` — 15+ proyectos de referencia filtrados por clima/tipo
-  - `patrones/` — Catálogo SOMA de 42 patrones + referencia Alexander (34 patrones mapeados)
+   - `patrones/` — Catálogo SOMA de 42 patrones + referencia Alexander (34 patrones mapeados)
+   - `analisis/` — 6 documentos VIVIENDA: Alexander, Gibson, Panero, Normativas Mérida, NMX Accesibilidad, Catálogo SOMA
 
 ## BLOQUE 3: LABORATORIO DE HERRAMIENTAS (I+D)
 - [x] **Aplicaciones:** App de Entrevistas (Ejes de Inmersión y ActivityMatrix operativos en Backend). App de Entrevista v2 con 6 tópicos + grabación + post-formulario.
@@ -85,7 +86,7 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 - [x] **Carrusel filosofía horizontal:** Forzado con `!important`, flecha `→` hint en mobile, slide "CALIDAD SIN JERARQUÍAS" eliminado.
 - [x] **Servicios:** `.services-row` agrupa imagen + lista, contacto debajo.
 - [x] **Trayectoria portrait:** Viñeta `::after` en foto, "M. en Arq." en una línea.
-- [x] **WhatsApp en contacto:** "999 361 9433" visible.
+- [x] **WhatsApp en contacto:** "999 531 4093" visible.
 - [x] **110 imágenes comprimidas:** Pillow quality 80/70, 49→44 MB. Commit `0531ffe`.
 - [x] **Video crossfade:** 2 players, sin pausa entre clips. Opacidad final 0.40.
 - [x] **Email SendGrid:** Reemplazó SMTP (Railway bloquea puertos SMTP). Timeout cliente 20s.
@@ -102,7 +103,8 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 - [x] **Fixes alta prioridad (11/11):** type duplicado, overflow sections, contraste (#bc4b21→#d45e2c, #555→#999, #666→#aaa), alt en 31 imágenes, `<noscript>`, -webkit-backdrop-filter, :focus-visible, scroll-snap-type y proximity. Threshold 0.65.
 - [x] **Video Hero Optimizado:** Fusión de 4 clips MP4 en `hero_loop.mp4` único de 29s con crossfades. 5.6MB (72% más ligero). Lógica JS compleja de players reemplazada por `<video loop>` nativo.
 - [x] **Rutas Operativas SOMA:** Creados `RUTA_CLIENTE.md`, `RUTA_ARQUITECTO.md` y `RUTA_ADMIN.md` para cubrir todo el modelo de negocio y diseño.
-- [x] **Algoritmo SOMA (Base):** Creado `FUSION_CONCEPTUALIZACION.md` integrando el protocolo teórico con la práctica de 17 pasos. Preparación para el diseño del algoritmo visual.
+- [x] **Algoritmo SOMA (Base):** Creado `FUSION_CONCEPTUALIZACION.md` integrando el protocolo teórico con la práctica de 17 pasos.
+- [x] **Algoritmo SOMA (Visual):** HTML interactivo (`web/algoritmo_soma.html`) + diagrama SVG (`recursos_graficos/algoritmo_soma_diagrama.svg`). 16 pasos visualizados en 4 fases con interacción expandible.
 
 ## 🎯 PRIORIDADES 29/05/2026 — ROADMAP A PRODUCCIÓN
 

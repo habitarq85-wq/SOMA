@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 160" width="500" height="160">
+  <rect width="500" height="160" fill="#0a0a0a" rx="12"/>
+
+  <!-- Espiral áurea partiendo de un punto central -->
+  <g transform="translate(65, 80)">
+    <!-- Punto central -->
+    <circle cx="0" cy="0" r="3.5" fill="#d45e2c"/>
+
+    <!-- Espiral -->
+    <path d="M 0,0
+             C 0,-10 10,-20 20,-20
+             C 35,-20 40,-5 40,10
+             C 40,30 20,38 5,38
+             C -18,38 -28,18 -28,-2
+             C -28,-28 -8,-42 15,-42
+             C 45,-42 55,-18 55,8
+             C 55,38 32,55 8,55
+             C -22,55 -42,35 -42,8
+             C -42,-25 -22,-50 10,-55"
+          fill="none" stroke="#d45e2c" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- Puntos de referencia en la espiral (opcional) -->
+    <circle cx="40" cy="10" r="1.8" fill="#d45e2c" opacity="0.6"/>
+    <circle cx="15" cy="38" r="1.5" fill="#d45e2c" opacity="0.4"/>
+    <circle cx="-28" cy="-2" r="1.2" fill="#d45e2c" opacity="0.3"/>
+  </g>
+
+  <!-- Texto SOMA -->
+  <text x="130" y="74" font-family="Georgia, 'Times New Roman', serif" font-size="54" font-weight="bold" fill="#ffffff" letter-spacing="8">SOMA</text>
+
+  <!-- Subtítulo -->
+  <text x="130" y="100" font-family="'Courier New', monospace" font-size="11" fill="#999999" letter-spacing="4">TALLER VIRTUAL DE ARQUITECTURA</text>
+
+  <!-- Línea decorativa -->
+  <line x1="130" y1="110" x2="240" y2="110" stroke="#d45e2c" stroke-width="1.2"/>
+</svg>

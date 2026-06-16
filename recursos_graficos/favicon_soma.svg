@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <rect width="100" height="100" fill="#0a0a0a" rx="8"/>
+
+  <g transform="translate(50, 46)">
+    <!-- Punto central -->
+    <circle cx="0" cy="0" r="2.5" fill="#d45e2c"/>
+
+    <!-- Espiral -->
+    <path d="M 0,0
+             C 0,-7 7,-14 14,-14
+             C 25,-14 28,-4 28,7
+             C 28,21 14,27 3,27
+             C -13,27 -20,13 -20,0
+             C -20,-20 -6,-30 11,-30
+             C 32,-30 39,-13 39,6
+             C 39,27 22,39 6,39
+             C -15,39 -30,25 -30,6"
+          fill="none" stroke="#d45e2c" stroke-width="2" stroke-linecap="round"/>
+  </g>
+</svg>

@@ -1,113 +1,128 @@
-# PROTOCOLO 02: ENTREVISTA DE INMERSION PROFUNDA
-## Bloque 2 — Taller SOMA (Operacion)
+# PROTOCOLO: ENTREVISTA DE INMERSIÓN PROFUNDA
+## Bloque 2 — Taller SOMA (Operación)
+## Referencia: PROCESO DE DISEÑO 2.0 — Items 2.2.1.2, 3.10
 
-Esta entrevista es la primera reunion presencial con el cliente. Se realiza
-apoyandose en la **App de Entrevista** (`aplicaciones_python/app_inmersion/`,
-puerto 5050) que graba la conversacion y estructura los datos.
+**Propósito:** Primera reunión presencial con el cliente para extraer datos
+cualitativos que no pueden capturarse en la Inmersión Web.
 
-La dinamica es conversacional en 6 topicos. El arquitecto lleva el hilo;
-la app registra audio, tiempo por topico y el formulario post-entrevista.
+**Relación con el 2.0:**
+- **2.2.1.2 (Investigación)** — entrevista presencial con grabación y notas
+- **3.10.1–5 (Análisis)** — transcripción, perfiles, matrices, necesidades
+
+**Herramienta:** App de Entrevista (`aplicaciones_python/app_inmersion/`, puerto 5050)
+que graba la conversación y estructura los datos.
+
+**Dinámica:** Conversacional en 6 tópicos. El arquitecto lleva el hilo;
+la app registra audio continuo, tiempo por tópico y formulario post-entrevista.
 
 ---
 
-## Flujo de la Entrevista (6 Topicos)
+## 2.2.1.2 Entrevista Presencial
 
-### Topico 1: La razon de estar aqui
+```
+[ACC] Entrevista de Inmersión (P2.0 ref: 2.2.1.2)
+─────────────────────────────────
+INPUT:  Cita agendada + respuestas de Inmersión Web (10 ejes)
+OPERA:  Sesión presencial. Grabar audio continuo mientras se
+        conversan los 6 tópicos. El arquitecto toma notas de
+        observaciones no verbales. El audio se guarda en bruto
+OUTPUT: • `entrevista.wav` o `.webm` (audio en bruto)
+        • `notas_campo_entrevista.txt` (observaciones)
+PROC:   HUMANO
+```
+
+### Tópico 1: La razón de estar aquí
 *Objetivo: Entender el encargo, el sitio y las reglas del juego.*
 
-- Describa el proyecto: que quiere construir, donde, para que.
-- Terreno: dimensiones, ubicacion, si ya es propietario.
-- Reglas: manual de construccion del fraccionamiento, restricciones conocidas.
-- Tomador de decisiones: quien tiene la ultima palabra en lo estetico y economico.
-- Presupuesto: el presupuesto incluye el terreno? o es solo construccion +
-  honorarios?
+- [ ] Describa el proyecto: qué quiere construir, dónde, para qué
+- [ ] Terreno: dimensiones, ubicación, si ya es propietario
+- [ ] Reglas: manual de construcción del fraccionamiento, restricciones conocidas
+- [ ] Tomador de decisiones: quién tiene la última palabra (estético y económico)
+- [ ] Presupuesto: ¿incluye terreno? ¿o solo construcción + honorarios?
 
-### Topico 2: Los habitantes
+### Tópico 2: Los habitantes
 *Objetivo: Construir la UserEntity de cada habitante.*
 
-- Quienes van a habitar el edificio? (cantidad, edades, salud/movilidad).
-- Tipos de usuarios: residentes fijos, visitas frecuentes, personal de servicio.
-- Capacidad de usuarios: accesibilidad, necesidades especiales.
-- Quien pasa mas tiempo en casa? Quien trabaja desde casa?
-- Mascotas.
+- [ ] Quiénes van a habitar el edificio (cantidad, edades, salud/movilidad)
+- [ ] Tipos de usuarios: residentes fijos, visitas frecuentes, servicio
+- [ ] Capacidades: accesibilidad, necesidades especiales
+- [ ] Quién pasa más tiempo en casa, quién trabaja desde casa
+- [ ] Mascotas (tipo, cantidad, tamaño)
 
-### Topico 3: El programa arquitectonico
-*Objetivo: Registrar los espacios solicitados para analizar despues que
-espacios complementarios necesita.*
+### Tópico 3: El programa arquitectónico
+*Objetivo: Registrar los espacios solicitados. NO complementar en el momento.*
 
-- Recamaras: cantidad, todas con bano y closet? recamara en PB?
-- Banos: banjo de visitas, medios banos.
-- Zonas de trabajo/hobby: oficina, estudio, taller, gimnasio, cava, cuarto de TV.
-- Servicios: cuarto de servicio con bano, lavado, bodega, cochera (autos).
-- Extras: alberca, terraza, jardin, roof garden.
-- Colecciones o equipamiento especial que requiera espacio dedicado.
-- NO se complementa en el momento — se registra para analisis posterior.
+- [ ] Recámaras: cantidad, todas con baño y closet, ¿una en PB?
+- [ ] Baños: baño de visitas, medios baños
+- [ ] Zonas de trabajo/hobby: oficina, estudio, taller, gimnasio, cava, cuarto TV
+- [ ] Servicios: cuarto de servicio, lavado, bodega, cochera (autos)
+- [ ] Extras: alberca, terraza, jardín, roof garden
+- [ ] Colecciones o equipamiento especial que requiera espacio dedicado
 
-### Topico 4: Dinamicas y rutinas
-*Objetivo: Poblar la ActivityMatrix de 24 slots.*
+### Tópico 4: Dinámicas y rutinas
+*Objetivo: Poblar la Activity Matrix de 24 slots por habitante.*
 
-- Como es un dia entre semana en la familia? (despertar, comidas, trabajo,
-  llegada a casa, dormir).
-- Como son los fines de semana?
-- Quien cocina? Se come junto o separado?
-- Reciben visitas seguido? Fiestas? Familia que se queda a dormir?
-- Rutinas de mascotas.
-- Clima: prefieren ventilacion natural o A/C? Que tanto uso de aire esperan?
-- Materiales: busqueda de materiales "eternos" o aprecian la patina y la nobleza
-  de la madera/piedra?
-- Orden: espacios que deban ser faciles de limpiar vs. espacios que puedan tener
-  "desorden creativo".
+- [ ] Día entre semana: despertar, comidas, trabajo, llegada a casa, dormir
+- [ ] Fines de semana: ¿diferente?
+- [ ] Quién cocina, ¿comen juntos o separados?
+- [ ] Visitas: frecuencia, fiestas, familia que se queda a dormir
+- [ ] Clima: ¿ventilación natural o A/C? ¿qué tanto uso de aire esperan?
+- [ ] Materiales: ¿buscan materiales "eternos" o aprecian pátina? ¿madera/piedra?
+- [ ] Orden: espacios fáciles de limpiar vs "desorden creativo"
 
-### Topico 5: Inversion
-*Objetivo: Validar la viabilidad economica y definir prioridades.*
+### Tópico 5: Inversión
+*Objetivo: Validar viabilidad económica y definir prioridades.*
 
-- Presupuesto realista: cuanto pueden invertir en el proyecto completo?
-- El proyecto se construira de una sola vez o por etapas?
-- Prioridad: prefieren mas metros cuadrados con acabados sencillos, o menos
-  metros con acabados de lujo?
-- Honorarios de diseno incluidos en el presupuesto?
-- Rango de obra esperado (terceros): $14k–$16.5k (Esencial), $18.5k–$23k
-  (Integral), $28k–$40k (Ejecutivo) por m2.
+- [ ] Presupuesto realista para el proyecto completo
+- [ ] ¿Construcción única o por etapas?
+- [ ] Prioridad: más m² con acabados sencillos vs menos m² con acabados de lujo
+- [ ] ¿Honorarios de diseño incluidos?
+- [ ] Rango de obra esperado: $14k–$16.5k (Esencial), $18.5k–$23k (Integral), $28k–$40k (Ejecutivo)
 
-### Topico 6: La cereza del pastel (Poetica)
+### Tópico 6: La cereza del pastel (Poética)
 *Objetivo: Extraer el CreativeCore y el Mensaje Creativo.*
 
-- Si al entrar a tu casa pudieras sentir un solo adjetivo (paz, poder, orden,
-  libertad), cual seria?
-- Cual es tu recuerdo mas feliz relacionado con un espacio?
-- Hay algun mueble, cuadro u objeto que deba dictar el diseno de un espacio?
-- Que es lo que NO quieres que pase en este proceso o en el resultado final?
-- Como te imaginas viviendo en este espacio en 10 anos?
-- Cierre breve de la filosofia SOMA: automatizamos lo tecnico, liberamos el
-  diseno. Explicar como trabajamos (disenamos, no construimos; tenemos
-  coadyuvantes externos) y proceso de anticipos/cobros.
+- [ ] Si al entrar a tu casa pudieras sentir un solo adjetivo, ¿cuál sería?
+- [ ] ¿Cuál es tu recuerdo más feliz relacionado con un espacio?
+- [ ] ¿Hay algún objeto que deba dictar el diseño de un espacio?
+- [ ] ¿Qué es lo que NO quieres que pase en este proceso?
+- [ ] ¿Cómo te imaginas viviendo aquí en 10 años?
+- [ ] Cierre: filosofía SOMA (automatizamos lo técnico, liberamos el diseño)
 
 ---
 
-## Post-Entrevista (Formulario en App)
+## Post-Entrevista
 
-Al finalizar la grabacion, el arquitecto llena en la app:
-
-- Cliente: nombre completo, correo, telefono.
-- Habitantes: resumen de UserEntity.
-- Programa: lista de espacios solicitados.
-- Rutinas: notas sobre ActivityMatrix.
-- Inversion: presupuesto confirmado, etapas.
-- Notas adicionales del arquitecto.
-- Checkbox: "Analizar con IA" (procesar con DeepSeek Flash cuando este
-  configurado).
+```
+[ACC] Formulario Post-Entrevista
+─────────────────────────────────
+INPUT:  6 tópicos conversados + notas del arquitecto
+OPERA:  Inmediatamente después de la entrevista, el arquitecto llena
+        el formulario en la App de Entrevista: cliente, habitantes,
+        programa, rutinas, inversión, notas adicionales
+OUTPUT: `info.json` — metadatos estructurados del proyecto
+PROC:   HUMANO
+```
 
 ---
 
-## Procesamiento (IA)
+## Procesamiento con IA
 
-1. **Transcripcion:** `faster-whisper` (local) convierte el audio a texto.
-2. **Analisis:** `DeepSeek Flash API` recibe la transcripcion + base de
-   conocimiento SOMA (Psicologia Ambiental, Patrones Alexander, Space Syntax,
-   Environmental Behavior, POE, Proxemica).
-3. **Salida:**
-   - `guia_de_diseno.md` — documento para el equipo de diseno.
-   - `datos_estructurados.json` — Activity Matrix, ejes, CreativeCore.
+```
+[ACC] Análisis Automático (P2.0 ref: 3.10)
+─────────────────────────────────
+INPUT:  `entrevista.wav` + `info.json`
+OPERA:  1) Transcripción con faster-whisper (local)
+        2) Análisis con DeepSeek Flash API:
+           - Extraer Activity Matrix por habitante
+           - Identificar CreativeCore
+           - Generar guía de diseño
+        Sin API configurada → genera guía stub
+OUTPUT: • `transcripcion.txt`
+        • `guia_de_diseno.md` — documento para diseñadores
+        • `datos_estructurados.json` — matriz, ejes, CreativeCore
+PROC:   AI
+```
 
 ---
 
@@ -115,20 +130,29 @@ Al finalizar la grabacion, el arquitecto llena en la app:
 
 ```
 backend/proyectos/SOMA-YYYYMMDD-XXXX/
-  info.json                ← metadatos (estado, cliente, fechas)
-  entrevista.webm          ← grabacion de audio
-  transcripcion.txt        ← salida de Whisper
-  guia_de_diseno.md        ← documento para disenadores
-  datos_estructurados.json ← Activity Matrix, ejes, etc.
+├── info.json                 ← metadatos (estado, cliente, fechas)
+├── entrevista.webm           ← grabación de audio
+├── transcripcion.txt         ← salida de Whisper
+├── guia_de_diseno.md         ← documento para diseñadores
+└── datos_estructurados.json  ← Activity Matrix, ejes, CreativeCore
 ```
+
+### Complementariedad Web + Entrevista
+
+| Fuente | Captura | Uso |
+|--------|---------|-----|
+| Inmersión Web (10 ejes) | Preferencias visuales A/B | Parámetros de fachada, planta, materialidad |
+| Entrevista (6 tópicos) | Contexto profundo | Guía de diseño unificada |
+
+Ambas fuentes se fusionan en la `guia_de_diseno.md` de cada proyecto.
 
 ---
 
-## Complementariedad Web + Entrevista
+## FUENTES
 
-| Fuente | Que captura | Como se usa |
-|--------|-------------|-------------|
-| Inmersion Web (10 ejes) | Preferencias visuales A/B | Parametros de fachada, planta, materialidad |
-| Entrevista (6 topicos) | Contexto profundo: habitantes, rutinas, poetica | Guia de diseno unificada |
-
-Ambas fuentes se fusionan en la `guia_de_diseno.md` de cada proyecto.
+- Hall, E. T. (1966). *The Hidden Dimension.* Doubleday.
+- Alexander, C. et al. (1977). *A Pattern Language.* Oxford University Press.
+- Zeisel, J. (2006). *Inquiry by Design.* Norton.
+- Deasy, C. M. & Lasswell, T. E. (1990). *Designing Places for People.*
+- Holahan, C. J. (1982). *Environmental Psychology.* Random House.
+- Sommer, R. (1969). *Personal Space: The Behavioral Basis of Design.*

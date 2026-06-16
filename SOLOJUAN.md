@@ -402,7 +402,7 @@ La investigación de sitio y normativa NO va antes de la cotización; se ejecuta
 
 "agrega el WhatsApp en la sección de contacto."
 
-**Decisión:** "WhatsApp: 999 361 9433" agregado en la sección Contacto.
+**Decisión:** "WhatsApp: 999 531 4093" agregado en la sección Contacto.
 
 "comprime las imágenes para que pesen menos."
 

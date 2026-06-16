@@ -1,150 +1,167 @@
 # PROTOCOLO: ANTEPROYECTO
-## Bloque 2 — Taller SOMA (Operación) | Etapa 9 del Ciclo
+## Bloque 2 — Taller SOMA (Operación) | Secciones 6 y 8 del PROCESO DE DISEÑO 2.0
+## Referencia: Items 6.1-6.2 (Básico), 8.1-8.6 (Integral)
 
-### ¿Qué es el Anteproyecto?
+**Qué es:** Formalización del diseño en planos arquitectónicos presentables.
+El cliente puede entenderlos y un constructor puede cotizar.
 
-Es la formalización del diseño en planos arquitectónicos presentables. No es un modelo 3D — son plantas, cortes y alzados a escala que el cliente puede entender y un constructor puede cotizar.
+**Entrada:** Modelo 3D evaluado y corregido (de Evaluación 4.14-4.15).
 
-**Entrada:** Modelo 3D evaluado y corregido (de Etapa 8).
 **Salida:** Juego de planos de anteproyecto para aprobación del cliente.
 
-### Principio rector
-
-El anteproyecto es el **primer entregable técnico**. Debe ser suficientemente completo para permiso de construcción (paquete Integral+) o para que el cliente contrate un constructor (paquete Esencial).
-
 ---
 
-## 1. DEFINICIÓN DE ELEMENTOS DEL ANTEPROYECTO
-(Fuentes: Reglamento de Construcción del Municipio de Mérida — requisitos de planos; Normativa mexicana de planos arquitectónicos; prácticas profesionales de Duarte Aznar)
+## 6. Planimetría — Etapa Básica (SOMA Esencial)
 
-### 1.1 Lámina de presentación
+```
+[HUMANO→AI] 6.1 Plantas Arquitectónicas (P2.0 ref: 6.1)
+─────────────────────────────────
+INPUT:  4.15 Diseño final + Modelo 3D (desde 5.2 o CAD/BIM)
+OPERA:  Generar láminas: planta de conjunto, plantas de distribución
+        por nivel, cotas, ejes, nombres de espacios, norte, escala
+OUTPUT: Lámina(s) de plantas arquitectónicas (PDF)
+PROC:   HUMANO (prepara) → AI (genera lámina base desde modelo)
+```
+
+```
+[HUMANO→AI] 6.2 Alzados Arquitectónicos (P2.0 ref: 6.2)
+─────────────────────────────────
+INPUT:  4.15 Diseño final + Modelo 3D
+        4.11.5 Fachadas + 4.8.5 Materiales
+OPERA:  Generar alzados de todas las fachadas con cotas verticales,
+        materiales anotados y escala gráfica
+OUTPUT: Lámina(s) de alzados arquitectónicos (PDF)
+PROC:   HUMANO (prepara) → AI (genera lámina base desde modelo)
+```
+
+### Lámina de presentación
 - [ ] Nombre del proyecto y cliente
 - [ ] Ubicación y dirección del predio
-- [ ] Tipo de proyecto
 - [ ] Área de terreno y área construida
-- [ ] Cuadro de áreas (por nivel)
+- [ ] Cuadro de áreas por nivel
 - [ ] Escala gráfica + flecha de norte
-- [ ] Fecha y número de proyecto
-- [ ] Nombre del proyectista: "SOMA Taller Virtual de Arquitectura · MM. Arq. Juan José Piña May"
+- [ ] "SOMA Taller Virtual de Arquitectura · MM. Arq. Juan José Piña May"
 
-### 1.2 Planta de Conjunto (escala 1:100 o 1:75)
-(Fuente: Ching, Architectural Graphics — convenciones de representación)
-
+### Planta de Conjunto (1:100 o 1:75)
 - [ ] Polígono del predio con dimensiones y colindancias
-- [ ] Proyección de cubiertas (con pendientes y bajadas de agua)
-- [ ] Áreas exteriores: jardín, terraza, andadores, alberca
-- [ ] Vegetación existente y propuesta
-- [ ] Acceso peatonal y vehicular
-- [ ] Restricciones frontales, laterales y posteriores marcadas (línea punteada)
-- [ ] Cotización general del predio
-- [ ] Norte magnético
+- [ ] Proyección de cubiertas con pendientes
+- [ ] Áreas exteriores, vegetación, accesos
+- [ ] Restricciones marcadas (línea punteada)
 
-### 1.3 Planta(s) Arquitectónica(s) por nivel (escala 1:75 o 1:50)
-(Fuente: NOM-008-SCFI — sistema general de unidades de medida; Ching, Architectural Graphics)
-
-- [ ] Muros interiores y exteriores con espesor real (no simbólico)
-- [ ] Vanos (puertas y ventanas) con identificación (V-1, P-1, etc.) y dimensiones
-- [ ] Cotización de todos los espacios (muros a eje y a paño)
+### Planta(s) Arquitectónica(s) por nivel (1:75 o 1:50)
+- [ ] Muros con espesor real
+- [ ] Vanos con identificación y dimensiones
+- [ ] Cotas de todos los espacios
 - [ ] Nombres de cada espacio + área en m²
-- [ ] Nivel de piso terminado (NPT) en cada espacio
-- [ ] Escalera(s): número de escalones, huella, contrahuella, dirección de subida
-- [ ] Instalaciones sanitarias (bajadas de aguas negras y pluviales — esquemático)
-- [ ] Corte de fachada indicado (línea de corte)
-- [ ] Zonificación SOMA indicada con color o etiqueta
-- [ ] Tabla de vanos en lámina aparte (Ventana-1: 1.20×1.50m, etc.)
+- [ ] NPT en cada espacio
+- [ ] Escalera: número de escalones, huella, contrahuella
 
-### 1.4 Cortes Arquitectónicos (mínimo 2, escala 1:75)
-(Fuente: Ching, Building Construction Illustrated — cortes constructivos)
+### Cortes Arquitectónicos (1:75)
+- [ ] Mínimo 2 cortes (longitudinal y transversal)
+- [ ] Niveles de piso terminado y banqueta
+- [ ] Alturas libres acotadas
+- [ ] Composición de cubierta esquemática
 
-- [ ] Corte longitudinal que pase por el espacio principal y acceso
-- [ ] Corte transversal que muestre la relación fachada-fondo
-- [ ] Niveles: NPT (piso terminado), NPT (techo), altura total
-- [ ] Alturas libres de cada espacio (mín. 2.60m)
-- [ ] Composición de cubierta (pendiente, impermeabilizante, losa)
-- [ ] Composición de muro exterior (block + repellado + pintura, etc.)
-- [ ] Cimentación esquemática (tipo, profundidad estimada)
-- [ ] Cotización vertical de niveles
-
-### 1.5 Alzados / Fachadas (mínimo 2, escala 1:75)
-- [ ] Fachada principal (acceso)
-- [ ] Fachada posterior (jardín)
-- [ ] Materiales de fachada indicados con texto o leyenda
-- [ ] Altura total del proyecto
-- [ ] Niveles de piso y techo
-- [ ] Proyección de sombras (opcional — orientativo)
-- [ ] Contexto inmediato (banqueta, calle, colindancia esquemática)
-
-### 1.6 Tabla de Acabados (1 página, solo para Integral+)
-(Fuente: especificaciones de construcción residencial mexicana)
-
-| Espacio | Piso | Muro | Plafón | Zócalo | Puerta | Observaciones |
-|---------|------|------|--------|--------|--------|---------------|
-| Sala-comedor | Porcelanato 60×60 | Repellado + pintura | Losa aparente | 10cm | Madera 2.10m | _ |
-| Recámara 1 | Madera laminada | Repellado + pintura | Tablaroca | 5cm | MDF 2.10m | _ |
+### Alzados (1:75)
+- [ ] Las 4 fachadas con cotas verticales
+- [ ] Materiales anotados (texto)
+- [ ] Vegetación y contexto (siluetas)
 
 ---
 
-## 2. ELEMENTOS POR PAQUETE
+## 8. Anteproyecto — Etapa Integral (SOMA Integral)
 
-| Elemento | Esencial | Integral | Ejecutivo |
-|----------|----------|----------|-----------|
-| Planta de conjunto | ✅ | ✅ | ✅ |
-| Plantas arquitectónicas | ✅ (1 nivel) | ✅ (todos) | ✅ (todos) |
-| Cortes (mínimo 2) | ✅ | ✅ | ✅ |
-| Alzados (mínimo 2) | ✅ | ✅ | ✅ |
-| Tabla de vanos | ❌ | ✅ | ✅ |
-| Tabla de acabados | ❌ | ✅ | ✅ |
-| Moodboard de materiales | ❌ | ✅ | ✅ |
-| Planta de instalaciones | ❌ | ✅ esquemático | ✅ detallado |
-| Planta estructural | ❌ | ❌ | ✅ esquemático |
-| Perspectivas adicionales | ❌ | ✅ (2+) | ✅ (4+) |
+```
+[DEC] 8.1 Selección Real de Acabados (P2.0 ref: 8.1)
+─────────────────────────────────
+INPUT:  4.8.5 Paleta de materiales (conceptual)
+        Presupuesto + disponibilidad local
+OPERA:  Convertir paleta conceptual en acabados reales: productos
+        específicos (marca, modelo), proveedores locales, costo/m²
+OUTPUT: Tabla de acabados reales con proveedores y costos
+PROC:   HUMANO
+```
+
+```
+[GUI] 8.2 Criterio de Instalaciones Hidrosanitarias (P2.0 ref: 8.2)
+─────────────────────────────────
+INPUT:  4.15 Diseño final + 2.2.2.1 Acometidas existentes
+OPERA:  Definir bajantes, registros, diámetros tentativos, captación
+        pluvial, cisterna, tinaco, calentador, bombeo
+OUTPUT: Diagrama de criterio hidrosanitario sobre planta
+PROC:   HUMANO (criterio) → AI (verificación dimensional)
+```
+
+```
+[GUI] 8.3 Criterio de Estructura (P2.0 ref: 8.3)
+─────────────────────────────────
+INPUT:  4.8.6 Sistema estructural propuesto
+        2.2.2.1 Mecánica de suelos (si existe)
+        3.7 Restricciones normativas
+OPERA:  Definir sistema, claros máximos, secciones tentativas,
+        cimentación, material
+OUTPUT: Esquema estructural con ejes y secciones tentativas
+PROC:   HUMANO (decisión) → AI (cálculos preliminares)
+```
+
+```
+[HUMANO→AI] 8.4 Planos de Permiso (P2.0 ref: 8.4)
+─────────────────────────────────
+INPUT:  6.1-6.2 Plantas y alzados actualizados
+        8.2-8.3 Criterios de ingeniería
+        3.7 Restricciones normativas
+OPERA:  Generar planos para trámite municipal: plantas, alzados,
+        cortes, cimentación, estructura, instalaciones, fachadas
+OUTPUT: Juego de planos de permiso (PDF, para firma y sello)
+PROC:   HUMANO (prepara) → AI (genera formato) → HUMANO (revisa y sella)
+```
+
+```
+[ACC] 8.5 Perspectivas Adicionales (P2.0 ref: 8.5)
+─────────────────────────────────
+INPUT:  8.4 Planos de permiso + 5.1 Vistas seleccionadas
+OPERA:  Generar perspectivas adicionales: fachada con contexto,
+        interiores adicionales, vistas aéreas, esquemas
+OUTPUT: Juego adicional de renders y diagramas
+PROC:   HUMANO→AI→HUMANO
+```
+
+```
+[OUT] 8.6 Documento de Entrega Integral (P2.0 ref: 8.6)
+─────────────────────────────────
+INPUT:  6.1-6.2 Planos + 8.4 Planos de permiso
+        8.1 Tabla de acabados + 8.5 Perspectivas
+        7.1 HTML actualizado
+OPERA:  Compilar todo en carpeta de entrega organizada
+OUTPUT: Carpeta de entrega Integral (digital, por secciones)
+PROC:   AI (compilación)
+```
 
 ---
 
-## 3. CHECKLIST DE REVISIÓN
+## Salida del Anteproyecto
 
-- [ ] ¿Todos los espacios del programa arquitectónico aparecen en las plantas?
-- [ ] ¿Las dimensiones en planta coinciden con el modelo 3D?
-- [ ] ¿Los cortes pasan por los espacios más significativos?
-- [ ] ¿Las fachadas muestran el material correcto?
-- [ ] ¿La tabla de vanos (si aplica) está completa?
-- [ ] ¿El cuadro de áreas suma correctamente?
-- [ ] ¿El norte es consistente en todas las láminas?
-- [ ] ¿La escala gráfica es correcta y consistente?
-- [ ] ¿Los nombres de archivo siguen la convención SOMA?
-- [ ] ¿El juego de planos está completo según el paquete contratado?
+### Esencial ($250/m²)
+- [ ] Lámina de presentación
+- [ ] Planta de conjunto
+- [ ] Plantas arquitectónicas por nivel
+- [ ] 2 cortes
+- [ ] 4 alzados
 
----
-
-## 4. SALIDA DEL ANTEPROYECTO
-
-1. **Juego de planos en PDF** (formato doble carta o A3):
-   - `SOMA-[Cliente]-CONJUNTO.pdf`
-   - `SOMA-[Cliente]-PLANTA_BAJA.pdf`
-   - `SOMA-[Cliente]-PLANTA_ALTA.pdf` (si aplica)
-   - `SOMA-[Cliente]-CORTE_[A|B].pdf`
-   - `SOMA-[Cliente]-FACHADA_[A|B].pdf`
-   - `SOMA-[Cliente]-ACABADOS.pdf` (si aplica)
-2. **Archivo fuente** editable (Revit .rvt o Blender .blend)
-3. **PDF unificado** con todas las láminas en orden (para enviar al cliente)
-
-**Hito de segundo pago (40%):** Se entrega el anteproyecto al cliente. Tras su aprobación y pago, se continúa a Planos Técnicos (Etapa 10).
+### Integral ($350/m²) — todo lo anterior más:
+- [ ] Tabla de acabados reales con proveedores
+- [ ] Criterio hidrosanitario
+- [ ] Criterio estructural
+- [ ] Planos de permiso municipal
+- [ ] Perspectivas adicionales
+- [ ] Dossier HTML de entrega
 
 ---
 
 ## FUENTES
 
-- **Francis D.K. Ching**, *Architectural Graphics* (6th ed., 2015) — convenciones de dibujo arquitectónico: cotas, escalas, simbología, organización de láminas.
-- **Francis D.K. Ching**, *Building Construction Illustrated* (6th ed., 2020) — composición de planos, cortes constructivos, especificación de materiales.
-- **Francis D.K. Ching**, *Architecture: Form, Space, & Order* (4th ed., 2014) — organización espacial en planta, circulación, jerarquía de accesos.
-- **C. M. Deasy**, *Design Places for People* (1974) — relación entre el programa arquitectónico y la organización espacial en el anteproyecto.
-- **Jacques Paul Grillo**, *Form, Function and Design* (1960) — paso de la función (programa) a la forma (planta), coherencia formal.
-- **Reglamento de Construcción del Municipio de Mérida** — requisitos de planos para permiso de construcción, formatos, firmas.
-- **Ernst Neufert**, *Arte de Proyectar en Arquitectura* (17ª ed. española, 2014) — estándares dimensionales para planos de anteproyecto, dimensiones mínimas de espacios.
-- **Julius Panero & Martin Zelnik**, *Human Dimension & Interior Space* (1979) — antropometría para dimensionamiento de mobiliario, circulaciones y áreas de trabajo.
-- **NMX-R-001-SCFI-2015** — Dibujo técnico, nomenclatura oficial para simbología y acotado.
-- **NOM-008-SCFI** — Sistema General de Unidades de Medida (escalas, simbología, cotas).
-
----
-
-*"El anteproyecto no es el diseño final — es el acuerdo congelado antes de entrar en detalle."*
+- Ching, F. (2015). *Architectural Graphics.*
+- Ching, F. (2020). *Building Construction Illustrated.*
+- NOM-008-SCFI — Sistema General de Unidades de Medida.
+- Reglamento de Construcción del Municipio de Mérida.
+- ISO 13567 — Organization and naming of layers.

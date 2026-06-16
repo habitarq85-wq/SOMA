@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Algoritmo SOMA — Grafo Conceptual (Sección 4)</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a0a0a;color:#f0f0f0;font-family:'Courier New',monospace;overflow-x:hidden;display:flex;flex-direction:column;align-items:center;padding:20px}
+h1{font-size:1.2rem;letter-spacing:6px;font-weight:400;margin-bottom:4px;color:#ddd}
+h1 span{color:#d45e2c}
+.sub{font-size:.65rem;color:#666;letter-spacing:3px;text-transform:uppercase;margin-bottom:16px}
+svg{background:#0a0a0a;border:1px solid #222;border-radius:8px;box-shadow:0 0 60px rgba(0,0,0,.6);max-width:100%;height:auto}
+.node{cursor:pointer}
+.node-body{transition:filter .15s,stroke .15s}
+.node:hover .node-body{filter:brightness(1.25);stroke:#555}
+.node-stripe{transition:fill .25s}
+.edge-path{transition:opacity .3s}
+.loop-path{stroke-dashoffset:0;animation:dashPulse 2.5s ease-in-out infinite}
+.loop-label{animation:pulseLabel 2.5s ease-in-out infinite}
+@keyframes dashPulse{0%,100%{stroke-dashoffset:0}50%{stroke-dashoffset:8}}
+@keyframes pulseLabel{0%,100%{opacity:.6}50%{opacity:1}}
+.fase-l{font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;writing-mode:vertical-rl;text-orientation:mixed}
+.gl{stroke:#ffffff08;stroke-width:1}
+.fb{stroke-width:0}
+</style>
+</head>
+<body>
+<h1>SECCIÓN 4 · <span>CONCEPTUALIZACIÓN</span></h1>
+<div class="sub">Grafo de Dependencias — Algoritmo SOMA v2.0</div>
+
+<svg viewBox="0 0 1500 1250" xmlns="http://www.w3.org/2000/svg" id="grafo">
+<defs>
+  <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10 Z" fill="#888"/>
+  </marker>
+  <marker id="ax" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10 Z" fill="#aa8800"/>
+  </marker>
+  <marker id="al" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10 Z" fill="#ff9800"/>
+  </marker>
+  <marker id="ae" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10 Z" fill="#d45e2c"/>
+  </marker>
+  <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity=".35"/></filter>
+</defs>
+
+<g>
+  <line class="gl" x1="0" y1="150" x2="1500" y2="150"/>
+  <line class="gl" x1="0" y1="390" x2="1500" y2="390"/>
+  <line class="gl" x1="0" y1="640" x2="1500" y2="640"/>
+  <line class="gl" x1="0" y1="890" x2="1500" y2="890"/>
+  <line class="gl" x1="250" y1="0" x2="250" y2="1150"/>
+  <line class="gl" x1="500" y1="0" x2="500" y2="1150"/>
+  <line class="gl" x1="750" y1="0" x2="750" y2="1150"/>
+  <line class="gl" x1="1000" y1="0" x2="1000" y2="1150"/>
+  <line class="gl" x1="1250" y1="0" x2="1250" y2="1150"/>
+</g>
+
+<rect class="fb" x="90" y="50" width="1380" height="200" fill="#4caf50" opacity=".045" rx="4"/>
+<rect class="fb" x="90" y="290" width="1380" height="200" fill="#5c6bc0" opacity=".045" rx="4"/>
+<rect class="fb" x="90" y="530" width="1380" height="220" fill="#ef5350" opacity=".045" rx="4"/>
+<rect class="fb" x="90" y="790" width="1380" height="200" fill="#26c6da" opacity=".045" rx="4"/>
+
+<text x="42" y="150" text-anchor="middle" class="fase-l" fill="#4caf50" opacity=".8">FASE A</text>
+<text x="42" y="390" text-anchor="middle" class="fase-l" fill="#5c6bc0" opacity=".8">FASE B</text>
+<text x="42" y="640" text-anchor="middle" class="fase-l" fill="#ef5350" opacity=".8">FASE C</text>
+<text x="42" y="890" text-anchor="middle" class="fase-l" fill="#26c6da" opacity=".8">FASE D</text>
+
+<text x="68" y="115" text-anchor="middle" fill="#4caf50" font-size="9" opacity=".5" font-weight="700">01–03</text>
+<text x="68" y="355" text-anchor="middle" fill="#5c6bc0" font-size="9" opacity=".5" font-weight="700">04–07</text>
+<text x="68" y="610" text-anchor="middle" fill="#ef5350" font-size="9" opacity=".5" font-weight="700">08–12</text>
+<text x="68" y="855" text-anchor="middle" fill="#26c6da" font-size="9" opacity=".5" font-weight="700">13–15</text>
+
+<!-- External inputs -->
+<g>
+  <rect x="275" y="15" width="190" height="28" rx="4" fill="#221d00" stroke="#aa8800" stroke-width="1" opacity=".85"/>
+  <text x="370" y="33" text-anchor="middle" fill="#ddb800" font-size="8" font-weight="700">3.1–3.10 Análisis</text>
+  <line x1="370" y1="43" x2="370" y2="105" stroke="#aa8800" stroke-width="1.5" marker-end="url(#ax)" opacity=".65"/>
+</g>
+<g>
+  <rect x="685" y="15" width="190" height="28" rx="4" fill="#221d00" stroke="#aa8800" stroke-width="1" opacity=".85"/>
+  <text x="780" y="33" text-anchor="middle" fill="#ddb800" font-size="8" font-weight="700">3.5–3.6 Patrones</text>
+  <line x1="780" y1="43" x2="780" y2="105" stroke="#aa8800" stroke-width="1.5" marker-end="url(#ax)" opacity=".65"/>
+</g>
+<g>
+  <rect x="115" y="255" width="190" height="28" rx="4" fill="#221d00" stroke="#aa8800" stroke-width="1" opacity=".85"/>
+  <text x="210" y="273" text-anchor="middle" fill="#ddb800" font-size="8" font-weight="700">3.3 Programa Arq.</text>
+  <line x1="210" y1="283" x2="210" y2="345" stroke="#aa8800" stroke-width="1.5" marker-end="url(#ax)" opacity=".65"/>
+</g>
+
+<!-- Intra-phase edges -->
+<line class="edge-path" data-from="01" x1="470" y1="150" x2="676" y2="150" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+<line class="edge-path" data-from="02" x1="880" y1="150" x2="1076" y2="150" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+<line class="edge-path" data-from="04" x1="310" y1="390" x2="476" y2="390" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+<line class="edge-path" data-from="05" x1="680" y1="390" x2="836" y2="390" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+<line class="edge-path" data-from="06" x1="1040" y1="390" x2="1076" y2="390" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+<line class="edge-path" data-from="08" x1="320" y1="640" x2="416" y2="640" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+<line class="edge-path" data-from="09" x1="620" y1="640" x2="676" y2="640" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+<line class="edge-path" data-from="10" x1="880" y1="640" x2="936" y2="640" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+<line class="edge-path" data-from="11" x1="1140" y1="640" x2="1156" y2="640" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+<line class="edge-path" data-from="13" x1="575" y1="890" x2="646" y2="890" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+<line class="edge-path" data-from="14" x1="850" y1="890" x2="886" y2="890" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+
+<!-- Cross-phase edges -->
+<path class="edge-path" data-from="03" d="M 1180 192 C 1180 350, 700 480, 316 590" stroke="#888" stroke-width="2" fill="none" marker-end="url(#a)"/>
+<path class="edge-path" data-from="07" d="M 1180 432 C 1000 520, 600 560, 222 593" stroke="#888" stroke-width="2" fill="none" marker-end="url(#a)"/>
+<path class="edge-path" data-from="10" d="M 780 682 C 700 770, 550 800, 475 843" stroke="#888" stroke-width="2" fill="none" marker-end="url(#a)"/>
+<path class="edge-path" data-from="12" d="M 1260 682 C 1000 770, 700 810, 425 843" stroke="#888" stroke-width="2" fill="none" marker-end="url(#a)"/>
+
+<!-- Loop 1: 09 area → Phase B -->
+<path class="loop-path" d="M 450 630 C 130 630, 130 450, 130 420 C 130 390, 190 390, 230 390" stroke="#ff9800" stroke-width="2.5" fill="none" stroke-dasharray="6,4" marker-end="url(#al)"/>
+<text x="82" y="545" class="loop-label" fill="#ff9800" font-size="11" font-weight="700">↺ iterar</text>
+<text x="76" y="560" fill="#ff9800" font-size="7" opacity=".5">re-evaluar</text>
+
+<!-- Loop 2: 14 area → Phase C -->
+<path class="loop-path" d="M 650 870 C 130 870, 130 700, 130 670 C 130 640, 190 640, 230 640" stroke="#ff9800" stroke-width="2.5" fill="none" stroke-dasharray="6,4" marker-end="url(#al)"/>
+<text x="82" y="800" class="loop-label" fill="#ff9800" font-size="11" font-weight="700">↺ iterar</text>
+<text x="76" y="815" fill="#ff9800" font-size="7" opacity=".5">re-evaluar</text>
+
+<!-- 15 → Sección 5 -->
+<path d="M 990 932 C 990 980, 990 1000, 990 1030" stroke="#d45e2c" stroke-width="2" fill="none" marker-end="url(#ae)" stroke-dasharray="6,3"/>
+<text x="1008" y="1008" fill="#d45e2c" font-size="10" font-weight="700" opacity=".9">→ Sección 5</text>
+<text x="1008" y="1023" fill="#d45e2c" font-size="9" opacity=".6">Visualización</text>
+
+<!-- ==================== NODES ==================== -->
+
+<!-- 01 -->
+<g class="node" data-step="01" data-outgoing='["02"]'>
+  <rect class="node-stripe" x="270" y="107" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="270" y="107" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="285" y="140" fill="#888" font-size="9" font-weight="700">01</text>
+  <text x="370" y="157" text-anchor="middle" fill="#eee" font-size="11" font-weight="400">Manifiesto de</text>
+  <text x="370" y="172" text-anchor="middle" fill="#eee" font-size="11" font-weight="400">Intenciones</text>
+  <rect x="420" y="118" width="40" height="18" rx="3" fill="#2196f3" opacity=".85"/>
+  <text x="440" y="131" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">OUT</text>
+  <circle cx="280" cy="180" r="4" fill="#555" class="node-status-dot"/>
+</g>
+
+<!-- 02 -->
+<g class="node" data-step="02" data-outgoing='["03"]'>
+  <rect class="node-stripe" x="680" y="107" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="680" y="107" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="695" y="140" fill="#888" font-size="9" font-weight="700">02</text>
+  <text x="780" y="157" text-anchor="middle" fill="#eee" font-size="11" font-weight="400">Idea Matriz +</text>
+  <text x="780" y="172" text-anchor="middle" fill="#eee" font-size="11" font-weight="400">Adjetivo</text>
+  <rect x="830" y="118" width="40" height="18" rx="3" fill="#ff9800" opacity=".85"/>
+  <text x="850" y="131" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">DEC</text>
+  <circle cx="690" cy="180" r="4" fill="#555" class="node-status-dot"/>
+</g>
+
+<!-- 03 -->
+<g class="node" data-step="03" data-outgoing='["08"]'>
+  <rect class="node-stripe" x="1080" y="107" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="1080" y="107" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="1095" y="140" fill="#888" font-size="9" font-weight="700">03</text>
+  <text x="1180" y="157" text-anchor="middle" fill="#eee" font-size="11" font-weight="400">Documento de</text>
+  <text x="1180" y="172" text-anchor="middle" fill="#eee" font-size="11" font-weight="400">Intenciones</text>
+  <rect x="1230" y="118" width="40" height="18" rx="3" fill="#2196f3" opacity=".85"/>
+  <text x="1250" y="131" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">OUT</text>
+  <circle cx="1090" cy="180" r="4" fill="#555" class="node-status-dot"/>
+</g>
+
+<!-- 04 -->
+<g class="node" data-step="04" data-outgoing='["05"]'>
+  <rect class="node-stripe" x="110" y="347" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="110" y="347" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="125" y="380" fill="#888" font-size="9" font-weight="700">04</text>
+  <text x="210" y="397" text-anchor="middle" fill="#eee" font-size="11" font-weight="400">Volumetrización</text>
+  <text x="210" y="412" text-anchor="middle" fill="#eee" font-size="11" font-weight="400">+ Zonificación</text>
+  <rect x="260" y="358" width="40" height="18" rx="3" fill="#d45e2c" opacity=".85"/>
+  <text x="280" y="371" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">ACC</text>
+  <circle cx="120" cy="420" r="4" fill="#555" class="node-status-dot"/>
+</g>
+
+<!-- 05 -->
+<g class="node" data-step="05" data-outgoing='["06"]'>
+  <rect class="node-stripe" x="480" y="347" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="480" y="347" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="495" y="380" fill="#888" font-size="9" font-weight="700">05</text>
+  <text x="580" y="397" text-anchor="middle" fill="#eee" font-size="11" font-weight="400">Ubicación +</text>
+  <text x="580" y="412" text-anchor="middle" fill="#eee" font-size="11" font-weight="400">Accesos</text>
+  <rect x="630" y="358" width="40" height="18" rx="3" fill="#d45e2c" opacity=".85"/>
+  <text x="650" y="371" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">ACC</text>
+  <circle cx="490" cy="420" r="4" fill="#555" class="node-status-dot"/>
+</g>
+
+<!-- 06 -->
+<g class="node" data-step="06" data-outgoing='["07"]'>
+  <rect class="node-stripe" x="840" y="347" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="840" y="347" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="855" y="380" fill="#888" font-size="9" font-weight="700">06</text>
+  <text x="940" y="397" text-anchor="middle" fill="#eee" font-size="11" font-weight="400">Partido</text>
+  <text x="940" y="412" text-anchor="middle" fill="#eee" font-size="11" font-weight="400">Arquitectónico</text>
+  <rect x="990" y="358" width="40" height="18" rx="3" fill="#2196f3" opacity=".85"/>
+  <text x="1010" y="371" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">OUT</text>
+  <circle cx="850" cy="420" r="4" fill="#555" class="node-status-dot"/>
+</g>
+
+<!-- 07 -->
+<g class="node" data-step="07" data-outgoing='["08"]'>
+  <rect class="node-stripe" x="1080" y="347" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="1080" y="347" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="1095" y="380" fill="#888" font-size="9" font-weight="700">07</text>
+  <text x="1180" y="397" text-anchor="middle" fill="#eee" font-size="11" font-weight="400">Espacialidad +</text>
+  <text x="1180" y="412" text-anchor="middle" fill="#eee" font-size="11" font-weight="400">Circulación</text>
+  <rect x="1230" y="358" width="40" height="18" rx="3" fill="#d45e2c" opacity=".85"/>
+  <text x="1250" y="371" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">ACC</text>
+  <circle cx="1090" cy="420" r="4" fill="#555" class="node-status-dot"/>
+</g>
+
+<!-- 08 -->
+<g class="node" data-step="08" data-outgoing='["09"]'>
+  <rect class="node-stripe" x="120" y="597" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="120" y="597" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="135" y="630" fill="#888" font-size="9" font-weight="700">08</text>
+  <text x="220" y="647" text-anchor="middle" fill="#eee" font-size="10" font-weight="400">Evaluación Ambiental</text>
+  <text x="220" y="662" text-anchor="middle" fill="#eee" font-size="10" font-weight="400">I (8 criterios)</text>
+  <rect x="270" y="608" width="40" height="18" rx="3" fill="#f44336" opacity=".85"/>
+  <text x="290" y="621" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">EVA</text>
+  <circle cx="130" cy="670" r="4" fill="#555" class="node-status-dot"/>
+</g>
+
+<!-- 09 -->
+<g class="node" data-step="09" data-outgoing='["10"]'>
+  <rect class="node-stripe" x="420" y="597" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="420" y="597" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="435" y="630" fill="#888" font-size="9" font-weight="700">09</text>
+  <text x="520" y="647" text-anchor="middle" fill="#eee" font-size="11" font-weight="400">Ajustes</text>
+  <text x="520" y="662" text-anchor="middle" fill="#eee" font-size="11" font-weight="400">Evaluación I</text>
+  <rect x="570" y="608" width="40" height="18" rx="3" fill="#d45e2c" opacity=".85"/>
+  <text x="590" y="621" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">ACC</text>
+  <circle cx="430" cy="670" r="4" fill="#555" class="node-status-dot"/>
+  <text x="635" y="648" fill="#ff9800" font-size="15" font-weight="700" opacity=".65">↺</text>
+</g>
+
+<!-- 10 -->
+<g class="node" data-step="10" data-outgoing='["11","13"]'>
+  <rect class="node-stripe" x="680" y="597" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="680" y="597" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="695" y="630" fill="#888" font-size="9" font-weight="700">10</text>
+  <text x="780" y="647" text-anchor="middle" fill="#eee" font-size="10" font-weight="400">Configuración</text>
+  <text x="780" y="662" text-anchor="middle" fill="#eee" font-size="10" font-weight="400">Avanzada</text>
+  <rect x="830" y="608" width="40" height="18" rx="3" fill="#d45e2c" opacity=".85"/>
+  <text x="850" y="621" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">ACC</text>
+  <circle cx="690" cy="670" r="4" fill="#555" class="node-status-dot"/>
+</g>
+
+<!-- 11 -->
+<g class="node" data-step="11" data-outgoing='["12"]'>
+  <rect class="node-stripe" x="940" y="597" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="940" y="597" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="955" y="630" fill="#888" font-size="9" font-weight="700">11</text>
+  <text x="1040" y="647" text-anchor="middle" fill="#eee" font-size="11" font-weight="400">Iluminación</text>
+  <text x="1040" y="662" text-anchor="middle" fill="#eee" font-size="11" font-weight="400">Artificial</text>
+  <rect x="1090" y="608" width="40" height="18" rx="3" fill="#9c27b0" opacity=".85"/>
+  <text x="1110" y="621" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">GUI</text>
+  <circle cx="950" cy="670" r="4" fill="#555" class="node-status-dot"/>
+</g>
+
+<!-- 12 -->
+<g class="node" data-step="12" data-outgoing='["13"]'>
+  <rect class="node-stripe" x="1160" y="597" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="1160" y="597" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="1175" y="630" fill="#888" font-size="9" font-weight="700">12</text>
+  <text x="1260" y="654" text-anchor="middle" fill="#eee" font-size="12" font-weight="400">Paisaje</text>
+  <rect x="1310" y="608" width="40" height="18" rx="3" fill="#9c27b0" opacity=".85"/>
+  <text x="1330" y="621" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">GUI</text>
+  <circle cx="1170" cy="670" r="4" fill="#555" class="node-status-dot"/>
+</g>
+
+<!-- 13 -->
+<g class="node" data-step="13" data-outgoing='["14"]'>
+  <rect class="node-stripe" x="375" y="847" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="375" y="847" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="390" y="880" fill="#888" font-size="9" font-weight="700">13</text>
+  <text x="475" y="897" text-anchor="middle" fill="#eee" font-size="10" font-weight="400">Evaluación Ambiental</text>
+  <text x="475" y="912" text-anchor="middle" fill="#eee" font-size="10" font-weight="400">II (5 dimensiones)</text>
+  <rect x="525" y="858" width="40" height="18" rx="3" fill="#f44336" opacity=".85"/>
+  <text x="545" y="871" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">EVA</text>
+  <circle cx="385" cy="920" r="4" fill="#555" class="node-status-dot"/>
+</g>
+
+<!-- 14 -->
+<g class="node" data-step="14" data-outgoing='["15"]'>
+  <rect class="node-stripe" x="650" y="847" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="650" y="847" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="665" y="880" fill="#888" font-size="9" font-weight="700">14</text>
+  <text x="750" y="897" text-anchor="middle" fill="#eee" font-size="11" font-weight="400">Ajustes</text>
+  <text x="750" y="912" text-anchor="middle" fill="#eee" font-size="11" font-weight="400">Evaluación II</text>
+  <rect x="800" y="858" width="40" height="18" rx="3" fill="#d45e2c" opacity=".85"/>
+  <text x="820" y="871" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">ACC</text>
+  <circle cx="660" cy="920" r="4" fill="#555" class="node-status-dot"/>
+  <text x="865" y="898" fill="#ff9800" font-size="15" font-weight="700" opacity=".65">↺</text>
+</g>
+
+<!-- 15 -->
+<g class="node" data-step="15" data-outgoing='[]'>
+  <rect class="node-stripe" x="890" y="847" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="890" y="847" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="905" y="880" fill="#888" font-size="9" font-weight="700">15</text>
+  <text x="990" y="897" text-anchor="middle" fill="#eee" font-size="11" font-weight="400">Documento de</text>
+  <text x="990" y="912" text-anchor="middle" fill="#eee" font-size="11" font-weight="400">Concepto</text>
+  <rect x="1040" y="858" width="40" height="18" rx="3" fill="#2196f3" opacity=".85"/>
+  <text x="1060" y="871" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">OUT</text>
+  <circle cx="900" cy="920" r="4" fill="#555" class="node-status-dot"/>
+</g>
+
+<!-- Legend -->
+<g transform="translate(540, 1060)">
+  <rect x="0" y="0" width="420" height="46" rx="6" fill="#111" stroke="#333" stroke-width="1" opacity=".92"/>
+  <text x="12" y="15" fill="#999" font-size="8" font-weight="700" letter-spacing="2">ESTADO</text>
+  <rect x="12" y="23" width="14" height="14" rx="3" fill="#555"/>
+  <text x="30" y="35" fill="#aaa" font-size="9">PENDIENTE</text>
+  <rect x="118" y="23" width="14" height="14" rx="3" fill="#ff9800"/>
+  <text x="136" y="35" fill="#aaa" font-size="9">EN PROGRESO</text>
+  <rect x="248" y="23" width="14" height="14" rx="3" fill="#4caf50"/>
+  <text x="266" y="35" fill="#aaa" font-size="9">LISTO</text>
+  <rect x="330" y="23" width="14" height="14" rx="3" fill="#2196f3"/>
+  <text x="348" y="35" fill="#aaa" font-size="9">APROBADO</text>
+</g>
+
+<g transform="translate(540, 1115)">
+  <rect x="0" y="0" width="420" height="28" rx="6" fill="#111" stroke="#333" stroke-width="1" opacity=".92"/>
+  <text x="12" y="18" fill="#999" font-size="8" font-weight="700" letter-spacing="2">TIPO</text>
+  <rect x="60" y="6" width="36" height="16" rx="3" fill="#2196f3" opacity=".8"/><text x="78" y="17" text-anchor="middle" fill="#fff" font-size="7" font-weight="700">OUT</text>
+  <rect x="105" y="6" width="36" height="16" rx="3" fill="#ff9800" opacity=".8"/><text x="123" y="17" text-anchor="middle" fill="#fff" font-size="7" font-weight="700">DEC</text>
+  <rect x="150" y="6" width="36" height="16" rx="3" fill="#d45e2c" opacity=".8"/><text x="168" y="17" text-anchor="middle" fill="#fff" font-size="7" font-weight="700">ACC</text>
+  <rect x="195" y="6" width="36" height="16" rx="3" fill="#f44336" opacity=".8"/><text x="213" y="17" text-anchor="middle" fill="#fff" font-size="7" font-weight="700">EVA</text>
+  <rect x="240" y="6" width="36" height="16" rx="3" fill="#9c27b0" opacity=".8"/><text x="258" y="17" text-anchor="middle" fill="#fff" font-size="7" font-weight="700">GUI</text>
+  <text x="300" y="18" fill="#666" font-size="8">↺ Nodo de iteración</text>
+</g>
+
+<g transform="translate(540, 1150)">
+  <text x="0" y="12" fill="#555" font-size="7">Click en cualquier nodo para cambiar su estado de avance</text>
+</g>
+
+</svg>
+
+<script>
+(function(){
+  const S = ['PENDIENTE','EN_PROGRESO','LISTO','APROBADO'];
+  const C = {PENDIENTE:'#555',EN_PROGRESO:'#ff9800',LISTO:'#4caf50',APROBADO:'#2196f3'};
+  const svg = document.getElementById('grafo');
+  const st = {};
+
+  document.querySelectorAll('.node').forEach(n => {
+    const s = n.dataset.step;
+    st[s] = 'PENDIENTE';
+    n.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const k = this.dataset.step;
+      const i = S.indexOf(st[k]);
+      st[k] = S[(i + 1) % 4];
+      const col = C[st[k]];
+      this.querySelector('.node-stripe').setAttribute('fill', col);
+      this.querySelector('.node-status-dot').setAttribute('fill', col);
+      this.dataset.status = st[k];
+      const isP = st[k] === 'PENDIENTE';
+      const out = JSON.parse(this.dataset.outgoing || '[]');
+      out.forEach(t => {
+        svg.querySelectorAll(`.edge-path[data-from="${k}"]`).forEach(e => {
+          e.style.opacity = isP ? '.5' : '1';
+        });
+      });
+    });
+    const out = JSON.parse(n.dataset.outgoing || '[]');
+    out.forEach(t => {
+      svg.querySelectorAll(`.edge-path[data-from="${s}"]`).forEach(e => {
+        e.style.opacity = '0.5';
+      });
+    });
+  });
+
+  console.log('Grafo SOMA listo — ' + document.querySelectorAll('.node').length + ' nodos');
+})();
+</script>
+</body>
+</html>

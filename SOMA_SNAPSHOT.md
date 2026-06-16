@@ -59,7 +59,7 @@
 - **Archivo:** `backend/server.py` (Flask)
 - **Endpoints:** `/save_immersion`, `/get_leads`, `/leads/kanban`, `/lead/<id>/pipeline`, `/activity_matrix/<temp_id>`, `/programa/<lead_id>`, `/programa/espacio` (POST/PUT/DELETE), `/cotizacion/<lead_id>`, `/cotizacion/<lead_id>/pdf`, `/cobros/<proyecto_id>`, `/cobros` (POST), `/cobros/<id>/pagar`, `/resumen_financiero`, `/` (Dashboard HTML), `/css/<path>` (CSS estático)
 - **SMTP:** Gmail configurado vía SSL (puerto 465, variable `SMTP_USE_SSL=true`). Reportes a habitarq85@gmail.com. ⚠️ Railway bloquea outbound en puerto 587, se migró a 465. Envío **síncrono** (sin threads) porque Railway elimina hilos en segundo plano. Timeout SMTP 10s.
-- **WhatsApp:** Twilio Sandbox. Notificaciones al +5219993619433.
+- **WhatsApp:** Twilio Sandbox. Notificaciones al +5219995314093.
 - **Persistencia:** SQLite con tablas: `captura_web`, `matriz_inversion`, `cobros`, `config_fiscal`, `programa_arquitectonico`, `proyectos`, `habitantes`, `actividades`, `ejes_diseno`, `espacios`, `proyecto_datos`.
 - **Diagnósticos:** `diagnosticos_master.json` (10 pasos de inmersión).
 - **Reportes:** `backend/reportes/reporte_*.txt`
@@ -185,7 +185,7 @@ Estrategias para redes sociales, Google y otras fuentes de leads. Solo cuando el
 - **[2026-05-28] Filosofía carrusel:** Slide "CALIDAD SIN JERARQUÍAS" eliminado. Flecha `→` pulse en mobile. Forzado horizontal con `!important`.
 - **[2026-05-28] Servicios reestructurados:** `.services-row` agrupa imagen + lista, contacto debajo. Grid desktop `1fr 260px`, mobile `1fr auto`.
 - **[2026-05-28] Trayectoria portrait:** Viñeta `::after { box-shadow: inset 0 0 30px 15px rgba(10,10,10,0.7) }`. "M. en Arq." en una línea.
-- **[2026-05-28] WhatsApp:** "WhatsApp: 999 361 9433" agregado en sección Contacto.
+- **[2026-05-28] WhatsApp:** "WhatsApp: 999 531 4093" agregado en sección Contacto.
 - **[2026-05-28] Imágenes comprimidas:** 110 imágenes con Pillow (quality 80 JPG, 70 WebP). 49→44 MB. Commit `0531ffe`.
 - **[BUG] Botón cotizador no visible en landscape mobile** — resuelto: compactación máxima (imagen 90px, fuentes 0.45rem, padding reducido). Pendiente verificar en vivo.
 - **[BUG] Página se traba en "Enviar"** — resuelto: email revertido a síncrono + timeout 5s en fetch. Pendiente ajustar si Railway persiste.
@@ -278,4 +278,34 @@ Estrategias para redes sociales, Google y otras fuentes de leads. Solo cuando el
 - **[NUEVO] Web actualizada:** Email cambiado a `info@soma-arquitectura.com`.
 
 ---
-## 📅 ÚLTIMA ACTUALIZACIÓN: 09/06/2026
+
+## 📅 SESIÓN 10/06/2026: ALGORITMO SOMA VISUAL + ÚLTIMOS PROTOCOLOS
+
+### ✅ COMPLETADO
+
+- **[NUEVO] Reestructura total del Bloque 2 completada:** Los 12 protocolos están alineados al PROCESO DE DISEÑO 2.0 con formato INPUT/OPERA/OUTPUT/PROC + referencias cruzadas + procesador AI/HUMANO.
+- **[NUEVO] Algoritmo SOMA visual diseñado:** Diagrama interactivo HTML (`web/algoritmo_soma.html`) y diagrama SVG estático (`recursos_graficos/algoritmo_soma_diagrama.svg`). 16 pasos en 4 fases con:
+  - Tarjetas clickeables con detalles expandibles (inputs, outputs, protocolos asociados)
+  - Etiquetas de procesador (HUMANO / AI / HUMANO→AI / AI→HUMANO)
+  - Código de color por fase (verde, azul, rojo, cian)
+  - Diseño responsive + print-friendly
+  - SVG listo para embedding en presentaciones y documentación
+- **Últimos 5 protocolos reestructurados:** visualización (5.3-5.11), anteproyecto (6-8), representación (7.1-7.2), coordinación (9.1-9.2), planos técnicos (9.3).
+
+### 📁 ARCHIVOS CREADOS
+
+| Archivo | Descripción |
+|---------|-------------|
+| `web/algoritmo_soma.html` | Visualización interactiva del Algoritmo SOMA (16 pasos, 4 fases) |
+| `recursos_graficos/algoritmo_soma_diagrama.svg` | Diagrama SVG estático para impresión y presentaciones |
+
+### 📋 PENDIENTES
+
+1. Mapear items del PROCESO 2.0 contra codebase real (Activity Matrix, Diagrama SOMA, Dashboard)
+2. Integrar biblioteca SOMA en template de proyecto (flujo automático de copia)
+3. Activar Google My Business y subir renders como fotos de perfil
+4. Publicar lead magnet como pop-up en la web
+
+---
+
+## 📅 ÚLTIMA ACTUALIZACIÓN: 10/06/2026

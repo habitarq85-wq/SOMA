@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Proceso completo de diseño arquitectónico SOMA — 9 estaciones, del contacto al proyecto ejecutivo. Metodología para clima cálido-húmedo.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>●</text></svg>">
+<title>Algoritmo SOMA — Proceso de Diseño</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0a;--surface:#141414;--surface2:#1a1a1a;--accent:#d45e2c;--text:#f0f0f0;--text2:#999;--text3:#666;--const-bg:#0d1a0d;--proyecto-bg:#1a1a0d;--border:#222}
+body{background:var(--bg);color:var(--text);font-family:Georgia,'Times New Roman',serif;min-height:100vh;overflow-x:hidden}
+.container{max-width:1100px;margin:0 auto;padding:28px 20px 60px}
+
+/* ─── HEADER ─── */
+header{text-align:center;margin-bottom:28px}
+header h1{font-size:2.4rem;letter-spacing:10px;font-weight:700}
+header h1 span{color:var(--accent)}
+header .line{width:80px;height:2px;background:var(--accent);margin:12px auto}
+header p{color:var(--text2);font-family:'Courier New',monospace;font-size:.75rem;letter-spacing:3px;text-transform:uppercase}
+header .sub{color:var(--text3);font-size:.8rem;margin-top:4px;font-style:italic}
+
+/* ─── EJEMPLO ─── */
+.ejemplo-banner{background:var(--proyecto-bg);border:1px solid #554400;border-radius:8px;padding:14px 18px;margin-bottom:28px}
+.ejemplo-banner .label{font-family:'Courier New',monospace;font-size:.6rem;color:#aa8800;letter-spacing:2px;text-transform:uppercase}
+.ejemplo-banner h2{font-size:1rem;color:#ddb800;margin:2px 0}
+.ejemplo-banner p{font-family:'Courier New',monospace;font-size:.7rem;color:var(--text2)}
+.ejemplo-banner .tags{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.ejemplo-banner .tags span{font-family:'Courier New',monospace;font-size:.6rem;padding:2px 8px;border:1px solid #554400;border-radius:3px;color:#aa8800}
+
+/* ─── CONSTANTES ─── */
+.section-label{font-family:'Courier New',monospace;font-size:.65rem;letter-spacing:3px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+
+/* ════════════════════════════════════════════ */
+/* LINEA DEL TIEMPO (METRO MAP)               */
+/* ════════════════════════════════════════════ */
+
+.timeline-wrapper{position:relative;margin-bottom:32px}
+
+.timeline{display:flex;align-items:flex-start;gap:0;position:relative;padding:12px 0;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;scrollbar-color:var(--accent) var(--surface);-webkit-overflow-scrolling:touch}
+.timeline::-webkit-scrollbar{height:4px}
+.timeline::-webkit-scrollbar-track{background:var(--surface)}
+.timeline::-webkit-scrollbar-thumb{background:var(--accent);border-radius:2px}
+
+.timeline-track{position:absolute;top:28px;left:30px;right:30px;height:3px;background:#333;z-index:0}
+
+.station{flex-shrink:0;display:flex;flex-direction:column;align-items:center;cursor:pointer;position:relative;z-index:1;padding:0 6px;transition:transform .2s}
+.station:hover{transform:translateY(-3px)}
+
+.station-circle{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Courier New',monospace;font-size:.8rem;font-weight:700;border:2px solid #555;background:var(--surface);color:var(--text2);transition:all .3s;position:relative}
+
+.station.active .station-circle{background:var(--accent);border-color:var(--accent);color:var(--bg);box-shadow:0 0 20px rgba(212,94,44,.4);transform:scale(1.1)}
+.station.passed .station-circle{border-color:var(--accent);color:var(--accent)}
+.station.future .station-circle{border-color:#333;color:var(--text3)}
+
+.station-label{font-family:'Courier New',monospace;font-size:.55rem;color:var(--text2);margin-top:6px;text-align:center;white-space:nowrap;letter-spacing:.5px;transition:color .3s}
+.station.active .station-label{color:var(--accent);font-weight:700}
+.station.passed .station-label{color:var(--text2)}
+
+.station-sub{font-family:'Courier New',monospace;font-size:.45rem;color:var(--text3);text-align:center;margin-top:1px}
+
+/* ─── DETAIL AREA ─── */
+.detail-area{margin-top:8px}
+.detail-section{display:none;animation:fadeIn .3s ease}
+.detail-section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.detail-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:6px;border-left:4px solid var(--accent)}
+.detail-header h2{font-size:.95rem;letter-spacing:1px}
+.detail-header .range{font-family:'Courier New',monospace;font-size:.6rem;color:var(--accent);margin-left:auto;padding:2px 8px;border:1px solid var(--accent);border-radius:3px}
+.detail-header p{font-family:'Courier New',monospace;font-size:.65rem;color:var(--text2);margin-top:2px;width:100%}
+
+/* ─── STEP CARDS (expandable, grid) ─── */
+.step-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+
+.step-card{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px;cursor:pointer;transition:all .2s}
+.step-card:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 3px 15px rgba(212,94,44,.1)}
+.step-card.expanded{border-color:var(--accent);background:#1e1410}
+
+.step-head{display:flex;align-items:baseline;gap:4px;margin-bottom:4px;flex-wrap:wrap}
+.step-nature{font-family:'Courier New',monospace;font-size:.5rem;font-weight:700;letter-spacing:1px;padding:1px 5px;border-radius:2px;border:1px solid;background:var(--surface)}
+.nat-out{border-color:#4a9eff;color:#4a9eff}
+.nat-dec{border-color:#ff9800;color:#ff9800}
+.nat-acc{border-color:#d45e2c;color:#d45e2c}
+.nat-gui{border-color:#ab47bc;color:#ab47bc}
+.nat-eva{border-color:#f44336;color:#f44336}
+.nat-ref{border-color:#4caf50;color:#4caf50}
+
+.step-num{font-family:'Courier New',monospace;font-size:.65rem;color:var(--accent);font-weight:700}
+.step-name{font-size:.75rem;font-weight:700;color:var(--text);flex:1;line-height:1.2}
+
+.step-proc{font-family:'Courier New',monospace;font-size:.5rem;padding:1px 6px;border-radius:2px;border:1px solid;background:var(--surface);white-space:nowrap}
+.proc-humano{border-color:var(--accent);color:var(--accent)}
+.proc-ai{border-color:#4a9eff;color:#4a9eff}
+.proc-mixto{border-color:#b388ff;color:#b388ff}
+
+.step-desc{font-family:'Courier New',monospace;font-size:.58rem;color:var(--text2);line-height:1.3}
+
+.step-detail{display:none;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.step-detail.open{display:block}
+.detail-block{margin-bottom:6px}
+.detail-label{font-family:'Courier New',monospace;font-size:.55rem;color:var(--accent);font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.detail-body{font-family:'Courier New',monospace;font-size:.62rem;color:var(--text2);line-height:1.5;margin-top:2px}
+
+.badge-c{display:inline-block;font-size:.5rem;padding:1px 4px;border-radius:2px;font-family:'Courier New',monospace;font-weight:700}
+.badge-c.const{background:#1b3a1b;color:#4caf50;border:1px solid #2e7d32}
+.badge-c.var{background:#3a1b1b;color:#ff7043;border:1px solid #7d2e2e}
+
+.loop-badge{display:inline-flex;align-items:center;gap:3px;margin-top:4px;padding:2px 6px;border-radius:2px;font-family:'Courier New',monospace;font-size:.5rem;background:#3a1b1b;border:1px solid #7d2e2e;color:#ff7043;width:fit-content}
+
+/* ─── SUB-ITEMS (nested) ─── */
+.sub-items{margin-top:6px;display:flex;flex-direction:column;gap:3px}
+.sub-item{padding:4px 6px;border-left:2px solid #333;background:rgba(255,255,255,.02);border-radius:0 3px 3px 0}
+.sub-item .snum{font-family:'Courier New',monospace;font-size:.5rem;color:var(--text3)}
+.sub-item h5{font-size:.65rem;color:var(--text);margin:1px 0}
+.sub-item p{font-family:'Courier New',monospace;font-size:.55rem;color:var(--text2);line-height:1.3}
+.sub-item .stag{font-family:'Courier New',monospace;font-size:.45rem;padding:1px 4px;border-radius:2px;border:1px solid;display:inline-block;margin-top:1px}
+
+/* ─── TARJETAS INVESTIGACIÓN (2 columnas) ─── */
+.inv-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.inv-card{border-radius:6px;overflow:hidden;display:flex;flex-direction:column}
+.inv-card.const{background:var(--const-bg);border:1px solid #1a3a1a}
+.inv-card.var{background:#1a0d0d;border:1px solid #3a1a1a}
+
+.inv-card-header{display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;transition:background .2s;user-select:none}
+.inv-card.const .inv-card-header{background:rgba(46,125,50,.08)}
+.inv-card.var .inv-card-header{background:rgba(125,46,46,.08)}
+.inv-card-header:hover{filter:brightness(1.15)}
+.inv-card-header .arrow{font-family:'Courier New',monospace;font-size:.6rem;color:var(--text2);transition:transform .3s}
+.inv-card.open .inv-card-header .arrow{transform:rotate(90deg)}
+.inv-card-header h3{font-size:.75rem;flex:1;letter-spacing:1px}
+.inv-card.const .inv-card-header h3{color:#a5d6a7}
+.inv-card.var .inv-card-header h3{color:#ffab91}
+.inv-card-header .badge{font-family:'Courier New',monospace;font-size:.5rem;padding:1px 6px;border-radius:2px;white-space:nowrap}
+.inv-card.const .badge{border:1px solid #2e7d32;color:#4caf50}
+.inv-card.var .badge{border:1px solid var(--accent);color:var(--accent)}
+
+.inv-card-body{display:none;padding:0 12px 10px}
+.inv-card.open .inv-card-body{display:block}
+
+.inv-item{padding:7px 6px;border-bottom:1px solid rgba(255,255,255,.04)}
+.inv-item:last-child{border-bottom:none}
+.inv-item h4{font-size:.7rem;margin-bottom:2px}
+.inv-item p{font-family:'Courier New',monospace;font-size:.58rem;color:var(--text2);line-height:1.4}
+.inv-item .ref{font-family:'Courier New',monospace;font-size:.5rem;color:var(--text3);margin-top:2px}
+
+@media(max-width:700px){
+.inv-grid{grid-template-columns:1fr}
+}
+
+/* ─── FASE DETALLADA (4 - Conceptualización) ─── */
+.phase-detail{border-radius:8px;padding:20px;position:relative;overflow:hidden;margin-bottom:8px}
+.phase-detail.conceptual{background:linear-gradient(135deg,#0d1a0d 0%,var(--bg) 60%);border:1px solid rgba(76,175,80,.1)}
+.phase-detail.conceptual .phase-accent{position:absolute;top:0;left:0;width:4px;height:100%;background:#4caf50}
+
+.phase-row{display:flex;align-items:stretch;margin-bottom:6px}
+.phase-step{flex:1;min-width:0;padding:0 3px}
+.phase-arr{width:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:1.6rem;opacity:.9;font-weight:700;text-shadow:0 0 10px rgba(212,94,44,.3)}
+.phase-arr::after{content:'→';position:relative;animation:pulse-arrow 2s ease-in-out infinite}
+@keyframes pulse-arrow{0%,100%{opacity:.7;transform:translateX(0)}50%{opacity:1;transform:translateX(3px)}}
+.inter-phase{text-align:center;padding:6px 0;color:var(--accent);font-size:1.6rem;opacity:.8;font-weight:700}
+.inter-phase::after{content:'↓';animation:pulse-down 2s ease-in-out infinite}
+@keyframes pulse-down{0%,100%{opacity:.7;transform:translateY(0)}50%{opacity:1;transform:translateY(3px)}}
+
+@media(max-width:900px){
+.phase-row{flex-wrap:wrap}
+.phase-step{flex:0 0 calc(50% - 18px);margin-bottom:6px}
+.phase-arr{width:20px;font-size:1rem}
+}
+
+@media(max-width:600px){
+header h1{font-size:1.6rem;letter-spacing:6px}
+.phase-step{flex:0 0 100%}
+.phase-arr{display:none}
+.station-circle{width:34px;height:34px;font-size:.65rem}
+.station-label{font-size:.45rem}
+.station{padding:0 4px}
+.detail-header{flex-wrap:wrap}
+.detail-header .range{margin-left:0}
+.step-grid{grid-template-columns:1fr}
+}
+
+@media print{body{background:#fff;color:#000}.phase-detail.conceptual{background:#f5f5f5!important;border:1px solid #ddd!important}.step-card{border:1px solid #ccc!important;cursor:default}.step-detail{display:block!important}.inv-card.const{background:#f0f5f0!important}.ejemplo-banner{background:#f5f0e0!important}.station-circle{background:#fff!important;border-color:#000!important;color:#000!important}.station.active .station-circle{background:#d45e2c!important;color:#fff!important}header h1{color:#000}header h1 span{color:#d45e2c}.timeline-track{background:#ccc!important}}
+
+.proto-desc{font-family:'Courier New',monospace;font-size:.6rem;color:var(--text3);margin-bottom:12px;line-height:1.4}
+.tl-desc{font-family:'Courier New',monospace;font-size:.65rem;color:var(--text3);margin-bottom:16px;line-height:1.4}
+.tag-c{color:#4caf50}
+.tag-v{color:#ff7043}
+.tag-a{color:var(--accent)}
+.phase-label{font-family:'Courier New',monospace;font-size:.55rem;margin-bottom:8px;letter-spacing:2px}
+.phase-label.green{color:#4caf50}
+.phase-label.blue{color:#5c6bc0}
+.phase-label.red{color:#ef5350}
+.phase-label.cyan{color:#26c6da}
+.ejemplo-box{margin-bottom:10px;font-family:'Courier New',monospace;font-size:.6rem;color:#aaa;padding:8px 12px;background:var(--proyecto-bg);border:1px solid #333;border-radius:4px}
+.ejemplo-box strong{color:#4caf50;font-weight:700}
+.final-node{margin-top:20px;text-align:center}
+.final-badge{display:inline-block;padding:10px 30px;border:2px solid var(--accent);border-radius:25px;font-family:Georgia,serif;font-weight:700;color:var(--accent)}
+.final-desc{font-family:'Courier New',monospace;font-size:.65rem;color:var(--text3);margin-top:6px}
+.station:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:4px}
+.step-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.step-card[aria-expanded="true"] .step-detail{display:block}
+
+/* ─── GRAPH (Sección 4) ─── */
+.phase-graph-wrapper{position:relative;margin-bottom:12px;width:100%}
+.phase-graph-scroll{overflow-x:auto;overflow-y:hidden;width:100%}
+.phase-graph-scroll svg{display:block;width:100%;height:auto;min-width:0;background:var(--bg)}
+.node{cursor:pointer}
+.node-body{transition:filter .15s,stroke .15s}
+.node:hover .node-body{filter:brightness(1.25);stroke:#555}
+.node-stripe{transition:fill .25s}
+.edge-path{transition:opacity .3s}
+.loop-path{stroke-dashoffset:0;animation:dashPulse 2.5s ease-in-out infinite}
+.loop-label{animation:pulseLabel 2.5s ease-in-out infinite}
+@keyframes dashPulse{0%,100%{stroke-dashoffset:0}50%{stroke-dashoffset:8}}
+@keyframes pulseLabel{0%,100%{opacity:.6}50%{opacity:1}}
+.fase-l{font-size:18px;font-weight:700;letter-spacing:2px;text-transform:uppercase;writing-mode:vertical-rl;text-orientation:mixed}
+.gl{stroke:#ffffff08;stroke-width:1}
+.fb{stroke-width:0}
+
+/* ─── DETAIL PANEL (Sección 4) ─── */
+.sec4-detail-panel{position:relative;margin-top:10px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:6px;border-left:4px solid var(--accent);animation:fadeIn .25s ease}
+.dp-header{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.dp-num{font-family:'Courier New',monospace;font-size:.7rem;font-weight:700;color:var(--accent)}
+.dp-name{font-size:.8rem;font-weight:700;color:var(--text);flex:1}
+.dp-type{font-family:'Courier New',monospace;font-size:.45rem;padding:1px 5px;border-radius:2px;border:1px solid;font-weight:700}
+.dp-proc{font-family:'Courier New',monospace;font-size:.45rem;padding:1px 5px;border-radius:2px;border:1px solid;background:var(--surface)}
+.dp-proc.proc-humano{border-color:var(--accent);color:var(--accent)}
+.dp-proc.proc-ai{border-color:#4a9eff;color:#4a9eff}
+.dp-proc.proc-mixto{border-color:#b388ff;color:#b388ff}
+.dp-status{font-family:'Courier New',monospace;font-size:.45rem;padding:1px 5px;border-radius:2px;border:1px solid;font-weight:700}
+.dp-desc{font-family:'Courier New',monospace;font-size:.6rem;color:var(--text2);margin-bottom:8px;line-height:1.4}
+.dp-body{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+@media(max-width:700px){.dp-body{grid-template-columns:1fr}}
+.dp-close{position:absolute;top:8px;right:10px;background:none;border:none;color:var(--text3);font-size:1rem;cursor:pointer;padding:2px 6px;border-radius:3px}
+.dp-close:hover{color:var(--accent);background:rgba(212,94,44,.1)}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+<h1><span>●</span> ALGORITMO SOMA</h1>
+<div class="line"></div>
+<p>Proceso Completo de Diseño — Línea del Tiempo</p>
+<p class="sub">Constantes pre-cargadas · Variables por proyecto · 9 secciones del PROCESO 2.0</p>
+</header>
+
+<div class="ejemplo-banner">
+<div class="label">▶ Proyecto Tipo</div>
+<h2>CASA HABITACIÓN · MÉRIDA, YUCATÁN</h2>
+<p>Vivienda unifamiliar 1 nivel · 135 m² · 3 recámaras · lote 8×20 m · clima Aw</p>
+<div class="tags"><span>Nivel: Esencial</span><span>Lote: 160 m²</span><span>Presupuesto: $800,000 MXN</span></div>
+</div>
+
+<div class="section-label">▌Línea del Tiempo — Proceso Completo</div>
+<p class="tl-desc">
+Cada estación es una sección del PROCESO DE DISEÑO 2.0. Haz clic para ver el detalle interno.
+<span class="tag-c">(C) = Constante</span> · <span class="tag-v">(V) = Variable</span> · <span class="tag-a">▼ activa</span>
+</p>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- LÍNEA DEL TIEMPO (METRO MAP)               -->
+<!-- ════════════════════════════════════════════ -->
+<div class="timeline-wrapper">
+<div class="timeline" id="timeline">
+<div class="timeline-track"></div>
+<div class="station passed" onclick="showSection(1)"><div class="station-circle">1</div><div class="station-label">Contacto</div><div class="station-sub">Prospecto → Proceso</div></div>
+<div class="station passed" onclick="showSection(2)"><div class="station-circle">2</div><div class="station-label">Investigación</div><div class="station-sub">Constante+Variable</div></div>
+<div class="station passed" onclick="showSection(3)"><div class="station-circle">3</div><div class="station-label">Análisis</div><div class="station-sub">Sitio·Norma·Programa</div></div>
+<div class="station active" onclick="showSection(4)"><div class="station-circle">4</div><div class="station-label">Conceptualización</div><div class="station-sub">15 pasos de diseño</div></div>
+<div class="station future" onclick="showSection(5)"><div class="station-circle">5</div><div class="station-label">Modelado+Vis.</div><div class="station-sub">3D·Renders·Post</div></div>
+<div class="station future" onclick="showSection(6)"><div class="station-circle">6</div><div class="station-label">Antep. Básico</div><div class="station-sub">Plantas·Alzados</div></div>
+<div class="station future" onclick="showSection(7)"><div class="station-circle">7</div><div class="station-label">Representación</div><div class="station-sub">Documento HTML+PDF</div></div>
+<div class="station future" onclick="showSection(8)"><div class="station-circle">8</div><div class="station-label">Antep. Integral</div><div class="station-sub">Acabados·Permisos</div></div>
+<div class="station future" onclick="showSection(9)"><div class="station-circle">9</div><div class="station-label">Coord.+Planos</div><div class="station-sub">Ingenierías·Técnicos</div></div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- DETALLE POR SECCIÓN                        -->
+<!-- ════════════════════════════════════════════ -->
+<div class="detail-area">
+
+<!-- ============================================ -->
+<!-- SECCIÓN 1: CONTACTO                          -->
+<!-- ============================================ -->
+<div id="sec-1" class="detail-section">
+<div class="detail-header">
+<div><h2>1. Contacto con el Cliente</h2><p>Primer contacto, calificación del prospecto, agendar entrevista</p></div>
+<span class="range">Elementos 1</span>
+</div>
+<p class="proto-desc">El output real de contacto son las guías de Inmersión Web + Entrevista Física, que son procesos vivos en otros documentos. Contacto es transversal (ADM + Diseño).</p>
+<div class="step-grid">
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">Prospecto Cualificado</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Lead cualificado en pipeline · Enlace de Inmersión Web enviado</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">Lead de la web (captura_web + cotizador) o contacto directo</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Primer contacto — presentar SOMA, entender alcance general, definir si hay viabilidad, agendar entrevista de inmersión</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Lead cualificado en pipeline (estado "Contactado") · Enlace de Inmersión Web enviado al cliente · Fecha tentativa de entrevista presencial</div></div>
+<div class="detail-block"><div class="detail-label">REF</div><div class="detail-body">PROCESO 2.0 · Sección 1</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">Entrevista Agendada</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Cita para entrevista presencial de inmersión con el cliente</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">Prospecto cualificado + disponibilidad de agenda</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Coordinar fecha, hora y lugar para la entrevista presencial. Confirmar que el cliente completó la Inmersión Web (10 ejes A/B) antes de la cita</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Fecha tentativa de entrevista presencial · Cliente tiene acceso a la Inmersión Web</div></div>
+<div class="detail-block"><div class="detail-label">REF</div><div class="detail-body">Protocolo: recepción_usuario</div></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECCIÓN 2: INVESTIGACIÓN                     -->
+<!-- ============================================ -->
+<div id="sec-2" class="detail-section">
+<div class="detail-header">
+<div><h2>2. Investigación</h2><p>Recolección de datos brutos. Constantes (una vez) + Variables (cada proyecto)</p></div>
+<span class="range">Elem. 2.1-2.2</span>
+</div>
+<p class="proto-desc">Todo lo que se produce aquí es <strong>material en bruto</strong> — archivos, tablas, fotos, grabaciones. Ningún output de esta sección está analizado; eso ocurre en la sección 3.</p>
+<div class="inv-grid">
+
+<div class="inv-card const open" onclick="toggleInv(this)">
+<div class="inv-card-header"><span class="arrow">▶</span><h3>2.1 Material Constante</h3><span class="badge">12 elementos · AI</span></div>
+<div class="inv-card-body">
+
+<div class="inv-item"><span class="stag nat-ref">REF</span><h4>2.1.1.1 Normales Climatológicas</h4><p>CONAGUA/SMN: 26.5°C media, 940mm precipitación, humedad 75%, vientos E-SE. Buscar en biblioteca SOMA, copiar a <code>referencias/clima/</code></p><div class="ref">PROCESO 2.0 elem. 2.1.1.1 · PROC: AI</div></div>
+<div class="inv-item"><span class="stag nat-ref">REF</span><h4>2.1.1.2 Carta Solar de Mérida</h4><p>Lat 20.97°N, Lon 89.62°O. Solsticio verano 84°, invierno 46°. Orientación óptima N-S. Generar con Ladybug/SunPath o descargar</p><div class="ref">PROCESO 2.0 elem. 2.1.1.2 · PROC: AI</div></div>
+<div class="inv-item"><span class="stag nat-ref">REF</span><h4>2.1.1.3 Rosa de los Vientos</h4><p>E-SE mar-jun, N-NE jul-oct. Velocidad media 12 km/h. Generar desde datos históricos de dirección y velocidad</p><div class="ref">PROCESO 2.0 elem. 2.1.1.3 · PROC: AI</div></div>
+<div class="inv-item"><span class="stag nat-ref">REF</span><h4>2.1.2.1 Reglamento de Construcción Mérida</h4><p>COS 0.60, CUS 0.90, altura máx 8m, retiro frontal 3m, lateral 1.5m, pozo absorción obligatorio. Descargar PDF de fuente oficial</p><div class="ref">PROCESO 2.0 elem. 2.1.2.1 · PROC: AI</div></div>
+<div class="inv-item"><span class="stag nat-ref">REF</span><h4>2.1.2.2 Accesibilidad Universal</h4><p>NMX-R-050-SCFI: vanos mín 90cm, rampa 8%, descansos 1.20m, espacio aproximación 1.50m</p><div class="ref">PROCESO 2.0 elem. 2.1.2.2 · PROC: AI</div></div>
+<div class="inv-item"><span class="stag nat-ref">REF</span><h4>2.1.2.3 Reglamento de Uso de Suelo</h4><p>Plan de Desarrollo Urbano de Mérida / carta urbana vigente. Usos permitidos, densidades, restricciones</p><div class="ref">PROCESO 2.0 elem. 2.1.2.3 · PROC: AI</div></div>
+<div class="inv-item"><span class="stag nat-ref">REF</span><h4>2.1.2.4 Parámetros de Diseño</h4><p>Neufert, Panero, Ching: dimensiones mínimas, ergonomía, antropometría para espacios habitables. Referencias bibliográficas</p><div class="ref">PROCESO 2.0 elem. 2.1.2.4 · PROC: AI</div></div>
+<div class="inv-item"><span class="stag nat-ref">REF</span><h4>2.1.2.5 Eficiencia Energética</h4><p>NOM-020-ENER: transmitancia máx 45 W/m² (muros), 25 (cubierta). Protección solar obligatoria</p><div class="ref">PROCESO 2.0 elem. 2.1.2.5 · PROC: AI</div></div>
+<div class="inv-item"><span class="stag nat-ref">REF</span><h4>2.1.3.1 Arquetipos Históricos Yucatán</h4><p>Casa maya, colonial (zaguán+patio), porfiriana, moderna (losas+celosías). Referencia tipológica local</p><div class="ref">PROCESO 2.0 elem. 2.1.3.1 · PROC: AI</div></div>
+<div class="inv-item"><span class="stag nat-ref">REF</span><h4>2.1.3.2 Repertorio de Proyectos</h4><p>15+ proyectos de referencia: clima cálido-húmedo, control solar pasivo, integración paisajística</p><div class="ref">PROCESO 2.0 elem. 2.1.3.2 · PROC: AI</div></div>
+<div class="inv-item"><span class="stag nat-ref">REF</span><h4>2.1.3.3 Patrones de Diseño SOMA</h4><p>42 patrones: espaciales, de uso, tectónicos, bioclimáticos, acontecimiento. Catálogo construido una vez, se consulta y enriquece c/proyecto</p><div class="ref">PROCESO 2.0 elem. 2.1.3.3 · PROC: AI→HUMANO</div></div>
+<div class="inv-item"><span class="stag nat-ref">REF</span><h4>2.1.3.4 Patrones Christopher Alexander</h4><p>"A Pattern Language" — 253 patrones. Referencia canónica para el lenguaje de patrones (Alexander et al., 1977)</p><div class="ref">PROCESO 2.0 elem. 2.1.3.4 · PROC: AI</div></div>
+</div>
+</div>
+
+<div class="inv-card var open" onclick="toggleInv(this)">
+<div class="inv-card-header"><span class="arrow">▶</span><h3>2.2 Material Variable</h3><span class="badge">8 elementos · HUMANO+AI</span></div>
+<div class="inv-card-body">
+
+<div class="inv-item"><span class="stag nat-ref">REF→OUT</span><h4>2.2.1.1 Datos de Inmersión Web</h4><p>10 ejes visuales A/B + formulario de contacto. AI recupera de BD automáticamente. Output: <code>respuestas_inmersion_web.json</code></p><div class="ref">PROCESO 2.0 elem. 2.2.1.1 · PROC: AI</div></div>
+<div class="inv-item"><span class="stag nat-acc">ACC</span><h4>2.2.1.2 Entrevista Presencial</h4><p>6 tópicos conversacionales. Audio continuo + notas de campo. Output: <code>entrevista.wav</code> + <code>notas_campo_entrevista.txt</code></p><div class="ref">PROCESO 2.0 elem. 2.2.1.2 · PROC: HUMANO</div></div>
+<div class="inv-item"><span class="stag nat-out">OUT</span><h4>2.2.2.1 Levantamiento Físico del Terreno</h4><p>Dimensiones, niveles, pendientes, tipo de suelo, vegetación, construcciones. Croquis + fotos. Output: <code>croquis_levantamiento.pdf</code></p><div class="ref">PROCESO 2.0 elem. 2.2.2.1 · PROC: HUMANO</div></div>
+<div class="inv-item"><span class="stag nat-out">OUT</span><h4>2.2.2.2 Elementos Interiores del Predio</h4><p>Árboles, pozos, cenotes, construcciones existentes, acometidas. Croquis + fotos georreferenciadas</p><div class="ref">PROCESO 2.0 elem. 2.2.2.2 · PROC: HUMANO</div></div>
+<div class="inv-item"><span class="stag nat-out">OUT</span><h4>2.2.2.3 Elementos Exteriores</h4><p>Colindancias, vialidades, banquetas, postes, alcantarillado, árboles públicos. Croquis + fotos. Output: <code>fotos_entorno/</code></p><div class="ref">PROCESO 2.0 elem. 2.2.2.3 · PROC: HUMANO</div></div>
+<div class="inv-item"><span class="stag nat-ref">REF</span><h4>2.2.3 Normativas Específicas</h4><p>Reglamento interno del fraccionamiento/condominio. Impredecible por proyecto. AI busca y descarga</p><div class="ref">PROCESO 2.0 elem. 2.2.3 · PROC: AI</div></div>
+<div class="inv-item"><span class="stag nat-out">OUT</span><h4>2.2.4.1 Fuentes de Ruido</h4><p>Vialidades, industrias, escuelas, etc. Mapa de fuentes + horarios críticos. Output: <code>mapa_fuentes_ruido.pdf</code></p><div class="ref">PROCESO 2.0 elem. 2.2.4.1 · PROC: HUMANO</div></div>
+<div class="inv-item"><span class="stag nat-out">OUT</span><h4>2.2.4.2 Fuentes de Olores</h4><p>Basurero, granja, industria, pozo séptico, quemas. Mapa con dirección de viento. Output: <code>mapa_fuentes_olores.pdf</code></p><div class="ref">PROCESO 2.0 elem. 2.2.4.2 · PROC: HUMANO</div></div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECCIÓN 3: ANÁLISIS                          -->
+<!-- ============================================ -->
+<div id="sec-3" class="detail-section">
+<div class="detail-header">
+<div><h2>3. Análisis</h2><p>Los datos brutos de la sección 2 se transforman en información de diseño procesada</p></div>
+<span class="range">Elem. 3.1-3.10</span>
+</div>
+<p class="proto-desc">Toma los materiales brutos de la sección 2 y los transforma en información de diseño. Aquí se cruzan datos, se grafican síntesis, se toman decisiones y se generan guías. PROTOCOLO: 02 Análisis/protocolo_3.1-3.10_analisis.md</p>
+<div class="step-grid">
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">3.1 Gráfico General del Sitio</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Lámina única de síntesis del sitio — capa base para todo análisis posterior</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">2.2.2.1-3 Croquis + fotos · 2.2.4.1-2 Mapas ruido/olores · 2.1.1.1-3 Clima, carta solar, vientos</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Integrar croquis y datos brutos en un solo gráfico de síntesis: geometría, niveles, vegetación, colindancias, vialidades, ruido, olores, sol, viento, temperatura</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Lámina única de síntesis del sitio (análoga o digital)</div></div>
+<div class="detail-block"><div class="detail-label">REF</div><div class="detail-body">PROCESO 2.0 elem. 3.1</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">3.2 Gráfico Particular Ambiental</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Análisis ambiental específico: visuales, ruido, temperatura, ventilación</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">3.1 Gráfico General · 2.2.4.1-2 Mapas ruido/olores · 2.2.2.3 Fotos entorno</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Procesar información ambiental: visuales (ext→int, int→ext), gradiente de ruido, temperatura (islas de calor), ventilación (canales de viento), conflictos de infraestructura</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Lámina de análisis ambiental particular del sitio</div></div>
+<div class="detail-block"><div class="detail-label">REF</div><div class="detail-body">PROCESO 2.0 elem. 3.2</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">3.3 Programa Arquitectónico</span><span class="step-proc proc-mixto">AI→HUMANO</span></div>
+<div class="step-desc">Desglose de necesidades en espacios 3 niveles: Deseado, Complementario, Lujo</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">2.2.1.1 Inmersión web · 2.2.1.2 Notas entrevista · Catálogo SOMA espacios mínimos v3.0</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Desglosar necesidades en espacios · Clasificar: Deseado (explícito), Complementario (bodega, lavandería, instalaciones), Lujo (aspiracional) · Cada espacio con m², zona SOMA y observaciones</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Tabla de programa arquitectónico (BD o spreadsheet) · Totales parciales por zona y nivel</div></div>
+<div class="detail-block"><div class="detail-label">REF</div><div class="detail-body">PROCESO 2.0 elem. 3.3</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">3.4 Diagrama de Relaciones Espaciales</span><span class="step-proc proc-mixto">HUMANO→AI</span></div>
+<div class="step-desc">Conexiones requeridas entre espacios · Diagrama de burbujas + matriz</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">3.3 Programa Arquitectónico · Zonificación Maestra SOMA (Social, Descanso, Operativa, Soporte, Transición)</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Analizar conexiones: directa (puerta), visual (vano), acústica (abierto/aislado), proximidad, separación (privacidad). Humano define relaciones, AI genera diagrama</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Diagrama de burbujas con relaciones · Matriz de relaciones (tabla doble entrada) · Input para Diagrama Espacial SOMA</div></div>
+<div class="detail-block"><div class="detail-label">REF</div><div class="detail-body">PROCESO 2.0 elem. 3.4</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-dec">DEC</span><span class="step-name">3.5-3.6 Selección de Patrones</span><span class="step-proc proc-mixto">AI→HUMANO</span></div>
+<div class="step-desc">Patrones SOMA + Alexander aplicables al proyecto</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">2.1.3.3 Catálogo SOMA · 2.1.3.4 Alexander · 2.2.1 Perfil usuario · 3.1 Sitio · 3.3 Programa</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">AI revisa catálogos y preselecciona según clima, cultura, tipología, perfil, programa y sitio. Humano evalúa pertinencia y ajusta cantidad</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Checklist de patrones SOMA + Alexander aplicables al proyecto</div></div>
+<div class="detail-block"><div class="detail-label">REF</div><div class="detail-body">PROCESO 2.0 elem. 3.5-3.6</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-dec">DEC</span><span class="step-name">3.7 Normativas Aplicables</span><span class="step-proc proc-ai">AI</span></div>
+<div class="step-desc">Extracción de valores numéricos de reglamentos para el predio</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">2.1.2.1 Reglamento Mérida · 2.1.2.3 Uso de suelo · 2.2.3 Reglamento fraccionamiento · 2.2.2.1 Datos del predio</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Leer reglamentos y extraer: COS, CUS, área verde obligatoria, altura máxima, retiros, cajones estacionamiento, densidades máximas</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Ficha de restricciones de diseño · Diagrama de envolvente normativa del volumen permitido</div></div>
+<div class="detail-block"><div class="detail-label">REF</div><div class="detail-body">PROCESO 2.0 elem. 3.7</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-gui">GUI</span><span class="step-name">3.8 Premisas Ergométricas</span><span class="step-proc proc-ai">AI</span></div>
+<div class="step-desc">Dimensiones mínimas y recomendadas por espacio del programa</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">2.1.2.4 Neufert/Panero · 3.3 Programa Arquitectónico (tipos de espacio)</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Consultar tablas y extraer dimensiones aplicables: ancho pasillos, alto mesetas, áreas mobiliario, espacios giro, alturas interruptores</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Tabla de premisas ergométricas por espacio del proyecto (procesada)</div></div>
+<div class="detail-block"><div class="detail-label">REF</div><div class="detail-body">PROCESO 2.0 elem. 3.8</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-gui">GUI</span><span class="step-name">3.9 Estrategias de Diseño</span><span class="step-proc proc-mixto">AI→HUMANO</span></div>
+<div class="step-desc">Estrategias: olores, ruido, bioclimáticas, integración urbana</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">Resultados de 3.1-3.8 (análisis completo de sitio, normativa, usuario)</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Sintetizar análisis en estrategias de diseño concretas. AI propone desde reglas conocidas, humano selecciona y adapta</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Conjunto de estrategias organizadas en 4 sub-grupos (3.9.1-4)</div></div>
+<div class="detail-block"><div class="detail-label">SUB-ITEMS</div><div class="detail-body">
+<div class="sub-items">
+<div class="sub-item"><span class="snum">3.9.1</span><h5>Estrategias de Extracción de Malos Olores</h5><p>Ubicación ventanas barlovento/sotavento · Patios como chimeneas · Barreras vegetales · Zonificación espacios sensibles · Presión diferencial</p></div>
+<div class="sub-item"><span class="snum">3.9.2</span><h5>Estrategias de Mitigación de Ruido</h5><p>Ubicación espacios silenciosos vs ruidosos · Barreras acústicas · Jerarquía aperturas · Patios amortiguadores · Materiales absorbentes</p></div>
+<div class="sub-item"><span class="snum">3.9.3</span><h5>Estrategias Bioclimáticas para Mérida</h5><p>4 sub-grupos: 3.9.3.1 Orientación (tratamiento x fachada, ubicación óptima espacios), 3.9.3.2 Ventilación (cruzada, patios chimenea, Venturi), 3.9.3.3 Pasivas (aleros, celosías, masa térmica, colores), 3.9.3.4 Operación Pasiva (horarios apertura/cierre)</p></div>
+<div class="sub-item"><span class="snum">3.9.4</span><h5>Estrategias de Integración Urbana</h5><p>Relación con calle, alturas, materialidad, límites. AI propone, humano adapta según lectura del lugar</p></div>
+</div>
+</div></div>
+<div class="detail-block"><div class="detail-label">REF</div><div class="detail-body">PROCESO 2.0 elem. 3.9.1-4</div></div>
+</div>
+<div class="loop-badge">↺ AI propone → Humano selecciona y adapta</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">3.10 Análisis del Usuario</span><span class="step-proc proc-mixto">AI→HUMANO</span></div>
+<div class="step-desc">Perfil de diseño completo: demografía, matrices, rutinas, ejes, necesidades</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">2.2.1.1 Inmersión web · 2.2.1.2 Audio entrevista + notas de campo</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Procesar datos brutos del usuario. Incluye transcripción de audio y estructuración de datos en 5 sub-items</div></div>
+<div class="detail-block"><div class="detail-label">SUB-ITEMS</div><div class="detail-body">
+<div class="sub-items">
+<div class="sub-item"><span class="snum">3.10.1</span><h5>Datos Demográficos</h5><p>Edad, género, ocupación, composición del hogar, roles, nivel de movilidad. PROC: AI</p></div>
+<div class="sub-item"><span class="snum">3.10.2</span><h5>Activity Matrix</h5><p>24 slots temporales por habitante con actividad, ubicación, aislamiento, iluminación, usuarios concurrentes. PROC: AI+HUMANO</p></div>
+<div class="sub-item"><span class="snum">3.10.3</span><h5>Rutinas y Frecuencias de Uso</h5><p>Rutinas diarias, frecuencias por espacio, horarios conflicto, patrones entre semana vs fin de semana. PROC: AI</p></div>
+<div class="sub-item"><span class="snum">3.10.4</span><h5>Perfil de Diseño (Inmersión)</h5><p>10 ejes A/B + matices cualitativos de entrevista. Polaridad dominante del cliente. PROC: AI+HUMANO</p></div>
+<div class="sub-item"><span class="snum">3.10.5</span><h5>Necesidades No Visibles</h5><p>AI sugiere necesidades típicas (almacenamiento, lavandería, tendedero, instalaciones). Humano evalúa y agrega. PROC: AI→HUMANO</p></div>
+</div>
+</div></div>
+<div class="detail-block"><div class="detail-label">REF</div><div class="detail-body">PROCESO 2.0 elem. 3.10.1-5</div></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECCIÓN 4: CONCEPTUALIZACIÓN                  -->
+<!-- ============================================ -->
+<div id="sec-4" class="detail-section active">
+<div class="detail-header">
+<div><h2>4. Conceptualización</h2><p>Núcleo creativo del algoritmo. 15 pasos de la idea al documento de concepto</p></div>
+<span class="range">Elem. 4.1-4.15</span>
+</div>
+
+<div class="phase-graph-wrapper">
+<div class="phase-graph-scroll">
+<svg viewBox="0 0 1500 1250" xmlns="http://www.w3.org/2000/svg" id="grafo">
+<defs>
+  <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10 Z" fill="#888"/>
+  </marker>
+  <marker id="ax" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10 Z" fill="#aa8800"/>
+  </marker>
+  <marker id="al" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10 Z" fill="#ff9800"/>
+  </marker>
+  <marker id="ae" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10 Z" fill="#d45e2c"/>
+  </marker>
+  <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity=".35"/></filter>
+</defs>
+<g>
+  <line class="gl" x1="0" y1="150" x2="1500" y2="150"/>
+  <line class="gl" x1="0" y1="390" x2="1500" y2="390"/>
+  <line class="gl" x1="0" y1="640" x2="1500" y2="640"/>
+  <line class="gl" x1="0" y1="890" x2="1500" y2="890"/>
+  <line class="gl" x1="250" y1="0" x2="250" y2="1150"/>
+  <line class="gl" x1="500" y1="0" x2="500" y2="1150"/>
+  <line class="gl" x1="750" y1="0" x2="750" y2="1150"/>
+  <line class="gl" x1="1000" y1="0" x2="1000" y2="1150"/>
+  <line class="gl" x1="1250" y1="0" x2="1250" y2="1150"/>
+</g>
+<rect class="fb" x="90" y="50" width="1380" height="200" fill="#4caf50" opacity=".045" rx="4"/>
+<rect class="fb" x="90" y="290" width="1380" height="200" fill="#5c6bc0" opacity=".045" rx="4"/>
+<rect class="fb" x="90" y="530" width="1380" height="220" fill="#ef5350" opacity=".045" rx="4"/>
+<rect class="fb" x="90" y="790" width="1380" height="200" fill="#26c6da" opacity=".045" rx="4"/>
+<text x="42" y="150" text-anchor="middle" class="fase-l" fill="#4caf50" opacity=".8">FASE A</text>
+<text x="42" y="390" text-anchor="middle" class="fase-l" fill="#5c6bc0" opacity=".8">FASE B</text>
+<text x="42" y="640" text-anchor="middle" class="fase-l" fill="#ef5350" opacity=".8">FASE C</text>
+<text x="42" y="890" text-anchor="middle" class="fase-l" fill="#26c6da" opacity=".8">FASE D</text>
+<text x="68" y="115" text-anchor="middle" fill="#4caf50" font-size="13" opacity=".5" font-weight="700">01\u201303</text>
+<text x="68" y="355" text-anchor="middle" fill="#5c6bc0" font-size="13" opacity=".5" font-weight="700">04\u201307</text>
+<text x="68" y="610" text-anchor="middle" fill="#ef5350" font-size="13" opacity=".5" font-weight="700">08\u201312</text>
+<text x="68" y="855" text-anchor="middle" fill="#26c6da" font-size="13" opacity=".5" font-weight="700">13\u201315</text>
+<g>
+  <rect x="275" y="15" width="190" height="28" rx="4" fill="#221d00" stroke="#aa8800" stroke-width="1" opacity=".85"/>
+  <text x="370" y="33" text-anchor="middle" fill="#ddb800" font-size="21" font-weight="700">3.1\u20133.10 An\u00e1lisis</text>
+  <line x1="370" y1="43" x2="370" y2="105" stroke="#aa8800" stroke-width="1.5" marker-end="url(#ax)" opacity=".65"/>
+</g>
+<g>
+  <rect x="685" y="15" width="190" height="28" rx="4" fill="#221d00" stroke="#aa8800" stroke-width="1" opacity=".85"/>
+  <text x="780" y="33" text-anchor="middle" fill="#ddb800" font-size="21" font-weight="700">3.5\u20133.6 Patrones</text>
+  <line x1="780" y1="43" x2="780" y2="105" stroke="#aa8800" stroke-width="1.5" marker-end="url(#ax)" opacity=".65"/>
+</g>
+<g>
+  <rect x="115" y="255" width="190" height="28" rx="4" fill="#221d00" stroke="#aa8800" stroke-width="1" opacity=".85"/>
+  <text x="210" y="273" text-anchor="middle" fill="#ddb800" font-size="21" font-weight="700">3.3 Programa Arq.</text>
+  <line x1="210" y1="283" x2="210" y2="345" stroke="#aa8800" stroke-width="1.5" marker-end="url(#ax)" opacity=".65"/>
+</g>
+<line class="edge-path" data-from="01" x1="470" y1="150" x2="676" y2="150" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+<line class="edge-path" data-from="02" x1="880" y1="150" x2="1076" y2="150" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+<line class="edge-path" data-from="04" x1="310" y1="390" x2="476" y2="390" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+<line class="edge-path" data-from="05" x1="680" y1="390" x2="836" y2="390" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+<line class="edge-path" data-from="06" x1="1040" y1="390" x2="1076" y2="390" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+<line class="edge-path" data-from="08" x1="320" y1="640" x2="416" y2="640" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+<line class="edge-path" data-from="09" x1="620" y1="640" x2="676" y2="640" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+<line class="edge-path" data-from="10" x1="880" y1="640" x2="936" y2="640" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+<line class="edge-path" data-from="11" x1="1140" y1="640" x2="1156" y2="640" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+<line class="edge-path" data-from="13" x1="575" y1="890" x2="646" y2="890" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+<line class="edge-path" data-from="14" x1="850" y1="890" x2="886" y2="890" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+<path class="edge-path" data-from="03" d="M 1180 192 C 1180 350, 700 480, 316 590" stroke="#888" stroke-width="2" fill="none" marker-end="url(#a)"/>
+<path class="edge-path" data-from="07" d="M 1180 432 C 1000 520, 600 560, 222 593" stroke="#888" stroke-width="2" fill="none" marker-end="url(#a)"/>
+<path class="edge-path" data-from="10" d="M 780 682 C 700 770, 550 800, 475 843" stroke="#888" stroke-width="2" fill="none" marker-end="url(#a)"/>
+<path class="edge-path" data-from="12" d="M 1260 682 C 1000 770, 700 810, 425 843" stroke="#888" stroke-width="2" fill="none" marker-end="url(#a)"/>
+<path class="loop-path" d="M 450 630 C 130 630, 130 450, 130 420 C 130 390, 190 390, 230 390" stroke="#ff9800" stroke-width="2.5" fill="none" stroke-dasharray="6,4" marker-end="url(#al)"/>
+<text x="82" y="545" class="loop-label" fill="#ff9800" font-size="21" font-weight="700">\u21ba iterar</text>
+<text x="76" y="560" fill="#ff9800" font-size="14" opacity=".5">re-evaluar</text>
+<path class="loop-path" d="M 650 870 C 130 870, 130 700, 130 670 C 130 640, 190 640, 230 640" stroke="#ff9800" stroke-width="2.5" fill="none" stroke-dasharray="6,4" marker-end="url(#al)"/>
+<text x="82" y="800" class="loop-label" fill="#ff9800" font-size="21" font-weight="700">\u21ba iterar</text>
+<text x="76" y="815" fill="#ff9800" font-size="14" opacity=".5">re-evaluar</text>
+<path d="M 990 932 C 990 980, 990 1000, 990 1030" stroke="#d45e2c" stroke-width="2" fill="none" marker-end="url(#ae)" stroke-dasharray="6,3"/>
+<text x="1008" y="1008" fill="#d45e2c" font-size="14" font-weight="700" opacity=".9">\u2192 Secci\u00f3n 5</text>
+<text x="1008" y="1023" fill="#d45e2c" font-size="13" opacity=".6">Visualizaci\u00f3n</text>
+<g class="node" data-step="01" data-outgoing='["02"]'>
+  <rect class="node-stripe" x="270" y="107" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="270" y="107" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="285" y="140" fill="#888" font-size="13" font-weight="700">01</text>
+  <text x="370" y="157" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Manifiesto de</text>
+  <text x="370" y="172" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Intenciones</text>
+  <rect x="420" y="118" width="40" height="18" rx="3" fill="#2196f3" opacity=".85"/>
+  <text x="440" y="131" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">OUT</text>
+  <circle cx="280" cy="180" r="4" fill="#555" class="node-status-dot"/>
+</g>
+<g class="node" data-step="02" data-outgoing='["03"]'>
+  <rect class="node-stripe" x="680" y="107" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="680" y="107" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="695" y="140" fill="#888" font-size="13" font-weight="700">02</text>
+  <text x="780" y="157" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Idea Matriz +</text>
+  <text x="780" y="172" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Adjetivo</text>
+  <rect x="830" y="118" width="40" height="18" rx="3" fill="#ff9800" opacity=".85"/>
+  <text x="850" y="131" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">DEC</text>
+  <circle cx="690" cy="180" r="4" fill="#555" class="node-status-dot"/>
+</g>
+<g class="node" data-step="03" data-outgoing='["08"]'>
+  <rect class="node-stripe" x="1080" y="107" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="1080" y="107" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="1095" y="140" fill="#888" font-size="13" font-weight="700">03</text>
+  <text x="1180" y="157" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Documento de</text>
+  <text x="1180" y="172" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Intenciones</text>
+  <rect x="1230" y="118" width="40" height="18" rx="3" fill="#2196f3" opacity=".85"/>
+  <text x="1250" y="131" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">OUT</text>
+  <circle cx="1090" cy="180" r="4" fill="#555" class="node-status-dot"/>
+</g>
+<g class="node" data-step="04" data-outgoing='["05"]'>
+  <rect class="node-stripe" x="110" y="347" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="110" y="347" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="125" y="380" fill="#888" font-size="13" font-weight="700">04</text>
+  <text x="210" y="397" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Volumetrizaci\u00f3n</text>
+  <text x="210" y="412" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">+ Zonificaci\u00f3n</text>
+  <rect x="260" y="358" width="40" height="18" rx="3" fill="#d45e2c" opacity=".85"/>
+  <text x="280" y="371" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">ACC</text>
+  <circle cx="120" cy="420" r="4" fill="#555" class="node-status-dot"/>
+</g>
+<g class="node" data-step="05" data-outgoing='["06"]'>
+  <rect class="node-stripe" x="480" y="347" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="480" y="347" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="495" y="380" fill="#888" font-size="13" font-weight="700">05</text>
+  <text x="580" y="397" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Ubicaci\u00f3n +</text>
+  <text x="580" y="412" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Accesos</text>
+  <rect x="630" y="358" width="40" height="18" rx="3" fill="#d45e2c" opacity=".85"/>
+  <text x="650" y="371" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">ACC</text>
+  <circle cx="490" cy="420" r="4" fill="#555" class="node-status-dot"/>
+</g>
+<g class="node" data-step="06" data-outgoing='["07"]'>
+  <rect class="node-stripe" x="840" y="347" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="840" y="347" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="855" y="380" fill="#888" font-size="13" font-weight="700">06</text>
+  <text x="940" y="397" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Partido</text>
+  <text x="940" y="412" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Arquitect\u00f3nico</text>
+  <rect x="990" y="358" width="40" height="18" rx="3" fill="#2196f3" opacity=".85"/>
+  <text x="1010" y="371" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">OUT</text>
+  <circle cx="850" cy="420" r="4" fill="#555" class="node-status-dot"/>
+</g>
+<g class="node" data-step="07" data-outgoing='["08"]'>
+  <rect class="node-stripe" x="1080" y="347" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="1080" y="347" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="1095" y="380" fill="#888" font-size="13" font-weight="700">07</text>
+  <text x="1180" y="397" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Espacialidad +</text>
+  <text x="1180" y="412" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Circulaci\u00f3n</text>
+  <rect x="1230" y="358" width="40" height="18" rx="3" fill="#d45e2c" opacity=".85"/>
+  <text x="1250" y="371" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">ACC</text>
+  <circle cx="1090" cy="420" r="4" fill="#555" class="node-status-dot"/>
+</g>
+<g class="node" data-step="08" data-outgoing='["09"]'>
+  <rect class="node-stripe" x="120" y="597" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="120" y="597" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="135" y="630" fill="#888" font-size="13" font-weight="700">08</text>
+  <text x="220" y="647" text-anchor="middle" fill="#eee" font-size="14" font-weight="400">Evaluaci\u00f3n Ambiental</text>
+  <text x="220" y="662" text-anchor="middle" fill="#eee" font-size="14" font-weight="400">I (8 criterios)</text>
+  <rect x="270" y="608" width="40" height="18" rx="3" fill="#f44336" opacity=".85"/>
+  <text x="290" y="621" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">EVA</text>
+  <circle cx="130" cy="670" r="4" fill="#555" class="node-status-dot"/>
+</g>
+<g class="node" data-step="09" data-outgoing='["10"]'>
+  <rect class="node-stripe" x="420" y="597" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="420" y="597" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="435" y="630" fill="#888" font-size="13" font-weight="700">09</text>
+  <text x="520" y="647" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Ajustes</text>
+  <text x="520" y="662" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Evaluaci\u00f3n I</text>
+  <rect x="570" y="608" width="40" height="18" rx="3" fill="#d45e2c" opacity=".85"/>
+  <text x="590" y="621" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">ACC</text>
+  <circle cx="430" cy="670" r="4" fill="#555" class="node-status-dot"/>
+  <text x="635" y="648" fill="#ff9800" font-size="21" font-weight="700" opacity=".65">\u21ba</text>
+</g>
+<g class="node" data-step="10" data-outgoing='["11","13"]'>
+  <rect class="node-stripe" x="680" y="597" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="680" y="597" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="695" y="630" fill="#888" font-size="13" font-weight="700">10</text>
+  <text x="780" y="647" text-anchor="middle" fill="#eee" font-size="14" font-weight="400">Configuraci\u00f3n</text>
+  <text x="780" y="662" text-anchor="middle" fill="#eee" font-size="14" font-weight="400">Avanzada</text>
+  <rect x="830" y="608" width="40" height="18" rx="3" fill="#d45e2c" opacity=".85"/>
+  <text x="850" y="621" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">ACC</text>
+  <circle cx="690" cy="670" r="4" fill="#555" class="node-status-dot"/>
+</g>
+<g class="node" data-step="11" data-outgoing='["12"]'>
+  <rect class="node-stripe" x="940" y="597" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="940" y="597" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="955" y="630" fill="#888" font-size="13" font-weight="700">11</text>
+  <text x="1040" y="647" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Iluminaci\u00f3n</text>
+  <text x="1040" y="662" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Artificial</text>
+  <rect x="1090" y="608" width="40" height="18" rx="3" fill="#9c27b0" opacity=".85"/>
+  <text x="1110" y="621" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">GUI</text>
+  <circle cx="950" cy="670" r="4" fill="#555" class="node-status-dot"/>
+</g>
+<g class="node" data-step="12" data-outgoing='["13"]'>
+  <rect class="node-stripe" x="1160" y="597" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="1160" y="597" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="1175" y="630" fill="#888" font-size="13" font-weight="700">12</text>
+  <text x="1260" y="654" text-anchor="middle" fill="#eee" font-size="17" font-weight="400">Paisaje</text>
+  <rect x="1310" y="608" width="40" height="18" rx="3" fill="#9c27b0" opacity=".85"/>
+  <text x="1330" y="621" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">GUI</text>
+  <circle cx="1170" cy="670" r="4" fill="#555" class="node-status-dot"/>
+</g>
+<g class="node" data-step="13" data-outgoing='["14"]'>
+  <rect class="node-stripe" x="375" y="847" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="375" y="847" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="390" y="880" fill="#888" font-size="13" font-weight="700">13</text>
+  <text x="475" y="897" text-anchor="middle" fill="#eee" font-size="14" font-weight="400">Evaluaci\u00f3n Ambiental</text>
+  <text x="475" y="912" text-anchor="middle" fill="#eee" font-size="14" font-weight="400">II (5 dimensiones)</text>
+  <rect x="525" y="858" width="40" height="18" rx="3" fill="#f44336" opacity=".85"/>
+  <text x="545" y="871" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">EVA</text>
+  <circle cx="385" cy="920" r="4" fill="#555" class="node-status-dot"/>
+</g>
+<g class="node" data-step="14" data-outgoing='["15"]'>
+  <rect class="node-stripe" x="650" y="847" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="650" y="847" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="665" y="880" fill="#888" font-size="13" font-weight="700">14</text>
+  <text x="750" y="897" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Ajustes</text>
+  <text x="750" y="912" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Evaluaci\u00f3n II</text>
+  <rect x="800" y="858" width="40" height="18" rx="3" fill="#d45e2c" opacity=".85"/>
+  <text x="820" y="871" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">ACC</text>
+  <circle cx="660" cy="920" r="4" fill="#555" class="node-status-dot"/>
+  <text x="865" y="898" fill="#ff9800" font-size="21" font-weight="700" opacity=".65">\u21ba</text>
+</g>
+<g class="node" data-step="15" data-outgoing='[]'>
+  <rect class="node-stripe" x="890" y="847" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
+  <rect class="node-body" x="890" y="847" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+  <text x="905" y="880" fill="#888" font-size="13" font-weight="700">15</text>
+  <text x="990" y="897" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Documento de</text>
+  <text x="990" y="912" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Concepto</text>
+  <rect x="1040" y="858" width="40" height="18" rx="3" fill="#2196f3" opacity=".85"/>
+  <text x="1060" y="871" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">OUT</text>
+  <circle cx="900" cy="920" r="4" fill="#555" class="node-status-dot"/>
+</g>
+<g transform="translate(540, 1060)">
+  <rect x="0" y="0" width="420" height="46" rx="6" fill="#111" stroke="#333" stroke-width="1" opacity=".92"/>
+  <text x="12" y="15" fill="#999" font-size="21" font-weight="700" letter-spacing="2">ESTADO</text>
+  <rect x="12" y="23" width="14" height="14" rx="3" fill="#555"/>
+  <text x="30" y="35" fill="#aaa" font-size="13">PENDIENTE</text>
+  <rect x="118" y="23" width="14" height="14" rx="3" fill="#ff9800"/>
+  <text x="136" y="35" fill="#aaa" font-size="13">EN PROGRESO</text>
+  <rect x="248" y="23" width="14" height="14" rx="3" fill="#4caf50"/>
+  <text x="266" y="35" fill="#aaa" font-size="13">LISTO</text>
+  <rect x="330" y="23" width="14" height="14" rx="3" fill="#2196f3"/>
+  <text x="348" y="35" fill="#aaa" font-size="13">APROBADO</text>
+</g>
+<g transform="translate(540, 1115)">
+  <rect x="0" y="0" width="420" height="28" rx="6" fill="#111" stroke="#333" stroke-width="1" opacity=".92"/>
+  <text x="12" y="18" fill="#999" font-size="21" font-weight="700" letter-spacing="2">TIPO</text>
+  <rect x="60" y="6" width="36" height="16" rx="3" fill="#2196f3" opacity=".8"/><text x="78" y="17" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">OUT</text>
+  <rect x="105" y="6" width="36" height="16" rx="3" fill="#ff9800" opacity=".8"/><text x="123" y="17" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">DEC</text>
+  <rect x="150" y="6" width="36" height="16" rx="3" fill="#d45e2c" opacity=".8"/><text x="168" y="17" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">ACC</text>
+  <rect x="195" y="6" width="36" height="16" rx="3" fill="#f44336" opacity=".8"/><text x="213" y="17" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">EVA</text>
+  <rect x="240" y="6" width="36" height="16" rx="3" fill="#9c27b0" opacity=".8"/><text x="258" y="17" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">GUI</text>
+  <text x="300" y="18" fill="#666" font-size="21">\u21ba Nodo de iteraci\u00f3n</text>
+</g>
+<g transform="translate(540, 1150)">
+  <text x="0" y="12" fill="#555" font-size="14">Click en cualquier nodo para ver su detalle y cambiar estado de avance</text>
+</g>
+</svg>
+</div>
+</div>
+
+<div class="sec4-detail-panel" id="sec4-detail" style="display:none">
+<div class="dp-header">
+  <span class="dp-num" id="dp-num"></span>
+  <span class="dp-name" id="dp-name"></span>
+  <span class="dp-type" id="dp-type"></span>
+  <span class="dp-proc" id="dp-proc"></span>
+  <span class="dp-status" id="dp-status"></span>
+</div>
+<div class="dp-desc" id="dp-desc"></div>
+<div class="dp-body">
+  <div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body" id="dp-input"></div></div>
+  <div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body" id="dp-opera"></div></div>
+  <div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body" id="dp-output"></div></div>
+</div>
+<button class="dp-close" onclick="document.getElementById('sec4-detail').style.display='none'">\u2715</button>
+</div>
+
+<div class="final-node">
+<div class="final-badge">\u2192 MODELADO 3D \u2190</div>
+<p class="final-desc">El Documento de Concepto alimenta el protocolo de modelado (PROCESO 2.0 \u00b7 Secci\u00f3n 5)</p>
+</div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECCIÓN 5: MODELADO + VISUALIZACIÓN           -->
+<!-- ============================================ -->
+<div id="sec-5" class="detail-section">
+<div class="detail-header">
+<div><h2>5. Modelado y Visualización</h2><p>Traducción del concepto a modelo 3D + renders de presentación</p></div>
+<span class="range">Elem. 5.1-5.11</span>
+</div>
+<p class="proto-desc">PROTOCOLO: 03 Diseño/protocolo_5.3-5.11_visualizacion.md (flujo Revit→D5→Photoshop, estilo SOMA)</p>
+<div class="step-grid">
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-dec">DEC</span><span class="step-name">5.1 Selección de Vistas</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Seleccionar las vistas que mejor comuniquen la intención del proyecto</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.15 Diseño final · 4.2 Idea rectora · 2.2.1.1 Ejes de diseño del cliente</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Seleccionar vistas: exterior general, fachada principal, interior principal, espacio clave, zona exterior, corte perspectivado</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Lista de vistas seleccionadas con ángulo y propósito</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">5.2 Detallado de Modelado</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Modelar en 3D elementos visibles en cada vista. LOD según paquete</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.15 Diseño final · 5.1 Vistas seleccionadas</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Modelar en Revit/SketchUp/Rhino: geometría, vanos, cancelería, mobiliario, texturas. LOD 200/300/350 según paquete</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Modelo 3D listo para renderizar</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">5.3 Iluminación Natural</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Configurar sol según hora/fecha, luz de cielo, penetración, sombras</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">5.2 Modelo · 2.1.1.2 Carta solar · 4.9.1 Datos de asoleamiento</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Configurar iluminación natural: orientación del sol según hora/fecha, luz de cielo, penetración en interiores, sombras</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Render con iluminación natural configurada</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">5.4 Iluminación Artificial</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Luces artificiales: tipo, temperatura color, intensidad, escena nocturna</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">5.2 Modelo · 4.12 Criterio de iluminación artificial</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Colocar y configurar luces: tipo, temperatura de color, intensidad, sombras, escena nocturna</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Render con iluminación artificial configurada</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">5.5 Materiales</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Asignar materiales: mapas de textura, escala, rotación, acabados</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">5.2 Modelo · 4.8.5 Paleta de materiales</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Asignar materiales a superficies: mapas (diffuse, roughness, normal, displacement), escala, rotación, acabados</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Modelo con materiales asignados</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">5.6 Mobiliario</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Colocar mobiliario fijo y móvil en vistas seleccionadas</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">5.2 Modelo · 4.11.1-2 Baños/cocina · 3.10.5 Necesidades no visibles</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Colocar mobiliario fijo y móvil en las vistas seleccionadas</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Escena amueblada</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">5.7 Vegetación</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Árboles existentes, vegetación propuesta, pasto</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">5.2 Modelo · 4.13 Paisaje · 2.2.2.1-2 Vegetación existente</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Colocar árboles existentes, vegetación propuesta, pasto</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Escena con paisajismo</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">5.8 Decoración</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Elementos decorativos: cojines, alfombras, cortinas, arte, objetos</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">5.6-5.7 Escena · 4.2 Idea rectora (atmósfera deseada)</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Colocar elementos decorativos: cojines, alfombras, cortinas, arte, vajilla, objetos, lámparas decorativas</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Escena decorada con atmósfera habitable</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">5.9 Personas</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Figuras humanas realizando actividades para dar escala y vida</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">5.8 Escena · 3.10.1 Datos demográficos (habitantes reales)</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Colocar figuras humanas realizando actividades del programa</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Escena con escala humana</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">5.10 Refinamiento IA</span><span class="step-proc proc-mixto">AI→HUMANO</span></div>
+<div class="step-desc">IA generativa para refinar iluminación, atmósfera, detalle fino</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">5.9 Escena renderizada (imagen base)</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Usar IA generativa para mejorar iluminación, atmósfera, detalle fino, variaciones de material/color. La IA refina — no crea desde cero</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Imagen base refinada (humano evalúa y acepta/rechaza)</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">5.11 Postproducción</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Edición final: niveles, curvas, color, exposición, viñeteado, retoque</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">5.10 Imagen refinada</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Editar imagen final en Photoshop: niveles, curvas, color, exposición, viñeteado, retoque, cielo, formato final</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Render final listo para entrega</div></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECCIÓN 6: ANTEPROYECTO BÁSICO                -->
+<!-- ============================================ -->
+<div id="sec-6" class="detail-section">
+<div class="detail-header">
+<div><h2>6. Anteproyecto — Básico</h2><p>Planos arquitectónicos presentables. Paquete SOMA Esencial ($250/m²)</p></div>
+<span class="range">Elem. 6.1-6.2</span>
+</div>
+<p class="proto-desc">PROTOCOLO: 03 Diseño/protocolo_6-8_anteproyecto.md (escalas, contenido de láminas)</p>
+<div class="step-grid">
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">6.1 Plantas Arquitectónicas</span><span class="step-proc proc-mixto">HUMANO→AI</span></div>
+<div class="step-desc">Planta de conjunto + plantas por nivel. Cotas, ejes, norte, escala</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.15 Diseño final · Modelo 3D (desde 5.2 o CAD/BIM)</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Generar láminas: planta de conjunto, plantas de distribución por nivel, cotas, ejes, nombres de espacios, norte, escala gráfica</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Lámina(s) de plantas arquitectónicas (PDF/DWG)</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">6.2 Alzados Arquitectónicos</span><span class="step-proc proc-mixto">HUMANO→AI</span></div>
+<div class="step-desc">Las 4 fachadas con cotas verticales, materiales anotados, escala gráfica</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.15 Diseño final · Modelo 3D · 4.11.5 Fachadas · 4.8.5 Materiales</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Generar alzados de todas las fachadas con cotas verticales, materiales anotados, escala gráfica</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Lámina(s) de alzados arquitectónicos (PDF/DWG)</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">6.3 Cortes Arquitectónicos</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Mínimo 2 cortes (longitudinal + transversal). Alturas, cubierta</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">Modelo 3D · 4.8.2 Circulaciones verticales</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Generar mínimo 2 cortes. Mostrar alturas libres, composición de cubierta, niveles, relaciones verticales</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Lámina(s) de cortes arquitectónicos (PDF/DWG)</div></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECCIÓN 7: REPRESENTACIÓN                     -->
+<!-- ============================================ -->
+<div id="sec-7" class="detail-section">
+<div class="detail-header">
+<div><h2>7. Representación Integral</h2><p>Documento editorial con identidad visual SOMA. Calidad revista</p></div>
+<span class="range">Elem. 7.1-7.2</span>
+</div>
+<p class="proto-desc">PROTOCOLO: 03 Diseño/protocolo_7.1-7.2_representacion.md (dossier editorial HTML/PDF)</p>
+<div class="step-grid">
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">7.1 Documento HTML</span><span class="step-proc proc-mixto">HUMANO→AI</span></div>
+<div class="step-desc">Documento interactivo: portada, manifiesto, planos, renders, animaciones</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">6.1-6.3 Planos · 5.11 Renders · 4.1 Manifiesto · 4.2 Idea Matriz</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Integrar en HTML con identidad SOMA: portada, manifiesto, carrusel de planos, carrusel de perspectivas, animaciones web sutiles</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Documento HTML de entrega (autocontenido, imprimible a PDF)</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">7.2 Documento PDF</span><span class="step-proc proc-ai">AI</span></div>
+<div class="step-desc">Versión imprimible del documento. Formato carta, listo para enviar</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">7.1 HTML · 6.1-6.3 Planos · 5.11 Renders</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Compilar plantas, alzados, cortes y perspectivas en PDF listo para imprimir/enviar</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">PDF de entrega (formato carta, listo para cliente)</div></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECCIÓN 8: ANTEPROYECTO INTEGRAL              -->
+<!-- ============================================ -->
+<div id="sec-8" class="detail-section">
+<div class="detail-header">
+<div><h2>8. Anteproyecto — Integral</h2><p>Complementos del paquete SOMA Integral ($350/m²) sobre la base del Básico</p></div>
+<span class="range">Elem. 8.1-8.6</span>
+</div>
+<p class="proto-desc">Incluye todo lo básico (6-7) más acabados reales, criterios de ingeniería, planos de permiso</p>
+<div class="step-grid">
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-dec">DEC</span><span class="step-name">8.1 Acabados Reales</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Paleta conceptual → productos reales: marca, modelo, proveedor, costo</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.8.5 Paleta de materiales (conceptual) · Presupuesto · Disponibilidad local</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Convertir paleta conceptual en acabados reales: productos específicos (marca, modelo), proveedores locales, costo por m², tiempo de entrega</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Tabla de acabados reales con proveedores y costos</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-gui">GUI</span><span class="step-name">8.2 Criterio Hidrosanitario</span><span class="step-proc proc-mixto">HUMANO→AI</span></div>
+<div class="step-desc">Bajantes, registros, diámetros, captación pluvial, cisterna, bombeo</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.15 Diseño final (baños, cocina, patio) · 2.2.2.1 Acometidas existentes</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Definir: bajantes, registros, diámetros tentativos, captación pluvial, cisterna, tinaco, calentador, bombeo. AI verifica dimensiones</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Diagrama de criterio hidrosanitario sobre planta</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-gui">GUI</span><span class="step-name">8.3 Criterio Estructural</span><span class="step-proc proc-mixto">HUMANO→AI</span></div>
+<div class="step-desc">Sistema, claros máximos, secciones tentativas, cimentación</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.8.6 Sistema estructural · 2.2.2.1 Mecánica de suelos · 3.7 Restricciones</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Definir sistema (losas, pórticos), claros máximos, secciones tentativas, cimentación, material. AI cálculos preliminares</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Esquema estructural con ejes y secciones tentativas</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">8.4 Planos de Permiso</span><span class="step-proc proc-mixto">HUMANO→AI</span></div>
+<div class="step-desc">Planos para trámite municipal. Firma y sello de perito</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">6.1-6.2 Plantas y alzados · 8.2 Criterio hidrosanitario · 8.3 Criterio estructural · 3.7 Restricciones</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Generar planos para trámite: plantas, alzados, cortes, cimentación, estructura, instalaciones, fachadas</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Juego de planos de permiso (PDF, para firma y sello)</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">8.5 Perspectivas Adicionales</span><span class="step-proc proc-mixto">HUMANO→AI</span></div>
+<div class="step-desc">Fachada con contexto, interiores adicionales, vistas aéreas</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">8.4 Planos de permiso · 5.1 Vistas seleccionadas</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Generar perspectivas adicionales: fachada con contexto, interiores no renderizados, vistas aéreas, esquemas</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Juego adicional de renders y diagramas</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">8.6 Entrega Integral</span><span class="step-proc proc-mixto">HUMANO→AI</span></div>
+<div class="step-desc">Carpeta organizada con todo: planos, acabados, criterios, perspectivas</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">6.1-6.2 Planos base · 8.4 Planos permiso · 8.1 Acabados · 8.5 Perspectivas · 7.1 HTML</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Compilar todo en carpeta de entrega organizada por secciones</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Carpeta de entrega Integral (digital)</div></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECCIÓN 9: COORDINACIÓN + PLANOS TÉCNICOS     -->
+<!-- ============================================ -->
+<div id="sec-9" class="detail-section">
+<div class="detail-header">
+<div><h2>9. Coordinación y Planos Técnicos</h2><p>Coordinación de ingenierías + documentación constructiva. Paquete SOMA Ejecutivo ($850/m²)</p></div>
+<span class="range">Elem. 9.1-9.4</span>
+</div>
+<p class="proto-desc">Incluye todo lo básico (6-7) e integral (8) más coordinación y planos ejecutivos. PROTOCOLO: 9.3_planos_tecnicos.md · 9.1-9.2_coordinacion.md</p>
+<div class="step-grid">
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">9.1 Coordinación con Coadyuvantes</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Contactar y coordinar ingenieros especialistas: estructural, hidrosanitario, eléctrico, climatización</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">8.4 Planos de permiso · 8.2-8.3 Criterios de ingeniería</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Contactar ingenieros. Reuniones para integrar propuestas al proyecto. Revisar y validar propuestas recibidas</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Propuestas de ingenierías recibidas y revisadas</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">9.2 Adecuación a Ingenierías</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Integrar propuestas de ingenieros al proyecto SOMA</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">8.4 Planos SOMA · 9.1 Propuestas de ingenieros</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Integrar ingenierías: ajustar estructura, ductos, registros. Resolver conflictos entre especialidades. Actualizar planos</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Proyecto actualizado con ingenierías integradas</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">9.3 Complementos Arquitectónicos</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">5 planos de detalle: acabados, despieces, cancelería, baño/cocina/escalera, detalles</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">9.2 Proyecto actualizado · Modelo BIM</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Desarrollar planos complementarios de detalle en 5 sub-ítems</div></div>
+<div class="detail-block"><div class="detail-label">SUB-ITEMS</div><div class="detail-body">
+<div class="sub-items">
+<div class="sub-item"><span class="snum">9.3.1</span><h5>Plano de Acabados</h5><p>Acabados piso por piso y espacio por espacio con especificaciones</p></div>
+<div class="sub-item"><span class="snum">9.3.2</span><h5>Plano de Despieces</h5><p>Piso, muro, plafón, recubrimientos con modulación y cuantificación</p></div>
+<div class="sub-item"><span class="snum">9.3.3</span><h5>Cancelería, Herreros, Carpintería</h5><p>Vistas, cortes, detalles de unión, materiales y acabados</p></div>
+<div class="sub-item"><span class="snum">9.3.4</span><h5>Detalles Baño, Cocina, Escalera</h5><p>Plantas, cortes, detalles colocación y unión a mayor escala</p></div>
+<div class="sub-item"><span class="snum">9.3.5</span><h5>Detalles Constructivos Generales</h5><p>Goteros, juntas, uniones, impermeabilización, anclajes, encuentros</p></div>
+</div>
+</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Juego de planos complementarios · PROCESO 2.0 elem. 9.3.1-5</div></div>
+</div>
+</div>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">9.4 Documentos Ejecutivos</span><span class="step-proc proc-ai">AI</span></div>
+<div class="step-desc">Carpeta completa: planos + ingenierías + complementos + renders + memorias</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">9.2 Proyecto actualizado · 9.3 Complementos · 9.1 Ingenierías definitivas · 8.5 Perspectivas</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Compilar entrega final: planos todos ingenieros + arq + complementos + perspectivas. Crear HTML navegable con índice</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Carpeta de Proyecto Ejecutivo completa + HTML navegable + PDF compilado</div></div>
+</div>
+</div>
+</div>
+</div>
+
+</div><!-- /detail-area -->
+
+</div><!-- /container -->
+
+<script>
+// ─── SECTION NAV ───
+function showSection(n){
+  document.querySelectorAll('.detail-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.station').forEach(s=>s.classList.remove('active'));
+  const sec=document.getElementById('sec-'+n);
+  if(sec){sec.classList.add('active')}
+  const st=document.querySelectorAll('.station')[n-1];
+  if(st){st.classList.add('active')}
+  const tl=document.getElementById('timeline');
+  if(tl)tl.querySelectorAll('.station')[n-1].scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+  window.location.hash='sec-'+n;
+}
+
+function toggle(el){
+  const expanded=el.classList.toggle('expanded');
+  const d=el.querySelector('.step-detail');
+  if(d){
+    d.classList.toggle('open');
+    d.setAttribute('aria-hidden',!expanded);
+  }
+  el.setAttribute('aria-expanded',expanded);
+}
+
+function toggleInv(el){
+  el.classList.toggle('open');
+  const a=el.querySelector('.arrow');
+  if(a)a.textContent=el.classList.contains('open')?'▼':'▶';
+}
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='Enter'||e.key===' '){
+    const t=e.target.closest('.step-card,.station,.node');
+    if(t&&typeof t.click==='function'){e.preventDefault();t.click()}
+  }
+});
+
+// ─── GRAFO SECCIÓN 4 ───
+(function(){
+  const STEPS_DATA = {
+    "01": {
+      num:"01", name:"Manifiesto de Intenciones", type:"OUT", proc:"HUMANO",
+      desc:"Declaración escrita de la intención del proyecto antes de cualquier decisión formal",
+      input:"3.1–3.10 Análisis completo · 2.2.1 Perfil del usuario · Brief inicial del cliente",
+      opera:"Redactar manifiesto de 1–2 párrafos que capture la esencia del proyecto: quién, qué, dónde, por qué, para qué. Define la dirección sin cerrar posibilidades.",
+      output:"Manifiesto de Intenciones firmado por el equipo"
+    },
+    "02": {
+      num:"02", name:"Idea Matriz + Adjetivo", type:"DEC", proc:"HUMANO→AI",
+      desc:"Concepto rector en tres palabras: un sustantivo + dos adjetivos que sinteticen la experiencia espacial deseada",
+      input:"4.1 Manifiesto · 3.10 Perfil de diseño · 2.2.1.1 Ejes A/B del cliente · 3.5-3.6 Patrones seleccionados",
+      opera:"Extraer del manifiesto y perfil de usuario la idea matriz. Elegir adjetivos que describan atmósfera, materialidad y relación con el entorno. AI sugiere tríadas, humano elige.",
+      output:"Idea Matriz registrada: sustantivo + 2 adjetivos · Guía para todas las decisiones de diseño subsecuentes"
+    },
+    "03": {
+      num:"03", name:"Documento de Intenciones", type:"OUT", proc:"HUMANO",
+      desc:"Documento compilado de 4.1–4.2 + inputs de análisis como base del proceso",
+      input:"4.1 Manifiesto · 4.2 Idea Matriz · 3.1–3.10 Outputs de análisis · 2.1 Constantes",
+      opera:"Compilar manifiesto, idea matriz, programa, patrones, premisas, estrategias y normativas en un solo documento de referencia. Sirve como brief interno del proyecto.",
+      output:"Documento de Intenciones completo (brief interno)"
+    },
+    "04": {
+      num:"04", name:"Volumetrización + Zonificación", type:"ACC", proc:"HUMANO→AI",
+      desc:"Primera exploración formal: masas, alturas, relaciones volumétricas en el predio",
+      input:"4.3 Documento de Intenciones · 3.1 Gráfico del sitio · 3.7 Envolvente normativa · 3.3 Programa",
+      opera:"Ubicar volúmenes en el predio respetando retiros, COS, CUS y altura máxima. Zonificar según programa y criterios de ventilación/asoleamiento. AI genera opciones, humano evalúa.",
+      output:"Esquema volumétrico con zonificación por niveles"
+    },
+    "05": {
+      num:"05", name:"Ubicación + Accesos", type:"ACC", proc:"HUMANO",
+      desc:"Definición de posición exacta de volúmenes, accesos peatonales y vehiculares",
+      input:"4.4 Volumetría · 3.1 Gráfico del sitio (vialidades, colindancias) · 3.9.4 Estrategias de integración urbana",
+      opera:"Sobre el esquema volumétrico, definir acceso principal (peatonal), acceso de servicio, y estacionamiento. Relacionar con vialidades y banquetas existentes.",
+      output:"Planta de conjunto esquemática con accesos marcados"
+    },
+    "06": {
+      num:"06", name:"Partido Arquitectónico", type:"OUT", proc:"HUMANO",
+      desc:"Diagrama fundamental: organización espacial, ejes, jerarquías, flujos",
+      input:"4.5 Ubicación + accesos · 3.4 Diagrama de relaciones · 3.9 Estrategias de diseño",
+      opera:"Dibujar el partido arquitectónico: ejes compositivos, jerarquía espacial, organización pública/privada/servicio, flujos principales. Es la huella digital del proyecto.",
+      output:"Partido arquitectónico dibujado (esquema conceptual)"
+    },
+    "07": {
+      num:"07", name:"Espacialidad + Circulación", type:"ACC", proc:"HUMANO",
+      desc:"Desarrollo de la experiencia espacial: alturas, conexiones visuales, recorridos",
+      input:"4.6 Partido · 4.5 Accesos · 3.4 Matriz de relaciones · 3.10 Activity Matrix",
+      opera:"Definir alturas libres, dobles alturas, conexiones visuales entre espacios, recorridos interiores/exteriores, transiciones público→privado. La circulación como experiencia.",
+      output:"Diagrama de espacialidad + circulación"
+    },
+    "08": {
+      num:"08", name:"Evaluación Ambiental I", type:"EVA", proc:"AI",
+      desc:"Evaluación del esquema contra 8 criterios ambientales: orientación, sol, viento, ruido, etc.",
+      input:"4.7 Espacialidad · 4.4 Volumetría · 2.1.1.1-3 Clima, carta solar, vientos · 3.2 Ambiental",
+      opera:"Evaluar 8 criterios: orientación fachadas, penetración solar, captación de viento, mitigación ruido, control olores, eficiencia volumétrica, relación visual exterior, protección climática. AI puntúa cada criterio.",
+      output:"Matriz de evaluación ambiental I con puntuaciones por criterio"
+    },
+    "09": {
+      num:"09", name:"Ajustes Evaluación I", type:"ACC", proc:"HUMANO",
+      desc:"Ajustar esquema según resultados de la evaluación ambiental. Bucle de iteración con Fase B",
+      input:"4.8 Evaluación I · 4.7 Espacialidad · 4.4 Volumetría",
+      opera:"Revisar criterios con baja puntuación. Modificar volúmenes, orientación, protección solar, ventilación. Puede requerir volver a Fase B (04–07) si los cambios son significativos.",
+      output:"Esquema ajustado tras evaluación I"
+    },
+    "10": {
+      num:"10", name:"Configuración Avanzada", type:"ACC", proc:"HUMANO→AI",
+      desc:"Desarrollo fino: sistema constructivo, plantas de distribución, fachadas",
+      input:"4.9 Ajustes · 3.8 Premisas ergométricas · 3.3 Programa detallado · 3.5 Patrones SOMA",
+      opera:"Desarrollar plantas de distribución por nivel, definir sistema constructivo, diseñar fachadas según orientación, integrar patrones SOMA seleccionados. AI ayuda con dimensionamiento y optimización.",
+      output:"Plantas de distribución + esquema de fachadas + sistema constructivo"
+    },
+    "11": {
+      num:"11", name:"Iluminación Artificial", type:"GUI", proc:"HUMANO→AI",
+      desc:"Criterio de iluminación artificial: tipos, temperaturas, controles por espacio",
+      input:"4.10 Configuración avanzada · 3.10 Activity Matrix (horarios de uso) · 4.2 Idea Matriz (atmósfera)",
+      opera:"Definir tipos de luminarias, temperatura de color por espacio, niveles lumínicos, controles (sensores, dimmers), escenas. AI sugiere esquemas según actividad, humano ajusta.",
+      output:"Criterio de iluminación artificial por espacio"
+    },
+    "12": {
+      num:"12", name:"Paisaje", type:"GUI", proc:"HUMANO→AI",
+      desc:"Integración paisajística: vegetación, áreas verdes, paleta vegetal, mobiliario exterior",
+      input:"4.10 Configuración · 2.2.2.1-2 Vegetación existente · 3.9.1 Estrategia de olores · 3.9.3 Estrategias bioclimáticas",
+      opera:"Diseñar áreas verdes, seleccionar especies nativas (bajo consumo de agua), ubicar árboles para sombra, integrar vegetación como barrera de olores/ruido. AI sugiere paleta vegetal regional.",
+      output:"Plano de paisaje + paleta vegetal"
+    },
+    "13": {
+      num:"13", name:"Evaluación Ambiental II", type:"EVA", proc:"AI",
+      desc:"Segunda evaluación: 5 dimensiones — confort térmico, lumínico, acústico, eficiencia, integración",
+      input:"4.10-4.12 Configuración avanzada + iluminación + paisaje · 2.1.1 Normales climatológicas",
+      opera:"Evaluar 5 dimensiones: confort térmico (temperatura operativa), confort lumínico (luxes), confort acústico (dB), eficiencia energética (W/m²), integración paisajística. AI modela y puntúa.",
+      output:"Matriz de evaluación ambiental II con 5 dimensiones"
+    },
+    "14": {
+      num:"14", name:"Ajustes Evaluación II", type:"ACC", proc:"HUMANO",
+      desc:"Ajustes finos según evaluación II. Bucle de iteración con Fase C",
+      input:"4.13 Evaluación II · 4.10-4.12 Configuración · 4.9 Ajustes anteriores",
+      opera:"Revisar dimensiones con baja calificación. Ajustar: protecciones solares, ventilación, aislamiento, selección de especies, orientación de vanos. Puede requerir iterar con Fase C (10–12).",
+      output:"Proyecto ajustado tras evaluación II"
+    },
+    "15": {
+      num:"15", name:"Documento de Concepto", type:"OUT", proc:"HUMANO",
+      desc:"Entrega final de sección 4: compilación de todo el proceso conceptual para modelado 3D",
+      input:"4.1–4.14 Todo el proceso · 3.1–3.10 Inputs de análisis · 2.1 Constantes",
+      opera:"Compilar: manifiesto, idea matriz, partido, plantas, fachadas, cortes conceptuales, evaluaciones ambientales, criterios. Es el input directo para modelado 3D (sección 5).",
+      output:"Documento de Concepto completo → Alimenta Sección 5 (Modelado 3D)"
+    }
+  };
+
+  const STATUS_CYCLE = ['PENDIENTE','EN_PROGRESO','LISTO','APROBADO'];
+  const STATUS_COLORS = {PENDIENTE:'#555', EN_PROGRESO:'#ff9800', LISTO:'#4caf50', APROBADO:'#2196f3'};
+  const TYPE_COLORS = {OUT:'#2196f3', DEC:'#ff9800', ACC:'#d45e2c', EVA:'#f44336', GUI:'#9c27b0'};
+  const PROC_CLASS = {HUMANO:'proc-humano', AI:'proc-ai', 'HUMANO→AI':'proc-mixto', 'AI→HUMANO':'proc-mixto'};
+  const svg = document.getElementById('grafo');
+  const detail = document.getElementById('sec4-detail');
+  const stateStore = {};
+
+  // Load from localStorage
+  function loadStates(){
+    try{
+      const saved = localStorage.getItem('soma_grafo_estados');
+      if(saved){const p=JSON.parse(saved);Object.assign(stateStore,p)}
+    }catch(e){}
+  }
+  function saveStates(){
+    try{localStorage.setItem('soma_grafo_estados',JSON.stringify(stateStore))}catch(e){}
+  }
+  loadStates();
+
+  function getStateLabel(s){return s||'PENDIENTE'}
+  function renderDetail(stepKey){
+    const d = STEPS_DATA[stepKey];
+    if(!d){detail.style.display='none';return}
+    document.getElementById('dp-num').textContent = d.num;
+    document.getElementById('dp-name').textContent = d.name;
+    const typeEl = document.getElementById('dp-type');
+    typeEl.textContent = d.type;
+    typeEl.style.color = TYPE_COLORS[d.type]||'#888';
+    typeEl.style.borderColor = TYPE_COLORS[d.type]||'#888';
+    const procEl = document.getElementById('dp-proc');
+    procEl.textContent = d.proc;
+    procEl.className = 'dp-proc ' + (PROC_CLASS[d.proc]||'');
+    const st = getStateLabel(stateStore[stepKey]);
+    const statusEl = document.getElementById('dp-status');
+    statusEl.textContent = st;
+    statusEl.style.color = STATUS_COLORS[st]||'#555';
+    statusEl.style.borderColor = STATUS_COLORS[st]||'#555';
+    document.getElementById('dp-desc').textContent = d.desc;
+    document.getElementById('dp-input').innerHTML = d.input;
+    document.getElementById('dp-opera').innerHTML = d.opera;
+    document.getElementById('dp-output').innerHTML = d.output;
+    detail.style.display = 'block';
+  }
+
+  function cycleState(stepKey){
+    const cur = stateStore[stepKey] || 'PENDIENTE';
+    const idx = STATUS_CYCLE.indexOf(cur);
+    const next = STATUS_CYCLE[(idx + 1) % 4];
+    stateStore[stepKey] = next;
+    saveStates();
+    return next;
+  }
+
+  function updateNodeVisual(stepKey){
+    const node = svg.querySelector(`.node[data-step="${stepKey}"]`);
+    if(!node)return;
+    const st = getStateLabel(stateStore[stepKey]);
+    const col = STATUS_COLORS[st]||'#555';
+    node.querySelector('.node-stripe').setAttribute('fill', col);
+    node.querySelector('.node-status-dot').setAttribute('fill', col);
+    node.dataset.status = st;
+    const isPen = st === 'PENDIENTE';
+    const out = JSON.parse(node.dataset.outgoing || '[]');
+    out.forEach(t => {
+      svg.querySelectorAll(`.edge-path[data-from="${stepKey}"]`).forEach(e => {
+        e.style.opacity = isPen ? '0.5' : '1';
+      });
+    });
+  }
+
+  function applyAllStates(){
+    Object.keys(STEPS_DATA).forEach(k => updateNodeVisual(k));
+  }
+
+  // Attach click handlers
+  document.querySelectorAll('.node').forEach(n => {
+    const sk = n.dataset.step;
+    if(!stateStore[sk]) stateStore[sk] = 'PENDIENTE';
+    n.addEventListener('click', function(e){
+      e.stopPropagation();
+      const k = this.dataset.step;
+      const next = cycleState(k);
+      updateNodeVisual(k);
+      renderDetail(k);
+    });
+    n.setAttribute('role','button');
+    n.setAttribute('tabindex','0');
+    // Dim edges initially
+    const out = JSON.parse(n.dataset.outgoing || '[]');
+    out.forEach(t => {
+      svg.querySelectorAll(`.edge-path[data-from="${sk}"]`).forEach(e => {
+        e.style.opacity = '0.5';
+      });
+    });
+  });
+
+  applyAllStates();
+  console.log('Grafo SOMA listo — ' + document.querySelectorAll('.node').length + ' nodos');
+})();
+
+// ─── DOMContentLoaded ───
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.step-card').forEach(c=>{
+    c.setAttribute('role','button');
+    c.setAttribute('aria-expanded','false');
+    const d=c.querySelector('.step-detail');
+    if(d)d.setAttribute('aria-hidden','true');
+  });
+  document.querySelectorAll('.station').forEach(s=>s.setAttribute('role','button'));
+  const hash=window.location.hash.replace('#','');
+  if(hash&&hash.startsWith('sec-')){
+    const n=parseInt(hash.replace('sec-',''));
+    if(n>=1&&n<=9)showSection(n);
+  }else{
+    const t=document.getElementById('timeline');
+    if(t)t.querySelectorAll('.station')[3].scrollIntoView({inline:'center',block:'nearest'});
+  }
+});
+</script>
+</body>
+</html>

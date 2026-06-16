@@ -9,7 +9,7 @@
 |-------|-------|
 | Nombre del negocio | SOMA — Taller Virtual de Arquitectura |
 | Categoría principal | Estudio de arquitectura |
-| Teléfono | 999 361 9433 (provisional — cambiar cuando tenga línea exclusiva) |
+| Teléfono | 999 531 4093 (provisional — cambiar cuando tenga línea exclusiva) |
 | Correo | habitarq85@gmail.com |
 | Horario | Lun–Vie 9:00–14:00 y 15:00–18:00 |
 | Tipo | Negocio de área de servicio (sin atención al público en domicilio) |
@@ -39,7 +39,7 @@
 - Opcional: agregar comisarías o municipios cercanos si también atiendes ahí (Umán, Kanasín, Conkal, Progreso, etc.)
 
 ### 5. Contacto
-- Teléfono: 999 361 9433
+- Teléfono: 999 531 4093
 - Sitio web: (dejarlo vacío por ahora, o poner un placeholder si tienes dominio)
 
 ### 6. Horario

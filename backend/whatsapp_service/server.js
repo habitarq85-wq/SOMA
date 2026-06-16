@@ -5,7 +5,7 @@ const fs = require('fs');
 const qrcode = require('qrcode-terminal');
 
 const PORT = process.env.WA_SERVICE_PORT || 3001;
-const TARGET_NUMBER = process.env.WA_NOTIFICACION || '5219993619433';
+const TARGET_NUMBER = process.env.WA_NOTIFICACION || '5219995314093';
 const SESSION_DIR = './session-data';
 const WA_NUMBER = process.env.VINCULAR_NUMERO || '';
 

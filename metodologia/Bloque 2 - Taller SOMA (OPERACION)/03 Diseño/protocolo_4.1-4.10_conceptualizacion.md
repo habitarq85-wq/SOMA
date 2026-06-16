@@ -1,241 +1,285 @@
 # PROTOCOLO: CONCEPTUALIZACIÓN
-## Bloque 2 — Taller SOMA (Operación) | Etapa 4 del Ciclo
+## Bloque 2 — Taller SOMA (Operación) | Sección 4 del PROCESO DE DISEÑO 2.0
+## Referencia: Items 4.1 a 4.10
 
-### ¿Qué es la Conceptualización?
+**Qué es:** Los datos procesados en el Análisis se traducen en una **idea
+arquitectónica**. No es dibujar planos — es definir el "qué y por qué" antes del "cómo".
 
-Es la etapa donde los datos procesados en el Análisis se traducen en una **idea
-arquitectónica**. No es dibujar planos — es definir el "qué y por qué" antes del
-"cómo".
+**Entrada:** Documento de Síntesis del Análisis (Sección 3 del 2.0)
 
-**Entrada:** Documento de Síntesis del Análisis (partido arquitectónico,
-estrategias, constraints, CreativeCore, perfil del proyecto, diagrama espacial,
-zonificación térmica).
+**Salida:** Concepto de diseño validado → listo para Modelado (Sección 5)
 
-**Salida:** Concepto de diseño validado → listo para Modelado (Etapa 5).
-
-### Rol del arquitecto
-
-Esta es la etapa donde el **talento SOMA** es insustituible. El protocolo
-organiza las preguntas clave, pero las respuestas son decisiones de diseño.
+**Rol del arquitecto:** Esta es la etapa donde el talento SOMA es insustituible.
+El protocolo organiza las preguntas clave; las respuestas son decisiones de diseño.
 
 ---
 
-## 1. DEL PARTIDO A LA IDEA
+```
+[OUT] 4.1 Manifiesto de Intenciones de Diseño (P2.0 ref: 4.1)
+─────────────────────────────────
+INPUT:  3.1-3.10 (todo el análisis)
+        2.2.1.2 Transcripción de entrevista (expectativas)
+OPERA:  Redactar intenciones que guiarán todas las decisiones de diseño,
+        organizadas en: formales, funcionales, espaciales, bioclimáticas
+OUTPUT: Manifiesto de 3-5 intenciones rectoras
+PROC:   HUMANO
+```
 
-### 1.1 Evaluación de la Síntesis
+### Intenciones Espaciales
+- [ ] **Secuencia:** ¿el recorrido del usuario está diseñado? (ActivityMatrix)
+- [ ] **Jerarquía:** ¿qué espacio es el protagonista? (más conexiones en Diagrama SOMA)
+- [ ] **Umbrales:** transición entre zonas (público→privado, interior→exterior)
+- [ ] **Dualidades:** resolver contradicciones del análisis
 
-Revisar el documento de síntesis del análisis y extraer:
+### Intenciones Tectónicas
+- [ ] **Materialidad dominante:** basada en CreativeCore
+- [ ] **Sistema estructural:** ¿se oculta o se exhibe?
+- [ ] **Relación interior-exterior:** basada en ejes Privacidad y Paisaje
 
-- [ ] **Partido arquitectónico:** ¿la frase + diagrama resumen captura la
-      esencia del proyecto? Si no, refinarla.
-- [ ] **Adjetivo rector:** ¿una sola palabra define la experiencia espacial?
-      (paz, poder, orden, libertad, refugio, encuentro, ligereza, cobijo).
-- [ ] **CreativeCore:** ¿las 5 posiciones de tensión son coherentes entre sí?
-      ¿Hay contradicciones que obliguen a una decisión? (ej: Brutalismo +
-      Efimeridad es una combinación que debe justificarse).
-- [ ] **Constraints críticos:** ¿cuáles son las 3 restricciones más duras del
-      proyecto? (normativa, presupuesto, solar). Esas van a condicionar
-      la forma más que cualquier deseo estético.
-- [ ] **Oportunidades únicas:** ¿qué tiene este proyecto que ningún otro tiene?
-      (vista, árbol, orientación, cliente, programa). Eso debe ser el
-      germen de la idea.
-
-### 1.2 Del Adjetivo a la Idea Matriz
-
-- [ ] **Idea Matriz:** Una frase que responda "¿Qué es este proyecto?".
-      No describe la función, describe la **intención poética y formal**.
-      Ejemplos:
-  - "Una caja de concreto que flota sobre el jardín."
-  - "La sombra de un árbol convertida en casa."
-  - "Un recorrido que va de la luz al cobijo y regresa."
-- [ ] **Verificación:** La Idea Matriz debe responder afirmativamente a:
-  - ¿Refleja el adjetivo rector?
-  - ¿Es comprensible para el cliente?
-  - ¿Puede guiar decisiones formales y espaciales?
+### Intenciones Bioclimáticas
+- [ ] **Estrategia pasiva principal:** ¿cuál dicta la forma del proyecto?
+- [ ] **Orientación:** ¿la forma prioriza N-S aunque sea alargada?
+- [ ] **Protección solar:** ¿la forma misma genera autosombra?
 
 ---
 
-## 2. MENSAJE ARQUITECTÓNICO
+```
+[DEC] 4.2 Selección de Idea Rectora (P2.0 ref: 4.2)
+─────────────────────────────────
+INPUT:  4.1 Manifiesto de intenciones
+        3.5 Patrones SOMA seleccionados
+        3.6 Patrones Alexander seleccionados
+        2.1.3.1 Arquetipos históricos
+        2.1.3.2 Repertorio de referencia
+OPERA:  Destilar las intenciones en una o dos ideas rectoras que sinteticen
+        la esencia del proyecto. Comunicable en una frase.
+OUTPUT: Idea rectora documentada (texto + referencias visuales)
+PROC:   HUMANO
+```
 
-El edificio comunica aunque no tenga letreros. La arquitectura siempre dice algo.
+### Evaluación de la Síntesis
+- [ ] **Partido arquitectónico:** ¿la frase + diagrama captura la esencia?
+- [ ] **Adjetivo rector:** una palabra que defina la experiencia espacial
+- [ ] **CreativeCore:** ¿las 5 posiciones de tensión son coherentes?
+- [ ] **Constraints críticos:** las 3 restricciones más duras del proyecto
+- [ ] **Oportunidades únicas:** ¿qué tiene este proyecto que ningún otro?
 
-### 2.1 Lo que el proyecto dice
+### Idea Matriz
+Una frase que responda "¿Qué es este proyecto?". Describe la **intención poética y formal**.
+- [ ] ¿Refleja el adjetivo rector?
+- [ ] ¿Es comprensible para el cliente?
+- [ ] ¿Puede guiar decisiones formales y espaciales?
 
-- [ ] **Al vecino:** ¿el proyecto se abre al barrio o se protege de él?
-      (decisión basada en análisis contextual: mimetismo o contraste).
+### Mensaje Arquitectónico
+- [ ] **Al vecino:** ¿se abre al barrio o se protege?
 - [ ] **Al usuario al llegar:** ¿qué siente al cruzar la entrada?
-      (basado en el Perfil Social y los 10 ejes de inmersión).
 - [ ] **Al habitante:** ¿qué le recuerda cada día?
-      (basado en CreativeCore y Mensaje Poético).
 - [ ] **Al visitante:** ¿qué historia cuenta la secuencia espacial?
-      (basado en la ActivityMatrix y la Matriz de Relaciones).
 
-### 2.2 Tono del proyecto
-
-| Si el adjetivo rector es... | El tono arquitectónico es... |
-|----------------------------|------------------------------|
-| Paz / Refugio / Cobijo | Contención, masas cerradas, luz controlada, horizontalidad |
-| Poder / Orden / Ceremonia | Ejes, simetría, jerarquía, materiales nobles, acceso monumental |
-| Libertad / Fluidez / Encuentro | Planta libre, transparencia, fluidez visual, límites difusos |
-| Ligereza / Elevación | Voladizos, pilotis, materiales ligeros, contacto mínimo con el suelo |
-| Introspección / Misterio | Recorridos quebrados, sorpresa, luz puntual, materiales oscuros |
+| Adjetivo rector | Tono arquitectónico |
+|----------------|-------------------|
+| Paz / Refugio | Contención, masas cerradas, horizontalidad |
+| Poder / Orden | Ejes, simetría, jerarquía, acceso monumental |
+| Libertad / Fluidez | Planta libre, transparencia, límites difusos |
+| Ligereza / Elevación | Voladizos, pilotis, materiales ligeros |
 
 ---
 
-## 3. INTENCIONES DE DISEÑO
+```
+[ACC] 4.3 Volumetrización del Programa (P2.0 ref: 4.3)
+─────────────────────────────────
+INPUT:  3.3 Programa Arquitectónico (m² por espacio y zona)
+        3.7 Restricciones normativas (COS, CUS, alturas)
+OPERA:  Agrupar espacios en volúmenes primarios según zona SOMA y
+        relaciones del diagrama. Asignar alturas preliminares.
+        Verificar huella contra COS disponible
+OUTPUT: Diagrama de masas inicial (bloques volumétricos sin forma final)
+PROC:   HUMANO (decisión) → AI (verificación contra COS/CUS)
+```
 
-Son los **objetivos explícitos** que el proyecto debe cumplir. Se redactan como
-compromisos verificables.
-
-### 3.1 Intenciones Espaciales
-
-- [ ] **Secuencia:** ¿el recorrido del usuario está diseñado? (basado en la
-      ActivityMatrix: ¿por dónde entra, cómo se mueve, dónde converge?)
-- [ ] **Jerarquía:** ¿qué espacio es el protagonista? (el que tiene más
-      conexiones en el Diagrama SOMA). Ese espacio merece la mejor
-      luz, la mayor altura, la mejor vista.
-- [ ] **Umbrales:** ¿cómo se marca la transición entre zonas? (público →
-      privado, social → descanso, interior → exterior).
-- [ ] **Dualidades:** ¿el proyecto resuelve las contradicciones detectadas en
-      el análisis? (ej: "fachada abierta" pero "perfil social privado" →
-      patio como filtro).
-
-### 3.2 Intenciones Tectónicas
-
-- [ ] **Materialidad dominante:** ¿el proyecto se inclina por un material
-      principal? (basado en CreativeCore: Brutalismo → concreto expuesto;
-      Refinamiento → piedra caliza pulida, madera).
-- [ ] **Sistema estructural como expresión:** ¿la estructura se oculta o se
-      exhibe? ¿la cubierta es pesada (losa) o ligera (estructura metálica)?
-- [ ] **Relación interior-exterior:** ¿cómo se desdibuja el límite?
-      (basado en los ejes Privacidad y Paisaje).
-
-### 3.3 Intenciones Bioclimáticas
-
-- [ ] **Estrategia pasiva principal:** ¿cuál de las seleccionadas en el análisis
-      dicta la forma del proyecto? (ej: "patio central como organizador
-      climático" → la forma se abre al patio).
-- [ ] **Orientación:** ¿la forma del proyecto prioriza la orientación N-S
-      aunque eso signifique un volumen alargado?
-- [ ] **Protección solar:** ¿la forma misma genera autosombra? (voladizos,
-      retranqueos, celosías integradas a la fachada).
+### Diagrama de Masas
+- [ ] **Volumen base:** bounding box del análisis. ¿Ocupa todo o se retira?
+- [ ] **Operaciones formales:**
+  - Sustracción (patio, jardín, terraza)
+  - Adición (pórtico, alas, mirador)
+  - Torsión (captar viento o vista)
+  - Fragmentación (pabellones)
+  - Plegado (cubierta o muro genera sombra/altura)
+- [ ] **Relación con el suelo:** ¿se posa, entierra, flota o ancla?
 
 ---
 
-## 4. MOLDEADO FORMAL
+```
+[ACC] 4.4 Zonificación Volumétrica (P2.0 ref: 4.4)
+─────────────────────────────────
+INPUT:  3.1 Gráfico del sitio
+        3.2 Gráfico ambiental (viento, sol, ruido)
+        3.9.3 Estrategias bioclimáticas
+        3.7 Restricciones normativas
+        4.3 Volumetrización del programa
+OPERA:  Colocar volúmenes en el terreno respetando retiros, orientación,
+        viento, ruido, accesos y vegetación a conservar
+OUTPUT: Planta de zonificación volumétrica
+PROC:   HUMANO
+```
 
-Cómo la idea se convierte en volumen, masa y espacio construible.
-
-### 4.1 Diagrama de Masas
-
-- [ ] **Volumen base:** Partir del Bounding Box (del análisis de sitio).
-      ¿El proyecto ocupa todo el polígono permitido o se retira?
-- [ ] **Operaciones formales:** Aplicar al volumen base:
-  - **Sustracción:** Macizo al que se le resta (patio, jardín, terraza).
-  - **Adición:** Volúmenes que se agregan (pórtico, alas, mirador).
-  - **Torsión:** Giro de un volumen respecto al otro para captar viento
-        o vista.
-  - **Fragmentación:** Partir el programa en volúmenes separados
-        conectados por circulaciones (pabellones).
-  - **Plegado:** La cubierta o el muro se pliega para generar sombra,
-        altura o jerarquía.
-- [ ] **Relación con el suelo:** ¿el proyecto se posa, se entierra, flota
-      o se ancla? Decisión basada en topografía y presupuesto.
-- [ ] **Perfiles:** Dibujar cortes esquemáticos del volumen contra el sol
-      (verificar que las protecciones solares funcionan).
-
-### 4.2 Zonificación Espacial
-
-- [ ] **Ubicar las 5 zonas SOMA** en el volumen:
-  - Social → acceso, mejor vista, conexión con exterior.
-  - Descanso → orientación N o NE, silencio, privacidad.
-  - Operativa → ventilación, luz natural, acceso de servicio.
-  - Soporte → en la periferia E/O, protegiendo al resto.
-  - Transición → conectar las zonas, generar sorpresa visual.
-- [ ] **Verificar contra la zonificación térmica** del análisis:
-  - Zona A (confort natural) = Social + Descanso.
-  - Zona B (híbrido) = Operativa.
-  - Zona C (asistido) = Soporte.
-
-### 4.3 Diagrama de Recorridos
-
-- [ ] **Recorrido principal:** Entrada → recibidor → espacio social →...
-      Debe contar una historia (basada en la secuencia del análisis).
-- [ ] **Recorridos secundarios:** Servicio, acceso directo a recámaras,
-      conexión al jardín.
-- [ ] **Nudos:** Puntos de convergencia donde el usuario decide direcciones.
-      Son los lugares con mayor potencial arquitectónico.
-- [ ] **Visuales en movimiento:** ¿qué se ve desde cada punto del recorrido?
-      (basado en el diagrama de visuales del análisis).
-
-### 4.4 Primer Croquis
-
-- [ ] Dibujar 3 opciones de **partido volumétrico** que respondan a la Idea
-      Matriz. Cada una debe ser radicalmente distinta:
-  - Opción A: La idea llevada al extremo.
-  - Opción B: La idea moderada por el presupuesto.
-  - Opción C: La idea que resuelve el programa de forma eficiente.
-- [ ] Marcar en cada opción: orientación N, acceso principal, viento
-      dominante, árboles existentes.
-- [ ] Evaluar las 3 opciones contra:
-  - ¿Cumple las intenciones de diseño? (sección 3)
-  - ¿Respeta los constraints? (normativa, presupuesto)
-  - ¿Aprovecha las oportunidades? (vista, viento, árbol)
-  - ¿Es construible por un tercero? (viabilidad técnica)
+- [ ] Ubicar las 5 zonas SOMA: Social (mejor vista), Descanso (N/NE), Operativa (servicio), Soporte (periferia E/O), Transición (conectar)
+- [ ] Verificar contra zonificación térmica del análisis
 
 ---
 
-## 5. VALIDACIÓN DEL CONCEPTO
-
-Antes de pasar a Modelado, el concepto debe validarse.
-
-- [ ] **Prueba del cliente:** Si el cliente entiende y se emociona con la
-      Idea Matriz, el concepto es correcto.
-- [ ] **Prueba del análisis:** ¿el concepto respeta todas las conclusiones
-      del análisis? Revisar punto por punto.
-- [ ] **Prueba del programa:** ¿todos los espacios del programa caben en la
-      volumetría propuesta? (Área construida ≤ CUS, áreas por espacio
-      ≥ dimensiones mínimas).
-- [ ] **Prueba del presupuesto:** ¿la opción seleccionada es viable
-      económicamente?
+```
+[ACC] 4.5 Ubicación de Volumetría en el Terreno (P2.0 ref: 4.5)
+─────────────────────────────────
+INPUT:  4.4 Zonificación volumétrica
+        3.1 Gráfico del sitio (niveles, pendientes)
+OPERA:  Ubicar exactamente cada volumen en coordenadas del terreno.
+        Decidir nivel de desplante según topografía
+OUTPUT: Planta de implantación (posición exacta de volúmenes)
+PROC:   HUMANO
+```
 
 ---
 
-## 6. SALIDA DE LA CONCEPTUALIZACIÓN
+```
+[ACC] 4.6 Ubicación de Accesos al Terreno (P2.0 ref: 4.6)
+─────────────────────────────────
+INPUT:  4.5 Implantación
+        2.2.2.3 Vialidades y banquetas
+        3.9.4 Integración urbana
+OPERA:  Definir acceso peatonal, vehicular y de servicio
+OUTPUT: Planta de accesos y circulaciones en el terreno
+PROC:   HUMANO
+```
 
-Al completar esta etapa, se genera el **Documento de Concepto** que contiene:
-
-1. **Idea Matriz:** Una frase que define el proyecto.
-2. **Mensaje arquitectónico:** Qué dice el proyecto a cada audiencia.
-3. **Intenciones de diseño:** Lista de 5–8 compromisos verificables.
-4. **Diagrama de masas:** Croquis volumétrico con operaciones formales.
-5. **Zonificación SOMA** sobre el volumen: qué va dónde.
-6. **Diagrama de recorridos:** Flechas de circulación principal y secundaria.
-7. **Opción seleccionada:** Con justificación de por qué sobre las otras.
-
-Este documento es la entrada directa al Modelado (Etapa 5 del ciclo SOMA).
+- [ ] **Recorrido principal:** entrada → recibidor → espacio social
+- [ ] **Recorridos secundarios:** servicio, acceso directo a recámaras, jardín
+- [ ] **Nudos:** puntos de convergencia con mayor potencial arquitectónico
 
 ---
 
-*La conceptualización no es el dibujo de una casa bonita. Es la decisión consciente
-de qué va a decir esa casa y cómo va a decirlo. El dibujo viene después.*
+```
+[ACC] 4.7 Partido Arquitectónico (P2.0 ref: 4.7)
+─────────────────────────────────
+INPUT:  4.3-4.6 Implantación + accesos + volumetría
+        4.2 Idea rectora
+        3.5-3.6 Patrones seleccionados
+OPERA:  Transformar volúmenes genéricos en composición arquitectónica.
+        Aplicar proporciones, escalas, ritmos y operaciones formales
+OUTPUT: Partido arquitectónico — boceto conceptual
+PROC:   HUMANO
+```
+
+### Primer Croquis
+Dibujar 3 opciones de **partido volumétrico** radicalmente distintas:
+- **Opción A:** La idea llevada al extremo
+- **Opción B:** Moderada por el presupuesto
+- **Opción C:** Máxima eficiencia programática
+
+Evaluar contra: intenciones, constraints, oportunidades, viabilidad técnica.
+
+---
+
+```
+[ACC] 4.8 Espacialidad Particular (P2.0 ref: 4.8)
+─────────────────────────────────
+INPUT:  4.7 Partido arquitectónico
+        3.3 Programa (espacios)
+        3.4 Diagrama de relaciones
+OPERA:  Configurar espacialidad interna: dónde va cada espacio, cómo
+        se circula, cómo se relaciona con el exterior
+OUTPUT: Configuración espacial detallada (6 sub-items 4.8.1 a 4.8.6)
+PROC:   HUMANO
+```
+
+### 4.8.1 Ubicación de Espacios
+- [ ] Colocar cada espacio en los volúmenes del partido
+
+### 4.8.2 Sistema de Circulaciones
+- [ ] Definir pasillos, galerías, escaleras, rampas con jerarquías
+
+### 4.8.3 Aperturas al Exterior
+- [ ] Definir tamaño y tipo de ventanas según orientación y ventilación
+
+### 4.8.4 Elementos Simbólicos
+- [ ] Identificar y colocar elementos con carga simbólica (entrada, pórtico, hogar)
+
+### 4.8.5 Colocación General de Materiales
+- [ ] Paleta general: pisos, muros, cubiertas, acabados por zona
+
+### 4.8.6 Propuesta de Sistema Estructural
+- [ ] Proponer sistema según claros, alturas, materiales y presupuesto
+
+---
+
+```
+[EVA] 4.9 Evaluación Ambiental I (P2.0 ref: 4.9)
+─────────────────────────────────
+INPUT:  4.8 Espacialidad (propuesta de diseño)
+        3.1-3.2 Análisis del sitio
+        3.9.3 Estrategias bioclimáticas
+OPERA:  Evaluar diseño contra 8 criterios ambientales
+        ✅ cumple / ⚠️ ajuste menor / ❌ requiere rediseño
+OUTPUT: Tabla de evaluación con 8 criterios
+PROC:   AI→HUMANO
+```
+
+| # | Criterio | ✅/⚠️/❌ |
+|---|----------|---------|
+| 4.9.1 | Asoleamiento — sombras, horas de sol por fachada | |
+| 4.9.2 | Ventilación — cruce de viento, obstrucciones | |
+| 4.9.3 | Accesibilidad — anchos, pendientes, giros | |
+| 4.9.4 | Seguridad y privacidad — visuales, territorialidad | |
+| 4.9.5 | Lluvia — pendientes, canalización, protección | |
+| 4.9.6 | Elementos simbólicos — legibilidad, jerarquía | |
+| 4.9.7 | Ergonomía y proxémica — dimensiones, distancias | |
+| 4.9.8 | Eficiencia del programa — m² previstos vs reales | |
+
+---
+
+```
+[ACC] 4.10 Ajustes Evaluación Ambiental I (P2.0 ref: 4.10)
+─────────────────────────────────
+INPUT:  4.9 Resultados (items ❌ y ⚠️)
+OPERA:  Corregir items ❌ (obligatorio). Evaluar ⚠️ (opcional).
+        Repetir 4.4-4.8 hasta que todos sean ✅ o ⚠️
+OUTPUT: Diseño ajustado (nueva iteración)
+PROC:   HUMANO (ajuste) → AI (re-evaluación)
+```
+
+---
+
+## Validación del Concepto (cortafuegos antes de Modelado)
+
+- [ ] **Prueba del cliente:** ¿entiende y se emociona con la Idea Matriz?
+- [ ] **Prueba del análisis:** ¿respeta todas las conclusiones?
+- [ ] **Prueba del programa:** ¿todos los espacios caben?
+- [ ] **Prueba del presupuesto:** ¿la opción es viable económicamente?
+
+---
+
+## Salida de la Conceptualización
+
+**Documento de Concepto** — entrada directa al Modelado (Sección 5):
+1. Idea Matriz — frase que define el proyecto
+2. Manifiesto de intenciones — 3-5 compromisos verificables
+3. Diagrama de masas — croquis volumétrico con operaciones formales
+4. Zonificación SOMA sobre el volumen
+5. Diagrama de recorridos
+6. Opción seleccionada con justificación
+7. Evaluación ambiental I — tabla con resultados
 
 ---
 
 ## FUENTES
 
-- **Christopher Alexander**, *A Pattern Language* (1977) — patrones 127 "intimacy gradient", 129 "common areas", 135 "light on two sides", 161 "sunny place". (patternlanguage.com)
-- **Christopher Alexander**, *The Timeless Way of Building* (1979) — concepto de "quality without a name", generación de forma viva.
-- **Francis D.K. Ching**, *Architecture: Form, Space, & Order* (4th ed., 2014) — principios de jerarquía espacial, umbrales, circulación, proporción.
-- **C. M. Deasy**, *Design Places for People* (1974) — relación entre el comportamiento humano y la generación de la forma arquitectónica.
-- **Jacques Paul Grillo**, *Form, Function and Design* (1960) — integración de la función en el proceso de diseño formal, operaciones de moldeado.
-- **Edward T. Hall**, *The Hidden Dimension* (1966) — teoría proxémica aplicada a la secuencia espacial y distancias interpersonales.
-- **Simon Unwin**, *Analysing Architecture* (3rd ed., 2009) — operaciones formales: sustracción, adición, torsión, fragmentación, plegado.
-- **01_PROTOCOLO_ANALISIS.md** (SOMA, 2026) — datos de entrada: CreativeCore, partido arquitectónico, zonificación térmica, ActivityMatrix.
-- **Christian Norberg-Schulz**, *Genius Loci: Towards a Phenomenology of Architecture* (1979) — concepto de lugar como generador de forma, refuerza el partido arquitectónico.
-- **Rudolf Arnheim**, *Visual Thinking* (1969) — pensamiento visual en la generación de conceptos formales, percepción de jerarquía y equilibrio.
-- **Alvar Aalto**, *Sketches* (1978, ed. Göran Schildt) — la escala humana como centro de la concepción arquitectónica, "humanizar la arquitectura".
-- **Christopher Alexander**, *Notes on the Synthesis of Form* (1964) — descomposición del problema de diseño en subproblemas, base metodológica de la conceptualización.
-- **Charles J. Holahan**, *Psicología Ambiental: Un Enfoque General* (1982) — bases psicológicas de la experiencia espacial, validación del CreativeCore y los 10 ejes.
-- **Reglamento de Construcción del Municipio de Mérida** — COS, CUS, alturas máximas, restricciones.
-- **NOM-008-SCFI** — Sistema General de Unidades de Medida (dimensiones mínimas de espacios).
+- Alexander, C. (1977). *A Pattern Language.* Oxford.
+- Alexander, C. (1979). *The Timeless Way of Building.*
+- Ching, F. (2014). *Arquitectura: Forma, Espacio y Orden.*
+- Unwin, S. (2009). *Analysing Architecture.*
+- Norberg-Schulz, C. (1979). *Genius Loci.*
+- Arnheim, R. (1969). *Visual Thinking.*
+- Hall, E. T. (1966). *The Hidden Dimension.*
+- Holahan, C. (1982). *Psicología Ambiental.*
+- Aalto, A. (1978). *Sketches.*
+- Deasy, C. M. (1974). *Design Places for People.*

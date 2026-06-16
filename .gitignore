@@ -10,3 +10,4 @@ backend/reportes/
 .env
 backend/whatsapp_service/session-data/
 backend/whatsapp_service/node_modules/
+*.pdf

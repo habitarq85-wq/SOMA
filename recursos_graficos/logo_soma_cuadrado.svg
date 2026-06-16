@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <rect width="400" height="400" fill="#0a0a0a" rx="24"/>
+
+  <!-- Espiral -->
+  <g transform="translate(200, 175)">
+    <!-- Punto central -->
+    <circle cx="0" cy="0" r="5" fill="#d45e2c"/>
+
+    <!-- Espiral áurea -->
+    <path d="M 0,0
+             C 0,-12 12,-24 24,-24
+             C 42,-24 48,-6 48,12
+             C 48,36 24,46 6,46
+             C -22,46 -34,22 -34,-2
+             C -34,-34 -10,-50 18,-50
+             C 54,-50 66,-22 66,10
+             C 66,46 38,66 10,66
+             C -26,66 -50,42 -50,10
+             C -50,-30 -26,-60 12,-66"
+          fill="none" stroke="#d45e2c" stroke-width="3.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Texto SOMA -->
+  <text x="200" y="320" font-family="Georgia, 'Times New Roman', serif" font-size="90" font-weight="bold" fill="#ffffff" letter-spacing="15" text-anchor="middle">SOMA</text>
+
+  <!-- Subtítulo -->
+  <text x="200" y="355" font-family="'Courier New', monospace" font-size="14" fill="#999999" letter-spacing="4" text-anchor="middle">ARQUITECTURA</text>
+</svg>

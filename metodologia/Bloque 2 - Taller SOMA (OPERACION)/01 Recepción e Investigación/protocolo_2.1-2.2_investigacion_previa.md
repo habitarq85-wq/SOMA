@@ -1,197 +1,102 @@
 # PROTOCOLO: INVESTIGACIÓN PREVIA DEL PROYECTO
 ## Bloque 2 — Taller SOMA (Operación)
+## Referencia: PROCESO DE DISEÑO 2.0 — Secciones 2.1 y 2.2
 
-**Propósito:** Recolectar los datos brutos del sitio, usuario, clima y normativa
-que se procesarán en la fase de Análisis.
+**Propósito:** Recolectar los datos brutos del sitio, clima y normativa
+que se procesarán en la fase de Análisis (Sección 3 del 2.0).
 
-**Diferencia clave:**
+**Regla fundamental:**
 - **Investigación** = ¿qué hay? ¿dónde obtenerlo? Se recolecta, no se interpreta.
-- **Análisis** = ¿qué significa eso para el diseño? Se procesa en el protocolo
-  de análisis (`02 Análisis/01_PROTOCOLO_ANALISIS.md`).
+- **Análisis** = ¿qué significa eso para el diseño? Se procesa en el protocolo de
+  análisis (`02 Análisis/protocolo_3.1-3.10_analisis.md`).
+- Todo output de esta sección es **bruto** — archivos, fotos, tablas sin procesar.
 
-Este protocolo se aplica por proyecto y se archiva en la carpeta del mismo.
-
----
-
-## 1. INVESTIGACIÓN DEL LUGAR (SITIO)
-
-### 1.1 Levantamiento Físico
-
-| Dato | Cómo obtenerlo | Dónde registrarlo |
-|------|---------------|-------------------|
-| Topografía (pendientes, niveles) | Visita al sitio, nivel de mano o estación total | Croquis acotado del predio |
-| Orientación (N magnético) | Brújula o app (Google Earth) | Plano de emplazamiento |
-| Dimensiones (frente, fondo, sup.) | Escrituras, catastro municipal, medición en sitio | Ficha del predio |
-| Vegetación (especies, copa, altura) | Observación directa, fotografía | Plano de vegetación existente |
-| Edificaciones preexistentes | Inspección visual, fotografías | Plano de estado actual |
-| Tipo de suelo | Reconocimiento visual, vecinos, estudio geotécnico si aplica | Nota en ficha del predio |
-| Colindancias | Escrituras, observación | Plano de emplazamiento |
-
-- [ ] **Topografía:** Pendientes del terreno, niveles de banqueta, punto más alto/bajo.
-      Croquis de niveles con cotas.
-- [ ] **Orientación:** Norte magnético y norte geográfico. Registrar trayectoria solar
-      aproximada sobre el predio.
-- [ ] **Dimensiones y forma:** Superficie total, frente, fondo, colindancias, forma del predio.
-- [ ] **Vegetación existente:** Árboles a conservar (especies, diámetro de copa, altura),
-      vegetación menor, áreas verdes. Fotografiar cada árbol relevante.
-- [ ] **Edificaciones preexistentes:** Construcciones actuales, materiales, estado.
-- [ ] **Mecánica de suelos:** Tipo de suelo (roca calcárea en Yucatán), capacidad de carga
-      si se tiene dato. Al menos reconocimiento visual del entorno y tipo de cimentación
-      de construcciones colindantes.
-
-### 1.2 Infraestructura y Servicios
-
-| Dato | Cómo obtenerlo |
-|------|---------------|
-| Acometida eléctrica | Inspección en sitio, pregunta al vecino o CFE |
-| Agua potable | Junta de Agua Potable del municipio o vecinos |
-| Drenaje sanitario | Observación de pozos/tomas en la calle |
-| Fibra óptica / internet | Preguntar a proveedores (Telmex, Totalplay, etc.) |
-
-- [ ] **Acometida eléctrica:** Ubicación del medidor, tipo de conexión (aérea/subterránea).
-- [ ] **Agua potable:** Diámetro de toma, presión estimada, ubicación del medidor.
-- [ ] **Drenaje sanitario:** Conexión a alcantarillado municipal o probable necesidad de
-      biodigestor/fosa séptica.
-- [ ] **Agua pluvial:** Puntos de descarga municipales. Pozos de absorción requeridos
-      (1 por cada 350 m² impermeables según reglamento de Mérida).
-- [ ] **Gas:** Disponibilidad de gas natural en la zona o necesidad de tanque estacionario.
-- [ ] **Telecomunicaciones:** Fibra óptica disponible, cobertura de internet, telefonía.
-- [ ] **Vialidad:** Tipo de calle, ancho de arroyo y banquetas, estado de pavimento.
-
-### 1.3 Contexto Urbano
-
-- [ ] **Tejido edificado:** Alturas, materiales, estilos y edades de las construcciones
-      vecinas. Fotografiar fachadas colindantes y vistas de calle.
-- [ ] **Usos de suelo del entorno:** Residencial, mixto, comercial, equipamiento.
-- [ ] **Transporte público:** Rutas cercanas, paradas, frecuencia (observación en sitio).
-- [ ] **Equipamiento cercano:** Escuelas, hospitales, mercados, parques. Registrar distancias.
-- [ ] **Visuales del entorno:** Registrar fotográficamente qué se ve desde el predio
-      en las 4 direcciones + desde cada posible punto de ventana. Anotar:
-  - Elementos visuales positivos (árboles, jardines, cielo abierto, hitos)
-  - Elementos visuales negativos (muros ciegos, transformadores, azoteas vecinas,
-        anuncios, patios de servicio ajenos)
-  - Visuales a nivel de piso, a 1.60 m (altura de ojos) y a 3.00 m+
-- [ ] **Acústica:** Fuentes de ruido dominantes (avenidas, industria, vecinos).
-      Registrar momento del día y duración.
-- [ ] **Seguridad:** Percepción de la zona, iluminación pública nocturna, flujo peatonal.
+**Procesadores:**
+- `AI` — la IA ejecuta (búsquedas, descargas, lookups)
+- `HUMANO` — el arquitecto ejecuta (trabajo de campo, juicio)
+- `AI→HUMANO` — IA procesa datos, humano toma decisiones
 
 ---
 
-## 2. ACCESIBILIDAD (PARÁMETROS A MEDIR)
+## 2.1 Material Constante
+*Fuentes que se recolectan una vez y persisten para todos los proyectos.
+Si la fuente ya está en la biblioteca SOMA → copiar al proyecto.
+Si es la primera vez o hay actualización → descargar de la fuente externa,
+guardar en biblioteca SOMA y copiar al proyecto.*
 
-*No se analiza, solo se registra qué condiciones existen y qué requisitos normativos
-aplican.*
+### 2.1.1 Datos Bioclimáticos
 
-### 2.1 Itinerario desde la vía pública
-
-- [ ] ¿Hay desnivel entre banqueta y entrada del predio? Registrar altura.
-- [ ] Ancho de banqueta frente al predio.
-- [ ] Pendiente de la calle frente al predio.
-
-### 2.2 Parámetros normativos a verificar en el proyecto
-
-*Estos valores se consultan en la normativa aplicable y se registran como requisitos.*
-
-| Parámetro | Valor de referencia (Mérida) |
-|-----------|------------------------------|
-| Ancho mínimo de puerta principal | 0.90 m |
-| Ancho mínimo de puertas interiores | 0.80 m (recámaras), 0.70 m (baños) |
-| Pendiente máxima de rampa | 10% (tramos ≤3 m), 8% (≤6 m), 6% (≤9 m) |
-| Diámetro de giro en baño accesible | 1.50 m |
-| Ancho de pasillos interiores | 0.90 m mínimo |
-| Escaleras: huella mínima / peralte máx. | 0.25 m / 0.18 m |
-| Barandales en escaleras y rampas | Altura 0.90–1.10 m, ambos lados |
-
-*Fuente: Reglamento de Construcciones del Municipio de Mérida; CTE DB-SUA 9;
-RD 505/2007; Orden TMA/851/2021.*
-
----
-
-## 3. INVESTIGACIÓN HISTÓRICA
-
-- [ ] **Evolución del predio:** Consultar en catastro municipal o con vecinos si el
-      terreno formó parte de una hacienda, fraccionamiento reciente o predio familiar.
-- [ ] **Construcciones previas:** Preguntar si hubo edificaciones anteriores (restos de
-      cimentaciones, pozos, rellenos).
-- [ ] **Valor patrimonial:** Verificar si el predio está en zona de monumentos históricos
-      (Centro Histórico de Mérida requiere autorización del INAH).
-- [ ] **Historia del barrio:** Fecha de fundación, estilo arquitectónico predominante,
-      hitos culturales cercanos.
-- [ ] **Significado del lugar:** Nombre de la calle o fraccionamiento, toponimia maya.
-- [ ] **Memoria vecinal:** Preguntar a vecinos de edad cómo era el área antes, qué usos
-      previos tenía el terreno (milpa, monte, potrero).
-- [ ] **Preexistencias físicas:** Registrar árboles maduros, muros de piedra, pozos
-      antiguos, albarradas, cenotes (común en Yucatán).
-
----
-
-## 4. DATOS CLIMÁTICOS (MÉRIDA, YUCATÁN)
-
-*Esta sección contiene datos ya disponibles que NO cambian por proyecto.
-Se registran una vez y se usan en todos los análisis.*
-
-### 4.1 Clasificación Climática
-
-| Variable | Dato |
-|----------|------|
-| Clasificación Köppen | Cálido subhúmedo Aw (sabana) |
-| Clasificación García (1973) | Cálido subhúmedo con lluvias en verano |
-| Altitud | 8 msnm (rango 4–10 m) |
-| Latitud | 20.97° N |
-
-### 4.2 Temperatura
+```
+[REF] 2.1.1.1 Normales Climatológicas de Mérida (P2.0 ref: 2.1.1.1)
+─────────────────────────────────
+INPUT:  CONAGUA / SMN (fuente externa)
+OPERA:  Buscar en biblioteca SOMA (clima/INDICE_CLIMA.md). Si no existe o
+        hay actualización, descargar de CONAGUA/SMN. Guardar en biblioteca
+        SOMA y copiar a `referencias/clima/` del proyecto
+OUTPUT: `normales_climatologicas_merida.pdf` — archivo en bruto
+PROC:   AI
+```
 
 | Variable | Dato | Fuente |
 |----------|------|--------|
+| Clasificación Köppen | Cálido subhúmedo Aw (sabana) | García, 1973 |
+| Altitud | 8 msnm | CONAGUA-SMN |
+| Latitud | 20.97° N | CONAGUA-SMN |
 | Temperatura media anual | 26°C | CONAGUA-SMN |
 | Temperatura máxima extrema | ~40°C (abril-mayo) | CONAGUA-SMN |
-| Temperatura mínima (nortes) | ~10°C (diciembre-enero) | CONAGUA-SMN |
-
-### 4.3 Humedad Relativa
-
-| Variable | Dato | Fuente |
-|----------|------|--------|
+| Temperatura mínima (nortes) | ~10°C (dic-ene) | CONAGUA-SMN |
 | Humedad relativa media | 75–80% | Canto, 1997 |
-| Picos máximos | hasta 94% | Canto, 1997 / Gonzalo Coral |
+| Precipitación | Régimen de verano (mayo-octubre) | CONAGUA-SMN |
 
-### 4.4 Asoleamiento
+```
+[REF] 2.1.1.2 Carta Solar de Mérida (P2.0 ref: 2.1.1.2)
+─────────────────────────────────
+INPUT:  Latitud/longitud de Mérida (20.97°N, 89.62°O)
+OPERA:  Buscar en biblioteca SOMA (clima/carta_solar_merida.png). Si no
+        existe, generar con software (Ladybug, SunPath) o descargar de
+        fuente confiable. Guardar en biblioteca SOMA y copiar a
+        `referencias/clima/` del proyecto
+OUTPUT: `carta_solar_merida.png` o `.pdf` — archivo en bruto
+PROC:   AI
+```
 
 | Variable | Dato | Fuente |
 |----------|------|--------|
 | Radiación global promedio | 4.7 kWh/m² | CONAGUA-SMN / INEGI |
-| Radiación mínima | 3.4 kWh/m² | CONAGUA-SMN |
-| Radiación máxima | 5.7 kWh/m² | CONAGUA-SMN |
 | Horas de sol promedio | ~6–7 h/día | CONAGUA-SMN |
+| Trayectoria | Este → Oeste, siempre al Sur del cenit | — |
 
-**Trayectoria solar:** El sol recorre de Este a Oeste, siempre al Sur del cenit
-(en el hemisferio norte). Los muros Este y Oeste reciben sol bajo y agresivo.
-La fachada Norte no recibe sol directo casi todo el año.
-
-### 4.5 Vientos
+```
+[REF] 2.1.1.3 Rosa de los Vientos de Mérida (P2.0 ref: 2.1.1.3)
+─────────────────────────────────
+INPUT:  CONAGUA / SMN (datos históricos de dirección y velocidad del viento)
+OPERA:  Buscar en biblioteca SOMA (clima/rosa_vientos_merida.png). Si no
+        existe, generar desde datos históricos. Guardar en biblioteca SOMA
+        y copiar a `referencias/clima/` del proyecto
+OUTPUT: `rosa_vientos_merida.png` o `.pdf` — archivo en bruto
+PROC:   AI
+```
 
 | Variable | Dato | Fuente |
 |----------|------|--------|
-| Dirección predominante | E, NE, SE (Alisios) | Raíz Arquitectónica - U. Modelo |
-| Vientos más frescos | NE | Raíz Arquitectónica - U. Modelo |
-| Frentes fríos ("Nortes") | Otoño-invierno, viento fuerte del N-NE | CONAGUA-SMN |
-| Suradas (viento cálido) | Primavera, dirección S-SE | CONAGUA-SMN |
-| Riesgo de huracanes | Temporada junio-noviembre, vientos hasta 250 km/h | CONAGUA-SMN |
+| Dirección predominante | E, NE, SE (Alisios) | U. Modelo |
+| Vientos más frescos | NE | U. Modelo |
+| Nortes (frentes fríos) | Otoño-invierno, N-NE | CONAGUA-SMN |
+| Suradas (cálido) | Primavera, S-SE | CONAGUA-SMN |
+| Riesgo de huracanes | Junio-noviembre, hasta 250 km/h | CONAGUA-SMN |
 
-### 4.6 Precipitación
+### 2.1.2 Normativas y Guías de Diseño
 
-| Variable | Dato |
-|----------|------|
-| Régimen de lluvias | Verano (mayo-octubre) |
-| Tormentas tropicales / huracanes | Posibles jun-nov |
-
----
-
-## 5. NORMATIVA Y MARCO LEGAL
-
-### 5.1 Reglamento de Construcciones del Municipio de Mérida
-
-*Fuente: Reglamento de Construcciones del Municipio de Mérida, disponible en
-el Instituto Municipal de Planeación (IMPLAN) o en línea.*
+```
+[REF] 2.1.2.1 Reglamento de Construcción de Mérida (P2.0 ref: 2.1.2.1)
+─────────────────────────────────
+INPUT:  Ayuntamiento de Mérida / IM Plan (fuente externa)
+OPERA:  Buscar en biblioteca SOMA (normativas/reglamento_construccion_merida.pdf).
+        Si no existe o hay actualización, descargar PDF de la fuente oficial.
+        Guardar en biblioteca SOMA y copiar a `referencias/normativas/` del proyecto
+OUTPUT: `reglamento_construccion_merida.pdf` — archivo en bruto
+PROC:   AI
+```
 
 Parámetros a consultar específicos del predio:
 - [ ] COS (Coeficiente de Ocupación del Suelo) — % máximo de desplante según zona
@@ -200,179 +105,311 @@ Parámetros a consultar específicos del predio:
 - [ ] Restricciones frontales, laterales y posteriores (metros de retiro)
 - [ ] Área verde permeable mínima
 - [ ] Pozos de absorción — 1 por cada 350 m² impermeables
-- [ ] Prohibición de escurrir agua pluvial a la vía pública
 
-### 5.2 Normas Técnicas Complementarias
+```
+[REF] 2.1.2.2 Norma de Accesibilidad Universal (P2.0 ref: 2.1.2.2)
+─────────────────────────────────
+INPUT:  Secretaría de Desarrollo Urbano / NOM (fuente externa)
+OPERA:  Buscar en biblioteca SOMA (normativas/NMX-R-050-SCFI-2006_accesibilidad.pdf).
+        Si no existe, descargar PDF de fuente oficial. Guardar en biblioteca SOMA
+        y copiar a `referencias/normativas/` del proyecto
+OUTPUT: `norma_accesibilidad_universal.pdf` — archivo en bruto
+PROC:   AI
+```
 
-*Fuente: Reglamento de Construcciones del Municipio de Mérida, Arts. 65–70.*
+| Parámetro | Valor referencia (Mérida) |
+|-----------|---------------------------|
+| Ancho mínimo puerta principal | 0.90 m |
+| Ancho mínimo puertas interiores | 0.80 m (recámaras), 0.70 m (baños) |
+| Pendiente máxima de rampa | 10% (≤3 m), 8% (≤6 m), 6% (≤9 m) |
+| Diámetro de giro baño accesible | 1.50 m |
+| Ancho de pasillos interiores | 0.90 m mínimo |
+| Escaleras: huella mínima / peralte máx. | 0.25 m / 0.18 m |
+| Barandales en escaleras y rampas | Altura 0.90–1.10 m, ambos lados |
 
-Parámetros generales de diseño (no dependen del predio):
-- [ ] Dimensión mínima de recámaras: 12.50 m², lado mínimo 3.25 m
-- [ ] Altura mínima interior: 2.60 m (habitables), 2.40 m (baños/lavado)
-- [ ] Iluminación natural: ventana ≥15% del área del piso
-- [ ] Ventilación natural: apertura ≥5% del área del piso
-- [ ] Circulaciones: pasillos ≥0.90 m, escaleras huella 0.25 m / peralte 0.18 m
-- [ ] Puertas: principal ≥0.90 m, recámaras ≥0.80 m, baños ≥0.70 m
+```
+[REF] 2.1.2.3 Reglamento de Uso de Suelo (P2.0 ref: 2.1.2.3)
+─────────────────────────────────
+INPUT:  Plan de Desarrollo Urbano de Mérida / carta urbana
+OPERA:  Buscar en biblioteca SOMA (normativas/PMDU_Merida.pdf). Si no existe
+        o hay actualización, descargar PDF de IM Plan. Guardar en biblioteca SOMA
+        y copiar a `referencias/normativas/` del proyecto
+OUTPUT: `uso_de_suelo_merida.pdf` — archivo en bruto
+PROC:   AI
+```
 
-### 5.3 Licencia de Construcción
+```
+[REF] 2.1.2.4 Parámetros de Diseño: Neufert, Ergonomía y Antropometría
+      (P2.0 ref: 2.1.2.4)
+─────────────────────────────────
+INPUT:  Fuentes bibliográficas externas (Neufert, Panero, Ching)
+OPERA:  Buscar en biblioteca SOMA (diseno/REFERENCIAS_BIBLIOGRAFICAS.md).
+        Los libros tienen copyright — solo se referencian con ISBN y lugar de
+        consulta. No se descargan
+OUTPUT: Referencia bibliográfica consultada en biblioteca física o digital
+PROC:   AI (referenciar) + HUMANO (consultar)
+```
 
-- [ ] ¿Aplica perito en construcción municipal (PCM)? (Obras >45 m² o +1 nivel)
-- [ ] Planos requeridos (5 juegos): localización, conjunto, plantas, fachadas,
-      2 cortes, instalaciones sanitarias
-- [ ] Archivo digital en AutoCAD (.dwg)
-- [ ] Copia de escrituras, predial al día, firma propietario + PCM
-- [ ] ¿Zona patrimonial? Autorización del INAH
+```
+[REF] 2.1.2.5 Normativas de Eficiencia Energética (P2.0 ref: 2.1.2.5)
+─────────────────────────────────
+INPUT:  CONUEE / NOM-020-ENER (fuente externa)
+OPERA:  Buscar en biblioteca SOMA (normativas/NOM-020-ENER-2011_eficiencia_energetica.pdf).
+        Si no existe o hay actualización, descargar PDF de CONUEE.
+        Guardar en biblioteca SOMA y copiar a `referencias/normativas/`
+OUTPUT: `nom_020_ener_eficiencia_energetica.pdf` — archivo en bruto
+PROC:   AI
+```
 
-### 5.4 Normativa de Accesibilidad
+### 2.1.3 Estado del Arte en Vivienda y Repertorio Tipológico
 
-*Fuentes: RD 505/2007 [BOE 11.05.07], Orden TMA/851/2021 [BOE 06.08.21],
-CTE DB-SUA 9, NOM-001-SEDATU, NOM-008-CONAVI.*
+```
+[REF] 2.1.3.1 Arquetipos Históricos de la Vivienda en Yucatán (P2.0 ref: 2.1.3.1)
+─────────────────────────────────
+INPUT:  Fuentes externas (historia, arquitectura, urbanismo)
+OPERA:  Buscar en biblioteca SOMA (arquetipos/INDICE_ARQUETIPOS.md). Si es
+        la primera vez o hay nuevas fuentes, investigar y recolectar materiales
+        sobre arquetipos (casa maya, colonial, porfiriana, moderna).
+        Guardar en biblioteca SOMA y copiar a `referencias/arquetipos/`
+OUTPUT: `arquetipo_casa_maya.pdf`, `arquetipo_casa_colonial.pdf`, etc.
+        — archivos de referencia en bruto
+PROC:   AI (búsqueda y recolección)
+```
 
-- [ ] Consultar qué normativa de accesibilidad aplica según el tipo de vivienda
-      (unifamiliar aislada puede tener exenciones en accesibilidad interior)
+```
+[REF] 2.1.3.2 Repertorio Local, Nacional e Internacional (P2.0 ref: 2.1.3.2)
+─────────────────────────────────
+INPUT:  Fuentes externas (libros, revistas, portafolios digitales)
+OPERA:  Buscar en biblioteca SOMA (repertorio/REPERTORIO_PROYECTOS.md).
+        Si no existen proyectos de referencia que compartan tipo, escala o clima
+        con el actual, investigar y recolectar. Guardar en biblioteca SOMA y
+        copiar a `referencias/repertorio/` del proyecto
+OUTPUT: `proyecto_referencia_01.pdf`, `proyecto_referencia_02.jpg`, etc.
+        — archivos de referencia en bruto
+PROC:   AI (búsqueda y recolección)
+```
+
+```
+[REF] 2.1.3.3 Patrones Importantes de Diseño SOMA (P2.0 ref: 2.1.3.3)
+─────────────────────────────────
+INPUT:  Fuentes externas + experiencia del arquitecto
+OPERA:  Buscar en biblioteca SOMA (patrones/CATALOGO_PATRONES_DISENO.md).
+        Si es primera vez, construir el catálogo de patrones SOMA
+        (acontecimiento, espaciales, de uso, tectónicos, bioclimáticos).
+        Se copia a `referencias/patrones/` de cada proyecto
+OUTPUT: `catalogo_patrones_diseno.md` — documento vivo, se enriquece con el tiempo
+PROC:   AI→HUMANO (AI compila borrador inicial, humano cura)
+```
+
+```
+[REF] 2.1.3.4 Patrones de Christopher Alexander (P2.0 ref: 2.1.3.4)
+─────────────────────────────────
+INPUT:  "A Pattern Language" (Alexander et al., 1977) — fuente externa
+OPERA:  Buscar en biblioteca SOMA (patrones/REFERENCIA_ALEXANDER.md).
+        El libro tiene copyright — solo se referencia con ISBN y se consulta
+        el mapeo de 34 patrones aplicables a Mérida
+OUTPUT: `a_pattern_language_alexander.pdf` — archivo de referencia si se adquiere
+PROC:   AI (referenciar) + HUMANO (consultar)
+```
 
 ---
 
-## 6. CONTEXTO SOCIAL Y ECONÓMICO
+## 2.2 Material Variable
+*Datos que se recolectan específicamente para cada proyecto.
+Operación: ir al campo, medir, fotografiar, entrevistar, registrar.*
 
-### 6.1 Perfil del Usuario
+### 2.2.2 Datos del Sitio
 
-Registrar en la entrevista (PROTOCOLO_02_ENTREVISTA + App puerto 5050):
-- [ ] Edades, salud/movilidad, ocupaciones de cada habitante
-- [ ] Hobbies y equipamiento que requieran espacio dedicado
-- [ ] Horarios típicos en casa (entre semana vs fines de semana)
-- [ ] Quién pasa más tiempo en casa
-- [ ] Mascotas
-- [ ] Frecuencia de visitas y familia que se queda a dormir
-- [ ] Quién toma las decisiones estéticas y quién las económicas
+```
+[OUT] 2.2.2.1 Levantamiento Físico del Terreno (P2.0 ref: 2.2.2.1)
+─────────────────────────────────
+INPUT:  Visita al sitio + escrituras / plano catastral del predio
+OPERA:  Medir y registrar en campo: dimensiones y forma del terreno,
+        niveles y pendientes, tipo de suelo (observación superficial),
+        vegetación existente, construcciones preexistentes.
+        Todo se registra en croquis análogo y fotografías
+OUTPUT: • `croquis_levantamiento.pdf` — croquis acotado del predio
+        • `fotos_terreno/` — carpeta con fotografías en bruto
+        • `datos_predio.txt` — dimensiones, área, medidas de escrituras
+PROC:   HUMANO
+```
 
-### 6.2 Aspectos Culturales Locales
+Checklist de campo:
+- [ ] **Topografía:** Pendientes del terreno, niveles de banqueta, punto más alto/bajo. Croquis de niveles con cotas.
+- [ ] **Orientación:** Norte magnético y norte geográfico. Registrar trayectoria solar aproximada sobre el predio.
+- [ ] **Dimensiones y forma:** Superficie total, frente, fondo, colindancias, forma del predio.
+- [ ] **Vegetación existente:** Árboles a conservar (especies, diámetro de copa, altura), vegetación menor, áreas verdes. Fotografiar cada árbol relevante.
+- [ ] **Edificaciones preexistentes:** Construcciones actuales, materiales, estado.
+- [ ] **Mecánica de suelos:** Tipo de suelo (roca calcárea en Yucatán), capacidad de carga si se tiene dato. Al menos reconocimiento visual del entorno y tipo de cimentación de construcciones colindantes.
 
-- [ ] **Arquitectura vernácula de la región:** Casas mayas de bajareque y palapa,
-      casonas coloniales con patio central y doble altura, galerías perimetrales.
-- [ ] **Materiales regionales disponibles:** Piedra caliza, madera de la región,
-      chukum (estuco maya), guano de palapa.
-- [ ] **Usos y costumbres locales:** Hamacas (requieren mayor altura libre y
-      anclajes en muros), cocina tradicional, pozo de ventilación en baños.
-- [ ] **Cosmovisión maya** (si aplica): Orientación de la vivienda, relación
-      con el monte y cenotes, importancia de la sombra y el viento.
+```
+[OUT] 2.2.2.2 Levantamiento de Elementos Interiores del Predio (P2.0 ref: 2.2.2.2)
+─────────────────────────────────
+INPUT:  Visita al sitio
+OPERA:  Registrar y fotografiar: árboles (especie, ubicación, diámetro),
+        pozos, cenotes, cuerpos de agua, construcciones existentes (muros,
+        pisos, losas, vanos, estado, materiales), acometidas (agua, drenaje,
+        electricidad, gas). Registro en croquis + fotografías
+OUTPUT: • `fotos_elementos_interiores/` — carpeta con fotos en bruto
+        • `croquis_elementos_existentes.pdf`
+PROC:   HUMANO
+```
 
-### 6.3 Datos Económicos del Contexto
+```
+[OUT] 2.2.2.3 Levantamiento de Elementos Exteriores (P2.0 ref: 2.2.2.3)
+─────────────────────────────────
+INPUT:  Visita al sitio + recorrido del entorno inmediato
+OPERA:  Registrar y fotografiar: colindancias (alturas, materiales, usos,
+        estado), vialidades (ancho, tipo, flujo), banquetas (ancho, estado),
+        postes (luz, teléfono, CCTV), alcantarillado, árboles públicos,
+        visuales del entorno en 4 direcciones
+OUTPUT: • `fotos_entorno/` — carpeta con fotos en bruto
+        • `croquis_contexto_urbano.pdf`
+PROC:   HUMANO
+```
+
+Checklist de contexto:
+- [ ] **Tejido edificado:** Alturas, materiales, estilos y edades de construcciones vecinas.
+- [ ] **Usos de suelo del entorno:** Residencial, mixto, comercial, equipamiento.
+- [ ] **Transporte público:** Rutas cercanas, paradas, frecuencia.
+- [ ] **Equipamiento cercano:** Escuelas, hospitales, mercados, parques. Distancias.
+- [ ] **Visuales del entorno:** Fotografiar en 4 direcciones + desde posibles puntos de ventana. Elementos positivos (árboles, jardines, cielo abierto) y negativos (muros ciegos, transformadores, azoteas vecinas).
+- [ ] **Seguridad:** Percepción de la zona, iluminación pública nocturna, flujo peatonal.
+
+### 2.2.2.4 Infraestructura y Servicios
 
 | Dato | Cómo obtenerlo |
 |------|---------------|
-| Nivel socioeconómico de la zona | Observación, INEGI, referencias inmobiliarias |
-| Valor del suelo por m² | Portales inmobiliarios, catastro |
-| Costos de construcción regionales | Referencia: $14k–$16.5k/m² Esencial, $18.5k–$23k/m² Integral, $28k–$40k/m² Ejecutivo |
-| Mano de obra calificada disponible | Preguntar a colegas, cámaras de construcción |
-| Proveedores de materiales regionales | Directorio local, ferreterías, trituradoras de piedra |
+| Acometida eléctrica | Inspección en sitio, pregunta al vecino o CFE |
+| Agua potable | Junta de Agua Potable o vecinos |
+| Drenaje sanitario | Observación de pozos/tomas en la calle |
+| Fibra óptica / internet | Telmex, Totalplay, etc. |
+
+- [ ] **Acometida eléctrica:** Ubicación del medidor, tipo de conexión (aérea/subterránea).
+- [ ] **Agua potable:** Diámetro de toma, presión estimada, ubicación del medidor.
+- [ ] **Drenaje sanitario:** Conexión a alcantarillado municipal o biodigestor/fosa séptica.
+- [ ] **Agua pluvial:** Puntos de descarga. Pozos de absorción (1 c/350 m² según reglamento).
+- [ ] **Gas:** Gas natural en la zona o tanque estacionario.
+- [ ] **Telecomunicaciones:** Fibra óptica disponible, cobertura.
+- [ ] **Vialidad:** Tipo de calle, ancho de arroyo y banquetas, estado de pavimento.
+
+### 2.2.3 Normativas Específicas
+
+```
+[REF] 2.2.3 Normativas Específicas del Fraccionamiento (P2.0 ref: 2.2.3)
+─────────────────────────────────
+INPUT:  Administración del fraccionamiento o condominio (si aplica)
+OPERA:  Si el predio está en fraccionamiento o condominio, solicitar el
+        reglamento interno a la administración. Guardar en biblioteca SOMA
+        y copiar a `referencias/normativas/especificas/` del proyecto
+OUTPUT: `reglamento_fraccionamiento.pdf` — archivo en bruto (si aplica)
+PROC:   AI
+```
+
+### 2.2.4 Datos Ambientales Específicos
+
+```
+[OUT] 2.2.4.1 Fuentes de Ruido (P2.0 ref: 2.2.4.1)
+─────────────────────────────────
+INPUT:  Visita al sitio en diferentes horarios (mañana, tarde, noche,
+        entre semana, fin de semana)
+OPERA:  Identificar fuentes de ruido: vialidades cercanas (flujo, tipo),
+        industrias, talleres, escuelas, comercios, aires acondicionados, etc.
+        Registrar ubicación en croquis y tipo. Medición cualitativa
+        (bajo/medio/alto) o cuantitativa con decibelímetro
+OUTPUT: • `mapa_fuentes_ruido.pdf` — croquis con ubicaciones
+        • `notas_ruido.txt` — horarios críticos, descripciones
+PROC:   HUMANO
+```
+
+```
+[OUT] 2.2.4.2 Fuentes de Olores (P2.0 ref: 2.2.4.2)
+─────────────────────────────────
+INPUT:  Visita al sitio + pregunta a vecinos (opcional)
+OPERA:  Identificar fuentes de olores: basurero, granja, industria, pozo
+        séptico, quemas, etc. Registrar dirección del viento, horarios y
+        estacionalidad
+OUTPUT: • `mapa_fuentes_olores.pdf` — croquis con dirección de viento
+        • `notas_olores.txt` — horarios, descripciones
+PROC:   HUMANO
+```
 
 ---
 
-## 7. VIABILIDAD ECONÓMICA
+## Investigación Histórica
 
-### 7.1 Presupuesto del Cliente (de la entrevista)
+- [ ] **Evolución del predio:** Consultar en catastro municipal o vecinos si el terreno formó parte de hacienda o fraccionamiento.
+- [ ] **Construcciones previas:** Preguntar si hubo edificaciones anteriores (restos de cimentaciones, pozos, rellenos).
+- [ ] **Valor patrimonial:** Verificar si el predio está en zona de monumentos históricos (Centro Histórico de Mérida requiere autorización INAH).
+- [ ] **Historia del barrio:** Fecha de fundación, estilo arquitectónico predominante, hitos culturales.
+- [ ] **Preexistencias físicas:** Registrar árboles maduros, muros de piedra, pozos antiguos, albarradas, cenotes (común en Yucatán).
 
-- [ ] Presupuesto total disponible (¿incluye terreno?)
-- [ ] ¿Construcción única o por etapas?
-- [ ] Prioridad: más m² con acabados básicos vs menos m² con acabados de lujo
-- [ ] Honorarios de diseño: $250/m² Esencial, $400/m² Integral, $1,000/m² Ejecutivo
+---
 
-### 7.2 Riesgos del Sitio
+## Viabilidad Económica
+
+- [ ] **Presupuesto del cliente:** Total disponible, si incluye terreno, etapas, prioridad m² vs acabados.
+- [ ] **Honorarios de diseño:** $250/m² Esencial, $350/m² Integral, $850/m² Ejecutivo.
 
 | Riesgo | Qué investigar |
 |--------|---------------|
 | Inundación | Historial de la colonia, topografía, drenaje municipal |
-| Huracanes | Zona de vientos según reglamento, temporada |
-| Suelo | Cavernas/cenotes en Yucatán — preguntar a vecinos si han encontrado |
-| Contaminación | Uso previo del terreno (taller, gasolinera, basurero) |
-| Servidumbres | Paso de instalaciones, tuberías, derechos de vía |
+| Huracanes | Zona de vientos según reglamento |
+| Suelo | Cavernas/cenotes — preguntar a vecinos |
+| Contaminación | Uso previo del terreno |
+| Servidumbres | Paso de instalaciones, derechos de vía |
 
 ---
 
-## 8. CÓMO ORGANIZAR LA INVESTIGACIÓN
+## Formato de Salida
 
-### 8.1 Formatos de registro
+Al completar la investigación se genera la **Carpeta de Investigación del Proyecto**
+en `backend/proyectos/SOMA-XXXX/`:
 
-Cada proyecto debe generar los siguientes documentos **en sitio** (app o libreta)
-y pasar a digital después:
+```
+referencias/
+├── clima/
+│   ├── normales_climatologicas_merida.pdf
+│   ├── carta_solar_merida.png
+│   └── rosa_vientos_merida.png
+├── normativas/
+│   ├── reglamento_construccion_merida.pdf
+│   ├── norma_accesibilidad_universal.pdf
+│   └── nom_020_ener_eficiencia_energetica.pdf
+├── arquetipos/
+├── repertorio/
+└── patrones/
+levantamiento/
+├── croquis_levantamiento.pdf
+├── croquis_elementos_existentes.pdf
+├── croquis_contexto_urbano.pdf
+├── fotos_terreno/
+├── fotos_elementos_interiores/
+├── fotos_entorno/
+└── datos_predio.txt
+ambiente/
+├── mapa_fuentes_ruido.pdf
+├── nota_ruido.txt
+├── mapa_fuentes_olores.pdf
+└── notas_olores.txt
+```
 
-1. **Ficha del predio:** Dimensiones, COS/CUS, orientación, colindancias.
-2. **Plano de emplazamiento raw:** Croquis con medidas, norte, vegetación, accesos.
-3. **Registro fotográfico:** Fotos del predio en 4 direcciones + detalles relevantes
-   (árboles, fachadas vecinas, infraestructura, visuales).
-4. **Ficha climática:** Datos de temperatura, humedad, viento, asoleamiento
-   (se usan los datos generales de Mérida + ajustes locales si aplica).
-5. **Ficha normativa:** COS, CUS, altura, restricciones del predio en concreto.
-6. **Notas de entrevista:** UserEntity, programa, presupuesto, CreativeCore.
-
-### 8.2 Datos que NO cambian por proyecto (ya disponibles)
-
-Estos datos se consultan una vez y se reusan en todos los proyectos de Mérida:
-- Clasificación climática, temperatura media, humedad, radiación solar
-- Dirección de vientos dominantes, fenómenos estacionales (nortes, suradas)
-- Normas Técnicas Complementarias (dimensiones mínimas)
-- Costos de construcción de referencia
-- Materiales regionales disponibles
-
-### 8.3 Datos que cambian por proyecto
-
-- Dimensiones, topografía, vegetación, colindancias del predio
-- COS/CUS específico (varía por zona)
-- Perfil del usuario, programa arquitectónico, presupuesto
-- Visuales y acústica del sitio
-- Riesgos específicos
-
----
-
-## 9. SALIDA DEL PROTOCOLO
-
-Al completar la investigación, se genera la **Carpeta de Investigación del Proyecto**
-que contiene:
-
-1. Checklist de investigación marcado (completado/pendiente).
-2. Plano de emplazamiento con medidas brutas, norte, vegetación, colindancias.
-3. Registro fotográfico del sitio y contexto.
-4. Ficha normativa (COS, CUS, altura, restricciones).
-5. Ficha de UserEntity + programa arquitectónico.
-6. Ficha de viabilidad (presupuesto, riesgos).
-7. Datos climáticos (ficha estándar de Mérida).
-
-Esta carpeta se archiva en `backend/proyectos/SOMA-XXXX/` y es la entrada para
-el PROTOCOLO DE ANÁLISIS.
+Esta carpeta es la entrada para el **PROTOCOLO DE ANÁLISIS** (`02 Análisis/protocolo_3.1-3.10_analisis.md`).
 
 ---
 
-*Fuentes detalladas en el anexo al final de este documento.*
+## FUENTES
 
-## ANEXO: FUENTES Y REFERENCIAS
-
-### Normativa
-- **Reglamento de Construcciones del Municipio de Mérida.** Arts. 65–70, Art. 29.
-- **CTE DB-SUA 9** — Seguridad de Utilización y Accesibilidad.
-- **RD 505/2007** — Condiciones básicas de accesibilidad. BOE 11.05.07.
-- **Orden TMA/851/2021** — Documento técnico de accesibilidad. BOE 06.08.21.
-- **NOM-001-SEDATU, NOM-008-CONAVI** (México).
-
-### Clima y bioclimática
-- **García, E. (1973).** Modificaciones al sistema Köppen.
-- **Canto, E. (1997).** Arquitectura bioclimática en Yucatán.
-- **Gonzalo Coral.** "Disfuncionalidad climática en la arquitectura regional meridana
-  actual". Lectambulos.
-- **Jiménez Torres et al. (2020).** Techos ventilados en Caucel, Mérida. UADY.
-- **Jiménez Torres et al. (2022).** Efecto de la altura sobre ganancia térmica. UADY.
-- **May Tzuc et al. (2020).** AI for indoor temperature modeling. J. Energy Engineering.
-- **Universidad del Medio Ambiente.** "Quintas del Mayab". umamexico.com
-- **Intersad Infrastruktur.** "Arquitectura bioclimática aplicada a Yucatán".
-  infrastruktur.com.mx
-- **Raíz Arquitectónica — Universidad Modelo.** Análisis bioclimático Mérida.
-- **UPC Barcelona.** Estrategias bioclimáticas para clima cálido-húmedo.
-  upcommons.upc.edu
-
-### Datos geográficos
-- **CONAGUA — SMN.** Datos climatológicos de Mérida.
-- **INEGI.** Clima de Yucatán. cuentame.inegi.org.mx
-
-### Accesibilidad
-- **COACyLE.** Listado de verificación de visado. Anexo 4 CSCAE.
-- **Verificación CTE.** Guía Completa CTE 2024. verificacioncte.es
+- García, E. (1973). *Modificaciones al sistema Köppen.*
+- Canto, E. (1997). *Arquitectura bioclimática en Yucatán.*
+- CONAGUA — SMN. *Normales Climatológicas de Mérida.*
+- H. Ayuntamiento de Mérida. (2023). *Reglamento de Construcción del Municipio de Mérida y NTC.*
+- IM Plan. (2022). *Plan de Desarrollo Urbano del Municipio de Mérida.*
+- NMX-R-050-SCFI-2015. *Accesibilidad Universal.*
+- NMX-R-001-SCFI. *Norma Mexicana de Vivienda.*
+- CONUEE. (2011). *NOM-020-ENER-2011.*
+- Alexander, C. et al. (1977). *A Pattern Language.* Oxford University Press.
+- Neufert, E. (1936). *El Arte de Proyectar en Arquitectura.* Gustavo Gili.
+- Panero, J. & Zelnik, M. (1979). *Human Dimension & Interior Space.*
+- Ching, F. (2014). *Arquitectura: Forma, Espacio y Orden.* Gustavo Gili.
+- Hall, E. T. (1966). *The Hidden Dimension.* Doubleday.

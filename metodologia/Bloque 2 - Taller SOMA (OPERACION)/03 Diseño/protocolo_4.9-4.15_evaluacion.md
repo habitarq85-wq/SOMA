@@ -1,205 +1,231 @@
 # PROTOCOLO: EVALUACIÓN DE HABITABILIDAD
-## Bloque 2 — Taller SOMA (Operación) | Etapa 8 del Ciclo
+## Bloque 2 — Taller SOMA (Operación) | Sección 4 del PROCESO DE DISEÑO 2.0
+## Referencia: Items 4.9 a 4.15
 
-### ¿Qué es la Evaluación?
-
-Es la auditoría sistemática del proyecto contra indicadores de habitabilidad antes de liberar la documentación final. No es opcional — es el control de calidad del taller SOMA.
+**Qué es:** Auditoría sistemática del proyecto contra indicadores de habitabilidad.
+Control de calidad del taller SOMA.
 
 **Entrada:** Modelo 3D + Planos de anteproyecto (de Etapas 5, 6, 7).
+
 **Salida:** Tabla de indicadores evaluados ✅/⚠️/❌ con ajustes documentados.
 
-### Principio rector
+---
 
-La evaluación no juzga la estética — verifica que el proyecto **funciona** para el ser humano que lo va a habitar.
+## 4.9 Evaluación Ambiental I
+
+```
+[EVA] 4.9 Evaluación Ambiental I (P2.0 ref: 4.9)
+─────────────────────────────────
+INPUT:  4.8 Espacialidad (propuesta de diseño)
+        3.1-3.2 Análisis del sitio
+        3.9.3 Estrategias bioclimáticas
+OPERA:  Evaluar diseño propuesto contra 8 criterios ambientales
+        (4.9.1 a 4.9.8). Si algún criterio es ❌, se ejecuta 4.10
+OUTPUT: Tabla de evaluación con 8 criterios + decisión de ajuste
+PROC:   AI→HUMANO
+```
+
+### 4.9.1 Asoleamiento
+- [ ] Radiación solar directa en vanos: vanos E/O con protección solar
+- [ ] Verificar sombras arrojadas en fechas críticas (solsticios, equinoccios)
+- [ ] Horas de sol por fachada: ¿las críticas tienen protección?
+
+### 4.9.2 Ventilación
+- [ ] Cada espacio habitable tiene dos muros opuestos con vanos
+- [ ] Cruce de viento en espacios principales
+- [ ] Obstrucciones al flujo de viento
+
+### 4.9.3 Accesibilidad
+- [ ] Anchos de circulación ≥ 0.90 m
+- [ ] Pendientes de rampa ≤ 10%
+- [ ] Puertas ≥ 0.80 m
+- [ ] Espacios de giro en baños ≥ 1.50 m
+
+### 4.9.4 Seguridad y Privacidad
+- [ ] Gradiente público-privado (Alexander, patrón 127)
+- [ ] Visuales desde calle y colindancias
+- [ ] Iluminación nocturna de accesos
+
+### 4.9.5 Comportamiento en Lluvia
+- [ ] Pendientes de cubierta ≥ 2%
+- [ ] Canalización pluvial
+- [ ] Áreas de inundación potencial
+- [ ] Pozos de absorción (1 c/350 m²)
+
+### 4.9.6 Elementos Simbólicos
+- [ ] Legibilidad y ubicación jerárquica
+- [ ] No competencia entre elementos
+- [ ] Funcionamiento a escala humana y urbana
+
+### 4.9.7 Ergonomía y Proxémica
+
+| Relación | Distancia (Hall, 1966) | Se aplica en |
+|----------|----------------------|-------------|
+| Íntima | 0-0.45 m | Recámara, baño |
+| Personal | 0.45-1.20 m | Sala, comedor, cocina |
+| Social | 1.20-3.60 m | Sala (visitas), comedor formal |
+| Pública | 3.60 m+ | Acceso, recibidor |
+
+- [ ] Gradiente de intimidad: acceso → social → descanso progresivo
+- [ ] Distancias entre asientos en sala-comedor: 1.20-2.50 m
+- [ ] Triángulo de trabajo cocina: 1.20-2.70 m
+
+### 4.9.8 Eficiencia del Programa
+- [ ] Área total ≤ CUS
+- [ ] Área por espacio ≥ mínimos normativos
+- [ ] Relación útil/construido: objetivo >80%
+- [ ] Área de circulación: objetivo <12%
 
 ---
 
-## 1. INDICADORES TÉRMICOS
-(Fuentes: ISO 7730:2005 / ISO 7730:2025 — PMV/PPD para confort térmico, iso.org/standard/39155.html; ASHRAE Standard 55 — Thermal Environmental Conditions for Human Occupancy, ashrae.org; NOM-020-ENER-2011 — Eficiencia energética en edificaciones, México)
-
-### 1.1 Criterios de evaluación
-
-| Indicador | Rango aceptable | Herramienta de verificación |
-|-----------|-----------------|---------------------------|
-| Temperatura operativa | 22°C – 26°C (Mérida, clima cálido) | Carta psicrométrica / Climate Consultant |
-| Humedad relativa | 40% – 70% | Carta psicrométrica |
-| Velocidad de aire | 0.2 – 1.0 m/s (ventilación natural) | CFD básico / cálculo manual |
-| PMV (voto medio estimado) | −0.5 a +0.5 | ISO 7730 cálculo (herramienta online) |
-| PPD (porcentaje insatisfechos) | < 10% | ISO 7730 cálculo |
-| Diferencia de temperatura radiante | < 5°C entre muros opuestos | Simulación solar |
-
-### 1.2 Checklist
-- [ ] **Radiación solar directa en vanos:** Verificar que vanos E/O tengan protección solar (alero, celosía, volado). Vanos N-S pueden tener menor protección.
-- [ ] **Ventilación cruzada:** ¿Cada espacio habitable tiene dos muros opuestos con vanos? Si no, ¿hay ventilación inducida (efecto chimenea)?
-- [ ] **Cubierta:** Reflectancia solar ≥ 0.7 (cool roof) para clima cálido. ¿La cubierta está aislada térmicamente?
-- [ ] **Muros exteriores:** ¿La composición del muro (block + repellado + aislamiento) cumple la transmitancia térmica recomendada para Mérida (U ≤ 1.5 W/m²K)?
-- [ ] **Zonificación térmica:** ¿Las zonas A (confort natural) están correctamente ubicadas (Social + Descanso)? ¿Zonas C (asistido) en Soporte?
+```
+[ACC] 4.10 Ajustes Evaluación Ambiental I (P2.0 ref: 4.10)
+─────────────────────────────────
+INPUT:  4.9 Resultados (items ❌ y ⚠️)
+OPERA:  Corregir items ❌ (obligatorio). Evaluar ⚠️ (opcional).
+        Repetir hasta que todos sean ✅ o ⚠️
+OUTPUT: Diseño ajustado (nueva iteración de 4.4-4.8)
+PROC:   HUMANO (ajuste) → AI (re-evaluación)
+```
 
 ---
 
-## 2. INDICADORES DE ILUMINACIÓN
-(Fuentes: NOM-025-STPS-2008 — Iluminación en centros de trabajo; Christopher Alexander, A Pattern Language — patrones 135, 161 sobre luz natural; 01_PROTOCOLO_ANALISIS.md — % de ventana por espacio)
+## 4.11 Proceso Avanzado de Configuración (Integral+)
 
-### 2.1 Criterios
+```
+[ACC] 4.11 Proceso Avanzado (P2.0 ref: 4.11)
+─────────────────────────────────
+INPUT:  4.8 Espacialidad ajustada + 4.10 Ajustes
+OPERA:  Configuración detallada de elementos específicos.
+        Solo si el paquete lo requiere (Integral o Ejecutivo)
+OUTPUT: Configuración detallada (6 sub-items 4.11.1 a 4.11.6)
+PROC:   HUMANO
+```
 
-| Espacio | Iluminancia recomendada (lux) | % ventana-piso | Temperatura color |
-|---------|------------------------------|----------------|-------------------|
-| Sala / Social | 200–300 lux | 15–25% | 3000K–3500K (cálida) |
-| Recámara / Descanso | 100–200 lux | 10–20% | 2700K–3000K (cálida) |
-| Cocina / Operativa | 300–500 lux | 15–25% | 4000K (neutra) |
-| Baño | 200–300 lux | 5–10% (privacidad) | 4000K (neutra) |
-| Circulaciones / Transición | 100–150 lux | 5–10% | 3000K (cálida) |
-| Estudio / Trabajo | 300–500 lux | 20–30% | 4000K–5000K |
-
-### 2.2 Checklist
-- [ ] **% ventana-piso:** Cada espacio cumple el % mínimo para su zona? (del análisis de iluminación en Protocolo de Análisis)
-- [ ] **Protección solar:** Vanos E/O tienen protección? Vanos N-S sin protección directa?
-- [ ] **Deslumbramiento:** ¿Ningún plano de trabajo (mesa, escritorio, cocina) tiene luz solar directa?
-- [ ] **Balance de luz natural:** ¿La profundidad del espacio permite que la luz natural llegue al fondo? (regla: prof. máxima = 2× altura de ventana)
-- [ ] **Iluminación artificial:** ¿Hay circuitos separados por zonas de uso? ¿Luces regulables en espacios sociales?
+- [ ] **4.11.1 Diseño General de Baños** — mobiliario, circulaciones, ventilación
+- [ ] **4.11.2 Diseño General de Cocina** — triángulo de trabajo, zonificación
+- [ ] **4.11.3 Diseño General de Escalera** — huella/contrahuella, ancho, barandales
+- [ ] **4.11.4 Diseño de Vanos** — dimensión, tipo, material de cada vano
+- [ ] **4.11.5 Diseño de Fachadas** — composición, materialidad, protecciones
+- [ ] **4.11.6 Diseño de Terrazas** — orientación, protección solar, vegetación
 
 ---
 
-## 3. INDICADORES ACÚSTICOS
-(Fuentes: NOM-081-SEMARNAT-1994 — Ruido en exteriores; ISO 140 / ISO 717 — Aislamiento acústico; Christopher Alexander, Pattern Language — patrón 155 "floor surface", 159 "light on two sides" como atenuación) 
+## 4.12 Criterio de Iluminación Artificial
 
-### 3.1 Criterios
+```
+[GUI] 4.12 Criterio Iluminación Artificial (P2.0 ref: 4.12)
+─────────────────────────────────
+INPUT:  4.8 Espacialidad + 4.9.1 Asoleamiento
+        3.10.4 Perfil de diseño (eje iluminación)
+OPERA:  Definir por espacio: tipo de iluminación, temperatura de
+        color, altura de luminarias, controles, eficiencia
+OUTPUT: Criterio de iluminación artificial por espacio
+PROC:   HUMANO
+```
 
-| Situación | Nivel sonoro máx. | Aislamiento mín. fachada | Aislamiento mín. entre espacios |
-|-----------|-------------------|------------------------|-------------------------------|
-| Recámaras (descanso) | 35 dB(A) nocturno | Rw ≥ 45 dB (vía ruidosa) / Rw ≥ 35 dB (vía tranquila) | Rw ≥ 40 dB entre recámaras |
-| Sala / Social | 45 dB(A) | Rw ≥ 40 dB | Rw ≥ 35 dB |
-| Cocina / Operativa | 50 dB(A) | Rw ≥ 35 dB | Rw ≥ 30 dB |
-| Baño | 45 dB(A) | Rw ≥ 35 dB | Rw ≥ 30 dB |
-
-### 3.2 Checklist
-- [ ] **Separación de zonas ruidosas y silenciosas:** Cocina y cuarto de máquinas NO contiguos a recámaras? (verificar zonificación SOMA)
-- [ ] **Muros entre recámaras:** ¿Tienen aislamiento acústico? (block macizo + cámara de aire + tablaroca sobre perfilería)
-- [ ] **Instalaciones ruidosas:** ¿El calentador, bomba de agua y minisplit están alejados de recámaras o con envolvente acústica?
-- [ ] **Pisos:** ¿Hay cambio de material en zonas de alto tránsito? (reducir ruido de impacto)
-- [ ] **Fachada:** Si el predio está en avenida, ¿la fachada tiene doble acristalamiento o muro macizo?
-
----
-
-## 4. INDICADORES DEL PROGRAMA
-(Fuente: 01_PROTOCOLO_ANALISIS.md — verificación de programa; 02_PROTOCOLO_MODELADO.md — checklist de áreas)
-
-### 4.1 Checklist
-- [ ] **Área total construida:** ¿No excede el CUS del predio? (verificar contra normativa municipal)
-- [ ] **Área por espacio:** ¿Cada espacio cumple el área mínima funcional? (recámara ≥ 12m², baño ≥ 3m², sala-comedor ≥ 25m²)
-- [ ] **Dimensiones mínimas:** Ancho de circulaciones ≥ 0.90m, puertas ≥ 0.80m, altura libre ≥ 2.60m (2.40m baños)
-- [ ] **Relaciones espaciales:** ¿Las conexiones del Diagrama Espacial SOMA se reflejan en la planta? (los espacios con relación directa deben ser contiguos)
-- [ ] **Accesibilidad:** ¿Hay acceso sin escalón a nivel de calle? ¿Rampas donde hay desniveles? ¿Baño accesible en planta baja?
+| Espacio | Iluminancia | Temp. color | % ventana-piso |
+|---------|------------|-------------|----------------|
+| Sala | 200-300 lux | 3000-3500K | 15-25% |
+| Recámara | 100-200 lux | 2700-3000K | 10-20% |
+| Cocina | 300-500 lux | 4000K | 15-25% |
+| Baño | 200-300 lux | 4000K | 5-10% |
+| Circulación | 100-150 lux | 3000K | 5-10% |
+| Estudio | 300-500 lux | 4000-5000K | 20-30% |
 
 ---
 
-## 5. INDICADORES PROXÉMICOS
-(Fuentes: Edward T. Hall, The Hidden Dimension (1966) — teoría proxémica, distancias interpersonales; Christopher Alexander, A Pattern Language — patrones 127 "intimacy gradient", 129 "common areas at the heart")
+## 4.13 Criterio de Diseño de Paisaje
 
-### 5.1 Distancias interpersonales por contexto (Hall, 1966)
-
-| Relación | Distancia | Se aplica en |
-|----------|-----------|-------------|
-| Íntima | 0–0.45 m | Recámara, baño, espacios personales |
-| Personal | 0.45–1.20 m | Sala, comedor, cocina (familia cercana) |
-| Social | 1.20–3.60 m | Sala (visitas), comedor formal, estudio |
-| Pública | 3.60m+ | Acceso, recibidor, espacios públicos |
-
-### 5.2 Checklist
-- [ ] **Gradiente de intimidad (Alexander, patrón 127):** ¿La secuencia acceso → social → descanso es progresiva en privacidad? (verificar contra recorrido principal)
-- [ ] **Dimensiones de espacios sociales:** Sala-comedor: ¿la distancia entre asientos permite conversación social (1.20–2.50m)? No debe ser tan grande que se pierda la intimidad.
-- [ ] **Recámaras:** ¿La cama tiene distancia personal (>0.45m) a cada muro?
-- [ ] **Baño:** ¿Los elementos (wc, lavabo, regadera) respetan distancia íntima (>0.30m entre sí)?
-- [ ] **Cocina:** ¿El triángulo de trabajo (estufa-fregadero-refrigerador) tiene distancias entre 1.20–2.70m? (Alexander, patrón 139)
+```
+[GUI] 4.13 Criterio de Paisaje (P2.0 ref: 4.13)
+─────────────────────────────────
+INPUT:  4.4 Zonificación (áreas exteriores)
+        2.2.2.1-2 Vegetación existente
+        3.9.4 Integración urbana
+OPERA:  Definir vegetación a conservar, especies propuestas (locales,
+        bajo consumo de agua), zonificación del jardín, mobiliario
+        exterior, riego e iluminación exterior
+OUTPUT: Criterio de paisaje + propuesta de especies
+PROC:   HUMANO
+```
 
 ---
 
-## 6. INDICADORES NORMATIVOS
-(Fuentes: Reglamento de Construcción del Municipio de Mérida; NOM-001-SEDE — Instalaciones eléctricas; Normativa de protección civil; COS/CUS del plan director)
+## 4.14 Evaluación Ambiental II (Cualitativa)
 
-### 6.1 Checklist por municipio (Mérida como base)
-- [ ] **COS (Coeficiente de Ocupación del Suelo):** No excedido. Verificar contra escrituras.
-- [ ] **CUS (Coeficiente de Utilización del Suelo):** No excedido. Verificar contra escrituras.
-- [ ] **Altura máxima:** No excedida. (generalmente 8–10m en zonas residenciales)
-- [ ] **Restricciones frontales:** Respetadas (generalmente 3–5m de retiro frontal)
-- [ ] **Restricciones laterales y posteriores:** Respetadas
-- [ ] **Cajones de estacionamiento:** Número mínimo según uso (1 cajón cada 50m² construidos en vivienda)
-- [ ] **Rampas de acceso:** Pendiente máxima 12% (interior) o 8% (exterior) para accesibilidad
-- [ ] **Área verde / jardín:** Porcentaje mínimo de terreno permeable según reglamento
-- [ ] **Normativa de gas:** Ubicación del calentador a ≥ 1.5m de ventanas y colindancias
-- [ ] **Protección civil:** Extintor visible y accesible en cocina, ruta de evacuación marcada
+```
+[EVA] 4.14 Evaluación Ambiental II (P2.0 ref: 4.14)
+─────────────────────────────────
+INPUT:  4.11 Configuración avanzada + 4.12-4.13 Criterios
+        3.10.4 Perfil de diseño (datos cualitativos)
+OPERA:  Segunda evaluación cualitativa centrada en la experiencia
+        del usuario: 5 dimensiones humanas
+OUTPUT: Evaluación cualitativa (4.14.1)
+PROC:   HUMANO
+```
 
----
+### 4.14.1 Evaluación: Fisiológica, Psicológica, Funcional, Social, Cultural
 
-## 7. TABLA DE RESULTADOS
-
-| Indicador | Estado | Ajuste requerido |
-|-----------|--------|------------------|
-| Confort térmico (PMV) | ✅ / ⚠️ / ❌ | _ |
-| Protección solar vanos E/O | ✅ / ⚠️ / ❌ | _ |
-| Ventilación cruzada | ✅ / ⚠️ / ❌ | _ |
-| Iluminación natural (% V/P) | ✅ / ⚠️ / ❌ | _ |
-| Iluminación artificial | ✅ / ⚠️ / ❌ | _ |
-| Aislamiento acústico fachada | ✅ / ⚠️ / ❌ | _ |
-| Separación zonas ruidosas | ✅ / ⚠️ / ❌ | _ |
-| Programa (áreas vs normativa) | ✅ / ⚠️ / ❌ | _ |
-| Accesibilidad | ✅ / ⚠️ / ❌ | _ |
-| Gradiente de intimidad (proxémica) | ✅ / ⚠️ / ❌ | _ |
-| Dimensiones proxémicas | ✅ / ⚠️ / ❌ | _ |
-| COS / CUS / Altura máx. | ✅ / ⚠️ / ❌ | _ |
-| Estacionamiento | ✅ / ⚠️ / ❌ | _ |
-| Normativa de gas / eléctrica | ✅ / ⚠️ / ❌ | _ |
-
-**Leyenda:**
-- ✅ = Cumple (no requiere ajuste)
-- ⚠️ = Requiere ajuste menor (documentar cambio)
-- ❌ = No cumple (requiere rediseño parcial)
+| Dimensión | Criterio | ✅/⚠️/❌ |
+|-----------|----------|---------|
+| Fisiológica | Confort térmico, lumínico, acústico | |
+| Psicológica | Seguridad, pertenencia, privacidad | |
+| Funcional | Eficiencia recorridos, mantenimiento | |
+| Social | Espacios de reunión, integración familiar | |
+| Cultural | Pertinencia tipológica, materialidad local | |
 
 ---
 
-## 8. PROCESO DE EVALUACIÓN
-
-1. **Evaluación inicial** (arquitecto, 1 día): llenar tabla completa contra modelo y planos
-2. **Documentación de hallazgos** (arquitecto, 0.5 día): para cada ⚠️/❌, escribir:
-   - ¿Cuál es el problema?
-   - ¿Qué ajuste se propone?
-   - ¿Impacta en otras áreas del diseño?
-3. **Ajustes** (arquitecto, 0.5–1 día): implementar correcciones en el modelo
-4. **Re-evaluación** (arquitecto, 0.5 día): verificar que los ajustes resolvieron los ⚠️/❌
-5. **Firma de liberación:** el protocolo se archiva con el proyecto
+```
+[ACC] 4.15 Ajustes II Evaluación Ambiental (P2.0 ref: 4.15)
+─────────────────────────────────
+INPUT:  4.14 Resultados (items ❌ y ⚠️)
+OPERA:  Corregir configuración avanzada. Repetir hasta que todos
+        los criterios sean al menos ⚠️
+OUTPUT: Diseño final ajustado → listo para Visualización (Sección 5)
+PROC:   HUMANO
+```
 
 ---
 
-## 9. SALIDA DE LA EVALUACIÓN
+## Tabla de Resultados Final
 
-1. **Tabla de indicadores** completada y firmada, archivada en `proyectos/SOMA-XXXX/evaluacion/`
-2. **Modelo 3D corregido** con los ajustes implementados
-3. **Notas de diseño** documentando cada corrección
+| Indicador | Estado | Ajuste |
+|-----------|--------|--------|
+| Asoleamiento | ✅/⚠️/❌ | |
+| Ventilación | ✅/⚠️/❌ | |
+| Accesibilidad | ✅/⚠️/❌ | |
+| Seguridad y privacidad | ✅/⚠️/❌ | |
+| Lluvia | ✅/⚠️/❌ | |
+| Elementos simbólicos | ✅/⚠️/❌ | |
+| Ergonomía y proxémica | ✅/⚠️/❌ | |
+| Eficiencia programa | ✅/⚠️/❌ | |
+| Iluminación artificial | ✅/⚠️/❌ | |
+| Paisaje | ✅/⚠️/❌ | |
+| Cualitativa (5 dim.) | ✅/⚠️/❌ | |
+| COS / CUS / Altura | ✅/⚠️/❌ | |
 
-Esta evaluación es el requisito para liberar el **Anteproyecto** (Etapa 9) y detonar el segundo pago (40%).
+---
+
+## Salida de la Evaluación
+
+1. Tabla de indicadores completada y archivada en `proyectos/SOMA-XXXX/evaluacion/`
+2. Modelo 3D corregido con ajustes implementados
+3. Notas de diseño documentando cada corrección
 
 ---
 
 ## FUENTES
 
-- **Francis D.K. Ching**, *Building Construction Illustrated* (6th ed., 2020) — composición de cerramientos, criterios de confort, dimensiones mínimas normativas.
-- **Francis D.K. Ching**, *Architecture: Form, Space, & Order* (4th ed., 2014) — proporciones espaciales, jerarquía de espacios, relación luz-forma.
-- **C. M. Deasy**, *Design Places for People* (1974) — evaluación de cómo los espacios funcionan para el comportamiento humano, criterios de éxito habitacional.
-- **Jacques Paul Grillo**, *Form, Function and Design* (1960) — verificación de que la forma cumple su función, método de auditoría funcional.
-- **Edward T. Hall**, *The Hidden Dimension* (1966) — teoría proxémica: distancias interpersonales y su aplicación al diseño de espacios. (edwardthall.com)
-- **Christopher Alexander**, *A Pattern Language* (1977) — patrones 127 (intimacy gradient), 129 (common areas), 135 (light on two sides), 155 (floor surface), 161 (sunny place). (patternlanguage.com)
-- **ISO 7730:2005 / ISO 7730:2025** — PMV/PPD para confort térmico. (iso.org/standard/39155.html)
-- **ASHRAE Standard 55-2023** — Thermal Environmental Conditions for Human Occupancy. (ashrae.org)
-- **NOM-020-ENER-2011** — Eficiencia energética en edificaciones, México.
-- **NOM-025-STPS-2008** — Iluminación en centros de trabajo.
-- **NOM-081-SEMARNAT-1994** — Ruido en exteriores.
-- **Reglamento de Construcción del Municipio de Mérida** — COS, CUS, alturas, estacionamiento, restricciones.
-- **Ernst Neufert**, *Arte de Proyectar en Arquitectura* (17ª ed. española, 2014 / original alemán 1936) — estándares dimensionales universales, verificación de espacios habitables.
-- **Julius Panero & Martin Zelnik**, *Human Dimension & Interior Space: A Source Book of Design Reference Standards* (1979) — antropometría detallada por actividad, verificación de mobiliario y circulaciones.
-- **Charles J. Holahan**, *Psicología Ambiental: Un Enfoque General* (1982) — evaluación psicoambiental del espacio, confort perceptual, bienestar psicológico.
-- **NMX-R-001-SCFI-2015** — Dibujo técnico, nomenclatura oficial de planos.
-- **NOM-001-SEDE** — Instalaciones Eléctricas.
-
----
-
-*"Un proyecto no está terminado hasta que pasa su propia auditoría."*
+- ISO 7730:2005/2025 — PMV/PPD confort térmico.
+- ASHRAE Standard 55-2023 — Thermal Environmental Conditions.
+- NOM-020-ENER-2011 — Eficiencia energética.
+- NOM-025-STPS-2008 — Iluminación.
+- NOM-081-SEMARNAT-1994 — Ruido.
+- Hall, E. T. (1966). *The Hidden Dimension.*
+- Alexander, C. (1977). *A Pattern Language.*
+- Neufert, E. *El Arte de Proyectar.*
+- Panero, J. & Zelnik, M. (1979). *Human Dimension.*
+- Holahan, C. (1982). *Psicología Ambiental.*
+- Reglamento de Construcción del Municipio de Mérida.

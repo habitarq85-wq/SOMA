@@ -1,214 +1,119 @@
-# PROTOCOLO: REPRESENTACIÓN INTEGRAL (DOSSIER EDITORIAL)
-## Bloque 2 — Taller SOMA (Operación) | Etapa 7 del Ciclo
+# PROTOCOLO: REPRESENTACIÓN INTEGRAL — DOSSIER EDITORIAL
+## Bloque 2 — Taller SOMA (Operación) | Sección 7 del PROCESO DE DISEÑO 2.0
+## Referencia: Items 7.1 a 7.2
 
-### ¿Qué es la Representación Integral?
+**Qué es:** Compilación del proyecto en un dossier editorial de calidad revista,
+que unifica memoria descriptiva, renders, planos y conceptos de diseño.
 
-Es la compilación del proyecto en un dossier editorial de calidad revista, que unifica la memoria descriptiva, los renders, los planos y los conceptos de diseño en un solo documento presentable al cliente y al portafolio.
+**Entrada:** Documento de Concepto + Modelo 3D + Renders + Planos.
 
-**Entrada:** Documento de Concepto + Modelo 3D + Renders (de Etapas 4, 5, 6).
 **Salida:** Dossier editorial en HTML/PDF con identidad visual SOMA.
 
-### Principio rector
-
-El dossier no es un instructivo técnico — es la **historia del proyecto** contada con imágenes, textos cortos y diseño editorial. El cliente debe entender el proyecto sin necesidad de leer planos.
+**Principio rector:** El dossier es la **historia del proyecto** — el cliente debe
+entender el proyecto sin necesidad de leer planos.
 
 ---
 
-## 1. ESTRUCTURA DEL DOSSIER
+```
+[HUMANO→AI] 7.1 Documento de Entrega HTML (P2.0 ref: 7.1)
+─────────────────────────────────
+INPUT:  6.1-6.2 Planos + 5.11 Renders + 4.1 Manifiesto + 4.2 Idea
+OPERA:  Integrar entregables en documento HTML con identidad SOMA:
+        portada, manifiesto, carrusel de planos, carrusel de
+        perspectivas, animaciones web sutiles
+OUTPUT: Documento HTML de entrega (autocontenido, imprimible a PDF)
+PROC:   HUMANO→AI
+```
 
-### 1.1 Portada
-(Fuente: editorial design principles — grid systems, typographic hierarchy)
+```
+[OUT] 7.2 Documento de Entrega PDF (P2.0 ref: 7.2)
+─────────────────────────────────
+INPUT:  7.1 HTML + 6.1-6.2 Planos + 5.11 Renders
+OPERA:  Compilar plantas, alzados y perspectivas en PDF
+OUTPUT: PDF de entrega (listo para imprimir/enviar)
+PROC:   AI (generación de PDF)
+```
 
-- Render principal del proyecto (vista más impactante) a página completa
+---
+
+## Estructura del Dossier
+
+### Portada
+- Render principal a página completa
 - Logotipo SOMA (esquina superior izquierda)
-- Título del proyecto: "Proyecto Arquitectónico [Nombre del Cliente]"
-- Subtítulo: tipo de paquete y fecha
-- Frase del proyecto (Idea Matriz de la Conceptualización)
+- Título: "Proyecto Arquitectónico [Nombre]"
+- Subtítulo: paquete y fecha
+- Frase del proyecto (Idea Matriz)
 - Créditos: "SOMA Taller Virtual de Arquitectura · Juan José Piña May"
 
-### 1.2 Ficha Técnica
-- Nombre del proyecto
-- Cliente
-- Ubicación
-- Tipo de proyecto
-- Área de terreno
-- Área construida
-- Paquete contratado
-- Fecha
-- Número de proyecto interno (SOMA-XXXX)
+### Ficha Técnica
+- Nombre, cliente, ubicación, tipo
+- Área de terreno y construida
+- Paquete contratado, fecha, No. proyecto
 
-### 1.3 Memoria Descriptiva (1 página)
-(Fuente: PROTOCOLO_CONCEPTUALIZACION.md — Documento de Concepto)
-
-En no más de 300 palabras:
+### Memoria Descriptiva (1 página, ≤300 palabras)
 - Idea Matriz del proyecto
-- Mensaje arquitectónico (qué dice el proyecto)
-- Partido arquitectónico (cómo se resolvió la implantación)
+- Mensaje arquitectónico
+- Partido arquitectónico
 - Estrategias bioclimáticas principales
 - Materialidad dominante
 
-### 1.4 Planta de Conjunto (1 página)
-- Planta de techos/implantación
-- Escala gráfica + norte
-- Nomenclatura de zonas SOMA (Social, Descanso, Operativa, Soporte, Transición)
+### Planta de Conjunto (1 página)
+- Escala 1:100 ó 1:75
+- Implantación, cubiertas, áreas exteriores, vegetación
+- Accesos, norte, escala gráfica
 
-### 1.5 Galería de Renders (3–6 páginas)
-(Fuente: PROTOCOLO_VISUALIZACION.md — vistas obligatorias)
+### Plantas Arquitectónicas (1 página cada una)
+- Por nivel, escala 1:75
+- Amuebladas, con nombres de espacios y áreas
 
-Cada render a página completa o doble página con:
-- Leyenda corta del espacio (ej: "Sala-estar · La luz del poniente tamizada por la celosía")
-- Material predominante del espacio
-- Pie de foto con nombre de archivo
+### Cortes y Alzados (2 páginas)
+- Corte longitudinal y transversal (1:75)
+- Alzados principales (1:75)
 
-### 1.6 Planos Arquitectónicos (2–4 páginas)
-- Plantas arquitectónicas (amuebladas)
-- Cortes significativos (mínimo 2)
-- Alzados principales
-- Escalas: 1:100 o 1:75 (según tamaño del proyecto)
+### Renders y Perspectivas (2-4 páginas)
+- Exterior general (página completa)
+- Fachada principal
+- Interior espacio principal
+- Interior cocina/baño (Integral+)
+- Zona exterior (Integral+)
 
-### 1.7 Moodboard de Acabados (1 página, solo Integral+)
-- Muestras de materiales propuestos
-- Nombre del material, proveedor, código de color
-- Foto de referencia de cada material
+### Estrategias Bioclimáticas (1 página)
+- Diagrama de estrategias seleccionadas
+- Triada recomendada para Mérida
 
-### 1.8 Esquema de Pagos y Vigencia (1 página, misma info que cotización)
-- Tabla 30/40/30
-- Nota de vigencia de 30 días
-- Aclaratoria: "Este documento cubre el diseño arquitectónico. La construcción está a cargo de un tercero."
-
-### 1.9 Contraportada
-- Render secundario o detalle
-- Contacto: web, email, WhatsApp
-- "SOMA Taller Virtual de Arquitectura"
+### Criterio de Materiales y Acabados (1 página)
+- Moodboard de materiales
+- Tabla de acabados por espacio
 
 ---
 
-## 2. PLANTILLA HTML (plantilla_dossier.html)
-(Fuente: W3C Web Accessibility Initiative — w3.org/WAI/tutorials; Intersection Observer API — MDN Web Docs; CSS @media print — MDN Web Docs)
+## Especificaciones de Diseño Visual
 
-### 2.1 Tecnología
-- HTML5 + CSS3 + JavaScript vanilla
-- Sin frameworks (carga rápida, sin dependencias)
-- Intersection Observer para efectos scroll-reveal
-- `@media print` para exportación a PDF (Ctrl+P)
+| Elemento | Especificación |
+|----------|---------------|
+| Fondo | #0a0a0a (negro SOMA) |
+| Acento | #d45e2c (naranja SOMA) |
+| Fuente títulos | Unbounded, sans-serif |
+| Fuente textos | JetBrains Mono, monospace |
+| Grid | 12 columnas, gutter 20px |
+| Animación | Intersection Observer (scroll-reveal) |
 
-### 2.2 Identidad Visual (consistente con la web)
-- Fondo: oscuro (#0A0A0A)
-- Texto: claro (#E8E0D8)
-- Acento: naranja SOMA (#bc4b21)
-- Tipografía titular: Unbounded (Google Fonts)
-- Tipografía de texto: JetBrains Mono (cuerpo) + Playfair Display (citas)
-- Grid: sistema de 12 columnas para flexibilidad editorial
-
-### 2.3 Efectos Interactivos
-(Fuente: Intersection Observer API — developer.mozilla.org)
-
-- Scroll-reveal: imágenes y textos aparecen al hacer scroll
-- Transiciones suaves (opacity 0 → 1, translateY 20px → 0)
-- Galería de renders: lightbox al hacer clic en imagen
-- Navegación lateral con saltos a secciones
-
-### 2.4 Exportación a PDF
-(Fuente: CSS @media print — developer.mozilla.org)
-
-- `@media print`: eliminar fondos oscuros (ahorrar tinta), convertir a blanco
-- Ajustar saltos de página con `page-break-after`
-- Ocultar elementos interactivos (botones, navegación)
-- Configurar márgenes de impresión: 1.5 cm
-- Resolución: 300 DPI para imágenes
-
-### 2.5 Archivo de template
-La plantilla base `plantilla_dossier.html` debe estar en:
-```
-metodologia/Bloque 2 - Taller SOMA (OPERACION)/03 Diseño/dossier/
-```
-
-Con la siguiente estructura:
-```
-dossier/
-├── plantilla_dossier.html    ← Template parametrizable
-├── css/
-│   └── estilo_dossier.css    ← Estilos del dossier
-├── js/
-│   └── dossier.js            ← Scroll-reveal, lightbox, PDF
-└── img/                      ← Carpeta para imágenes del proyecto
-```
+### @media print
+- Fondo blanco para ahorrar tinta
+- Tipografía serif para cuerpo de texto
+- Imágenes en escala de grises (opcional)
 
 ---
 
-## 3. CÓMO USAR LA PLANTILLA
+## Salida de la Representación
 
-1. Copiar `plantilla_dossier.html` a `proyectos/SOMA-XXXX/dossier_editorial/`
-2. Editar el bloque JSON al inicio del HTML con los datos del proyecto:
-
-```javascript
-const DATOS_PROYECTO = {
-  titulo: "Casa [Cliente]",
-  subtitulo: "SOMA [Paquete] · [Fecha]",
-  idea_matriz: "Una caja de concreto que flota sobre el jardín.",
-  cliente: "Nombre del Cliente",
-  ubicacion: "Mérida, Yucatán",
-  tipo: "Casa Habitación",
-  area_terreno: 300,
-  area_construida: 200,
-  paquete: "Integral",
-  numero_proyecto: "SOMA-20260526-0001",
-  memoria: "Texto de la memoria descriptiva...",
-  materialidad: "Concreto aparente, madera de tzalam, vidrio templado...",
-  renders: [
-    { archivo: "SOMA-LOPEZ-AEREA-01.png", leyenda: "Vista aérea del conjunto" },
-    { archivo: "SOMA-LOPEZ-FACHADA-01.png", leyenda: "Fachada principal" }
-  ],
-  plantas: [
-    { archivo: "planta_baja.png", escala: "1:100", titulo: "Planta Baja" }
-  ],
-  acabados: [
-    { material: "Concreto aparente", proveedor: "CEMEX", color: "#B5B0A8", imagen: "concreto.jpg" }
-  ]
-};
-```
-
-3. Colocar las imágenes en `img/`
-4. Abrir el HTML en el navegador → verificar visualización
-5. Ctrl+P → Guardar como PDF
-
----
-
-## 4. CHECKLIST DE CALIDAD EDITORIAL
-
-- [ ] ¿La portada tiene el render más impactante?
-- [ ] ¿La memoria descriptiva NO excede 300 palabras?
-- [ ] ¿Todos los renders tienen leyenda explicativa?
-- [ ] ¿Los planos incluyen escala gráfica y norte?
-- [ ] ¿El moodboard (si aplica) tiene fotos de los materiales reales?
-- [ ] ¿La ortografía y redacción están correctas?
-- [ ] ¿El PDF se ve bien en pantalla y en impresión?
-- [ ] ¿El nombre del archivo sigue la convención: `SOMA-Dossier-[Cliente].pdf`?
-- [ ] ¿Se incluyó la nota de vigencia de 30 días?
-
----
-
-## 5. SALIDA DE LA REPRESENTACIÓN INTEGRAL
-
-1. **Dossier PDF** en `proyectos/SOMA-XXXX/dossier_editorial/SOMA-Dossier-[Cliente].pdf`
-2. **Archivo HTML fuente** (para modificaciones futuras)
-3. **Carpeta de imágenes** optimizadas usadas en el dossier
-
-Este dossier es el entregable principal al cliente y la entrada al portafolio.
+1. `dossier_[proyecto].html` — documento interactivo
+2. `dossier_[proyecto].pdf` — versión imprimible
 
 ---
 
 ## FUENTES
 
-- **Francis D.K. Ching**, *Architecture: Form, Space, & Order* (4th ed., 2014) — estructura narrativa visual del proyecto, jerarquía de información en láminas.
-- **Francis D.K. Ching**, *Architectural Graphics* (6th ed., 2015) — composición de láminas, tipografía técnica, organización de planos en página.
-- **C. M. Deasy**, *Design Places for People* (1974) — cómo el dossier debe contar la historia del espacio para el usuario, no solo del edificio.
-- **Jacques Paul Grillo**, *Form, Function and Design* (1960) — integración de la memoria descriptiva con la representación gráfica, claridad comunicativa.
-- **W3C Web Accessibility Initiative** (w3.org/WAI/tutorials) — alt text para imágenes, contraste, accesibilidad del documento digital.
-- **Intersection Observer API** — MDN Web Docs (developer.mozilla.org) — efectos scroll-reveal.
-- **Rudolf Arnheim**, *Visual Thinking* (1969) — principios de percepción visual aplicados a la composición editorial y narrativa gráfica del dossier.
-- **CSS @media print** — MDN Web Docs — exportación a PDF con estilos de impresión.
-
----
-
-*"Un proyecto bien contado vale más que cien renders sueltos."*
+- Arnheim, R. (1969). *Visual Thinking.*
+- Ching, F. (2015). *Architectural Graphics.*

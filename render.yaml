@@ -35,7 +35,7 @@ services:
       - key: WA_SERVICE_HOST
         value: http://127.0.0.1:3001
       - key: VINCULAR_NUMERO
-        value: "5219993619433"
+        value: "5219995314093"
 
 databases:
   - name: soma-db
