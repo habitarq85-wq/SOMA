@@ -162,7 +162,10 @@ const PROGRAMA = (() => {
                 <tr><td><strong>Honorarios</strong></td><td class="right"><strong>$${Number(data.honorarios_reales || 0).toLocaleString()}</strong></td></tr>
                 <tr><td>Inversión obra (mín)</td><td class="right">$${Number(data.obra_min_estimada || 0).toLocaleString()}</td></tr>
                 <tr><td>Inversión obra (máx)</td><td class="right">$${Number(data.obra_max_estimada || 0).toLocaleString()}</td></tr>
-            </table>`;
+            </table>
+            <div style="margin-top:10px;text-align:center;">
+                <button class="cand-btn btn-dark" style="font-size:.65rem;padding:6px 20px;" onclick="window.open('/cotizacion/${leadId}/pdf','_blank')">📄 GENERAR PDF</button>
+            </div>`;
         } catch (_) {
             el.innerHTML = '<p class="loading-text">Primero guarda el programa arquitectónico.</p>';
         }

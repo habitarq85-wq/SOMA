@@ -1960,7 +1960,13 @@ function exportDiagramaPDF(){
   const pw = doc.internal.pageSize.getWidth();
   const ph = doc.internal.pageSize.getHeight();
 
-  const imgData = c.toDataURL('image/png');
+  const tmpCanvas = document.createElement('canvas');
+  tmpCanvas.width = c.width; tmpCanvas.height = c.height;
+  const ctx = tmpCanvas.getContext('2d');
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillRect(0, 0, tmpCanvas.width, tmpCanvas.height);
+  ctx.drawImage(c, 0, 0);
+  const imgData = tmpCanvas.toDataURL('image/png');
   const cw = c.width, ch = c.height;
   const aspect = cw / ch;
   let iw = pw - 20, ih = iw / aspect;
