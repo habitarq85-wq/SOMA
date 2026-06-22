@@ -106,7 +106,14 @@ const PROGRAMA = (() => {
             </table>`;
 
             // Form to add new space
-            html += `<div style="margin-top:10px;padding:10px;background:#f9f9f9;border-radius:4px;">
+            html += `<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;font-size:.55rem;font-family:'JetBrains Mono',monospace;">
+                <span style="display:inline-flex;align-items:center;gap:3px;"><span style="width:10px;height:10px;border-radius:2px;background:#4d7ae6;display:inline-block;"></span> Social</span>
+                <span style="display:inline-flex;align-items:center;gap:3px;"><span style="width:10px;height:10px;border-radius:2px;background:#e6cc33;display:inline-block;"></span> Operativa</span>
+                <span style="display:inline-flex;align-items:center;gap:3px;"><span style="width:10px;height:10px;border-radius:2px;background:#e64d4d;display:inline-block;"></span> Descanso</span>
+                <span style="display:inline-flex;align-items:center;gap:3px;"><span style="width:10px;height:10px;border-radius:2px;background:#e68033;display:inline-block;"></span> Soporte</span>
+                <span style="display:inline-flex;align-items:center;gap:3px;"><span style="width:10px;height:10px;border-radius:2px;background:#9933cc;display:inline-block;"></span> Transición</span>
+            </div>
+            <div style="margin-top:10px;padding:10px;background:#f9f9f9;border-radius:4px;">
                 <h4 style="font-size:.6rem;margin-bottom:6px;">Agregar espacio</h4>
                 <div style="display:flex;gap:6px;flex-wrap:wrap;">
                     <input type="text" id="prog-nuevo-espacio" placeholder="Nombre" style="padding:4px;border:1px solid #ddd;border-radius:3px;font-size:.65rem;flex:2;">
