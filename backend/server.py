@@ -9,13 +9,12 @@ import urllib.request
 import urllib.error
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
-from twilio.rest import Client
 from dotenv import load_dotenv
+
+load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '.env'))
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from db import get_connection, execute, fetchone, fetchall, get_lastrowid, dictify, json_loads
-
-load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '.env'))
 
 app = Flask(__name__)
 CORS(app)
@@ -33,11 +32,6 @@ SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD", "").strip()
 SMTP_USE_SSL = os.environ.get("SMTP_USE_SSL", "false").strip().lower() == "true"
 SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY", "").strip()
 
-TWILIO_SID = os.environ.get("TWILIO_SID", "").strip()
-TWILIO_TOKEN = os.environ.get("TWILIO_TOKEN", "").strip()
-TWILIO_WHATSAPP = os.environ.get("TWILIO_WHATSAPP", "+14155238886")
-NOTIFICACION_WHATSAPP = os.environ.get("NOTIFICACION_WHATSAPP", "").strip()
-
 MINIMO_TALLER = 6500
 RANGOS_OBRA = {
     250: {"min": 14000, "max": 16500},
@@ -47,28 +41,67 @@ RANGOS_OBRA = {
 
 os.makedirs(REPORTES_DIR, exist_ok=True)
 
+UNIDADES = ["", "un", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve"]
+DIEZ_DIECINUEVE = ["diez", "once", "doce", "trece", "catorce", "quince", "dieciséis", "diecisiete", "dieciocho", "diecinueve"]
+DECENAS = ["", "", "veinte", "treinta", "cuarenta", "cincuenta", "sesenta", "setenta", "ochenta", "noventa"]
+CENTENAS = ["", "cien", "doscientos", "trescientos", "cuatrocientos", "quinientos", "seiscientos", "setecientos", "ochocientos", "novecientos"]
+
+def num_to_words(n):
+    if n == 0: return "cero"
+    entero = int(n)
+    decimal = round((n - entero) * 100)
+    def convertir(num):
+        if num == 0: return ""
+        if num < 10: return UNIDADES[num]
+        if num < 20: return DIEZ_DIECINUEVE[num - 10]
+        if num < 100:
+            d = num // 10
+            u = num % 10
+            if u == 0: return DECENAS[d]
+            if d == 2: return f"veinti{u}" if u > 0 else "veinte"
+            return f"{DECENAS[d]} y {UNIDADES[u]}"
+        if num < 1000:
+            c = num // 100
+            resto = num % 100
+            if c == 1 and resto == 0: return "cien"
+            base = "cien" if c == 1 else CENTENAS[c]
+            return f"{base} {convertir(resto)}".strip() if resto else base
+        if num < 1000000:
+            miles = num // 1000
+            resto = num % 1000
+            base = convertir(miles) + (" mil" if miles > 1 else "mil")
+            return f"{base} {convertir(resto)}".strip() if resto else base
+        mill = num // 1000000
+        resto = num % 1000000
+        base = convertir(mill) + (" millones" if mill > 1 else " millón")
+        return f"{base} {convertir(resto)}".strip() if resto else base
+    resultado = convertir(entero)
+    if decimal > 0:
+        resultado += f" con {decimal:02d}/100"
+    else:
+        resultado += " con 00/100"
+    return resultado.upper()
+
 def init_db():
     conn = get_connection()
     use_pg = bool(os.environ.get('DATABASE_URL', ''))
     tables = {
         'captura_web': [
             ('id', 'SERIAL PRIMARY KEY' if use_pg else 'INTEGER PRIMARY KEY AUTOINCREMENT'),
-            ('temp_id', 'TEXT'), ('contacto', 'TEXT'), ('presupuesto', 'TEXT'),
-            ('habitantes', 'TEXT'), ('respuestas_json', 'TEXT'), ('analisis_procesado', 'TEXT'),
+            ('temp_id', 'TEXT'), ('contacto', 'TEXT'),
+            ('respuestas_json', 'TEXT'), ('analisis_procesado', 'TEXT'),
             ('fecha', 'TEXT'), ('estado', 'TEXT'), ('m2', 'REAL'),
             ('honorarios_diseno', 'REAL'), ('inversion_obra_estimada', 'REAL'),
             ('nivel_proyecto', 'TEXT'), ("pipeline_estado", "TEXT DEFAULT 'lead'"),
+            ('nombre_cliente', 'TEXT'), ('nombre_proyecto', 'TEXT'),
+            ('tipo_proyecto', 'TEXT'), ('ubicacion', 'TEXT'),
+            ("estado_contacto", "TEXT DEFAULT 'pendiente'"),
         ],
         'cobros': [
             ('id', 'SERIAL PRIMARY KEY' if use_pg else 'INTEGER PRIMARY KEY AUTOINCREMENT'),
             ('proyecto_id', 'INTEGER'), ('concepto', 'TEXT'), ('monto', 'REAL'),
             ('fecha_vencimiento', 'TEXT'), ('fecha_pago', 'TEXT'),
             ("estado", "TEXT DEFAULT 'pendiente'"), ('metodo_pago', 'TEXT'), ('notas', 'TEXT'),
-        ],
-        'config_fiscal': [
-            ('id', 'SERIAL PRIMARY KEY' if use_pg else 'INTEGER PRIMARY KEY AUTOINCREMENT'),
-            ('rfc', 'TEXT'), ("regimen", "TEXT DEFAULT 'RESICO'"),
-            ('pac_api_key', 'TEXT'), ('activo', 'INTEGER DEFAULT 1'),
         ],
         'programa_arquitectonico': [
             ('id', 'SERIAL PRIMARY KEY' if use_pg else 'INTEGER PRIMARY KEY AUTOINCREMENT'),
@@ -77,32 +110,50 @@ def init_db():
             ('mobiliario', 'TEXT'), ('acontecimientos', 'TEXT'), ('patrones_espaciales', 'TEXT'),
             ('usuarios', 'INTEGER'), ('clave', 'TEXT'), ('relacion_directa', 'TEXT'),
         ],
+        'egresos': [
+            ('id', 'SERIAL PRIMARY KEY' if use_pg else 'INTEGER PRIMARY KEY AUTOINCREMENT'),
+            ('categoria', 'TEXT'), ('concepto', 'TEXT'), ('monto', 'REAL'),
+            ('fecha', 'TEXT'),
+        ],
         'matriz_inversion': [
             ('id', 'SERIAL PRIMARY KEY' if use_pg else 'INTEGER PRIMARY KEY AUTOINCREMENT'),
             ('proyecto_id', 'INTEGER'), ('categoria', 'TEXT'), ('prioridad_gasto', 'INTEGER'),
             ('porcentaje_asignado', 'REAL'), ('monto_estimado', 'REAL'),
         ],
-        'habitantes': [
+        'fondos': [
             ('id', 'SERIAL PRIMARY KEY' if use_pg else 'INTEGER PRIMARY KEY AUTOINCREMENT'),
-            ('proyecto_id', 'INTEGER'), ('nombre', 'TEXT'), ('edad', 'INTEGER'),
-            ('genero', 'TEXT'), ('estatura_cm', 'REAL'), ('peso_kg', 'REAL'),
-            ('hobbies', 'TEXT'), ('rol_poder', 'TEXT'), ('observaciones', 'TEXT'),
+            ('nombre', 'TEXT'), ('monto_mensual', 'REAL DEFAULT 0'),
+            ('balance_actual', 'REAL DEFAULT 0'),
         ],
-        'actividades': [
+        'movimientos_fondo': [
             ('id', 'SERIAL PRIMARY KEY' if use_pg else 'INTEGER PRIMARY KEY AUTOINCREMENT'),
-            ('habitante_id', 'INTEGER'), ('hora', 'INTEGER'), ('actividad_principal', 'TEXT'),
-            ('aislamiento_necesario', 'INTEGER'), ('iluminacion_deseada', 'TEXT'),
-            ('espacio_sugerido', 'TEXT'),
+            ('fondo_id', 'INTEGER'), ('tipo', 'TEXT'),
+            ('monto', 'REAL'), ('fecha', 'TEXT'), ('concepto', 'TEXT'),
         ],
-        'ejes_diseno': [
+        'algoritmo_progreso': [
             ('id', 'SERIAL PRIMARY KEY' if use_pg else 'INTEGER PRIMARY KEY AUTOINCREMENT'),
-            ('proyecto_id', 'INTEGER'), ('eje', 'TEXT'), ('valor_polar', 'REAL'),
-            ('justificacion', 'TEXT'),
+            ('proyecto_id', 'INTEGER'), ('seccion', 'INTEGER'),
+            ('paso', 'TEXT'), ('estado', 'TEXT DEFAULT \'PENDIENTE\''),
+            ('updated_at', 'TEXT'),
         ],
     }
     for table_name, columns in tables.items():
         cols_sql = ", ".join(f"{name} {typ}" for name, typ in columns)
         execute(conn, f"CREATE TABLE IF NOT EXISTS {table_name} ({cols_sql})")
+
+    # Migración: agregar columnas faltantes
+    nuevas_columnas = [
+        ('m2_original', 'REAL'), ('nivel_original', 'TEXT'),
+        ('honorarios_original', 'REAL'),
+    ]
+    for col_name, col_type in nuevas_columnas:
+        try:
+            if use_pg:
+                execute(conn, f"ALTER TABLE captura_web ADD COLUMN IF NOT EXISTS {col_name} {col_type}")
+            else:
+                execute(conn, f"ALTER TABLE captura_web ADD COLUMN {col_name} {col_type}")
+        except Exception:
+            pass
     conn.commit()
     conn.close()
 
@@ -150,7 +201,6 @@ def enviar_correo(destinatario, asunto, cuerpo):
 
 def enviar_whatsapp(contacto, temp_id, nivel_key, m2):
     mensaje = f"🔔 NUEVO LEAD SOMA\nID: {temp_id}\nCliente: {contacto}\nPaquete: {nivel_key.upper()}\nEscala: {m2:.0f} m²"
-    # Intentar con Baileys (servicio Node.js local)
     wa_host = os.environ.get("WA_SERVICE_HOST", "http://127.0.0.1:3001")
     try:
         payload = json.dumps({"message": mensaje}).encode()
@@ -165,19 +215,7 @@ def enviar_whatsapp(contacto, temp_id, nivel_key, m2):
             print("--- WHATSAPP ENVIADO (Baileys) ---")
             return True
     except Exception as e:
-        print(f"--- Baileys no disponible ({e}), fallback a Twilio ---")
-    # Fallback: Twilio
-    try:
-        client = Client(TWILIO_SID, TWILIO_TOKEN)
-        client.messages.create(
-            body=mensaje,
-            from_=f"whatsapp:{TWILIO_WHATSAPP}",
-            to=f"whatsapp:{NOTIFICACION_WHATSAPP}"
-        )
-        print("--- WHATSAPP ENVIADO (Twilio) ---")
-        return True
-    except Exception as e:
-        print(f"--- ERROR WHATSAPP (Twilio): {e} ---")
+        print(f"--- WHATSAPP NO DISPONIBLE (Baileys): {e} ---")
         return False
 
 @app.route('/save_immersion', methods=['POST'])
@@ -230,10 +268,11 @@ def save_immersion():
     try:
         conn = get_connection()
         cur = execute(conn, """INSERT INTO captura_web
-                     (temp_id, contacto, m2, honorarios_diseno, inversion_obra_estimada, nivel_proyecto, respuestas_json, analisis_procesado, fecha)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                     (temp_id, contacto, m2, honorarios_diseno, inversion_obra_estimada, nivel_proyecto, respuestas_json, analisis_procesado, fecha, m2_original, nivel_original, honorarios_original)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                   (temp_id, contacto, m2, total_diseno, obra_min, nivel_key,
-                   json.dumps(respuestas), reporte, datetime.datetime.now().isoformat()))
+                   json.dumps(respuestas), reporte, datetime.datetime.now().isoformat(),
+                   m2, nivel_key, total_diseno))
         proyecto_id = get_lastrowid(cur)
 
         obra_promedio = (obra_min + obra_max) / 2
@@ -255,6 +294,8 @@ def save_immersion():
         conn.close()
     except Exception as e:
         print(f"Error DB: {e}")
+        try: conn.close()
+        except: pass
 
     # --- ENVÍO SINCRÓNICO (confiable) ---
     asunto = f"NUEVO LEAD SOMA: {temp_id}"
@@ -382,6 +423,20 @@ def actualizar_espacio(espacio_id):
                    json.dumps(data.get('patrones_espaciales', [])),
                    data.get('usuarios', 0), data.get('clave', ''),
                    json.dumps(data.get('relacion_directa', [])), espacio_id))
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "success"}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/programa/espacio/<int:espacio_id>/relaciones', methods=['PUT'])
+def guardar_relaciones_espacio(espacio_id):
+    try:
+        data = request.json
+        relaciones = data.get('relaciones', [])
+        conn = get_connection()
+        execute(conn, "UPDATE programa_arquitectonico SET relacion_directa=? WHERE id=?",
+                (json.dumps(relaciones), espacio_id))
         conn.commit()
         conn.close()
         return jsonify({"status": "success"}), 200
@@ -529,6 +584,189 @@ td {{ padding: 5px 6px; border-bottom: 1px solid #ddd; }}
     except Exception as e:
         return f"Error: {e}", 500
 
+@app.route('/lead/<int:lead_id>/cierre-pdf', methods=['GET'])
+def cierre_pdf(lead_id):
+    try:
+        conn = get_connection()
+        lead = fetchone(conn, "SELECT * FROM captura_web WHERE id=?", (lead_id,))
+        if not lead:
+            conn.close()
+            return "Proyecto no encontrado", 404
+        cobros_rows = fetchall(conn, "SELECT concepto, monto, estado, fecha_pago FROM cobros WHERE proyecto_id=? ORDER BY id", (lead_id,))
+        prog_rows = fetchall(conn, "SELECT espacio, area, tipo, clave FROM programa_arquitectonico WHERE lead_id=? ORDER BY id", (lead_id,))
+        conn.close()
+
+        contacto = lead["contacto"] or "—"
+        nombre_cliente = lead["nombre_cliente"] or contacto
+        nombre_proyecto = lead["nombre_proyecto"] or "—"
+        tipo_proyecto = lead["tipo_proyecto"] or "—"
+        nivel = lead["nivel_proyecto"] or "—"
+        m2_lead = lead["m2"] or 0
+        honorarios = lead["honorarios_diseno"] or 0
+        temp_id = lead["temp_id"] or "—"
+        fecha = datetime.datetime.now().strftime("%d/%m/%Y")
+        ubic_str = ""
+        try:
+            ubic = json.loads(lead["ubicacion"] or "{}")
+            parts = [ubic.get("calle_numero",""), ubic.get("colonia",""), ubic.get("ciudad",""), ubic.get("estado","")]
+            ubic_str = ", ".join(p for p in parts if p)
+        except:
+            pass
+
+        filas_cobros = "".join(
+            f"<tr><td>{r['concepto'] or '—'}</td><td style='text-align:right'>${r['monto']:,.2f}</td>"
+            f"<td style='text-align:center'>{r['estado'] or 'pendiente'}</td>"
+            f"<td style='text-align:center'>{r['fecha_pago'] or '—'}</td></tr>"
+            for r in cobros_rows
+        )
+        total_pagado = sum(r['monto'] for r in cobros_rows if r['estado'] == 'pagado')
+        total_pendiente = sum(r['monto'] for r in cobros_rows if r['estado'] == 'pendiente')
+
+        filas_prog = "".join(
+            f"<tr><td>{r['tipo'] or '—'}</td><td>{r['espacio'] or '—'}</td>"
+            f"<td style='text-align:right'>{r['area'] or 0:.1f}</td><td style='text-align:center'>{r['clave'] or '—'}</td></tr>"
+            for r in prog_rows
+        )
+
+        html = f"""<!DOCTYPE html><html><head><meta charset='utf-8'>
+<title>CIERRE DE PROYECTO — {nombre_cliente}</title>
+<style>
+@page {{ margin: 1.8cm; }}
+body {{ font-family: 'Helvetica', 'Arial', sans-serif; color: #1a1a1a; font-size: 10pt; line-height: 1.5; }}
+.header {{ text-align: center; margin-bottom: 25px; border-bottom: 3px solid #1b5e20; padding-bottom: 15px; }}
+.header h1 {{ font-size: 24pt; letter-spacing: 4px; margin: 0; color: #1b5e20; }}
+.header h2 {{ font-size: 9pt; color: #666; font-weight: normal; margin: 5px 0 0; }}
+.section {{ margin: 15px 0; }}
+.section h3 {{ font-size: 9pt; text-transform: uppercase; color: #1b5e20; border-bottom: 1px solid #ccc; padding-bottom: 4px; }}
+table {{ width: 100%; border-collapse: collapse; font-size: 9pt; margin: 8px 0; }}
+th {{ background: #1b5e20; color: #fff; padding: 5px; text-align: left; font-size: 7.5pt; text-transform: uppercase; }}
+td {{ padding: 4px 5px; border-bottom: 1px solid #ddd; }}
+.total-row td {{ border-top: 2px solid #000; font-weight: bold; }}
+.resumen {{ background: #f4f1ea; padding: 12px; margin: 10px 0; }}
+.resumen div {{ display: flex; justify-content: space-between; padding: 3px 0; }}
+.footer {{ margin-top: 30px; font-size: 7.5pt; color: #999; text-align: center; border-top: 1px solid #ddd; padding-top: 10px; }}
+</style></head><body>
+<div class='header'>
+<h1>SOMA</h1>
+<h2>CIERRE DE PROYECTO</h2>
+</div>
+<div class='section'>
+<h3>Datos del Proyecto</h3>
+<table>
+<tr><td style='width:140px;font-weight:600;'>Cliente</td><td>{nombre_cliente}</td></tr>
+<tr><td style='font-weight:600;'>Contacto</td><td>{contacto}</td></tr>
+<tr><td style='font-weight:600;'>Proyecto</td><td>{nombre_proyecto}</td></tr>
+<tr><td style='font-weight:600;'>Tipo</td><td>{tipo_proyecto}</td></tr>
+<tr><td style='font-weight:600;'>Ubicación</td><td>{ubic_str}</td></tr>
+<tr><td style='font-weight:600;'>ID</td><td>{temp_id}</td></tr>
+<tr><td style='font-weight:600;'>Paquete</td><td>{nivel.upper()} · {m2_lead:.0f} m²</td></tr>
+<tr><td style='font-weight:600;'>Fecha de cierre</td><td>{fecha}</td></tr>
+</table>
+</div>
+<div class='section'>
+<h3>Programa Arquitectónico</h3>
+<table>
+<tr><th>Tipo</th><th>Espacio</th><th style='text-align:right'>m²</th><th style='text-align:center'>Clave</th></tr>
+{filas_prog}
+</table>
+</div>
+<div class='section'>
+<h3>Análisis Multidimensional</h3>
+<pre style="font-family:'Courier New',monospace;font-size:7.5pt;line-height:1.4;background:#f9f9f9;padding:10px;border:1px solid #ddd;white-space:pre-wrap;">{lead['analisis_procesado'] or 'Sin análisis disponible.'}</pre>
+</div>
+<div class='section'>
+<h3>Respuestas de Inmersión</h3>
+<pre style="font-family:'Courier New',monospace;font-size:7pt;line-height:1.3;background:#f9f9f9;padding:10px;border:1px solid #ddd;white-space:pre-wrap;">{json.dumps(json.loads(lead['respuestas_json'] or '{}'), indent=2) if lead.get('respuestas_json') else 'Sin respuestas.'}</pre>
+</div>
+<div class='section'>
+<h3>Resumen Financiero</h3>
+<div class='resumen'>
+<div><span>Honorarios de Diseño</span><span><strong>${honorarios:,.2f}</strong></span></div>
+<div><span>Total Pagado</span><span style='color:#2e7d32;'><strong>${total_pagado:,.2f}</strong></span></div>
+<div><span>Total Pendiente</span><span style='color:#c62828;'><strong>${total_pendiente:,.2f}</strong></span></div>
+</div>
+<h3 style='margin-top:12px;'>Detalle de Cobros</h3>
+<table>
+<tr><th>Concepto</th><th style='text-align:right'>Monto</th><th style='text-align:center'>Estado</th><th style='text-align:center'>Fecha Pago</th></tr>
+{filas_cobros}
+</table>
+</div>
+<div class='footer'>
+<p>SOMA Taller Virtual de Arquitectura — {fecha}</p>
+<p>info@soma-arquitectura.com</p>
+</div>
+</body></html>"""
+        return html, 200, {'Content-Type': 'text/html; charset=utf-8'}
+    except Exception as e:
+        return f"Error: {e}", 500
+
+MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
+
+@app.route('/metrics/bloque01', methods=['GET'])
+def metrics_bloque01():
+    try:
+        now = datetime.datetime.now()
+        year = request.args.get('year', str(now.year))
+        month = request.args.get('month', '')
+        year = int(year)
+        
+        if month:
+            start_date = f"{year}-{int(month):02d}-01"
+            end_date = f"{year}-{int(month)+1:02d}-01" if int(month) < 12 else f"{year+1}-01-01"
+        else:
+            start_date = f"{year}-01-01"
+            end_date = f"{year+1}-01-01"
+        
+        conn = get_connection()
+        
+        # Solo clientes ACTIVOS (excluye terminados)
+        leads = fetchall(conn, "SELECT id, pipeline_estado, honorarios_diseno FROM captura_web WHERE pipeline_estado IN ('contratado', 'primera_entrega', 'entrega_final')")
+        total_clientes = len(leads)
+        total_honorarios = sum(dictify(r)['honorarios_diseno'] or 0 for r in leads)
+        
+        # Cobros pagados en el periodo
+        date_params = [start_date, end_date]
+        cobros_pagados = fetchall(conn, f"SELECT concepto, monto FROM cobros WHERE estado = 'pagado' AND fecha_pago >= ? AND fecha_pago < ?", date_params)
+        
+        anticipos = 0.0
+        primera_entrega = 0.0
+        pagos_finales = 0.0
+        ingresos_periodo = 0.0
+        for r in cobros_pagados:
+            row = dictify(r)
+            monto = row['monto'] or 0
+            ingresos_periodo += monto
+            concepto_lower = (row['concepto'] or '').lower()
+            if '30%' in row['concepto'] and 'anticipo' in concepto_lower:
+                anticipos += monto
+            elif '40%' in row['concepto'] and 'segundo' in concepto_lower:
+                primera_entrega += monto
+            elif '30%' in row['concepto'] and 'tercer' in concepto_lower:
+                pagos_finales += monto
+        
+        # Egresos en el periodo
+        gastos = fetchall(conn, "SELECT monto FROM egresos WHERE fecha >= ? AND fecha < ?", date_params)
+        gasto_operacion = sum(dictify(r)['monto'] or 0 for r in gastos)
+        
+        conn.close()
+        
+        periodo_label = f"{MESES[int(month)-1]} {year}" if month else str(year)
+        
+        return jsonify({
+            "total_clientes": total_clientes,
+            "anticipos": round(anticipos, 2),
+            "primera_entrega": round(primera_entrega, 2),
+            "pagos_finales": round(pagos_finales, 2),
+            "ingresos_periodo": round(ingresos_periodo, 2),
+            "gasto_operacion": round(gasto_operacion, 2),
+            "total_honorarios": round(total_honorarios, 2),
+            "periodo": periodo_label,
+            "year": year,
+            "month": month or None
+        }), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 @app.route('/get_leads', methods=['GET'])
 def get_leads():
     try:
@@ -539,7 +777,7 @@ def get_leads():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
-PIPELINE_ESTADOS = ['lead', 'entrevistado', 'programado', 'cotizado', 'contratado', 'pagado']
+PIPELINE_ESTADOS = ['lead', 'entrevistado', 'programado', 'cotizado', 'contratado', 'primera_entrega', 'entrega_final', 'terminado']
 
 @app.route('/leads/kanban', methods=['GET'])
 def get_leads_kanban():
@@ -578,11 +816,153 @@ def contratar_lead(lead_id):
     try:
         conn = get_connection()
         execute(conn, "UPDATE captura_web SET pipeline_estado='contratado' WHERE id=?", (lead_id,))
+        # Generar esquema de pagos 30/40/30 automático
+        lead = fetchone(conn, "SELECT m2, nivel_proyecto, honorarios_diseno FROM captura_web WHERE id=?", (lead_id,))
+        if lead:
+            m2 = lead["m2"] or 0
+            nivel = lead["nivel_proyecto"] or "esencial"
+            honorarios = lead["honorarios_diseno"] or max(m2 * PRECIOS_M2.get(nivel, 250), MINIMO_TALLER)
+            if honorarios > 0:
+                esquema = [
+                    ("Anticipo 30%", honorarios * 0.3),
+                    ("Segundo pago 40%", honorarios * 0.4),
+                    ("Tercer pago 30%", honorarios * 0.3),
+                ]
+                for concepto, monto in esquema:
+                    execute(conn, "INSERT INTO cobros (proyecto_id, concepto, monto, estado) VALUES (?, ?, ?, ?)",
+                            (lead_id, concepto, round(monto, 2), "pendiente"))
         conn.commit()
         conn.close()
         return jsonify({"status": "success", "pipeline_estado": "contratado"}), 200
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/lead/<int:lead_id>/recibo-anticipo', methods=['GET'])
+def recibo_anticipo(lead_id):
+    try:
+        conn = get_connection()
+        lead = fetchone(conn, "SELECT * FROM captura_web WHERE id=?", (lead_id,))
+        if not lead:
+            conn.close()
+            return "Lead no encontrado", 404
+        html = _recibo_pago_html(lead, 0.3, "ANTICIPO", conn)
+        conn.close()
+        return html, 200, {'Content-Type': 'text/html; charset=utf-8'}
+    except Exception as e:
+        return f"Error: {e}", 500
+
+def _recibo_pago_html(lead, pct, label, conn):
+    nombre = lead["nombre_cliente"] or lead["contacto"] or "—"
+    proyecto = lead["nombre_proyecto"] or "—"
+    temp_id = lead["temp_id"] or "—"
+    nivel = lead["nivel_proyecto"] or "esencial"
+    m2_lead = lead["m2"] or 0
+    precio_m2 = PRECIOS_M2.get(nivel, 250)
+    espacios_rows = fetchall(conn, "SELECT area FROM programa_arquitectonico WHERE lead_id=?", (lead["id"],))
+    if espacios_rows:
+        total_m2_prog = sum(r["area"] for r in espacios_rows)
+        honorarios = max(total_m2_prog * precio_m2, MINIMO_TALLER)
+    elif lead["honorarios_diseno"] and lead["honorarios_diseno"] > 0:
+        honorarios = lead["honorarios_diseno"]
+    else:
+        honorarios = max(m2_lead * precio_m2, MINIMO_TALLER)
+    monto_pago = honorarios * pct
+    fecha = datetime.datetime.now().strftime("%d/%m/%Y")
+    folio = f"REC-{temp_id}-{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
+    return f"""<!DOCTYPE html><html><head><meta charset='utf-8'>
+<title>RECIBO DE {label} — {nombre}</title>
+<style>
+@page {{ margin: 1.5cm; }}
+body {{ font-family: 'Helvetica', 'Arial', sans-serif; color: #1a1a1a; font-size: 10pt; line-height: 1.5; }}
+.header {{ text-align: center; margin-bottom: 30px; border-bottom: 3px double #000; padding-bottom: 15px; }}
+.header h1 {{ font-size: 26pt; letter-spacing: 4px; margin: 0; }}
+.header h2 {{ font-size: 9pt; color: #a6937c; font-weight: normal; margin: 3px 0 0; }}
+.header .folio {{ font-family: monospace; font-size: 7.5pt; color: #999; margin-top: 5px; }}
+.info {{ margin: 20px 0; }}
+.info table {{ width: 100%; font-size: 9pt; }}
+.info td {{ padding: 3px 5px; }}
+.info .label {{ font-weight: 600; width: 130px; color: #555; }}
+.monto-box {{ border: 2px solid #000; padding: 20px; text-align: center; margin: 25px 0; }}
+.monto-box .cantidad {{ font-size: 28pt; font-weight: bold; letter-spacing: 2px; }}
+.monto-box .concepto {{ font-size: 9pt; color: #666; margin-top: 5px; }}
+.monto-box .letra {{ font-size: 8pt; color: #888; margin-top: 8px; }}
+.detalle {{ margin: 20px 0; font-size: 8.5pt; }}
+.detalle table {{ width: 100%; border-collapse: collapse; }}
+.detalle td {{ padding: 4px 5px; border-bottom: 1px solid #eee; }}
+.detalle .total-row td {{ border-top: 2px solid #000; font-weight: bold; }}
+.firma {{ margin-top: 35px; text-align: center; }}
+.firma .line {{ width: 250px; border-top: 1px solid #000; margin: 25px auto 5px; }}
+.firma p {{ font-size: 8pt; color: #666; margin: 0; }}
+.footer {{ margin-top: 30px; font-size: 7pt; color: #999; text-align: center; border-top: 1px solid #ddd; padding-top: 8px; }}
+</style></head><body>
+<div class='header'>
+<h1>SOMA</h1>
+<h2>RECIBO DE {label}</h2>
+<div class='folio'>Folio: {folio}</div>
+</div>
+<div class='info'>
+<table>
+<tr><td class='label'>Cliente</td><td>{nombre}</td></tr>
+<tr><td class='label'>Proyecto</td><td>{proyecto}</td></tr>
+<tr><td class='label'>ID Proyecto</td><td>{temp_id}</td></tr>
+<tr><td class='label'>Paquete</td><td>{nivel.upper()} · {m2_lead:.0f} m²</td></tr>
+<tr><td class='label'>Fecha de emisión</td><td>{fecha}</td></tr>
+</table>
+</div>
+<div class='monto-box'>
+<div class='cantidad'>${monto_pago:,.2f}</div>
+<div class='concepto'>{label.upper()} — {int(pct*100)}% DE HONORARIOS DE DISEÑO</div>
+<div class='letra'>Son: {num_to_words(monto_pago)} MXN</div>
+</div>
+<div class='detalle'>
+<table>
+<tr><td style='font-weight:600;'>Concepto</td><td style='text-align:right;font-weight:600;'>Monto</td></tr>
+<tr><td>Honorarios de Diseño ({nivel.capitalize()})</td><td style='text-align:right;'>${honorarios:,.2f}</td></tr>
+<tr><td>{label} ({int(pct*100)}%)</td><td style='text-align:right;font-weight:600;color:#2e7d32;'>${monto_pago:,.2f}</td></tr>
+<tr><td>Saldo pendiente por cubrir ({int((1-pct)*100)}%)</td><td style='text-align:right;'>${honorarios * (1-pct):,.2f}</td></tr>
+</table>
+</div>
+<div class='firma'>
+<div class='line'></div>
+<p>Recibí conforme</p>
+<p style='margin-top:2px;font-size:7pt;'>SOMA Taller Virtual de Arquitectura</p>
+</div>
+<div class='footer'>
+<p>info@soma-arquitectura.com — {fecha}</p>
+<p style='margin-top:4px;font-size:6.5pt;color:#bbb;'>Este recibo no sustituye una factura fiscal. Generado automáticamente por el sistema SOMA.</p>
+</div>
+</body></html>"""
+
+
+@app.route('/lead/<int:lead_id>/recibo-segundo-pago', methods=['GET'])
+def recibo_segundo_pago(lead_id):
+    try:
+        conn = get_connection()
+        lead = fetchone(conn, "SELECT * FROM captura_web WHERE id=?", (lead_id,))
+        if not lead:
+            conn.close()
+            return "Lead no encontrado", 404
+        html = _recibo_pago_html(lead, 0.4, "SEGUNDO PAGO", conn)
+        conn.close()
+        return html, 200, {'Content-Type': 'text/html; charset=utf-8'}
+    except Exception as e:
+        return f"Error: {e}", 500
+
+
+@app.route('/lead/<int:lead_id>/recibo-tercer-pago', methods=['GET'])
+def recibo_tercer_pago(lead_id):
+    try:
+        conn = get_connection()
+        lead = fetchone(conn, "SELECT * FROM captura_web WHERE id=?", (lead_id,))
+        if not lead:
+            conn.close()
+            return "Lead no encontrado", 404
+        html = _recibo_pago_html(lead, 0.3, "TERCER PAGO", conn)
+        conn.close()
+        return html, 200, {'Content-Type': 'text/html; charset=utf-8'}
+    except Exception as e:
+        return f"Error: {e}", 500
+
 
 @app.route('/lead/<int:lead_id>/datos-proyecto', methods=['PATCH'])
 def update_datos_proyecto(lead_id):
@@ -592,11 +972,24 @@ def update_datos_proyecto(lead_id):
         nombre_proyecto = (data.get('nombre_proyecto') or '').strip()
         tipo_proyecto = (data.get('tipo_proyecto') or '').strip()
         nivel_proyecto = (data.get('nivel_proyecto') or '').strip()
+        m2 = data.get('m2')
+        honorarios = data.get('honorarios_diseno')
         ubicacion = data.get('ubicacion', {})
         ubicacion_json = json.dumps(ubicacion) if ubicacion else None
+
+        PRECIOS = {'esencial': 250, 'integral': 350, 'ejecutivo': 850}
+        precio_m2 = PRECIOS.get(nivel_proyecto, 250)
+        if m2 is not None and nivel_proyecto:
+            m2 = float(m2)
+            honorarios_calc = max(m2 * precio_m2, 6500)
+        else:
+            honorarios_calc = None
         
         conn = get_connection()
-        if nivel_proyecto:
+        if nivel_proyecto and m2 is not None:
+            execute(conn, "UPDATE captura_web SET nombre_cliente=?, nombre_proyecto=?, tipo_proyecto=?, nivel_proyecto=?, m2=?, honorarios_diseno=?, ubicacion=? WHERE id=?",
+                    (nombre_cliente, nombre_proyecto, tipo_proyecto, nivel_proyecto, m2, honorarios_calc, ubicacion_json, lead_id))
+        elif nivel_proyecto:
             execute(conn, "UPDATE captura_web SET nombre_cliente=?, nombre_proyecto=?, tipo_proyecto=?, nivel_proyecto=?, ubicacion=? WHERE id=?",
                     (nombre_cliente, nombre_proyecto, tipo_proyecto, nivel_proyecto, ubicacion_json, lead_id))
         else:
@@ -605,6 +998,18 @@ def update_datos_proyecto(lead_id):
         conn.commit()
         conn.close()
         return jsonify({"status": "success"}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/lead/<int:lead_id>/regresar', methods=['POST'])
+def regresar_lead(lead_id):
+    try:
+        conn = get_connection()
+        execute(conn, "DELETE FROM cobros WHERE proyecto_id = ?", (lead_id,))
+        execute(conn, "UPDATE captura_web SET pipeline_estado = 'lead' WHERE id = ?", (lead_id,))
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "success", "pipeline_estado": "lead"}), 200
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
@@ -623,10 +1028,65 @@ def update_pipeline(lead_id):
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
-@app.route('/cobros/<int:proyecto_id>', methods=['GET'])
+@app.route('/lead/<int:lead_id>', methods=['DELETE'])
+def delete_lead(lead_id):
+    try:
+        conn = get_connection()
+        execute(conn, "DELETE FROM cobros WHERE proyecto_id = ?", (lead_id,))
+        execute(conn, "DELETE FROM matriz_inversion WHERE proyecto_id = ?", (lead_id,))
+        execute(conn, "DELETE FROM algoritmo_progreso WHERE proyecto_id = ?", (lead_id,))
+        execute(conn, "DELETE FROM programa_arquitectonico WHERE lead_id = ?", (lead_id,))
+        execute(conn, "DELETE FROM captura_web WHERE id = ?", (lead_id,))
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "success"}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/egresos', methods=['GET', 'POST'])
+def egresos():
+    try:
+        conn = get_connection()
+        if request.method == 'POST':
+            data = request.json
+            execute(conn, "INSERT INTO egresos (categoria, concepto, monto, fecha) VALUES (?, ?, ?, ?)",
+                    (data['categoria'], data['concepto'], data['monto'], data.get('fecha', '')))
+            conn.commit()
+            conn.close()
+            return jsonify({"status": "success"}), 201
+        rows = fetchall(conn, "SELECT * FROM egresos ORDER BY fecha DESC, id DESC")
+        conn.close()
+        result = []
+        for r in rows:
+            item = dictify(r)
+            fecha = item.get('fecha')
+            if hasattr(fecha, 'strftime'):
+                item['fecha'] = fecha.strftime('%Y-%m-%d')
+            result.append(item)
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/egresos/<int:egreso_id>', methods=['DELETE'])
+def eliminar_egreso(egreso_id):
+    try:
+        conn = get_connection()
+        execute(conn, "DELETE FROM egresos WHERE id = ?", (egreso_id,))
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "success"}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/cobros/<int:proyecto_id>', methods=['GET', 'DELETE'])
 def get_cobros(proyecto_id):
     try:
         conn = get_connection()
+        if request.method == 'DELETE':
+            execute(conn, "DELETE FROM cobros WHERE proyecto_id = ?", (proyecto_id,))
+            conn.commit()
+            conn.close()
+            return jsonify({"status": "success"}), 200
         rows = fetchall(conn, "SELECT * FROM cobros WHERE proyecto_id = ? ORDER BY fecha_vencimiento ASC", (proyecto_id,))
         conn.close()
         return jsonify([dictify(row) for row in rows]), 200
@@ -735,15 +1195,23 @@ def serve_web():
 
 @app.route('/dashboard')
 def serve_dashboard():
-    dashboard_path = os.path.join(PROYECTO_DIR, "metodologia", "Bloque 1 - Gestion del Entorno (ADM)", "dashboard", "Dashboard.html")
+    dashboard_path = os.path.join(PROYECTO_DIR, "web", "dashboard.html")
     if os.path.exists(dashboard_path):
         with open(dashboard_path, 'r', encoding='utf-8') as f:
             return f.read(), 200, {'Content-Type': 'text/html; charset=utf-8'}
     return "Dashboard no encontrado", 404
 
+@app.route('/web/<path:filename>')
+def serve_web_static(filename):
+    web_dir = os.path.join(PROYECTO_DIR, "web")
+    filepath = os.path.join(web_dir, filename)
+    if os.path.exists(filepath) and os.path.isfile(filepath):
+        return send_from_directory(web_dir, filename)
+    return "Not found", 404
+
 @app.route('/css/<path:filename>')
 def serve_css(filename):
-    css_path = os.path.join(PROYECTO_DIR, "metodologia", "Bloque 1 - Gestion del Entorno (ADM)", "dashboard", "css", filename)
+    css_path = os.path.join(PROYECTO_DIR, "metodologia", "Bloque 01 - GESTIÓN DE PROYECTOS", "dashboard", "css", filename)
     if os.path.exists(css_path):
         with open(css_path, 'r', encoding='utf-8') as f:
             return f.read(), 200, {'Content-Type': 'text/css; charset=utf-8'}
@@ -817,11 +1285,90 @@ def serve_algoritmo():
 
 @app.route('/carta-presentacion')
 def serve_carta_presentacion():
-    carta_path = os.path.join(PROYECTO_DIR, "metodologia", "Bloque 1 - Gestion del Entorno (ADM)", "CARTA_PRESENTACION_SOMA.html")
+    carta_path = os.path.join(PROYECTO_DIR, "metodologia", "Bloque 01 - GESTIÓN DE PROYECTOS", "CARTA_PRESENTACION_SOMA.html")
     if os.path.exists(carta_path):
         with open(carta_path, 'r', encoding='utf-8') as f:
             return f.read(), 200, {'Content-Type': 'text/html; charset=utf-8'}
     return "Carta de presentación no encontrada", 404
+
+# ---- ALGORITMO SOMA (Progreso + Datos por proyecto) ----
+
+@app.route('/api/algoritmo/progreso/<int:proyecto_id>', methods=['GET', 'PUT'])
+def algoritmo_progreso(proyecto_id):
+    try:
+        conn = get_connection()
+        if request.method == 'PUT':
+            data = request.json
+            seccion = data.get('seccion')
+            paso = data.get('paso')
+            estado = data.get('estado', 'PENDIENTE')
+            ahora = datetime.datetime.now().isoformat()
+
+            existing = fetchone(conn, """SELECT id FROM algoritmo_progreso
+                WHERE proyecto_id=? AND seccion=? AND paso=?""",
+                (proyecto_id, seccion, paso))
+            if existing:
+                execute(conn, """UPDATE algoritmo_progreso
+                    SET estado=?, updated_at=? WHERE id=?""",
+                    (estado, ahora, existing['id']))
+            else:
+                execute(conn, """INSERT INTO algoritmo_progreso
+                    (proyecto_id, seccion, paso, estado, updated_at)
+                    VALUES (?, ?, ?, ?, ?)""",
+                    (proyecto_id, seccion, paso, estado, ahora))
+            conn.commit()
+            conn.close()
+            return jsonify({"status": "success"}), 200
+
+        rows = fetchall(conn, """SELECT seccion, paso, estado FROM algoritmo_progreso
+            WHERE proyecto_id=? ORDER BY seccion, paso""", (proyecto_id,))
+        conn.close()
+        progreso = {}
+        for r in rows:
+            key = f"{r['seccion']}_{r['paso']}"
+            progreso[key] = r['estado']
+        return jsonify({"status": "success", "progreso": progreso}), 200
+    except Exception as e:
+        try: conn.close()
+        except: pass
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route('/api/algoritmo/datos/<int:proyecto_id>', methods=['GET'])
+def algoritmo_datos(proyecto_id):
+    try:
+        conn = get_connection()
+        lead = fetchone(conn, """SELECT * FROM captura_web WHERE id=?""", (proyecto_id,))
+        if not lead:
+            conn.close()
+            return jsonify({"status": "error", "message": "Proyecto no encontrado"}), 404
+
+        espacios = fetchall(conn, """SELECT * FROM programa_arquitectonico
+            WHERE lead_id=? ORDER BY tipo, id""", (proyecto_id,))
+        cobros_data = fetchall(conn, """SELECT * FROM cobros
+            WHERE proyecto_id=? ORDER BY id""", (proyecto_id,))
+
+        conn.close()
+
+        lead_dict = dictify(lead)
+        if lead_dict and lead_dict.get('respuestas_json'):
+            try:
+                lead_dict['respuestas_json'] = json.loads(lead_dict['respuestas_json'])
+            except: pass
+        if lead_dict and lead_dict.get('analisis_procesado'):
+            try:
+                lead_dict['analisis_procesado'] = json.loads(lead_dict['analisis_procesado'])
+            except: pass
+
+        return jsonify({
+            "status": "success",
+            "lead": lead_dict,
+            "programa": [dictify(e) for e in espacios],
+            "cobros": [dictify(c) for c in cobros_data]
+        }), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 
 @app.route('/api/diagrama/proyectos', methods=['GET'])
 def diagrama_proyectos():
@@ -932,27 +1479,6 @@ def diagrama_grafo(lead_id):
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
-@app.route('/save_lead_magnet', methods=['POST'])
-def save_lead_magnet():
-    data = request.json
-    nombre = data.get('nombre', 'Anónimo')
-    contacto = data.get('contacto', '')
-    fuente = data.get('fuente', 'lead_magnet')
-    fecha = datetime.datetime.now().isoformat()
-    try:
-        conn = get_connection()
-        execute(conn, """INSERT INTO captura_web
-                     (temp_id, contacto, m2, honorarios_diseno, nivel_proyecto, respuestas_json, analisis_procesado, fecha)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-                  (f"LM-{datetime.datetime.now().strftime('%Y%m%d-%H%M%S')}", f"{nombre} - {contacto}",
-                   0, 0, 'lead_magnet', json.dumps({"fuente": fuente, "nombre": nombre}),
-                   f"Lead magnet: {fuente}", fecha))
-        conn.commit()
-        conn.close()
-        return jsonify({"status": "ok"}), 200
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
-
 @app.route('/fondo_democratizacion', methods=['GET'])
 def fondo_democratizacion():
     try:
@@ -985,15 +1511,98 @@ def notificaciones_status():
         except Exception as e:
             status["correo"]["conectado"] = False
             status["correo"]["error"] = str(e)
-    if TWILIO_SID and TWILIO_TOKEN:
-        status["whatsapp"]["configurado"] = True
-        try:
-            client = Client(TWILIO_SID, TWILIO_TOKEN)
-            client.api.accounts(TWILIO_SID).fetch()
-            status["whatsapp"]["conectado"] = True
-        except Exception:
-            status["whatsapp"]["conectado"] = False
+    wa_host = os.environ.get("WA_SERVICE_HOST", "http://127.0.0.1:3001")
+    try:
+        req = urllib.request.Request(f"{wa_host}/status")
+        resp = urllib.request.urlopen(req, timeout=3)
+        if resp.status == 200:
+            wa_status = json.loads(resp.read().decode())
+            status["whatsapp"]["configurado"] = True
+            status["whatsapp"]["conectado"] = wa_status.get("ready", False)
+            status["whatsapp"]["error"] = wa_status.get("error")
+    except Exception as e:
+        status["whatsapp"]["error"] = str(e)
     return jsonify(status), 200
+
+# ---- FONDOS (Provisiones mensuales para equipos/gastos futuros) ----
+
+@app.route('/api/fondos', methods=['GET', 'POST'])
+def fondos():
+    try:
+        conn = get_connection()
+        if request.method == 'POST':
+            data = request.json
+            execute(conn, "INSERT INTO fondos (nombre, monto_mensual, balance_actual) VALUES (?, ?, ?)",
+                    (data['nombre'], data.get('monto_mensual', 0), data.get('balance_actual', 0)))
+            conn.commit()
+            conn.close()
+            return jsonify({"status": "success"}), 201
+        rows = fetchall(conn, "SELECT * FROM fondos ORDER BY id")
+        conn.close()
+        return jsonify([dictify(r) for r in rows]), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/api/fondos/<int:fondo_id>', methods=['DELETE'])
+def eliminar_fondo(fondo_id):
+    try:
+        conn = get_connection()
+        execute(conn, "DELETE FROM movimientos_fondo WHERE fondo_id = ?", (fondo_id,))
+        execute(conn, "DELETE FROM fondos WHERE id = ?", (fondo_id,))
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "success"}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/api/fondos/<int:fondo_id>/apartar', methods=['POST'])
+def apartar_fondo(fondo_id):
+    try:
+        conn = get_connection()
+        data = request.json
+        monto = data['monto']
+        fecha = data.get('fecha', datetime.datetime.now().isoformat())
+        execute(conn, "INSERT INTO movimientos_fondo (fondo_id, tipo, monto, fecha, concepto) VALUES (?, 'apartado', ?, ?, ?)",
+                (fondo_id, monto, fecha, data.get('concepto', 'Aportación mensual')))
+        execute(conn, "UPDATE fondos SET balance_actual = balance_actual + ? WHERE id = ?", (monto, fondo_id))
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "success"}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/api/fondos/<int:fondo_id>/retirar', methods=['POST'])
+def retirar_fondo(fondo_id):
+    try:
+        conn = get_connection()
+        data = request.json
+        monto = data['monto']
+        fondo = fetchone(conn, "SELECT balance_actual FROM fondos WHERE id = ?", (fondo_id,))
+        if not fondo:
+            conn.close()
+            return jsonify({"status": "error", "message": "Fondo no encontrado"}), 404
+        if fondo['balance_actual'] < monto:
+            conn.close()
+            return jsonify({"status": "error", "message": "Saldo insuficiente"}), 400
+        fecha = data.get('fecha', datetime.datetime.now().isoformat())
+        execute(conn, "INSERT INTO movimientos_fondo (fondo_id, tipo, monto, fecha, concepto) VALUES (?, 'retiro', ?, ?, ?)",
+                (fondo_id, monto, fecha, data.get('concepto', 'Retiro')))
+        execute(conn, "UPDATE fondos SET balance_actual = balance_actual - ? WHERE id = ?", (monto, fondo_id))
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "success"}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/api/fondos/<int:fondo_id>/movimientos', methods=['GET'])
+def movimientos_fondo(fondo_id):
+    try:
+        conn = get_connection()
+        rows = fetchall(conn, "SELECT * FROM movimientos_fondo WHERE fondo_id = ? ORDER BY fecha DESC, id DESC", (fondo_id,))
+        conn.close()
+        return jsonify([dictify(r) for r in rows]), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))

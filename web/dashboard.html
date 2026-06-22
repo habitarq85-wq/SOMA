@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SOMA | Dashboard 2.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/web/css/dashboard.css">
+</head>
+<body>
+
+<header class="magazine-header">
+    <h1>SOMA <span>║</span> <span style="font-weight:300;">Dashboard 2.0</span></h1>
+    <div class="header-right">
+        <span id="last-update"></span>
+        <span style="color:#888;">PUERTO 8080</span>
+    </div>
+</header>
+
+<main>
+
+    <!-- BLOQUE 01: GESTIÓN DE PROYECTOS -->
+    <section class="block-section" style="border-top:4px solid #2e7d32;">
+        <div class="block-header">
+            <h2 class="block-title">BLOQUE 01: GESTIÓN DE PROYECTOS</h2>
+            <span class="block-num">KPI</span>
+        </div>
+
+        <div class="period-selector">
+            <select id="period-mes" onchange="cambiarPeriodo()">
+                <option value="">— Año completo —</option>
+                <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
+                <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
+                <option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
+                <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+            </select>
+            <select id="period-ano" onchange="cambiarPeriodo()">
+                <option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option>
+            </select>
+            <span id="periodo-label"></span>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="kpi-card"><span class="label">Clientes Activos</span><p id="gp-total-clientes" class="value green">0</p></div>
+            <div class="kpi-card"><span class="label">Anticipos</span><p id="gp-anticipos" class="value gold">$0</p></div>
+            <div class="kpi-card"><span class="label">Pagos 1.ª Entrega</span><p id="gp-primera-entrega" class="value gold">$0</p></div>
+            <div class="kpi-card"><span class="label">Pagos Finales</span><p id="gp-pagos-finales" class="value gold">$0</p></div>
+            <div class="kpi-card"><span class="label">Ingresos del Período</span><p id="gp-ingresos-periodo" class="value green">$0</p></div>
+            <div class="kpi-card"><span class="label">Gasto de Operación</span><p id="gp-gasto-operacion" class="value brown">$0</p></div>
+        </div>
+    </section>
+
+    <!-- CANDIDATOS — MOMENTO 1 -->
+    <section class="block-section" style="border-top:4px solid #888;">
+        <div class="block-header">
+            <h2 class="block-title" style="color:#888;">CANDIDATOS — MOMENTO 1</h2>
+            <span class="block-num">M1</span>
+        </div>
+        <div id="candidatos-container" class="cards-grid">
+            <p class="loading-text">Cargando...</p>
+        </div>
+    </section>
+
+    <!-- CLIENTES — MOMENTO 2 -->
+    <section class="block-section" style="border-top:4px solid #1565c0;">
+        <div class="block-header">
+            <h2 class="block-title" style="color:#1565c0;">CLIENTES — MOMENTO 2</h2>
+            <span class="block-num">M2</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:15px;">
+            <div>
+                <h3 style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:#1565c0;margin-bottom:8px;text-transform:uppercase;">Fase 1 · Contratado</h3>
+                <div id="fase-contratado-container" class="cards-grid"></div>
+            </div>
+            <div>
+                <h3 style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:#6a1b9a;margin-bottom:8px;text-transform:uppercase;">Fase 2 · 1ra Entrega</h3>
+                <div id="fase-primera_entrega-container" class="cards-grid"></div>
+            </div>
+            <div>
+                <h3 style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:#1b5e20;margin-bottom:8px;text-transform:uppercase;">Fase 3 · Entrega Final</h3>
+                <div id="fase-entrega_final-container" class="cards-grid"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MOMENTO 3: PROYECTOS CONCLUIDOS -->
+    <section class="block-section" style="border-top:4px solid #555;">
+        <div class="block-header">
+            <h2 class="block-title" style="color:#555;">MOMENTO 3 — PROYECTOS CONCLUIDOS</h2>
+            <span class="block-num">M3</span>
+        </div>
+        <div id="momento3-container" class="cards-grid">
+            <p class="loading-text">Cargando...</p>
+        </div>
+    </section>
+
+    <!-- BLOQUE 02: EGRESOS -->
+    <section class="block-section" style="border-top:4px solid #c62828;">
+        <div class="block-header">
+            <h2 class="block-title">BLOQUE 02: EGRESOS</h2>
+            <span class="block-num">GASTOS</span>
+        </div>
+        <div class="cols-2">
+            <div class="form-panel">
+                <h4>Registrar Gasto</h4>
+                <div class="form-group">
+                    <select id="egr-categoria">
+                        <option value="">— Categoría —</option>
+                        <option value="Luz">Luz</option>
+                        <option value="Internet">Internet</option>
+                        <option value="Teléfono">Teléfono</option>
+                        <option value="Suscripciones">Suscripciones</option>
+                        <option value="Equipo">Equipo</option>
+                        <option value="Mantenimiento">Mantenimiento</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                    <input type="text" id="egr-concepto" placeholder="Concepto">
+                    <input type="number" id="egr-monto" placeholder="Monto $">
+                    <input type="date" id="egr-fecha">
+                    <button class="cand-btn btn-close" style="padding:6px;font-size:.75rem;" id="egr-registrar-btn" onclick="EGRESOS.registrar()">+ AGREGAR</button>
+                </div>
+            </div>
+            <div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                    <h4 style="font-family:'JetBrains Mono',monospace;font-size:.65rem;text-transform:uppercase;">Historial</h4>
+                    <span id="egr-total-mes" style="font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:700;color:#c62828;">$0</span>
+                </div>
+                <div id="egr-lista"><p class="loading-text">Cargando...</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BLOQUE 03: FONDOS DE PROVISIÓN -->
+    <section class="block-section" style="border-top:4px solid #d4af37;">
+        <div class="block-header">
+            <h2 class="block-title">BLOQUE 03: FONDOS DE PROVISIÓN</h2>
+            <span class="block-num">FONDOS</span>
+        </div>
+        <div class="cols-2">
+            <div class="form-panel">
+                <h4>Nuevo Fondo</h4>
+                <div class="form-group">
+                    <input type="text" id="fnd-nombre" placeholder="Nombre (ej. Equipo Cómputo)">
+                    <input type="number" id="fnd-mensual" placeholder="Aportación mensual $">
+                    <button class="cand-btn btn-gold" style="padding:6px;font-size:.75rem;" onclick="FONDOS.crear()">+ CREAR FONDO</button>
+                </div>
+                <h4 style="margin-top:15px;">Aportar / Retirar</h4>
+                <div class="form-group">
+                    <select id="fnd-select"><option value="">— Seleccionar fondo —</option></select>
+                    <input type="number" id="fnd-monto" placeholder="Monto $">
+                    <input type="text" id="fnd-concepto" placeholder="Concepto">
+                    <div style="display:flex;gap:8px;">
+                        <button class="cand-btn btn-green" style="flex:1;padding:6px;font-size:.7rem;" onclick="FONDOS.apartar()">+ APORTAR</button>
+                        <button class="cand-btn btn-close" style="flex:1;padding:6px;font-size:.7rem;" onclick="FONDOS.retirar()">− RETIRAR</button>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div id="fnd-tarjetas" style="display:grid;gap:12px;"><p class="loading-text">Cargando...</p></div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer>"Lo protocolario se programa, lo creativo se libera." | SOMA 2026</footer>
+
+<div id="toast-container"></div>
+
+<!-- MODAL EXPEDIENTE -->
+<div id="modal-expediente" class="modal-overlay">
+    <div class="modal-content">
+        <button class="modal-close" onclick="UI.closeModal('modal-expediente')">✕</button>
+        <h2 style="font-family:'Playfair Display';font-size:1.8rem;margin-bottom:5px;" id="modal-titulo">Expediente</h2>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:#999;margin-bottom:20px;" id="modal-id"></p>
+        <div id="modal-body"></div>
+    </div>
+</div>
+
+<!-- MODAL CONTRATAR -->
+<div id="modal-contratar" class="modal-overlay">
+    <div class="modal-content" style="max-width:400px;">
+        <button class="modal-close" onclick="LEADS.cerrarContratar()">✕</button>
+        <h2 style="font-family:'Playfair Display';font-size:1.8rem;margin-bottom:5px;">Confirmar Contratación</h2>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:#999;margin-bottom:20px;">¿Estás seguro de pasar este lead a <strong>Momento 2 (Clientes)</strong>?</p>
+        <div style="text-align:center;">
+            <p style="font-size:.8rem;margin-bottom:20px;" id="cont-resumen">Cargando...</p>
+            <button onclick="LEADS.confirmarContratar()" class="cand-btn btn-green" style="width:100%;padding:10px;font-size:.85rem;">✓ Sí, pasar a Momento 2</button>
+            <button onclick="LEADS.cerrarContratar()" style="width:100%;padding:8px;background:none;border:none;color:#888;font-size:.75rem;cursor:pointer;margin-top:8px;">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL PROGRAMA ARQUITECTÓNICO -->
+<div id="modal-programa" class="modal-overlay">
+    <div class="modal-content wide">
+        <button class="modal-close" onclick="PROGRAMA.cerrar()">✕</button>
+        <h2 style="font-family:'Playfair Display';font-size:1.8rem;margin-bottom:5px;" id="modal-prog-titulo">Programa</h2>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:#999;margin-bottom:10px;" id="modal-prog-id"></p>
+        <div id="modal-prog-header"></div>
+        <div style="display:flex;gap:8px;margin-bottom:15px;">
+            <button class="cand-btn btn-green" style="flex:1;font-size:.6rem;" onclick="PROGRAMA.mostrarSeccion('programa')">📐 Programa</button>
+            <button class="cand-btn btn-gold" style="flex:1;font-size:.6rem;" onclick="PROGRAMA.mostrarSeccion('cotizacion')">💰 Cotización</button>
+        </div>
+        <div id="modal-prog-body"></div>
+    </div>
+</div>
+
+<script src="/web/js/api.js"></script>
+<script src="/web/js/ui.js"></script>
+<script src="/web/js/leads.js"></script>
+<script src="/web/js/cobros.js"></script>
+<script src="/web/js/egresos.js"></script>
+<script src="/web/js/fondos.js"></script>
+<script src="/web/js/programa.js"></script>
+<script src="/web/js/app.js"></script>
+
+</body>
+</html>

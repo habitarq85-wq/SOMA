@@ -7,8 +7,8 @@ import os
 import sqlite3
 import json
 
-DATABASE_URL = os.environ.get('DATABASE_URL', '')
-USE_POSTGRES = bool(DATABASE_URL)
+def _use_postgres():
+    return bool(os.environ.get('DATABASE_URL', ''))
 
 def _get_sqlite_path():
     base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -16,10 +16,10 @@ def _get_sqlite_path():
     return os.path.join(proyecto_dir, "web", "EjemploBD", "proyectos_arquitectonicos.db")
 
 def get_connection():
-    if USE_POSTGRES:
+    if _use_postgres():
         import psycopg2
         from psycopg2.extras import RealDictCursor
-        conn = psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
+        conn = psycopg2.connect(os.environ['DATABASE_URL'], cursor_factory=RealDictCursor)
         return conn
     else:
         db_path = _get_sqlite_path()
@@ -30,7 +30,7 @@ def get_connection():
         return conn
 
 def adapt_sql(sql):
-    if USE_POSTGRES:
+    if _use_postgres():
         sql = sql.replace('?', '%s')
         sql = sql.replace('IFNULL(', 'COALESCE(')
         sql = sql.replace("datetime('now')", "NOW()")
@@ -56,7 +56,7 @@ def fetchall(conn, sql, params=None):
     return cur.fetchall()
 
 def get_lastrowid(cur):
-    if USE_POSTGRES:
+    if _use_postgres():
         row = cur.fetchone()
         if row:
             return row[0] if isinstance(row, (list, tuple)) else row.get('id')
@@ -66,8 +66,6 @@ def get_lastrowid(cur):
 def dictify(row):
     if row is None:
         return None
-    if USE_POSTGRES:
-        return dict(row)
     return dict(row)
 
 def json_dumps(val):

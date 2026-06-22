@@ -1,43 +1,85 @@
 # Contexto de Sesión — Algoritmo SOMA
 
-## Última sesión: 16 Jun 2026 (Parte 2) ✅
+## Sesión: 22 Jun 2026 ✅
 
-### Tema: Flujo Momento 1 a Momento 2, Reestructuración del Dashboard, Fix DB Postgres
+### Bitácora del día
+1. **Station 2 → Inmersión Web real**: `renderImmersionReal()` — muestra las 10 respuestas A/B de `respuestas_json` con labels (Fachada, Privacidad, Flexibilidad, etc.). Se inyecta dinámicamente en 2.2 Material Variable.
+2. **Station 3 → Análisis Procesado real**: `renderAnalisisReal()` — despliega el `analisis_procesado` (reporte multidimensional con Psicología Ambiental, Lenguaje de Patrones, Space Syntax, Conducta Ambiental, POE) en secciones formateadas.
+3. **Station 1 → Cobros reales**: `renderContactoReal()` — ahora muestra los pagos del proyecto con montos y estado (✅ Pagado / ⏳ Pendiente) desde la tabla `cobros`.
+4. **Llamadas integradas** en `showSection()` para que cada estación cargue datos reales al activarse.
 
-### Qué se hizo en esta sesión
-1. **Reestructuración del Dashboard:**
-   - División en 3 bloques principales: **CANDIDATOS — MOMENTO 1** (Leads), **CLIENTES — MOMENTO 2** (Contratados), y **BLOQUE 02: TALLER SOMA** (Vista detallada operativa).
-   - Actualización de las tarjetas de leads para incluir botones consistentes: `[ EXPEDIENTE ] [ PROGRAMA ] [ CONTRATAR ]`.
-2. **Flujo de Contratación (Momento 1 -> Momento 2):**
-   - El botón **CONTRATAR** ahora sirve únicamente para confirmar el pase a Momento 2 (cambia el pipeline a `contratado`).
-   - Se agregó validación: no permite contratar si los "Datos del Proyecto" no están completos.
-3. **Datos del Proyecto y Autoguardado en PROGRAMA:**
-   - Se movieron los campos de configuración (Nombre Cliente, Proyecto, Tipo, Nivel, Ubicación) a la cabecera del modal **PROGRAMA**.
-   - Se implementó **autoguardado inteligente**: cambiar de pestaña hacia "Cotización" guarda automáticamente los datos y recalcula los honorarios/obra usando el Nivel seleccionado sin recargar.
-4. **Fix Crítico Base de Datos (PostgreSQL):**
-   - Se corrigió un bug en `db.py` al migrar de SQLite a Postgres: se agregó dinámicamente `RETURNING id` a las consultas `INSERT` para que `get_lastrowid()` funcione correctamente. Esto resolvió el problema de creación de espacios en el Programa Arquitectónico.
+### Próxima sesión
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
+- Considerar crear tabla `algoritmo_contenido` para almacenar outputs de cada estación
 
-### Cambios adicionales
-- Limpieza de datos de prueba, manteniendo ejemplos fieles a lo generado por la Inmersión Web (Cotizador).
-- Adición de las columnas de ubicación y nombre_cliente en `captura_web`.
+## Sesión: 22 Jun 2026 (p.m.) ✅
 
-### Archivos modificados
-| Archivo | Cambio |
-|---------|--------|
-| `metodologia/Bloque 1 - Gestion del Entorno (ADM)/dashboard/Dashboard.html` | **(Modificado)** Reestructura Momento 1 y 2, nuevos modals y validaciones, autoguardado de cotización. |
-| `backend/server.py` | **(Modificado)** Nuevo endpoint `PATCH /lead/<id>/datos-proyecto`. Ajuste en ruta `contratar`. |
-| `backend/db.py` | **(Modificado)** Fix `RETURNING id` en función `adapt_sql` para PostgreSQL. |
+### Bitácora del día
+1. **Barra de progreso global eliminada**: removido marcador de avance por estación (HTML+CSS+JS). Se conserva solo Estación 10 como Control.
+2. **Barra de avance en tarjeta de proyecto**: cada proyecto en el selector ahora muestra una barra que se llena de izquierda a derecha (0–100%) con el progreso real del algoritmo. Se actualiza al cargar/guardar progreso vía `calcularProgresoGlobal()` + `actualizarProgresoTarjeta()`.
 
-### Pendientes (PRÓXIMA SESIÓN)
-1. **Continuar trabajando con el Dashboard**.
-2. **Crear los campos de la base de datos "integral"** (expandir las tablas y modelo de datos general del proyecto).
-3. (Opcional) Compuertas condicionales por paquete (Básico/Integral/Ejecutivo) en Algoritmo SOMA.
+## Sesión: 22 Jun 2026 (noche) ✅
 
-### Archivos relevantes
-- `web/algoritmo_soma.html`
-- `backend/server.py` y `backend/db.py`
-- `metodologia/Bloque 1 - Gestion del Entorno (ADM)/dashboard/Dashboard.html`
+### Bitácora del día
+1. **Diagrama SOMA integrado en Algoritmo (3.4)**: 
+   - Botón "ABRIR DIAGRAMA DE RELACIONES" en la tarjeta 3.4 de Station 3 (Análisis).
+   - Sección colapsable debajo del step-grid con vis-network (force-directed graph).
+   - Carga datos reales desde `/api/diagrama/grafo/<proyecto_id>` (espacios + relaciones).
+   - Filtro por zona (Social/Operativa/Descanso/Soporte/Transición).
+   - Posiciones guardadas en localStorage, botón Reset, export PNG.
+   - Leyenda cromática por zona.
+2. **Cambio de proyecto re-renderiza estación activa**: al seleccionar otra tarjeta, la estación visible se actualiza con los datos del nuevo proyecto (incluyendo diagrama si está abierto).
 
-### Comandos útiles
-- Servir local: `cd /home/juan/Documentos/PROYECTO\ SOMA/backend && source venv/bin/activate && DATABASE_URL=postgresql://soma_user:soma_pass@localhost:5432/soma_db python server.py`
-- Dashboard: `http://localhost:8080/dashboard`
+### Próxima sesión
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
+- Considerar crear tabla `algoritmo_contenido` para almacenar outputs de cada estación
+- Lead magnet — decidir ubicación en página web
+
+## Sesión: 19 Jun 2026 (tarde/noche) ✅
+
+### Bitácora del día
+1. **KPIs por período contable**: `/metrics/bloque01` filtra por `?year=` y `?month=`. Clientes Activos excluye `terminado`. `Ingresos del Período` sobre `Monto Acumulado`. `Gasto de Operación` desde egresos.
+2. **Botones de pago directo**: ANTICIPO (F1), PAGO 1RA (F2), PAGO FINAL (F3) — marcan cobro como pagado sin confirm. Botones de avance advierten si falta pago.
+3. **Dashboard 2.0**: Reescribito en `web/` con módulos separados (api.js, ui.js, leads.js, egresos.js, fondos.js, programa.js, app.js). Sin `alert()`, datos escapados, botones con loading state, concurrencia controlada. CSS limpio en `web/css/dashboard.css`.
+4. **Fondos de provisión (B03)**: Tablas `fondos` + `movimientos_fondo`. API: CRUD + apartar/retirar. UI en dashboard.
+5. **Limpieza de BD**: Eliminadas 7 tablas vacías. Eliminadas columnas `presupuesto` y `habitantes` de `captura_web`. `init_db` actualizado.
+6. **Dashboard v1 archivado**: Movido a `antecedentes/dashboard_v1/`.
+7. **Algoritmo SOMA**: Dropdown reemplazado por tarjetas visuales colapsables. Muestra solo Momento 2. Clic expande/colapsa. Banner eliminado. Botón PROGRAMA abre dashboard.
+
+### Próxima sesión
+- Continuar desarrollo del Algoritmo SOMA
+- Vincular estaciones del algoritmo con datos reales de la BD
+
+### Comandos
+```bash
+# Servidor
+systemctl --user stop soma-flask.service
+systemd-run --user --unit=soma-flask --setenv=DATABASE_URL=postgresql://soma_user:soma_pass@localhost:5432/soma_db /home/juan/Documentos/PROYECTO\ SOMA/backend/venv/bin/python /home/juan/Documentos/PROYECTO\ SOMA/backend/server.py
+
+# Logs
+journalctl --user -u soma-flask.service -f
+
+# Dashboard
+http://localhost:8080/dashboard
+
+# Algoritmo
+http://localhost:8080/algoritmo
+
+# PostgreSQL
+PGPASSWORD=soma_pass psql -h localhost -U soma_user -d soma_db
+
+# Métricas
+curl -s "http://127.0.0.1:8080/metrics/bloque01?year=2026&month=6" | python3 -m json.tool
+```
+
+### Archivos clave
+```
+web/
+├── dashboard.html          # Dashboard 2.0
+├── css/dashboard.css       # Estilos
+├── js/                     # Módulos JS
+│   ├── api.js, ui.js, leads.js, egresos.js, fondos.js, programa.js, app.js
+└── algoritmo_soma.html     # Algoritmo con tarjetas de proyecto
+backend/server.py           # Flask (rutas actualizadas)
+antecedentes/dashboard_v1/  # Dashboard original
+```

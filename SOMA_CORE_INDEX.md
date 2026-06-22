@@ -106,6 +106,13 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 - [x] **Algoritmo SOMA (Base):** Creado `FUSION_CONCEPTUALIZACION.md` integrando el protocolo teórico con la práctica de 17 pasos.
 - [x] **Algoritmo SOMA (Visual):** HTML interactivo (`web/algoritmo_soma.html`) + diagrama SVG (`recursos_graficos/algoritmo_soma_diagrama.svg`). 16 pasos visualizados en 4 fases con interacción expandible.
 
+## 🧪 BLOQUE 7: SITIO WEB (MKT) — Sesión 17/06/2026
+- [x] **Flujo cotizador:** Paso 12 eliminado. Contacto → directo a Escala e Inversión.
+- [x] **Textos paquetes:** Lenguaje claro para público general. Detalles técnicos en letras chiquitas.
+- [x] **Recámaras separadas:** Principal (16m²) y Secundaria (12m²) como checkboxes.
+- [x] **Otros dinámico:** Filas con nombre + m² + botón +/×. Sin cantidad.
+- [x] **Padding btn-back:** Corregido para no montarse en imágenes.
+
 ## 🎯 PRIORIDADES 29/05/2026 — ROADMAP A PRODUCCIÓN
 
 | Prioridad | Acción | Por qué |

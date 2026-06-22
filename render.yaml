@@ -14,12 +14,7 @@ services:
           property: connectionString
       - key: SENDGRID_API_KEY
         sync: false
-      - key: TWILIO_SID
-        sync: false
-      - key: TWILIO_TOKEN
-        sync: false
-      - key: NOTIFICACION_WHATSAPP
-        sync: false
+
       - key: SMTP_SERVER
         value: smtp.gmail.com
       - key: SMTP_PORT

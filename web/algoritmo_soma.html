@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Proceso completo de diseño arquitectónico SOMA — 9 estaciones, del contacto al proyecto ejecutivo. Metodología para clima cálido-húmedo.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>●</text></svg>">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.6/dist/vis-network.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.6/dist/vis-network.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <title>Algoritmo SOMA — Proceso de Diseño</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -90,6 +93,16 @@ header .sub{color:var(--text3);font-size:.8rem;margin-top:4px;font-style:italic}
 .step-name{font-size:.75rem;font-weight:700;color:var(--text);flex:1;line-height:1.2}
 
 .step-proc{font-family:'Courier New',monospace;font-size:.5rem;padding:1px 6px;border-radius:2px;border:1px solid;background:var(--surface);white-space:nowrap}
+.step-status{font-size:1.8rem;cursor:pointer;margin-left:auto;transition:color .3s;line-height:1;user-select:none;padding:0 6px}
+.step-status:hover{filter:brightness(1.5)}
+.step-status.s-pendiente{color:#555}
+.step-status.s-progreso{color:#ff9800}
+.step-status.s-listo{color:#4caf50}
+.step-status.s-aprobado{color:#2196f3}
+.step-status.s-noaplica{color:#333;opacity:.35;font-size:1rem}
+
+.kanban-legend{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;padding:20px 0 10px;border-top:1px solid var(--border);margin-top:20px;font-family:'Courier New',monospace;font-size:.6rem}
+.kanban-legend-item{display:flex;align-items:center;gap:5px;color:var(--text2)}
 .proc-humano{border-color:var(--accent);color:var(--accent)}
 .proc-ai{border-color:#4a9eff;color:#4a9eff}
 .proc-mixto{border-color:#b388ff;color:#b388ff}
@@ -144,6 +157,28 @@ header .sub{color:var(--text3);font-size:.8rem;margin-top:4px;font-style:italic}
 .inv-item p{font-family:'Courier New',monospace;font-size:.58rem;color:var(--text2);line-height:1.4}
 .inv-item .ref{font-family:'Courier New',monospace;font-size:.5rem;color:var(--text3);margin-top:2px}
 
+/* ─── KANBAN DASHBOARD ─── */
+.ctrl-summary{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.ctrl-card{flex:1;min-width:100px;padding:14px 10px;border-radius:6px;text-align:center;background:var(--surface);border:1px solid var(--border);font-family:'Courier New',monospace}
+.ctrl-card .num{font-size:1.8rem;font-weight:700}
+.ctrl-card .lbl{font-size:.55rem;color:var(--text2);margin-top:2px;letter-spacing:1px;text-transform:uppercase}
+.ctrl-card.s-pendiente{color:#555;border-color:#555}
+.ctrl-card.s-progreso{color:#ff9800;border-color:#ff9800}
+.ctrl-card.s-listo{color:#4caf50;border-color:#4caf50}
+.ctrl-card.s-aprobado{color:#2196f3;border-color:#2196f3}
+#ctrl-sections{display:grid;gap:8px}
+.ctrl-section{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:10px}
+.ctrl-section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.ctrl-section-header h3{font-family:'Courier New',monospace;font-size:.65rem;color:var(--text)}
+.ctrl-section-header span{font-family:'Courier New',monospace;font-size:.5rem;color:var(--text3)}
+.ctrl-bar{height:6px;border-radius:3px;background:#222;overflow:hidden;display:flex}
+.ctrl-bar-seg{transition:width .3s}
+.bar-pendiente{background:#555}
+.bar-progreso{background:#ff9800}
+.bar-listo{background:#4caf50}
+.bar-aprobado{background:#2196f3}
+.bar-noaplica{background:#333;opacity:.2}
+
 @media(max-width:700px){
 .inv-grid{grid-template-columns:1fr}
 }
@@ -194,46 +229,70 @@ header h1{font-size:1.6rem;letter-spacing:6px}
 .phase-label.cyan{color:#26c6da}
 .ejemplo-box{margin-bottom:10px;font-family:'Courier New',monospace;font-size:.6rem;color:#aaa;padding:8px 12px;background:var(--proyecto-bg);border:1px solid #333;border-radius:4px}
 .ejemplo-box strong{color:#4caf50;font-weight:700}
-.final-node{margin-top:20px;text-align:center}
-.final-badge{display:inline-block;padding:10px 30px;border:2px solid var(--accent);border-radius:25px;font-family:Georgia,serif;font-weight:700;color:var(--accent)}
-.final-desc{font-family:'Courier New',monospace;font-size:.65rem;color:var(--text3);margin-top:6px}
 .station:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:4px}
 .step-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .step-card[aria-expanded="true"] .step-detail{display:block}
 
-/* ─── GRAPH (Sección 4) ─── */
-.phase-graph-wrapper{position:relative;margin-bottom:12px;width:100%}
-.phase-graph-scroll{overflow-x:auto;overflow-y:hidden;width:100%}
-.phase-graph-scroll svg{display:block;width:100%;height:auto;min-width:0;background:var(--bg)}
-.node{cursor:pointer}
-.node-body{transition:filter .15s,stroke .15s}
-.node:hover .node-body{filter:brightness(1.25);stroke:#555}
-.node-stripe{transition:fill .25s}
-.edge-path{transition:opacity .3s}
-.loop-path{stroke-dashoffset:0;animation:dashPulse 2.5s ease-in-out infinite}
-.loop-label{animation:pulseLabel 2.5s ease-in-out infinite}
-@keyframes dashPulse{0%,100%{stroke-dashoffset:0}50%{stroke-dashoffset:8}}
-@keyframes pulseLabel{0%,100%{opacity:.6}50%{opacity:1}}
-.fase-l{font-size:18px;font-weight:700;letter-spacing:2px;text-transform:uppercase;writing-mode:vertical-rl;text-orientation:mixed}
-.gl{stroke:#ffffff08;stroke-width:1}
-.fb{stroke-width:0}
+/* ─── PROJECT SELECTOR ─── */
+/* ─── PROJECT CARDS ─── */
+.proj-cards{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}
+.proj-card{border:1px solid var(--border);border-radius:6px;padding:10px 14px;cursor:pointer;transition:all .2s;min-width:200px;background:var(--surface)}
+.proj-card:hover{border-color:var(--accent);background:var(--surface2)}
+.proj-card.selected{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.proj-card .proj-name{font-family:'Courier New',monospace;font-size:.75rem;color:var(--text);display:flex;justify-content:space-between;align-items:center}
+.proj-card .proj-name .arrow{transition:transform .2s;color:var(--text3)}
+.proj-card .proj-name .arrow.open{transform:rotate(90deg)}
+.proj-card .proj-details{max-height:0;overflow:hidden;transition:max-height .3s ease,opacity .2s ease;opacity:0}
+.proj-card .proj-details.open{max-height:300px;opacity:1}
+.proj-details-inner{padding-top:8px;font-size:.7rem;color:var(--text2);line-height:1.6}
+.proj-details-inner dt{color:var(--text3);font-family:'Courier New',monospace;font-size:.55rem;text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
+.proj-details-inner dd{margin-left:0;color:var(--text)}
+.proj-details-inner .btn-prog{display:inline-block;margin-top:8px;padding:4px 10px;background:var(--accent);color:#fff;border:none;border-radius:3px;font-size:.6rem;cursor:pointer;font-family:'Courier New',monospace}
+.proj-details-inner .btn-prog:hover{opacity:.85}
 
-/* ─── DETAIL PANEL (Sección 4) ─── */
-.sec4-detail-panel{position:relative;margin-top:10px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:6px;border-left:4px solid var(--accent);animation:fadeIn .25s ease}
-.dp-header{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
-.dp-num{font-family:'Courier New',monospace;font-size:.7rem;font-weight:700;color:var(--accent)}
-.dp-name{font-size:.8rem;font-weight:700;color:var(--text);flex:1}
-.dp-type{font-family:'Courier New',monospace;font-size:.45rem;padding:1px 5px;border-radius:2px;border:1px solid;font-weight:700}
-.dp-proc{font-family:'Courier New',monospace;font-size:.45rem;padding:1px 5px;border-radius:2px;border:1px solid;background:var(--surface)}
-.dp-proc.proc-humano{border-color:var(--accent);color:var(--accent)}
-.dp-proc.proc-ai{border-color:#4a9eff;color:#4a9eff}
-.dp-proc.proc-mixto{border-color:#b388ff;color:#b388ff}
-.dp-status{font-family:'Courier New',monospace;font-size:.45rem;padding:1px 5px;border-radius:2px;border:1px solid;font-weight:700}
-.dp-desc{font-family:'Courier New',monospace;font-size:.6rem;color:var(--text2);margin-bottom:8px;line-height:1.4}
-.dp-body{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-@media(max-width:700px){.dp-body{grid-template-columns:1fr}}
-.dp-close{position:absolute;top:8px;right:10px;background:none;border:none;color:var(--text3);font-size:1rem;cursor:pointer;padding:2px 6px;border-radius:3px}
-.dp-close:hover{color:var(--accent);background:rgba(212,94,44,.1)}
+/* ─── PROGRESS BAR IN PROJECT CARD ─── */
+.proj-progress-wrap{margin-top:8px;padding-top:6px;border-top:1px solid var(--border)}
+.proj-progress-bar{height:6px;border-radius:3px;background:#222;overflow:hidden}
+.proj-progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#d45e2c,#4caf50);width:0%;transition:width .5s ease}
+.proj-progress-label{font-family:'Courier New',monospace;font-size:.5rem;color:var(--text3);margin-top:3px;display:flex;justify-content:space-between}
+
+/* ─── DIAGRAMA DE RELACIONES ─── */
+.diagrama-section{margin-top:20px;border-top:1px solid var(--border);padding-top:16px;display:none}
+.diagrama-section.visible{display:block}
+.diagrama-section .section-label{margin-bottom:6px}
+.diagrama-programa{margin-bottom:12px;border-radius:6px;font-size:.6rem}
+.diagrama-programa .prog-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;color:var(--text3);font-size:.55rem;padding:0 2px}
+.diagrama-programa .prog-card{border:1px solid var(--border);border-radius:6px;margin-bottom:6px;background:var(--surface);overflow:hidden}
+.diagrama-programa .prog-card .prog-row{display:flex;align-items:center;gap:8px;padding:8px 10px}
+.diagrama-programa .prog-card .prog-nombre{color:#fff;flex:1;font-weight:600}
+.diagrama-programa .prog-card .prog-m2{color:#999;min-width:45px;text-align:right;font-size:.55rem}
+.diagrama-programa .prog-card .prog-zona{min-width:50px;text-align:right;font-size:.5rem;font-weight:600}
+.diagrama-programa .prog-card .prog-rels{display:flex;flex-wrap:wrap;gap:3px;flex:1;min-height:18px}
+.diagrama-programa .prog-card .prog-rels .rel-tag{background:rgba(212,94,44,.25);border:1px solid rgba(212,94,44,.4);border-radius:3px;padding:1px 6px;font-size:.5rem;color:var(--accent);cursor:pointer}
+.diagrama-programa .prog-card .prog-rels .rel-tag:hover{border-color:var(--accent)}
+.diagrama-programa .prog-card .prog-rels .rel-add{background:transparent;border:1px dashed var(--border);border-radius:3px;padding:1px 6px;font-size:.55rem;color:var(--text3);cursor:pointer;flex-shrink:0}
+.diagrama-programa .prog-card .prog-rels .rel-add:hover{border-color:var(--text)}
+.diagrama-programa .prog-picker{padding:8px 10px;border-top:1px solid var(--border);background:rgba(255,255,255,.02)}
+.diagrama-programa .prog-picker .picker-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.diagrama-programa .prog-picker .picker-grid label{display:flex;align-items:center;gap:6px;padding:3px 4px;border-radius:3px;cursor:pointer;font-size:.55rem}
+.diagrama-programa .prog-picker .picker-grid label:hover{background:rgba(255,255,255,.04)}
+.diagrama-programa .prog-picker .picker-grid input[type=checkbox]{accent-color:var(--accent)}
+.diagrama-programa .prog-picker .picker-actions{display:flex;gap:8px;margin-top:8px}
+.diagrama-programa .prog-picker .picker-actions button{padding:5px 12px;border-radius:4px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font-size:.55rem;font-family:'Courier New',monospace}
+.diagrama-programa .prog-picker .picker-actions button:hover{border-color:var(--accent)}
+.diagrama-programa .prog-picker .picker-actions .btn-save{background:var(--accent);border-color:var(--accent);color:#fff}
+.diagrama-programa .prog-header span{color:var(--text3);font-size:.55rem}
+.diagrama-controls{display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.diagrama-controls select,.diagrama-controls button{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:4px;padding:4px 10px;font-family:'Courier New',monospace;font-size:.6rem;cursor:pointer}
+.diagrama-controls select:hover,.diagrama-controls button:hover{border-color:var(--accent)}
+.diagrama-controls .btn-export,.diagrama-controls .btn-connect.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.diagrama-controls .btn-connect.active{box-shadow:0 0 8px rgba(212,94,44,.5)}
+.diagrama-canvas{width:100%;height:480px;border:1px solid var(--border);border-radius:6px;background:var(--surface);overflow:hidden}
+.diagrama-footer{display:flex;justify-content:space-between;margin-top:6px;font-family:'Courier New',monospace;font-size:.5rem;color:var(--text3)}
+.diagrama-legend{display:flex;gap:12px;flex-wrap:wrap}
+.diagrama-legend span{display:flex;align-items:center;gap:4px}
+.diagrama-legend .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+
 </style>
 </head>
 <body>
@@ -243,15 +302,13 @@ header h1{font-size:1.6rem;letter-spacing:6px}
 <h1><span>●</span> ALGORITMO SOMA</h1>
 <div class="line"></div>
 <p>Proceso Completo de Diseño — Línea del Tiempo</p>
-<p class="sub">Constantes pre-cargadas · Variables por proyecto · 9 secciones del PROCESO 2.0</p>
+<p class="sub">Constantes pre-cargadas · Variables por proyecto · 10 secciones del PROCESO 2.0</p>
 </header>
 
-<div class="ejemplo-banner">
-<div class="label">▶ Proyecto Tipo</div>
-<h2>CASA HABITACIÓN · MÉRIDA, YUCATÁN</h2>
-<p>Vivienda unifamiliar 1 nivel · 135 m² · 3 recámaras · lote 8×20 m · clima Aw</p>
-<div class="tags"><span>Nivel: Esencial</span><span>Lote: 160 m²</span><span>Presupuesto: $800,000 MXN</span></div>
+<div class="proj-cards" id="proj-cards">
+  <p style="font-family:'Courier New',monospace;font-size:.65rem;color:var(--text3);padding:10px;">Sin proyectos activos en Momento 2.</p>
 </div>
+
 
 <div class="section-label">▌Línea del Tiempo — Proceso Completo</div>
 <p class="tl-desc">
@@ -274,8 +331,11 @@ Cada estación es una sección del PROCESO DE DISEÑO 2.0. Haz clic para ver el 
 <div class="station future" onclick="showSection(7)"><div class="station-circle">7</div><div class="station-label">Representación</div><div class="station-sub">Documento HTML+PDF</div></div>
 <div class="station future" onclick="showSection(8)"><div class="station-circle">8</div><div class="station-label">Antep. Integral</div><div class="station-sub">Acabados·Permisos</div></div>
 <div class="station future" onclick="showSection(9)"><div class="station-circle">9</div><div class="station-label">Coord.+Planos</div><div class="station-sub">Ingenierías·Técnicos</div></div>
+<div class="station future" onclick="showSection(10)"><div class="station-circle">C</div><div class="station-label">Control</div><div class="station-sub">Avance General</div></div>
 </div>
 </div>
+
+
 
 <!-- ════════════════════════════════════════════ -->
 <!-- DETALLE POR SECCIÓN                        -->
@@ -411,6 +471,7 @@ Cada estación es una sección del PROCESO DE DISEÑO 2.0. Haz clic para ver el 
 <div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Analizar conexiones: directa (puerta), visual (vano), acústica (abierto/aislado), proximidad, separación (privacidad). Humano define relaciones, AI genera diagrama</div></div>
 <div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Diagrama de burbujas con relaciones · Matriz de relaciones (tabla doble entrada) · Input para Diagrama Espacial SOMA</div></div>
 <div class="detail-block"><div class="detail-label">REF</div><div class="detail-body">PROCESO 2.0 elem. 3.4</div></div>
+<div class="detail-block" style="margin-top:10px;"><button class="btn-prog" id="btn-abrir-diagrama" onclick="event.stopPropagation();abrirDiagramaRelaciones()" style="font-size:.7rem;padding:6px 16px;">🔗 ABRIR DIAGRAMA DE RELACIONES</button></div>
 </div>
 </div>
 <div class="step-card" tabindex="0" onclick="toggle(this)">
@@ -481,6 +542,29 @@ Cada estación es una sección del PROCESO DE DISEÑO 2.0. Haz clic para ver el 
 </div>
 </div>
 </div>
+
+<!-- ─── DIAGRAMA DE RELACIONES (3.4) ─── -->
+<div class="diagrama-section" id="diagrama-section">
+  <div class="section-label">▌Diagrama de Relaciones Espaciales — 3.4</div>
+  <div class="diagrama-programa" id="diagrama-programa"></div>
+  <div class="diagrama-controls">
+    <select id="diagrama-zona-filter" onchange="if(PROYECTO_ACTUAL)renderDiagramaRelaciones(PROYECTO_ACTUAL,parseInt(this.value))"><option value="0">Todas las zonas</option><option value="1">Z1 Social</option><option value="2">Z2 Operativa</option><option value="3">Z3 Descanso</option><option value="4">Z4 Soporte</option><option value="5">Z5 Transición</option></select>
+    <button id="btn-connect-mode" class="btn-connect" onclick="toggleConnectMode()">🔗 CONECTAR</button>
+    <button id="btn-reset-diagrama" onclick="resetDiagrama()">↺ Reset</button>
+    <button id="btn-export-png" class="btn-export" onclick="exportDiagramaPDF()">⬇ PDF</button>
+  </div>
+  <div class="diagrama-canvas" id="diagrama-canvas"></div>
+  <div class="diagrama-footer">
+    <div class="diagrama-legend">
+      <span><span class="dot" style="background:#4d7ae6"></span>Social</span>
+      <span><span class="dot" style="background:#e6cc33"></span>Operativa</span>
+      <span><span class="dot" style="background:#e64d4d"></span>Descanso</span>
+      <span><span class="dot" style="background:#e68033"></span>Soporte</span>
+      <span><span class="dot" style="background:#9933cc"></span>Transición</span>
+    </div>
+    <span id="diagrama-info">Sin datos</span>
+  </div>
+</div>
 </div>
 
 <!-- ============================================ -->
@@ -492,286 +576,160 @@ Cada estación es una sección del PROCESO DE DISEÑO 2.0. Haz clic para ver el 
 <span class="range">Elem. 4.1-4.15</span>
 </div>
 
-<div class="phase-graph-wrapper">
-<div class="phase-graph-scroll">
-<svg viewBox="0 0 1500 1250" xmlns="http://www.w3.org/2000/svg" id="grafo">
-<defs>
-  <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-    <path d="M 0 0 L 10 5 L 0 10 Z" fill="#888"/>
-  </marker>
-  <marker id="ax" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-    <path d="M 0 0 L 10 5 L 0 10 Z" fill="#aa8800"/>
-  </marker>
-  <marker id="al" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-    <path d="M 0 0 L 10 5 L 0 10 Z" fill="#ff9800"/>
-  </marker>
-  <marker id="ae" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-    <path d="M 0 0 L 10 5 L 0 10 Z" fill="#d45e2c"/>
-  </marker>
-  <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity=".35"/></filter>
-</defs>
-<g>
-  <line class="gl" x1="0" y1="150" x2="1500" y2="150"/>
-  <line class="gl" x1="0" y1="390" x2="1500" y2="390"/>
-  <line class="gl" x1="0" y1="640" x2="1500" y2="640"/>
-  <line class="gl" x1="0" y1="890" x2="1500" y2="890"/>
-  <line class="gl" x1="250" y1="0" x2="250" y2="1150"/>
-  <line class="gl" x1="500" y1="0" x2="500" y2="1150"/>
-  <line class="gl" x1="750" y1="0" x2="750" y2="1150"/>
-  <line class="gl" x1="1000" y1="0" x2="1000" y2="1150"/>
-  <line class="gl" x1="1250" y1="0" x2="1250" y2="1150"/>
-</g>
-<rect class="fb" x="90" y="50" width="1380" height="200" fill="#4caf50" opacity=".045" rx="4"/>
-<rect class="fb" x="90" y="290" width="1380" height="200" fill="#5c6bc0" opacity=".045" rx="4"/>
-<rect class="fb" x="90" y="530" width="1380" height="220" fill="#ef5350" opacity=".045" rx="4"/>
-<rect class="fb" x="90" y="790" width="1380" height="200" fill="#26c6da" opacity=".045" rx="4"/>
-<text x="42" y="150" text-anchor="middle" class="fase-l" fill="#4caf50" opacity=".8">FASE A</text>
-<text x="42" y="390" text-anchor="middle" class="fase-l" fill="#5c6bc0" opacity=".8">FASE B</text>
-<text x="42" y="640" text-anchor="middle" class="fase-l" fill="#ef5350" opacity=".8">FASE C</text>
-<text x="42" y="890" text-anchor="middle" class="fase-l" fill="#26c6da" opacity=".8">FASE D</text>
-<text x="68" y="115" text-anchor="middle" fill="#4caf50" font-size="13" opacity=".5" font-weight="700">01\u201303</text>
-<text x="68" y="355" text-anchor="middle" fill="#5c6bc0" font-size="13" opacity=".5" font-weight="700">04\u201307</text>
-<text x="68" y="610" text-anchor="middle" fill="#ef5350" font-size="13" opacity=".5" font-weight="700">08\u201312</text>
-<text x="68" y="855" text-anchor="middle" fill="#26c6da" font-size="13" opacity=".5" font-weight="700">13\u201315</text>
-<g>
-  <rect x="275" y="15" width="190" height="28" rx="4" fill="#221d00" stroke="#aa8800" stroke-width="1" opacity=".85"/>
-  <text x="370" y="33" text-anchor="middle" fill="#ddb800" font-size="21" font-weight="700">3.1\u20133.10 An\u00e1lisis</text>
-  <line x1="370" y1="43" x2="370" y2="105" stroke="#aa8800" stroke-width="1.5" marker-end="url(#ax)" opacity=".65"/>
-</g>
-<g>
-  <rect x="685" y="15" width="190" height="28" rx="4" fill="#221d00" stroke="#aa8800" stroke-width="1" opacity=".85"/>
-  <text x="780" y="33" text-anchor="middle" fill="#ddb800" font-size="21" font-weight="700">3.5\u20133.6 Patrones</text>
-  <line x1="780" y1="43" x2="780" y2="105" stroke="#aa8800" stroke-width="1.5" marker-end="url(#ax)" opacity=".65"/>
-</g>
-<g>
-  <rect x="115" y="255" width="190" height="28" rx="4" fill="#221d00" stroke="#aa8800" stroke-width="1" opacity=".85"/>
-  <text x="210" y="273" text-anchor="middle" fill="#ddb800" font-size="21" font-weight="700">3.3 Programa Arq.</text>
-  <line x1="210" y1="283" x2="210" y2="345" stroke="#aa8800" stroke-width="1.5" marker-end="url(#ax)" opacity=".65"/>
-</g>
-<line class="edge-path" data-from="01" x1="470" y1="150" x2="676" y2="150" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
-<line class="edge-path" data-from="02" x1="880" y1="150" x2="1076" y2="150" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
-<line class="edge-path" data-from="04" x1="310" y1="390" x2="476" y2="390" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
-<line class="edge-path" data-from="05" x1="680" y1="390" x2="836" y2="390" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
-<line class="edge-path" data-from="06" x1="1040" y1="390" x2="1076" y2="390" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
-<line class="edge-path" data-from="08" x1="320" y1="640" x2="416" y2="640" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
-<line class="edge-path" data-from="09" x1="620" y1="640" x2="676" y2="640" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
-<line class="edge-path" data-from="10" x1="880" y1="640" x2="936" y2="640" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
-<line class="edge-path" data-from="11" x1="1140" y1="640" x2="1156" y2="640" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
-<line class="edge-path" data-from="13" x1="575" y1="890" x2="646" y2="890" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
-<line class="edge-path" data-from="14" x1="850" y1="890" x2="886" y2="890" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
-<path class="edge-path" data-from="03" d="M 1180 192 C 1180 350, 700 480, 316 590" stroke="#888" stroke-width="2" fill="none" marker-end="url(#a)"/>
-<path class="edge-path" data-from="07" d="M 1180 432 C 1000 520, 600 560, 222 593" stroke="#888" stroke-width="2" fill="none" marker-end="url(#a)"/>
-<path class="edge-path" data-from="10" d="M 780 682 C 700 770, 550 800, 475 843" stroke="#888" stroke-width="2" fill="none" marker-end="url(#a)"/>
-<path class="edge-path" data-from="12" d="M 1260 682 C 1000 770, 700 810, 425 843" stroke="#888" stroke-width="2" fill="none" marker-end="url(#a)"/>
-<path class="loop-path" d="M 450 630 C 130 630, 130 450, 130 420 C 130 390, 190 390, 230 390" stroke="#ff9800" stroke-width="2.5" fill="none" stroke-dasharray="6,4" marker-end="url(#al)"/>
-<text x="82" y="545" class="loop-label" fill="#ff9800" font-size="21" font-weight="700">\u21ba iterar</text>
-<text x="76" y="560" fill="#ff9800" font-size="14" opacity=".5">re-evaluar</text>
-<path class="loop-path" d="M 650 870 C 130 870, 130 700, 130 670 C 130 640, 190 640, 230 640" stroke="#ff9800" stroke-width="2.5" fill="none" stroke-dasharray="6,4" marker-end="url(#al)"/>
-<text x="82" y="800" class="loop-label" fill="#ff9800" font-size="21" font-weight="700">\u21ba iterar</text>
-<text x="76" y="815" fill="#ff9800" font-size="14" opacity=".5">re-evaluar</text>
-<path d="M 990 932 C 990 980, 990 1000, 990 1030" stroke="#d45e2c" stroke-width="2" fill="none" marker-end="url(#ae)" stroke-dasharray="6,3"/>
-<text x="1008" y="1008" fill="#d45e2c" font-size="14" font-weight="700" opacity=".9">\u2192 Secci\u00f3n 5</text>
-<text x="1008" y="1023" fill="#d45e2c" font-size="13" opacity=".6">Visualizaci\u00f3n</text>
-<g class="node" data-step="01" data-outgoing='["02"]'>
-  <rect class="node-stripe" x="270" y="107" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
-  <rect class="node-body" x="270" y="107" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
-  <text x="285" y="140" fill="#888" font-size="13" font-weight="700">01</text>
-  <text x="370" y="157" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Manifiesto de</text>
-  <text x="370" y="172" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Intenciones</text>
-  <rect x="420" y="118" width="40" height="18" rx="3" fill="#2196f3" opacity=".85"/>
-  <text x="440" y="131" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">OUT</text>
-  <circle cx="280" cy="180" r="4" fill="#555" class="node-status-dot"/>
-</g>
-<g class="node" data-step="02" data-outgoing='["03"]'>
-  <rect class="node-stripe" x="680" y="107" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
-  <rect class="node-body" x="680" y="107" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
-  <text x="695" y="140" fill="#888" font-size="13" font-weight="700">02</text>
-  <text x="780" y="157" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Idea Matriz +</text>
-  <text x="780" y="172" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Adjetivo</text>
-  <rect x="830" y="118" width="40" height="18" rx="3" fill="#ff9800" opacity=".85"/>
-  <text x="850" y="131" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">DEC</text>
-  <circle cx="690" cy="180" r="4" fill="#555" class="node-status-dot"/>
-</g>
-<g class="node" data-step="03" data-outgoing='["08"]'>
-  <rect class="node-stripe" x="1080" y="107" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
-  <rect class="node-body" x="1080" y="107" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
-  <text x="1095" y="140" fill="#888" font-size="13" font-weight="700">03</text>
-  <text x="1180" y="157" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Documento de</text>
-  <text x="1180" y="172" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Intenciones</text>
-  <rect x="1230" y="118" width="40" height="18" rx="3" fill="#2196f3" opacity=".85"/>
-  <text x="1250" y="131" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">OUT</text>
-  <circle cx="1090" cy="180" r="4" fill="#555" class="node-status-dot"/>
-</g>
-<g class="node" data-step="04" data-outgoing='["05"]'>
-  <rect class="node-stripe" x="110" y="347" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
-  <rect class="node-body" x="110" y="347" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
-  <text x="125" y="380" fill="#888" font-size="13" font-weight="700">04</text>
-  <text x="210" y="397" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Volumetrizaci\u00f3n</text>
-  <text x="210" y="412" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">+ Zonificaci\u00f3n</text>
-  <rect x="260" y="358" width="40" height="18" rx="3" fill="#d45e2c" opacity=".85"/>
-  <text x="280" y="371" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">ACC</text>
-  <circle cx="120" cy="420" r="4" fill="#555" class="node-status-dot"/>
-</g>
-<g class="node" data-step="05" data-outgoing='["06"]'>
-  <rect class="node-stripe" x="480" y="347" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
-  <rect class="node-body" x="480" y="347" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
-  <text x="495" y="380" fill="#888" font-size="13" font-weight="700">05</text>
-  <text x="580" y="397" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Ubicaci\u00f3n +</text>
-  <text x="580" y="412" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Accesos</text>
-  <rect x="630" y="358" width="40" height="18" rx="3" fill="#d45e2c" opacity=".85"/>
-  <text x="650" y="371" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">ACC</text>
-  <circle cx="490" cy="420" r="4" fill="#555" class="node-status-dot"/>
-</g>
-<g class="node" data-step="06" data-outgoing='["07"]'>
-  <rect class="node-stripe" x="840" y="347" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
-  <rect class="node-body" x="840" y="347" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
-  <text x="855" y="380" fill="#888" font-size="13" font-weight="700">06</text>
-  <text x="940" y="397" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Partido</text>
-  <text x="940" y="412" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Arquitect\u00f3nico</text>
-  <rect x="990" y="358" width="40" height="18" rx="3" fill="#2196f3" opacity=".85"/>
-  <text x="1010" y="371" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">OUT</text>
-  <circle cx="850" cy="420" r="4" fill="#555" class="node-status-dot"/>
-</g>
-<g class="node" data-step="07" data-outgoing='["08"]'>
-  <rect class="node-stripe" x="1080" y="347" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
-  <rect class="node-body" x="1080" y="347" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
-  <text x="1095" y="380" fill="#888" font-size="13" font-weight="700">07</text>
-  <text x="1180" y="397" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Espacialidad +</text>
-  <text x="1180" y="412" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Circulaci\u00f3n</text>
-  <rect x="1230" y="358" width="40" height="18" rx="3" fill="#d45e2c" opacity=".85"/>
-  <text x="1250" y="371" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">ACC</text>
-  <circle cx="1090" cy="420" r="4" fill="#555" class="node-status-dot"/>
-</g>
-<g class="node" data-step="08" data-outgoing='["09"]'>
-  <rect class="node-stripe" x="120" y="597" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
-  <rect class="node-body" x="120" y="597" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
-  <text x="135" y="630" fill="#888" font-size="13" font-weight="700">08</text>
-  <text x="220" y="647" text-anchor="middle" fill="#eee" font-size="14" font-weight="400">Evaluaci\u00f3n Ambiental</text>
-  <text x="220" y="662" text-anchor="middle" fill="#eee" font-size="14" font-weight="400">I (8 criterios)</text>
-  <rect x="270" y="608" width="40" height="18" rx="3" fill="#f44336" opacity=".85"/>
-  <text x="290" y="621" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">EVA</text>
-  <circle cx="130" cy="670" r="4" fill="#555" class="node-status-dot"/>
-</g>
-<g class="node" data-step="09" data-outgoing='["10"]'>
-  <rect class="node-stripe" x="420" y="597" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
-  <rect class="node-body" x="420" y="597" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
-  <text x="435" y="630" fill="#888" font-size="13" font-weight="700">09</text>
-  <text x="520" y="647" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Ajustes</text>
-  <text x="520" y="662" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Evaluaci\u00f3n I</text>
-  <rect x="570" y="608" width="40" height="18" rx="3" fill="#d45e2c" opacity=".85"/>
-  <text x="590" y="621" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">ACC</text>
-  <circle cx="430" cy="670" r="4" fill="#555" class="node-status-dot"/>
-  <text x="635" y="648" fill="#ff9800" font-size="21" font-weight="700" opacity=".65">\u21ba</text>
-</g>
-<g class="node" data-step="10" data-outgoing='["11","13"]'>
-  <rect class="node-stripe" x="680" y="597" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
-  <rect class="node-body" x="680" y="597" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
-  <text x="695" y="630" fill="#888" font-size="13" font-weight="700">10</text>
-  <text x="780" y="647" text-anchor="middle" fill="#eee" font-size="14" font-weight="400">Configuraci\u00f3n</text>
-  <text x="780" y="662" text-anchor="middle" fill="#eee" font-size="14" font-weight="400">Avanzada</text>
-  <rect x="830" y="608" width="40" height="18" rx="3" fill="#d45e2c" opacity=".85"/>
-  <text x="850" y="621" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">ACC</text>
-  <circle cx="690" cy="670" r="4" fill="#555" class="node-status-dot"/>
-</g>
-<g class="node" data-step="11" data-outgoing='["12"]'>
-  <rect class="node-stripe" x="940" y="597" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
-  <rect class="node-body" x="940" y="597" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
-  <text x="955" y="630" fill="#888" font-size="13" font-weight="700">11</text>
-  <text x="1040" y="647" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Iluminaci\u00f3n</text>
-  <text x="1040" y="662" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Artificial</text>
-  <rect x="1090" y="608" width="40" height="18" rx="3" fill="#9c27b0" opacity=".85"/>
-  <text x="1110" y="621" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">GUI</text>
-  <circle cx="950" cy="670" r="4" fill="#555" class="node-status-dot"/>
-</g>
-<g class="node" data-step="12" data-outgoing='["13"]'>
-  <rect class="node-stripe" x="1160" y="597" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
-  <rect class="node-body" x="1160" y="597" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
-  <text x="1175" y="630" fill="#888" font-size="13" font-weight="700">12</text>
-  <text x="1260" y="654" text-anchor="middle" fill="#eee" font-size="17" font-weight="400">Paisaje</text>
-  <rect x="1310" y="608" width="40" height="18" rx="3" fill="#9c27b0" opacity=".85"/>
-  <text x="1330" y="621" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">GUI</text>
-  <circle cx="1170" cy="670" r="4" fill="#555" class="node-status-dot"/>
-</g>
-<g class="node" data-step="13" data-outgoing='["14"]'>
-  <rect class="node-stripe" x="375" y="847" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
-  <rect class="node-body" x="375" y="847" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
-  <text x="390" y="880" fill="#888" font-size="13" font-weight="700">13</text>
-  <text x="475" y="897" text-anchor="middle" fill="#eee" font-size="14" font-weight="400">Evaluaci\u00f3n Ambiental</text>
-  <text x="475" y="912" text-anchor="middle" fill="#eee" font-size="14" font-weight="400">II (5 dimensiones)</text>
-  <rect x="525" y="858" width="40" height="18" rx="3" fill="#f44336" opacity=".85"/>
-  <text x="545" y="871" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">EVA</text>
-  <circle cx="385" cy="920" r="4" fill="#555" class="node-status-dot"/>
-</g>
-<g class="node" data-step="14" data-outgoing='["15"]'>
-  <rect class="node-stripe" x="650" y="847" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
-  <rect class="node-body" x="650" y="847" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
-  <text x="665" y="880" fill="#888" font-size="13" font-weight="700">14</text>
-  <text x="750" y="897" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Ajustes</text>
-  <text x="750" y="912" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Evaluaci\u00f3n II</text>
-  <rect x="800" y="858" width="40" height="18" rx="3" fill="#d45e2c" opacity=".85"/>
-  <text x="820" y="871" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">ACC</text>
-  <circle cx="660" cy="920" r="4" fill="#555" class="node-status-dot"/>
-  <text x="865" y="898" fill="#ff9800" font-size="21" font-weight="700" opacity=".65">\u21ba</text>
-</g>
-<g class="node" data-step="15" data-outgoing='[]'>
-  <rect class="node-stripe" x="890" y="847" width="200" height="10" rx="5" fill="#555" filter="url(#sh)"/>
-  <rect class="node-body" x="890" y="847" width="200" height="85" rx="6" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
-  <text x="905" y="880" fill="#888" font-size="13" font-weight="700">15</text>
-  <text x="990" y="897" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Documento de</text>
-  <text x="990" y="912" text-anchor="middle" fill="#eee" font-size="21" font-weight="400">Concepto</text>
-  <rect x="1040" y="858" width="40" height="18" rx="3" fill="#2196f3" opacity=".85"/>
-  <text x="1060" y="871" text-anchor="middle" fill="#fff" font-size="21" font-weight="700">OUT</text>
-  <circle cx="900" cy="920" r="4" fill="#555" class="node-status-dot"/>
-</g>
-<g transform="translate(540, 1060)">
-  <rect x="0" y="0" width="420" height="46" rx="6" fill="#111" stroke="#333" stroke-width="1" opacity=".92"/>
-  <text x="12" y="15" fill="#999" font-size="21" font-weight="700" letter-spacing="2">ESTADO</text>
-  <rect x="12" y="23" width="14" height="14" rx="3" fill="#555"/>
-  <text x="30" y="35" fill="#aaa" font-size="13">PENDIENTE</text>
-  <rect x="118" y="23" width="14" height="14" rx="3" fill="#ff9800"/>
-  <text x="136" y="35" fill="#aaa" font-size="13">EN PROGRESO</text>
-  <rect x="248" y="23" width="14" height="14" rx="3" fill="#4caf50"/>
-  <text x="266" y="35" fill="#aaa" font-size="13">LISTO</text>
-  <rect x="330" y="23" width="14" height="14" rx="3" fill="#2196f3"/>
-  <text x="348" y="35" fill="#aaa" font-size="13">APROBADO</text>
-</g>
-<g transform="translate(540, 1115)">
-  <rect x="0" y="0" width="420" height="28" rx="6" fill="#111" stroke="#333" stroke-width="1" opacity=".92"/>
-  <text x="12" y="18" fill="#999" font-size="21" font-weight="700" letter-spacing="2">TIPO</text>
-  <rect x="60" y="6" width="36" height="16" rx="3" fill="#2196f3" opacity=".8"/><text x="78" y="17" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">OUT</text>
-  <rect x="105" y="6" width="36" height="16" rx="3" fill="#ff9800" opacity=".8"/><text x="123" y="17" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">DEC</text>
-  <rect x="150" y="6" width="36" height="16" rx="3" fill="#d45e2c" opacity=".8"/><text x="168" y="17" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">ACC</text>
-  <rect x="195" y="6" width="36" height="16" rx="3" fill="#f44336" opacity=".8"/><text x="213" y="17" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">EVA</text>
-  <rect x="240" y="6" width="36" height="16" rx="3" fill="#9c27b0" opacity=".8"/><text x="258" y="17" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">GUI</text>
-  <text x="300" y="18" fill="#666" font-size="21">\u21ba Nodo de iteraci\u00f3n</text>
-</g>
-<g transform="translate(540, 1150)">
-  <text x="0" y="12" fill="#555" font-size="14">Click en cualquier nodo para ver su detalle y cambiar estado de avance</text>
-</g>
-</svg>
+<div class="step-grid">
+
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">01 Manifiesto de Intenciones</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Declaración escrita de la intención del proyecto antes de cualquier decisión formal</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">3.1–3.10 Análisis completo · 2.2.1 Perfil del usuario · Brief inicial del cliente</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Redactar manifiesto de 1–2 párrafos que capture la esencia del proyecto: quién, qué, dónde, por qué, para qué. Define la dirección sin cerrar posibilidades.</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Manifiesto de Intenciones firmado por el equipo</div></div>
 </div>
 </div>
 
-<div class="sec4-detail-panel" id="sec4-detail" style="display:none">
-<div class="dp-header">
-  <span class="dp-num" id="dp-num"></span>
-  <span class="dp-name" id="dp-name"></span>
-  <span class="dp-type" id="dp-type"></span>
-  <span class="dp-proc" id="dp-proc"></span>
-  <span class="dp-status" id="dp-status"></span>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-dec">DEC</span><span class="step-name">02 Idea Matriz + Adjetivo</span><span class="step-proc proc-mixto">AI→HUMANO</span></div>
+<div class="step-desc">Concepto rector en tres palabras: un sustantivo + dos adjetivos que sinteticen la experiencia espacial deseada</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.1 Manifiesto · 3.10 Perfil de diseño · 2.2.1.1 Ejes A/B del cliente · 3.5-3.6 Patrones seleccionados</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Extraer del manifiesto y perfil de usuario la idea matriz. Elegir adjetivos que describan atmósfera, materialidad y relación con el entorno. AI sugiere tríadas, humano elige.</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Idea Matriz registrada: sustantivo + 2 adjetivos · Guía para todas las decisiones de diseño subsecuentes</div></div>
 </div>
-<div class="dp-desc" id="dp-desc"></div>
-<div class="dp-body">
-  <div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body" id="dp-input"></div></div>
-  <div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body" id="dp-opera"></div></div>
-  <div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body" id="dp-output"></div></div>
-</div>
-<button class="dp-close" onclick="document.getElementById('sec4-detail').style.display='none'">\u2715</button>
 </div>
 
-<div class="final-node">
-<div class="final-badge">\u2192 MODELADO 3D \u2190</div>
-<p class="final-desc">El Documento de Concepto alimenta el protocolo de modelado (PROCESO 2.0 \u00b7 Secci\u00f3n 5)</p>
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">03 Documento de Intenciones</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Documento compilado de 4.1–4.2 + inputs de análisis como base del proceso</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.1 Manifiesto · 4.2 Idea Matriz · 3.1–3.10 Outputs de análisis · 2.1 Constantes</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Compilar manifiesto, idea matriz, programa, patrones, premisas, estrategias y normativas en un solo documento de referencia. Sirve como brief interno del proyecto.</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Documento de Intenciones completo (brief interno)</div></div>
+</div>
+</div>
+
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">04 Volumetrización + Zonificación</span><span class="step-proc proc-mixto">AI→HUMANO</span></div>
+<div class="step-desc">Primera exploración formal: masas, alturas, relaciones volumétricas en el predio</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.3 Documento de Intenciones · 3.1 Gráfico del sitio · 3.7 Envolvente normativa · 3.3 Programa</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Ubicar volúmenes en el predio respetando retiros, COS, CUS y altura máxima. Zonificar según programa y criterios de ventilación/asoleamiento. AI genera opciones, humano evalúa.</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Esquema volumétrico con zonificación por niveles</div></div>
+</div>
+</div>
+
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">05 Ubicación + Accesos</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Definición de posición exacta de volúmenes, accesos peatonales y vehiculares</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.4 Volumetría · 3.1 Gráfico del sitio (vialidades, colindancias) · 3.9.4 Estrategias de integración urbana</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Sobre el esquema volumétrico, definir acceso principal (peatonal), acceso de servicio, y estacionamiento. Relacionar con vialidades y banquetas existentes.</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Planta de conjunto esquemática con accesos marcados</div></div>
+</div>
+</div>
+
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">06 Partido Arquitectónico</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Diagrama fundamental: organización espacial, ejes, jerarquías, flujos</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.5 Ubicación + accesos · 3.4 Diagrama de relaciones · 3.9 Estrategias de diseño</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Dibujar el partido arquitectónico: ejes compositivos, jerarquía espacial, organización pública/privada/servicio, flujos principales. Es la huella digital del proyecto.</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Partido arquitectónico dibujado (esquema conceptual)</div></div>
+</div>
+</div>
+
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">07 Espacialidad + Circulación</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Desarrollo de la experiencia espacial: alturas, conexiones visuales, recorridos</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.6 Partido · 4.5 Accesos · 3.4 Matriz de relaciones · 3.10 Activity Matrix</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Definir alturas libres, dobles alturas, conexiones visuales entre espacios, recorridos interiores/exteriores, transiciones público→privado. La circulación como experiencia.</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Diagrama de espacialidad + circulación</div></div>
+</div>
+</div>
+
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-eva">EVA</span><span class="step-name">08 Evaluación Ambiental I</span><span class="step-proc proc-ai">AI</span></div>
+<div class="step-desc">Evaluación del esquema contra 8 criterios ambientales: orientación, sol, viento, ruido, etc.</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.7 Espacialidad · 4.4 Volumetría · 2.1.1.1-3 Clima, carta solar, vientos · 3.2 Ambiental</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Evaluar 8 criterios: orientación fachadas, penetración solar, captación de viento, mitigación ruido, control olores, eficiencia volumétrica, relación visual exterior, protección climática. AI puntúa cada criterio.</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Matriz de evaluación ambiental I con puntuaciones por criterio</div></div>
+</div>
+</div>
+
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">09 Ajustes Evaluación I</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Ajustar esquema según resultados de la evaluación ambiental. Bucle de iteración con Fase B</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.8 Evaluación I · 4.7 Espacialidad · 4.4 Volumetría</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Revisar criterios con baja puntuación. Modificar volúmenes, orientación, protección solar, ventilación. Puede requerir volver a Fase B (04–07) si los cambios son significativos.</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Esquema ajustado tras evaluación I</div></div>
+</div>
+<div class="loop-badge">↺ Puede iterar con Fase B</div>
+</div>
+
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">10 Configuración Avanzada</span><span class="step-proc proc-mixto">AI→HUMANO</span></div>
+<div class="step-desc">Desarrollo fino: sistema constructivo, plantas de distribución, fachadas</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.9 Ajustes · 3.8 Premisas ergométricas · 3.3 Programa detallado · 3.5 Patrones SOMA</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Desarrollar plantas de distribución por nivel, definir sistema constructivo, diseñar fachadas según orientación, integrar patrones SOMA seleccionados. AI ayuda con dimensionamiento y optimización.</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Plantas de distribución + esquema de fachadas + sistema constructivo</div></div>
+</div>
+</div>
+
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-gui">GUI</span><span class="step-name">11 Iluminación Artificial</span><span class="step-proc proc-mixto">AI→HUMANO</span></div>
+<div class="step-desc">Criterio de iluminación artificial: tipos, temperaturas, controles por espacio</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.10 Configuración avanzada · 3.10 Activity Matrix (horarios de uso) · 4.2 Idea Matriz (atmósfera)</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Definir tipos de luminarias, temperatura de color por espacio, niveles lumínicos, controles (sensores, dimmers), escenas. AI sugiere esquemas según actividad, humano ajusta.</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Criterio de iluminación artificial por espacio</div></div>
+</div>
+</div>
+
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-gui">GUI</span><span class="step-name">12 Paisaje</span><span class="step-proc proc-mixto">AI→HUMANO</span></div>
+<div class="step-desc">Integración paisajística: vegetación, áreas verdes, paleta vegetal, mobiliario exterior</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.10 Configuración · 2.2.2.1-2 Vegetación existente · 3.9.1 Estrategia de olores · 3.9.3 Estrategias bioclimáticas</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Diseñar áreas verdes, seleccionar especies nativas (bajo consumo de agua), ubicar árboles para sombra, integrar vegetación como barrera de olores/ruido. AI sugiere paleta vegetal regional.</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Plano de paisaje + paleta vegetal</div></div>
+</div>
+</div>
+
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-eva">EVA</span><span class="step-name">13 Evaluación Ambiental II</span><span class="step-proc proc-ai">AI</span></div>
+<div class="step-desc">Segunda evaluación: 5 dimensiones — confort térmico, lumínico, acústico, eficiencia, integración</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.10-4.12 Configuración avanzada + iluminación + paisaje · 2.1.1 Normales climatológicas</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Evaluar 5 dimensiones: confort térmico (temperatura operativa), confort lumínico (luxes), confort acústico (dB), eficiencia energética (W/m²), integración paisajística. AI modela y puntúa.</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Matriz de evaluación ambiental II con 5 dimensiones</div></div>
+</div>
+</div>
+
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">14 Ajustes Evaluación II</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Ajustes finos según evaluación II. Bucle de iteración con Fase C</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.13 Evaluación II · 4.10-4.12 Configuración · 4.9 Ajustes anteriores</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Revisar dimensiones con baja calificación. Ajustar: protecciones solares, ventilación, aislamiento, selección de especies, orientación de vanos. Puede requerir iterar con Fase C (10–12).</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Proyecto ajustado tras evaluación II</div></div>
+</div>
+<div class="loop-badge">↺ Puede iterar con Fase C</div>
+</div>
+
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">15 Documento de Concepto</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Entrega final de sección 4: compilación de todo el proceso conceptual para modelado 3D</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.1–4.14 Todo el proceso · 3.1–3.10 Inputs de análisis · 2.1 Constantes</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Compilar: manifiesto, idea matriz, partido, plantas, fachadas, cortes conceptuales, evaluaciones ambientales, criterios. Es el input directo para modelado 3D (sección 5).</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Documento de Concepto completo → Alimenta Sección 5 (Modelado 3D)</div></div>
+</div>
+</div>
+
 </div>
 </div>
 
@@ -784,6 +742,8 @@ Cada estación es una sección del PROCESO DE DISEÑO 2.0. Haz clic para ver el 
 <span class="range">Elem. 5.1-5.11</span>
 </div>
 <p class="proto-desc">PROTOCOLO: 03 Diseño/protocolo_5.3-5.11_visualizacion.md (flujo Revit→D5→Photoshop, estilo SOMA)</p>
+
+
 <div class="step-grid">
 <div class="step-card" tabindex="0" onclick="toggle(this)">
 <div class="step-head"><span class="step-nature nat-dec">DEC</span><span class="step-name">5.1 Selección de Vistas</span><span class="step-proc proc-humano">HUMANO</span></div>
@@ -893,9 +853,10 @@ Cada estación es una sección del PROCESO DE DISEÑO 2.0. Haz clic para ver el 
 <div id="sec-6" class="detail-section">
 <div class="detail-header">
 <div><h2>6. Anteproyecto — Básico</h2><p>Planos arquitectónicos presentables. Paquete SOMA Esencial ($250/m²)</p></div>
-<span class="range">Elem. 6.1-6.2</span>
+<span class="range">Elem. 6.1-6.3</span>
 </div>
 <p class="proto-desc">PROTOCOLO: 03 Diseño/protocolo_6-8_anteproyecto.md (escalas, contenido de láminas)</p>
+
 <div class="step-grid">
 <div class="step-card" tabindex="0" onclick="toggle(this)">
 <div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">6.1 Plantas Arquitectónicas</span><span class="step-proc proc-mixto">HUMANO→AI</span></div>
@@ -936,6 +897,7 @@ Cada estación es una sección del PROCESO DE DISEÑO 2.0. Haz clic para ver el 
 <span class="range">Elem. 7.1-7.2</span>
 </div>
 <p class="proto-desc">PROTOCOLO: 03 Diseño/protocolo_7.1-7.2_representacion.md (dossier editorial HTML/PDF)</p>
+
 <div class="step-grid">
 <div class="step-card" tabindex="0" onclick="toggle(this)">
 <div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">7.1 Documento HTML</span><span class="step-proc proc-mixto">HUMANO→AI</span></div>
@@ -967,6 +929,7 @@ Cada estación es una sección del PROCESO DE DISEÑO 2.0. Haz clic para ver el 
 <span class="range">Elem. 8.1-8.6</span>
 </div>
 <p class="proto-desc">Incluye todo lo básico (6-7) más acabados reales, criterios de ingeniería, planos de permiso</p>
+
 <div class="step-grid">
 <div class="step-card" tabindex="0" onclick="toggle(this)">
 <div class="step-head"><span class="step-nature nat-dec">DEC</span><span class="step-name">8.1 Acabados Reales</span><span class="step-proc proc-humano">HUMANO</span></div>
@@ -1034,6 +997,8 @@ Cada estación es una sección del PROCESO DE DISEÑO 2.0. Haz clic para ver el 
 <span class="range">Elem. 9.1-9.4</span>
 </div>
 <p class="proto-desc">Incluye todo lo básico (6-7) e integral (8) más coordinación y planos ejecutivos. PROTOCOLO: 9.3_planos_tecnicos.md · 9.1-9.2_coordinacion.md</p>
+
+
 <div class="step-grid">
 <div class="step-card" tabindex="0" onclick="toggle(this)">
 <div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">9.1 Coordinación con Coadyuvantes</span><span class="step-proc proc-humano">HUMANO</span></div>
@@ -1083,11 +1048,51 @@ Cada estación es una sección del PROCESO DE DISEÑO 2.0. Haz clic para ver el 
 </div>
 </div>
 
+<!-- ============================================ -->
+<!-- SECCIÓN 10: CONTROL                          -->
+<!-- ============================================ -->
+<div id="sec-10" class="detail-section">
+<div class="detail-header">
+<div><h2>10. Control de Avance</h2><p>Panel general del progreso del proyecto por sección</p></div>
+<span class="range">Kanban · 9 secciones</span>
+</div>
+<p class="proto-desc">Distribución de marcadores kanban por estado. Haz clic en los bullets de cada paso para cambiar su estado.</p>
+
+<div class="ctrl-summary" id="ctrl-summary">
+<div class="ctrl-card s-pendiente"><div class="num" id="ctrl-total-pen">0</div><div class="lbl">Pendiente</div></div>
+<div class="ctrl-card s-progreso"><div class="num" id="ctrl-total-pro">0</div><div class="lbl">En Progreso</div></div>
+<div class="ctrl-card s-listo"><div class="num" id="ctrl-total-lis">0</div><div class="lbl">Listo</div></div>
+<div class="ctrl-card s-aprobado"><div class="num" id="ctrl-total-apr">0</div><div class="lbl">Aprobado</div></div>
+</div>
+
+<div id="ctrl-sections"></div>
+</div>
+
 </div><!-- /detail-area -->
 
 </div><!-- /container -->
 
+<div class="kanban-legend">
+  <div class="kanban-legend-item"><span class="step-status s-pendiente" style="font-size:1.2rem;cursor:default;padding:0">●</span> PENDIENTE</div>
+  <div class="kanban-legend-item"><span class="step-status s-progreso" style="font-size:1.2rem;cursor:default;padding:0">●</span> EN_PROGRESO</div>
+  <div class="kanban-legend-item"><span class="step-status s-listo" style="font-size:1.2rem;cursor:default;padding:0">●</span> LISTO</div>
+  <div class="kanban-legend-item"><span class="step-status s-aprobado" style="font-size:1.2rem;cursor:default;padding:0">●</span> APROBADO</div>
+  <div class="kanban-legend-item"><span class="step-status s-noaplica" style="font-size:1.2rem;cursor:default;padding:0">○</span> NO APLICA</div>
+</div>
+
 <script>
+// ─── STATE ───
+let PROYECTO_ACTUAL = localStorage.getItem('soma_proyecto_id') || null;
+let DATOS_PROYECTO = null;
+const KANBAN_CYCLE = ['PENDIENTE','EN_PROGRESO','LISTO','APROBADO','NO_APLICA'];
+const KANBAN_CLASS = ['s-pendiente','s-progreso','s-listo','s-aprobado','s-noaplica'];
+const KANBAN_SYMBOL = ['●','●','●','●','○'];
+let DB_PROGRESO = {};
+
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+function lsKey(s){ return 'soma_kanban_'+(PROYECTO_ACTUAL||'0')+'_'+s; }
+
 // ─── SECTION NAV ───
 function showSection(n){
   document.querySelectorAll('.detail-section').forEach(s=>s.classList.remove('active'));
@@ -1099,15 +1104,16 @@ function showSection(n){
   const tl=document.getElementById('timeline');
   if(tl)tl.querySelectorAll('.station')[n-1].scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
   window.location.hash='sec-'+n;
+  if(n===1) renderContactoReal();
+  if(n===2) renderImmersionReal();
+  if(n===3) { renderProgramaReal(); renderAnalisisReal(); }
+  if(n===10) renderKanbanDashboard();
 }
 
 function toggle(el){
   const expanded=el.classList.toggle('expanded');
   const d=el.querySelector('.step-detail');
-  if(d){
-    d.classList.toggle('open');
-    d.setAttribute('aria-hidden',!expanded);
-  }
+  if(d){ d.classList.toggle('open'); d.setAttribute('aria-hidden',!expanded); }
   el.setAttribute('aria-expanded',expanded);
 }
 
@@ -1124,216 +1130,902 @@ document.addEventListener('keydown',function(e){
   }
 });
 
-// ─── GRAFO SECCIÓN 4 ───
-(function(){
-  const STEPS_DATA = {
-    "01": {
-      num:"01", name:"Manifiesto de Intenciones", type:"OUT", proc:"HUMANO",
-      desc:"Declaración escrita de la intención del proyecto antes de cualquier decisión formal",
-      input:"3.1–3.10 Análisis completo · 2.2.1 Perfil del usuario · Brief inicial del cliente",
-      opera:"Redactar manifiesto de 1–2 párrafos que capture la esencia del proyecto: quién, qué, dónde, por qué, para qué. Define la dirección sin cerrar posibilidades.",
-      output:"Manifiesto de Intenciones firmado por el equipo"
-    },
-    "02": {
-      num:"02", name:"Idea Matriz + Adjetivo", type:"DEC", proc:"HUMANO→AI",
-      desc:"Concepto rector en tres palabras: un sustantivo + dos adjetivos que sinteticen la experiencia espacial deseada",
-      input:"4.1 Manifiesto · 3.10 Perfil de diseño · 2.2.1.1 Ejes A/B del cliente · 3.5-3.6 Patrones seleccionados",
-      opera:"Extraer del manifiesto y perfil de usuario la idea matriz. Elegir adjetivos que describan atmósfera, materialidad y relación con el entorno. AI sugiere tríadas, humano elige.",
-      output:"Idea Matriz registrada: sustantivo + 2 adjetivos · Guía para todas las decisiones de diseño subsecuentes"
-    },
-    "03": {
-      num:"03", name:"Documento de Intenciones", type:"OUT", proc:"HUMANO",
-      desc:"Documento compilado de 4.1–4.2 + inputs de análisis como base del proceso",
-      input:"4.1 Manifiesto · 4.2 Idea Matriz · 3.1–3.10 Outputs de análisis · 2.1 Constantes",
-      opera:"Compilar manifiesto, idea matriz, programa, patrones, premisas, estrategias y normativas en un solo documento de referencia. Sirve como brief interno del proyecto.",
-      output:"Documento de Intenciones completo (brief interno)"
-    },
-    "04": {
-      num:"04", name:"Volumetrización + Zonificación", type:"ACC", proc:"HUMANO→AI",
-      desc:"Primera exploración formal: masas, alturas, relaciones volumétricas en el predio",
-      input:"4.3 Documento de Intenciones · 3.1 Gráfico del sitio · 3.7 Envolvente normativa · 3.3 Programa",
-      opera:"Ubicar volúmenes en el predio respetando retiros, COS, CUS y altura máxima. Zonificar según programa y criterios de ventilación/asoleamiento. AI genera opciones, humano evalúa.",
-      output:"Esquema volumétrico con zonificación por niveles"
-    },
-    "05": {
-      num:"05", name:"Ubicación + Accesos", type:"ACC", proc:"HUMANO",
-      desc:"Definición de posición exacta de volúmenes, accesos peatonales y vehiculares",
-      input:"4.4 Volumetría · 3.1 Gráfico del sitio (vialidades, colindancias) · 3.9.4 Estrategias de integración urbana",
-      opera:"Sobre el esquema volumétrico, definir acceso principal (peatonal), acceso de servicio, y estacionamiento. Relacionar con vialidades y banquetas existentes.",
-      output:"Planta de conjunto esquemática con accesos marcados"
-    },
-    "06": {
-      num:"06", name:"Partido Arquitectónico", type:"OUT", proc:"HUMANO",
-      desc:"Diagrama fundamental: organización espacial, ejes, jerarquías, flujos",
-      input:"4.5 Ubicación + accesos · 3.4 Diagrama de relaciones · 3.9 Estrategias de diseño",
-      opera:"Dibujar el partido arquitectónico: ejes compositivos, jerarquía espacial, organización pública/privada/servicio, flujos principales. Es la huella digital del proyecto.",
-      output:"Partido arquitectónico dibujado (esquema conceptual)"
-    },
-    "07": {
-      num:"07", name:"Espacialidad + Circulación", type:"ACC", proc:"HUMANO",
-      desc:"Desarrollo de la experiencia espacial: alturas, conexiones visuales, recorridos",
-      input:"4.6 Partido · 4.5 Accesos · 3.4 Matriz de relaciones · 3.10 Activity Matrix",
-      opera:"Definir alturas libres, dobles alturas, conexiones visuales entre espacios, recorridos interiores/exteriores, transiciones público→privado. La circulación como experiencia.",
-      output:"Diagrama de espacialidad + circulación"
-    },
-    "08": {
-      num:"08", name:"Evaluación Ambiental I", type:"EVA", proc:"AI",
-      desc:"Evaluación del esquema contra 8 criterios ambientales: orientación, sol, viento, ruido, etc.",
-      input:"4.7 Espacialidad · 4.4 Volumetría · 2.1.1.1-3 Clima, carta solar, vientos · 3.2 Ambiental",
-      opera:"Evaluar 8 criterios: orientación fachadas, penetración solar, captación de viento, mitigación ruido, control olores, eficiencia volumétrica, relación visual exterior, protección climática. AI puntúa cada criterio.",
-      output:"Matriz de evaluación ambiental I con puntuaciones por criterio"
-    },
-    "09": {
-      num:"09", name:"Ajustes Evaluación I", type:"ACC", proc:"HUMANO",
-      desc:"Ajustar esquema según resultados de la evaluación ambiental. Bucle de iteración con Fase B",
-      input:"4.8 Evaluación I · 4.7 Espacialidad · 4.4 Volumetría",
-      opera:"Revisar criterios con baja puntuación. Modificar volúmenes, orientación, protección solar, ventilación. Puede requerir volver a Fase B (04–07) si los cambios son significativos.",
-      output:"Esquema ajustado tras evaluación I"
-    },
-    "10": {
-      num:"10", name:"Configuración Avanzada", type:"ACC", proc:"HUMANO→AI",
-      desc:"Desarrollo fino: sistema constructivo, plantas de distribución, fachadas",
-      input:"4.9 Ajustes · 3.8 Premisas ergométricas · 3.3 Programa detallado · 3.5 Patrones SOMA",
-      opera:"Desarrollar plantas de distribución por nivel, definir sistema constructivo, diseñar fachadas según orientación, integrar patrones SOMA seleccionados. AI ayuda con dimensionamiento y optimización.",
-      output:"Plantas de distribución + esquema de fachadas + sistema constructivo"
-    },
-    "11": {
-      num:"11", name:"Iluminación Artificial", type:"GUI", proc:"HUMANO→AI",
-      desc:"Criterio de iluminación artificial: tipos, temperaturas, controles por espacio",
-      input:"4.10 Configuración avanzada · 3.10 Activity Matrix (horarios de uso) · 4.2 Idea Matriz (atmósfera)",
-      opera:"Definir tipos de luminarias, temperatura de color por espacio, niveles lumínicos, controles (sensores, dimmers), escenas. AI sugiere esquemas según actividad, humano ajusta.",
-      output:"Criterio de iluminación artificial por espacio"
-    },
-    "12": {
-      num:"12", name:"Paisaje", type:"GUI", proc:"HUMANO→AI",
-      desc:"Integración paisajística: vegetación, áreas verdes, paleta vegetal, mobiliario exterior",
-      input:"4.10 Configuración · 2.2.2.1-2 Vegetación existente · 3.9.1 Estrategia de olores · 3.9.3 Estrategias bioclimáticas",
-      opera:"Diseñar áreas verdes, seleccionar especies nativas (bajo consumo de agua), ubicar árboles para sombra, integrar vegetación como barrera de olores/ruido. AI sugiere paleta vegetal regional.",
-      output:"Plano de paisaje + paleta vegetal"
-    },
-    "13": {
-      num:"13", name:"Evaluación Ambiental II", type:"EVA", proc:"AI",
-      desc:"Segunda evaluación: 5 dimensiones — confort térmico, lumínico, acústico, eficiencia, integración",
-      input:"4.10-4.12 Configuración avanzada + iluminación + paisaje · 2.1.1 Normales climatológicas",
-      opera:"Evaluar 5 dimensiones: confort térmico (temperatura operativa), confort lumínico (luxes), confort acústico (dB), eficiencia energética (W/m²), integración paisajística. AI modela y puntúa.",
-      output:"Matriz de evaluación ambiental II con 5 dimensiones"
-    },
-    "14": {
-      num:"14", name:"Ajustes Evaluación II", type:"ACC", proc:"HUMANO",
-      desc:"Ajustes finos según evaluación II. Bucle de iteración con Fase C",
-      input:"4.13 Evaluación II · 4.10-4.12 Configuración · 4.9 Ajustes anteriores",
-      opera:"Revisar dimensiones con baja calificación. Ajustar: protecciones solares, ventilación, aislamiento, selección de especies, orientación de vanos. Puede requerir iterar con Fase C (10–12).",
-      output:"Proyecto ajustado tras evaluación II"
-    },
-    "15": {
-      num:"15", name:"Documento de Concepto", type:"OUT", proc:"HUMANO",
-      desc:"Entrega final de sección 4: compilación de todo el proceso conceptual para modelado 3D",
-      input:"4.1–4.14 Todo el proceso · 3.1–3.10 Inputs de análisis · 2.1 Constantes",
-      opera:"Compilar: manifiesto, idea matriz, partido, plantas, fachadas, cortes conceptuales, evaluaciones ambientales, criterios. Es el input directo para modelado 3D (sección 5).",
-      output:"Documento de Concepto completo → Alimenta Sección 5 (Modelado 3D)"
+// ─── API HELPERS ───
+async function apiGet(url){
+  try{ const r=await fetch(url); return await r.json(); }catch(e){ return null; }
+}
+async function apiPut(url, data){
+  try{ await fetch(url,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}); }catch(e){}
+}
+
+// ─── CARGAR DATOS DEL PROYECTO ───
+async function cargarDatosProyecto(proyectoId){
+  PROYECTO_ACTUAL = proyectoId;
+  localStorage.setItem('soma_proyecto_id', proyectoId);
+  DATOS_PROYECTO = await apiGet(`/api/algoritmo/datos/${proyectoId}`);
+  if(DATOS_PROYECTO){
+    await cargarProgreso();
+    // Re-render estación visible si muestra datos del proyecto
+    const active = document.querySelector('.detail-section.active');
+    if(active){
+      const id = active.id;
+      if(id==='sec-1') renderContactoReal();
+      else if(id==='sec-2') renderImmersionReal();
+      else if(id==='sec-3') { renderProgramaReal(); renderAnalisisReal(); if(document.getElementById('diagrama-section')?.classList.contains('visible')){ renderProgramaRelaciones(); renderDiagramaRelaciones(proyectoId); } }
+      else if(id==='sec-10') renderKanbanDashboard();
     }
+  }
+}
+
+// ─── KANBAN — DB + LOCALSTORAGE POR PROYECTO ───
+async function cargarProgreso(){
+  if(!PROYECTO_ACTUAL) return;
+  const res = await apiGet(`/api/algoritmo/progreso/${PROYECTO_ACTUAL}`);
+  DB_PROGRESO = (res && res.progreso) || {};
+  actualizarTodosBullets();
+  actualizarProgresoTarjeta();
+}
+
+async function guardarProgreso(seccion, paso, estado){
+  if(!PROYECTO_ACTUAL) return;
+  await apiPut(`/api/algoritmo/progreso/${PROYECTO_ACTUAL}`, { seccion, paso, estado });
+  DB_PROGRESO[seccion+'_'+paso] = estado;
+  actualizarProgresoTarjeta();
+  if(document.getElementById('sec-10')?.classList.contains('active')) renderKanbanDashboard();
+}
+
+function totalStepsInSection(s){
+  const sec = document.getElementById('sec-'+s);
+  if(!sec) return 0;
+  if(s===2) return sec.querySelectorAll('.inv-card.var .inv-item').length;
+  return sec.querySelectorAll('.step-card').length;
+}
+
+function varItemsInSection(s){
+  const sec = document.getElementById('sec-'+s);
+  if(!sec) return [];
+  if(s===2) return [...sec.querySelectorAll('.inv-card.var .inv-item')];
+  return [...sec.querySelectorAll('.step-card')];
+}
+
+function calcularProgresoGlobal(){
+  if(!PROYECTO_ACTUAL) return 0;
+  let total = 0, completados = 0;
+  for(let s=1;s<=9;s++){
+    const items = varItemsInSection(s);
+    items.forEach(item => {
+      const step = (s===2)
+        ? (item.querySelector('h4')||{}).textContent?.match(/([\d.]+)/)?.[1]||s+'.1'
+        : item.dataset.step||s+'.1';
+      const st = DB_PROGRESO[s+'_'+step] || 'PENDIENTE';
+      if(st==='NO_APLICA') return;
+      total++;
+      if(st==='APROBADO'||st==='LISTO') completados++;
+    });
+  }
+  return total ? Math.round((completados/total)*100) : 0;
+}
+
+function actualizarProgresoTarjeta(){
+  const pct = calcularProgresoGlobal();
+  const fill = document.getElementById('prog-fill-'+PROYECTO_ACTUAL);
+  const label = document.getElementById('prog-pct-'+PROYECTO_ACTUAL);
+  if(fill) fill.style.width = pct+'%';
+  if(label) label.textContent = pct+'%';
+}
+
+function actualizarTodosBullets(){
+  for(let s=1;s<=9;s++){
+    const section = document.getElementById('sec-'+s);
+    if(!section) continue;
+    const selector = (s===2) ? '.inv-card.var .inv-item' : '.step-card';
+    section.querySelectorAll(selector).forEach(item => {
+      const step = (s===2)
+        ? (item.querySelector('h4')||{}).textContent?.match(/([\d.]+)/)?.[1]||s+'.1'
+        : item.dataset.step||s+'.1';
+      if(s!==2) item.dataset.step = step;
+      const st = DB_PROGRESO[s+'_'+step] || 'PENDIENTE';
+      const dot = item.querySelector('.step-status');
+      if(dot) setBullet(dot, st);
+    });
+  }
+}
+
+// ─── PROGRESIÓN IRREVERSIBLE ───
+function nextStatus(cur){
+  const idx = KANBAN_CYCLE.indexOf(cur);
+  if(idx < 0 || idx >= 3) return cur; // APROBADO y NO_APLICA no avanzan
+  return KANBAN_CYCLE[idx+1];
+}
+function setBullet(dot, status){
+  const idx = KANBAN_CYCLE.indexOf(status);
+  dot.dataset.status = status;
+  dot.className = 'step-status '+KANBAN_CLASS[idx>=0?idx:0];
+  dot.textContent = KANBAN_SYMBOL[idx>=0?idx:0];
+}
+// ─── INYECTAR BULLETS (TODOS INICIAN EN PENDIENTE) ───
+(function(){
+for(let s=1;s<=9;s++){
+  const section = document.getElementById('sec-'+s);
+  if(!section) continue;
+  if(s===2){
+    section.querySelectorAll('.inv-card.var .inv-item').forEach(item => {
+      const h4 = item.querySelector('h4');
+      if(!h4) return;
+      const m = h4.textContent.match(/([\d.]+)/);
+      if(!m) return;
+      const step = m[1];
+      item.dataset.step = step;
+      const dot = document.createElement('span');
+      dot.className = 'step-status s-pendiente';
+      dot.textContent = '●';
+      dot.dataset.status = 'PENDIENTE';
+      dot.dataset.seccion = s;
+      dot.dataset.paso = step;
+      dot.style.cssText = 'margin-left:6px;font-size:1.2rem;vertical-align:middle;cursor:pointer';
+      dot.addEventListener('click', function(e){
+        e.stopPropagation();
+        const next = nextStatus(this.dataset.status);
+        if(next===this.dataset.status) return;
+        setBullet(this, next);
+        guardarProgreso(parseInt(this.dataset.seccion), this.dataset.paso, next);
+      });
+      dot.addEventListener('contextmenu', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        if(this.dataset.status==='NO_APLICA'){
+          setBullet(this, 'PENDIENTE');
+          guardarProgreso(parseInt(this.dataset.seccion), this.dataset.paso, 'PENDIENTE');
+        } else {
+          setBullet(this, 'NO_APLICA');
+          guardarProgreso(parseInt(this.dataset.seccion), this.dataset.paso, 'NO_APLICA');
+        }
+      });
+      h4.parentNode.insertBefore(dot, h4.nextSibling);
+    });
+  } else {
+    section.querySelectorAll('.step-card').forEach((card, idx) => {
+      const nameEl = card.querySelector('.step-name');
+      if(!nameEl) return;
+      let step;
+      const match = nameEl.textContent.match(/(\d{2}|\d+\.\d+)/);
+      if(match) step = match[1];
+      else step = s+'.'+(idx+1);
+      card.dataset.step = step;
+      const dot = document.createElement('span');
+      dot.className = 'step-status s-pendiente';
+      dot.textContent = '●';
+      dot.dataset.status = 'PENDIENTE';
+      dot.dataset.seccion = s;
+      dot.dataset.paso = step;
+      dot.addEventListener('click', function(e){
+        e.stopPropagation();
+        const next = nextStatus(this.dataset.status);
+        if(next===this.dataset.status) return;
+        setBullet(this, next);
+        guardarProgreso(parseInt(this.dataset.seccion), this.dataset.paso, next);
+      });
+      dot.addEventListener('contextmenu', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        if(this.dataset.status==='NO_APLICA'){
+          setBullet(this, 'PENDIENTE');
+          guardarProgreso(parseInt(this.dataset.seccion), this.dataset.paso, 'PENDIENTE');
+        } else {
+          setBullet(this, 'NO_APLICA');
+          guardarProgreso(parseInt(this.dataset.seccion), this.dataset.paso, 'NO_APLICA');
+        }
+      });
+      const head = card.querySelector('.step-head');
+      if(head) head.appendChild(dot);
+    });
+  }
+}})();
+
+// ─── PROJECT SELECTOR (Visual Cards) ───
+(function(){
+  const container = document.getElementById('proj-cards');
+  if(!container) return;
+  const saved = localStorage.getItem('soma_proyecto_id');
+  const MOMENTO2 = ['contratado','primera_entrega','entrega_final'];
+
+  function renderCards(proyectos){
+    const m2 = (proyectos||[]).filter(p => MOMENTO2.includes(p.pipeline_estado));
+    if(!m2.length){
+      container.innerHTML = '<p style="font-family:\'Courier New\',monospace;font-size:.65rem;color:var(--text3);padding:10px;">Sin proyectos activos en Momento 2.</p>';
+      return;
+    }
+    container.innerHTML = m2.map(p => {
+      const sel = String(p.id) === String(saved) ? ' selected' : '';
+      return `<div class="proj-card${sel}" data-id="${p.id}">
+        <div class="proj-name"><span>${esc(p.nombre_proyecto || p.temp_id || '—')}</span><span class="arrow${sel?' open':''}">▶</span></div>
+        <div class="proj-details${sel?' open':''}"><div class="proj-details-inner">
+          <dt>ID SOMA</dt><dd>${esc(p.temp_id||'—')}</dd>
+          <dt>Cliente</dt><dd>${esc(p.nombre_cliente || p.contacto || '—')}</dd>
+          <dt>Tipo</dt><dd>${esc(p.tipo_proyecto || '—')}</dd>
+          <dt>Nivel</dt><dd>${esc(p.nivel_proyecto || '—')} · ${p.m2||'?'} m²</dd>
+          <button class="btn-prog" data-id="${p.id}">📐 PROGRAMA</button>
+          <div class="proj-progress-wrap"><div class="proj-progress-bar" id="prog-bar-${p.id}"><div class="proj-progress-fill" id="prog-fill-${p.id}" style="width:0%"></div></div><div class="proj-progress-label"><span>Avance</span><span id="prog-pct-${p.id}">0%</span></div></div>
+        </div></div>
+      </div>`;
+    }).join('');
+
+    container.querySelectorAll('.proj-card').forEach(card => {
+      card.addEventListener('click', async function(e){
+        if(e.target.closest('.btn-prog')) return;
+        const id = this.dataset.id;
+        const isSelected = this.classList.contains('selected');
+        if(isSelected){
+          this.classList.remove('selected');
+          this.querySelector('.proj-details').classList.remove('open');
+          this.querySelector('.arrow').classList.remove('open');
+          localStorage.removeItem('soma_proyecto_id');
+          PROYECTO_ACTUAL = null;
+          DATOS_PROYECTO = null;
+          return;
+        }
+        container.querySelectorAll('.proj-card').forEach(c => {
+          c.classList.remove('selected');
+          c.querySelector('.proj-details').classList.remove('open');
+          c.querySelector('.arrow').classList.remove('open');
+        });
+        this.classList.add('selected');
+        this.querySelector('.proj-details').classList.add('open');
+        this.querySelector('.arrow').classList.add('open');
+        await cargarDatosProyecto(id);
+      });
+    });
+
+    container.querySelectorAll('.btn-prog').forEach(btn => {
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        window.open('/dashboard', '_blank');
+      });
+    });
+
+    if(saved){
+      const matched = container.querySelector(`.proj-card[data-id="${saved}"]`);
+      if(matched) matched.click();
+    }
+  }
+
+  fetch('/get_leads').then(r=>r.json()).then(p=>{
+    if(Array.isArray(p)) renderCards(p);
+  }).catch(()=>{});
+})();
+
+// ─── ESTACIÓN 1: DATOS REALES DEL CONTACTO ───
+function renderContactoReal(){
+  const lead = DATOS_PROYECTO?.lead;
+  if(!lead) return;
+  const h = document.querySelector('#sec-1 .detail-header p');
+  if(h) h.textContent = `Proyecto: ${esc(lead.nombre_proyecto||lead.temp_id||'—')} · Cliente: ${esc(lead.nombre_cliente||lead.contacto||'—')} · Estado: ${lead.pipeline_estado||'—'}`;
+  const grid = document.querySelector('#sec-1 .step-grid');
+  if(!grid) return;
+  grid.querySelectorAll('.real-contacto-card').forEach(el => el.remove());
+  let extra = '';
+  if(lead.contacto) extra += `<div class="step-card real-contacto-card" onclick="toggle(this)"><div class="step-head"><span class="step-nature nat-ref">DAT</span><span class="step-name">Contacto: ${esc(lead.contacto)}</span><span class="step-proc proc-humano">HUMANO</span></div>
+    <div class="step-desc">Dato real desde la BD · ${lead.fecha ? new Date(lead.fecha).toLocaleDateString() : '—'}</div></div>`;
+  if(lead.nivel_proyecto && lead.m2){
+    extra += `<div class="step-card real-contacto-card" onclick="toggle(this)"><div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">${lead.nivel_proyecto.toUpperCase()} · ${lead.m2} m²</span><span class="step-proc proc-humano">HUMANO</span></div>
+      <div class="step-desc">Honorarios: $${Number(lead.honorarios_diseno||0).toLocaleString()} · Obra estimada: $${Number(lead.inversion_obra_estimada||0).toLocaleString()}</div></div>`;
+  }
+  // Cobros
+  const cobros = DATOS_PROYECTO?.cobros;
+  if(cobros && cobros.length){
+    let cobrosHtml = `<div class="step-card real-contacto-card" onclick="toggle(this)" style="border-color:#4caf50;">
+      <div class="step-head"><span class="step-nature nat-out">FIN</span><span class="step-name">💰 Esquema de Cobros · ${cobros.length} pago(s)</span><span class="step-proc proc-humano">BD</span></div>
+      <div class="step-desc">Estado financiero del proyecto</div>
+      <div class="step-detail"><div class="detail-block"><div class="detail-label">PAGOS</div><div class="detail-body" style="display:grid;gap:4px;">`;
+    cobros.forEach(c => {
+      const monto = Number(c.monto||0).toLocaleString();
+      const est = (c.estado||'pendiente').toLowerCase();
+      const label = est==='pagado'||est==='completado' ? '✅ Pagado' : '⏳ Pendiente';
+      const color = est==='pagado'||est==='completado' ? '#4caf50' : '#ff9800';
+      cobrosHtml += `<div style="display:flex;justify-content:space-between;padding:4px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.6rem;">
+        <span>${esc(c.concepto||'Pago')}</span>
+        <span style="color:#4caf50;">$${monto}</span>
+        <span style="color:${color};">${label}</span>
+      </div>`;
+    });
+    cobrosHtml += `</div></div></div></div>`;
+    extra += cobrosHtml;
+  }
+  if(extra) grid.insertAdjacentHTML('beforeend', extra);
+}
+
+// ─── ESTACIÓN 2: INMERSIÓN WEB (RESPUESTAS REALES) ───
+function renderImmersionReal(){
+  const lead = DATOS_PROYECTO?.lead;
+  if(!lead) return;
+  const respuestas = lead.respuestas_json;
+  if(!respuestas || typeof respuestas !== 'object' || Object.keys(respuestas).length === 0) return;
+
+  const ITEMS = {
+    step1:{name:'Fachada',a:'Abierta',b:'Cerrada'},
+    step2:{name:'Privacidad',a:'Abiertos y francos',b:'Protegidos, que insinúan'},
+    step3:{name:'Flexibilidad',a:'Amplios e integrados',b:'Divididos por muros'},
+    step4:{name:'Iluminación',a:'Mucha luz natural',b:'Luz suave'},
+    step5:{name:'Estilo',a:'Texturas y ornamentos',b:'Lisos y sobrios'},
+    step6:{name:'Niveles',a:'Un nivel',b:'Varios niveles'},
+    step7:{name:'Exteriores',a:'Mucho jardín',b:'Tipo plaza pétrea'},
+    step8:{name:'Espacios',a:'Abiertos y altos',b:'Acogedores e íntimos'},
+    step9:{name:'Socialización',a:'Vida social activa',b:'Introvertida'},
+    step10:{name:'Color',a:'Neutrales',b:'Colores llamativos'}
   };
 
-  const STATUS_CYCLE = ['PENDIENTE','EN_PROGRESO','LISTO','APROBADO'];
-  const STATUS_COLORS = {PENDIENTE:'#555', EN_PROGRESO:'#ff9800', LISTO:'#4caf50', APROBADO:'#2196f3'};
-  const TYPE_COLORS = {OUT:'#2196f3', DEC:'#ff9800', ACC:'#d45e2c', EVA:'#f44336', GUI:'#9c27b0'};
-  const PROC_CLASS = {HUMANO:'proc-humano', AI:'proc-ai', 'HUMANO→AI':'proc-mixto', 'AI→HUMANO':'proc-mixto'};
-  const svg = document.getElementById('grafo');
-  const detail = document.getElementById('sec4-detail');
-  const stateStore = {};
+  const existing = document.getElementById('inmersion-real-card');
+  if(existing) existing.remove();
 
-  // Load from localStorage
-  function loadStates(){
-    try{
-      const saved = localStorage.getItem('soma_grafo_estados');
-      if(saved){const p=JSON.parse(saved);Object.assign(stateStore,p)}
-    }catch(e){}
+  let html = `<div class="inv-item" id="inmersion-real-card" style="border:1px solid #d45e2c;border-radius:4px;padding:8px;margin-bottom:6px;">
+    <span class="stag nat-out">OUT</span><h4 style="margin-bottom:4px;">2.2.1.1 Respuestas de Inmersión Web</h4>`;
+  for(let i=1;i<=10;i++){
+    const key='step'+i;
+    const info=ITEMS[key];
+    if(!info) continue;
+    const val=respuestas[key];
+    if(!val) continue;
+    const selA=val==='A'||val==='a';
+    const selB=val==='B'||val==='b';
+    const classA='display:inline-block;padding:1px 6px;border-radius:3px;font-size:.55rem;font-family:Courier New,monospace;'+(selA?'background:#d45e2c;color:#fff;font-weight:700;':'color:#666;');
+    const classB='display:inline-block;padding:1px 6px;border-radius:3px;font-size:.55rem;font-family:Courier New,monospace;'+(selB?'background:#d45e2c;color:#fff;font-weight:700;':'color:#666;');
+    html+=`<div style="display:flex;align-items:center;gap:4px;padding:2px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.6rem;">
+      <span style="color:#999;min-width:70px;">${info.name}</span>
+      <span style="${classA}">A: ${info.a}</span>
+      <span style="color:#444;">/</span>
+      <span style="${classB}">B: ${info.b}</span>
+    </div>`;
   }
-  function saveStates(){
-    try{localStorage.setItem('soma_grafo_estados',JSON.stringify(stateStore))}catch(e){}
-  }
-  loadStates();
+  html += `</div>`;
 
-  function getStateLabel(s){return s||'PENDIENTE'}
-  function renderDetail(stepKey){
-    const d = STEPS_DATA[stepKey];
-    if(!d){detail.style.display='none';return}
-    document.getElementById('dp-num').textContent = d.num;
-    document.getElementById('dp-name').textContent = d.name;
-    const typeEl = document.getElementById('dp-type');
-    typeEl.textContent = d.type;
-    typeEl.style.color = TYPE_COLORS[d.type]||'#888';
-    typeEl.style.borderColor = TYPE_COLORS[d.type]||'#888';
-    const procEl = document.getElementById('dp-proc');
-    procEl.textContent = d.proc;
-    procEl.className = 'dp-proc ' + (PROC_CLASS[d.proc]||'');
-    const st = getStateLabel(stateStore[stepKey]);
-    const statusEl = document.getElementById('dp-status');
-    statusEl.textContent = st;
-    statusEl.style.color = STATUS_COLORS[st]||'#555';
-    statusEl.style.borderColor = STATUS_COLORS[st]||'#555';
-    document.getElementById('dp-desc').textContent = d.desc;
-    document.getElementById('dp-input').innerHTML = d.input;
-    document.getElementById('dp-opera').innerHTML = d.opera;
-    document.getElementById('dp-output').innerHTML = d.output;
-    detail.style.display = 'block';
-  }
+  const varCard = document.querySelector('#sec-2 .inv-card.var .inv-card-body');
+  if(varCard) varCard.insertAdjacentHTML('afterbegin', html);
+}
 
-  function cycleState(stepKey){
-    const cur = stateStore[stepKey] || 'PENDIENTE';
-    const idx = STATUS_CYCLE.indexOf(cur);
-    const next = STATUS_CYCLE[(idx + 1) % 4];
-    stateStore[stepKey] = next;
-    saveStates();
-    return next;
-  }
+// ─── ESTACIÓN 3: PROGRAMA ARQUITECTÓNICO REAL ───
+function renderProgramaReal(){
+  const programa = DATOS_PROYECTO?.programa;
+  if(!programa || !programa.length) return;
+  const grid = document.querySelector('#sec-3 .step-grid');
+  if(!grid) return;
+  const existing = grid.querySelector('.real-programa-card');
+  if(existing) existing.remove();
+  const totalM2 = programa.reduce((s,e) => s+Number(e.area||0), 0);
+  const zonas = {1:'Social',2:'Operativa',3:'Descanso',4:'Soporte',5:'Transición'};
+  const porZona = {};
+  programa.forEach(e => {
+    const z = e.zona||1; if(!porZona[z]) porZona[z]={count:0,area:0};
+    porZona[z].count++; porZona[z].area+=Number(e.area||0);
+  });
+  let zonasHtml = Object.entries(porZona).map(([z,d]) =>
+    `<span style="font-size:.55rem;color:#999;">Z${z} ${zonas[z]||'?'}: ${d.count} esp · ${d.area.toFixed(1)} m²</span>`
+  ).join(' · ');
+  let html = `<div class="step-card expanded real-programa-card" style="border-color:#d45e2c;">
+    <div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">📋 Programa Real · ${programa.length} espacios · ${totalM2.toFixed(1)} m²</span><span class="step-proc proc-ai">BD</span></div>
+    <div class="step-desc">${zonasHtml}</div>
+    <div class="step-detail open"><div class="detail-block"><div class="detail-label">ESPACIOS</div>
+    <div class="detail-body" style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">`;
+  const tipoLbl = {'Deseado':'✔','Complementario':'+','Lujo':'★'};
+  [...programa].sort((a,b)=>(a.zona||1)-(b.zona||1)).forEach(e => {
+    const icon = tipoLbl[e.tipo]||'·', clave = e.clave||'E?', zona = zonas[e.zona]||`Z${e.zona}`;
+    html += `<div style="padding:3px 4px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.6rem;">
+      <span style="color:#d45e2c;font-weight:700;">${clave}</span>
+      <span style="color:#fff;">${esc(e.espacio)}</span>
+      <span style="color:#999;"> ${Number(e.area).toFixed(1)} m²</span>
+      <span style="color:#666;font-size:.5rem;"> ${icon} · ${zona}</span></div>`;
+  });
+  html += `</div></div></div></div>`;
+  grid.insertAdjacentHTML('afterbegin', html);
+}
 
-  function updateNodeVisual(stepKey){
-    const node = svg.querySelector(`.node[data-step="${stepKey}"]`);
-    if(!node)return;
-    const st = getStateLabel(stateStore[stepKey]);
-    const col = STATUS_COLORS[st]||'#555';
-    node.querySelector('.node-stripe').setAttribute('fill', col);
-    node.querySelector('.node-status-dot').setAttribute('fill', col);
-    node.dataset.status = st;
-    const isPen = st === 'PENDIENTE';
-    const out = JSON.parse(node.dataset.outgoing || '[]');
-    out.forEach(t => {
-      svg.querySelectorAll(`.edge-path[data-from="${stepKey}"]`).forEach(e => {
-        e.style.opacity = isPen ? '0.5' : '1';
-      });
-    });
-  }
+// ─── ESTACIÓN 3: ANÁLISIS PROCESADO (TEXTO REAL) ───
+function renderAnalisisReal(){
+  const lead = DATOS_PROYECTO?.lead;
+  if(!lead || !lead.analisis_procesado) return;
+  const texto = typeof lead.analisis_procesado === 'string' ? lead.analisis_procesado : JSON.stringify(lead.analisis_procesado);
+  if(!texto || texto === '{}') return;
 
-  function applyAllStates(){
-    Object.keys(STEPS_DATA).forEach(k => updateNodeVisual(k));
-  }
+  const existing = document.getElementById('analisis-real-card');
+  if(existing) existing.remove();
 
-  // Attach click handlers
-  document.querySelectorAll('.node').forEach(n => {
-    const sk = n.dataset.step;
-    if(!stateStore[sk]) stateStore[sk] = 'PENDIENTE';
-    n.addEventListener('click', function(e){
-      e.stopPropagation();
-      const k = this.dataset.step;
-      const next = cycleState(k);
-      updateNodeVisual(k);
-      renderDetail(k);
-    });
-    n.setAttribute('role','button');
-    n.setAttribute('tabindex','0');
-    // Dim edges initially
-    const out = JSON.parse(n.dataset.outgoing || '[]');
-    out.forEach(t => {
-      svg.querySelectorAll(`.edge-path[data-from="${sk}"]`).forEach(e => {
-        e.style.opacity = '0.5';
-      });
-    });
+  const secciones = texto.split(/(?=▶|---|🔔|\n#)/).filter(Boolean);
+  let bodyHtml = '';
+  secciones.forEach(sec => {
+    const t = sec.trim();
+    if(!t) return;
+    const isHeader = t.startsWith('▶') || t.startsWith('---') || t.startsWith('🔔');
+    if(isHeader){
+      const clean = t.replace(/^▶\s*/, '').replace(/^---+\s*/, '').replace(/^🔔\s*/, '');
+      const partes = clean.split('\n');
+      const titulo = partes[0];
+      const contenido = partes.slice(1).join('\n').trim();
+      if(titulo){
+        bodyHtml += `<div class="detail-block" style="margin-top:8px;"><div class="detail-label" style="color:#ff9800;">${esc(titulo)}</div>`;
+        if(contenido) bodyHtml += `<div class="detail-body" style="white-space:pre-wrap;">${esc(contenido)}</div>`;
+        bodyHtml += `</div>`;
+      }
+    } else {
+      bodyHtml += `<div class="detail-body" style="white-space:pre-wrap;margin-top:4px;">${esc(t.substring(0,500))}</div>`;
+    }
   });
 
-  applyAllStates();
-  console.log('Grafo SOMA listo — ' + document.querySelectorAll('.node').length + ' nodos');
-})();
+  let html = `<div class="step-card expanded real-programa-card" id="analisis-real-card" style="border-color:#4a9eff;margin-top:10px;">
+    <div class="step-head"><span class="step-nature nat-ref">AI</span><span class="step-name">📊 Análisis Procesado · Reporte Técnico</span><span class="step-proc proc-ai">AI</span></div>
+    <div class="step-desc">Reporte multidimensional generado desde las respuestas de inmersión</div>
+    <div class="step-detail open">${bodyHtml || '<div class="detail-body">Sin contenido de análisis disponible.</div>'}</div>
+  </div>`;
+
+  const grid = document.querySelector('#sec-3 .step-grid');
+  if(grid) grid.insertAdjacentHTML('beforeend', html);
+}
+
+// ─── KANBAN DASHBOARD (SECCIÓN 10) ───
+function renderKanbanDashboard(){
+  const container = document.getElementById('ctrl-sections');
+  if(!container) return;
+  const SECTIONS = {1:'Contacto',2:'Investigación',3:'Análisis',4:'Conceptualización',5:'Modelado+Vis.',6:'Antep. Básico',7:'Representación',8:'Antep. Integral',9:'Coord.+Planos'};
+  const ALL_STATUS = {PENDIENTE:0,EN_PROGRESO:0,LISTO:0,APROBADO:0};
+  let html = '';
+  for(let s=1;s<=9;s++){
+    const sec = document.getElementById('sec-'+s);
+    if(!sec) continue;
+    const counts = {PENDIENTE:0,EN_PROGRESO:0,LISTO:0,APROBADO:0,NO_APLICA:0};
+    let validos = 0;
+    const items = varItemsInSection(s);
+    items.forEach(item => {
+      const step = (s===2)
+        ? (item.querySelector('h4')?.textContent?.match(/([\d.]+)/)?.[1]||s+'.1')
+        : item.dataset.step||s+'.1';
+      const st = DB_PROGRESO[s+'_'+step] || 'PENDIENTE';
+      if(st==='NO_APLICA'){ counts.NO_APLICA++; return; }
+      validos++;
+      if(KANBAN_CYCLE.indexOf(st)>=0) counts[st]++;
+      else counts['PENDIENTE']++;
+    });
+    if(!validos && !counts.NO_APLICA){ html+=sectionBarHtml(s,SECTIONS[s],counts,1); continue; }
+    KANBAN_CYCLE.slice(0,4).forEach(c=>ALL_STATUS[c]+=(counts[c]||0));
+    html += sectionBarHtml(s,SECTIONS[s],counts,validos||1);
+  }
+  container.innerHTML = html;
+  document.getElementById('ctrl-total-pen').textContent = ALL_STATUS['PENDIENTE'];
+  document.getElementById('ctrl-total-pro').textContent = ALL_STATUS['EN_PROGRESO'];
+  document.getElementById('ctrl-total-lis').textContent = ALL_STATUS['LISTO'];
+  document.getElementById('ctrl-total-apr').textContent = ALL_STATUS['APROBADO'];
+}
+
+// ─── DIAGRAMA DE RELACIONES (vis-network) ───
+let diagramaNetwork = null;
+let connectNode = null;
+const ZONA_COLOR = {1:'#4d7ae6',2:'#e6cc33',3:'#e64d4d',4:'#e68033',5:'#9933cc'};
+const ZONA_NOMBRE = {1:'Social',2:'Operativa',3:'Descanso',4:'Soporte',5:'Transición'};
+
+function abrirDiagramaRelaciones(){
+  const section = document.getElementById('diagrama-section');
+  if(!section) return;
+  section.classList.toggle('visible');
+  if(section.classList.contains('visible') && PROYECTO_ACTUAL){
+    renderProgramaRelaciones();
+    renderDiagramaRelaciones(PROYECTO_ACTUAL);
+    section.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+}
+
+function renderProgramaRelaciones(){
+  const container = document.getElementById('diagrama-programa');
+  if(!container) return;
+  const programa = DATOS_PROYECTO?.programa;
+  if(!programa || !programa.length){ container.innerHTML='<div style="color:var(--text3);font-size:.55rem;">Sin programa arquitectónico</div>'; return; }
+  const zonas = {1:'Social',2:'Operativa',3:'Descanso',4:'Soporte',5:'Transición'};
+  let html = '<div class="prog-header"><span>Programa Arquitectónico · '+programa.length+' espacios</span></div>';
+  [...programa].sort((a,b)=>(a.zona||1)-(b.zona||1)).forEach(e => {
+    const clave = e.clave||'?';
+    const rels = (()=>{try{return JSON.parse(e.relacion_directa||'[]');}catch{return [];}})();
+    const relTags = rels.map(r => {
+      const otro = programa.find(p => p.clave===r);
+      return `<span class="rel-tag" onclick="eliminarRelacion('${esc(clave)}','${esc(r)}')" title="Quitar ${esc(otro?otro.espacio:r)}">${esc(otro?otro.espacio:r)} ✕</span>`;
+    }).join('');
+    html += '<div class="prog-card">';
+    html += '<div class="prog-row">';
+    html += '<span class="prog-nombre">'+esc(e.espacio)+'</span>';
+    html += '<span class="prog-m2">'+Number(e.area||0).toFixed(1)+' m²</span>';
+    html += '<span class="prog-zona" style="color:'+(ZONA_COLOR[e.zona]||'#666')+'">'+(zonas[e.zona]||'Z'+e.zona)+'</span>';
+    html += '<span class="prog-rels" id="prog-rels-'+esc(clave)+'">'+relTags+'</span>';
+    html += '<span class="rel-add" onclick="togglePicker(\''+esc(clave)+'\')">+</span>';
+    html += '</div>';
+    html += '<div class="prog-picker" id="prog-picker-'+esc(clave)+'" style="display:none"></div>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+let PICKER_OPEN = null;
+
+function togglePicker(clave){
+  const picker = document.getElementById('prog-picker-'+clave);
+  if(!picker) return;
+  if(PICKER_OPEN && PICKER_OPEN!==clave){
+    const prev = document.getElementById('prog-picker-'+PICKER_OPEN);
+    if(prev) prev.style.display = 'none';
+  }
+  if(picker.style.display==='block'){
+    picker.style.display = 'none';
+    PICKER_OPEN = (PICKER_OPEN===clave) ? null : PICKER_OPEN;
+    return;
+  }
+  PICKER_OPEN = clave;
+  picker.style.display = 'block';
+  if(picker.children.length===0) renderPickerContent(clave, picker);
+}
+
+function renderPickerContent(clave, picker){
+  const programa = DATOS_PROYECTO?.programa;
+  if(!programa) return;
+  const actual = programa.find(e => e.clave===clave);
+  if(!actual) return;
+  const rels = (()=>{try{return JSON.parse(actual.relacion_directa||'[]');}catch{return [];}})();
+  const otros = programa.filter(e => e.clave && e.clave!==clave);
+  let checks = '';
+  otros.forEach(o => {
+    const checked = rels.includes(o.clave) ? 'checked' : '';
+    checks += '<label><input type="checkbox" value="'+esc(o.clave)+'" '+checked+'> '+esc(o.espacio)+'</label>';
+  });
+  picker.innerHTML = '<div class="picker-grid">'+checks+'</div>'
+    + '<div class="picker-actions">'
+    + '<button class="btn-save" onclick="guardarPicker(\''+esc(clave)+'\')">✓ GUARDAR</button>'
+    + '<button onclick="togglePicker(\''+esc(clave)+'\')">✕ CANCELAR</button>'
+    + '</div>';
+}
+
+async function guardarPicker(clave){
+  const picker = document.getElementById('prog-picker-'+clave);
+  if(!picker) return;
+  const checks = picker.querySelectorAll('input[type=checkbox]:checked');
+  const nuevas = Array.from(checks).map(c => c.value);
+  const programa = DATOS_PROYECTO?.programa;
+  const actual = programa?.find(e => e.clave===clave);
+  if(!actual) return;
+  const viejas = (()=>{try{return JSON.parse(actual.relacion_directa||'[]');}catch{return [];}})();
+  const agregar = nuevas.filter(r => !viejas.includes(r));
+  const quitar = viejas.filter(r => !nuevas.includes(r));
+  try {
+    await fetch('/programa/espacio/'+actual.id+'/relaciones', {
+      method: 'PUT', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ relaciones: nuevas })
+    });
+    actual.relacion_directa = JSON.stringify(nuevas);
+    for(const t of agregar){
+      const otro = programa.find(e => e.clave===t);
+      if(!otro) continue;
+      const relsOtro = (()=>{try{return JSON.parse(otro.relacion_directa||'[]');}catch{return [];}})();
+      if(!relsOtro.includes(clave)){
+        relsOtro.push(clave);
+        await fetch('/programa/espacio/'+otro.id+'/relaciones', {
+          method: 'PUT', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ relaciones: relsOtro })
+        });
+        otro.relacion_directa = JSON.stringify(relsOtro);
+      }
+    }
+    for(const t of quitar){
+      const otro = programa.find(e => e.clave===t);
+      if(!otro) continue;
+      const relsOtro = (()=>{try{return JSON.parse(otro.relacion_directa||'[]');}catch{return [];}})();
+      const idx = relsOtro.indexOf(clave);
+      if(idx!==-1){
+        relsOtro.splice(idx,1);
+        await fetch('/programa/espacio/'+otro.id+'/relaciones', {
+          method: 'PUT', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ relaciones: relsOtro })
+        });
+        otro.relacion_directa = JSON.stringify(relsOtro);
+      }
+    }
+    picker.style.display = 'none';
+    PICKER_OPEN = null;
+    renderProgramaRelaciones();
+    if(PROYECTO_ACTUAL) renderDiagramaRelaciones(PROYECTO_ACTUAL);
+  } catch(e){ console.error(e); }
+}
+
+async function eliminarRelacion(clave, target){
+  const programa = DATOS_PROYECTO?.programa;
+  const actual = programa?.find(e => e.clave===clave);
+  if(!actual) return;
+  const otro = programa?.find(e => e.clave===target);
+  try {
+    const rels = (()=>{try{return JSON.parse(actual.relacion_directa||'[]');}catch{return [];}})();
+    const idx = rels.indexOf(target);
+    if(idx!==-1){
+      rels.splice(idx, 1);
+      await fetch('/programa/espacio/'+actual.id+'/relaciones', {
+        method: 'PUT', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ relaciones: rels })
+      });
+      actual.relacion_directa = JSON.stringify(rels);
+    }
+    if(otro){
+      const relsOtro = (()=>{try{return JSON.parse(otro.relacion_directa||'[]');}catch{return [];}})();
+      const jdx = relsOtro.indexOf(clave);
+      if(jdx!==-1){
+        relsOtro.splice(jdx, 1);
+        await fetch('/programa/espacio/'+otro.id+'/relaciones', {
+          method: 'PUT', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ relaciones: relsOtro })
+        });
+        otro.relacion_directa = JSON.stringify(relsOtro);
+      }
+    }
+    renderProgramaRelaciones();
+    if(PROYECTO_ACTUAL) renderDiagramaRelaciones(PROYECTO_ACTUAL);
+  } catch(e){ console.error(e); }
+}
+
+function toggleConnectMode(){
+  const btn = document.getElementById('btn-connect-mode');
+  if(!btn) return;
+  btn.classList.toggle('active');
+  btn.textContent = btn.classList.contains('active') ? '🔗 CONECTANDO...' : '🔗 CONECTAR';
+  if(!btn.classList.contains('active')) connectNode = null;
+}
+
+function handleDiagramClick(params){
+  if(params.nodes.length===1){
+    const clicked = params.nodes[0];
+    if(connectNode===null){
+      connectNode = clicked;
+      diagramaNetwork.selectNodes([clicked]);
+    } else if(connectNode!==clicked){
+      diagramaNetwork.selectNodes([]);
+      const from = connectNode, to = clicked;
+      connectNode = null;
+      agregarRelacionDiagrama(from, to);
+    } else {
+      connectNode = null;
+      diagramaNetwork.selectNodes([]);
+    }
+  } else if(params.edges.length===1 && params.nodes.length===0){
+    const edgeId = params.edges[0];
+    connectNode = null;
+    diagramaNetwork.selectNodes([]);
+    eliminarRelacionDiagrama(edgeId);
+  } else {
+    connectNode = null;
+    diagramaNetwork.selectNodes([]);
+  }
+}
+
+async function agregarRelacionDiagrama(from, to){
+  const programa = DATOS_PROYECTO?.programa;
+  const a = programa?.find(e => e.clave===from);
+  const b = programa?.find(e => e.clave===to);
+  if(!a || !b) return;
+  try {
+    const relsA = (()=>{try{return JSON.parse(a.relacion_directa||'[]');}catch{return [];}})();
+    if(!relsA.includes(to)){
+      relsA.push(to);
+      await fetch('/programa/espacio/'+a.id+'/relaciones', {
+        method: 'PUT', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ relaciones: relsA })
+      });
+      a.relacion_directa = JSON.stringify(relsA);
+    }
+    const relsB = (()=>{try{return JSON.parse(b.relacion_directa||'[]');}catch{return [];}})();
+    if(!relsB.includes(from)){
+      relsB.push(from);
+      await fetch('/programa/espacio/'+b.id+'/relaciones', {
+        method: 'PUT', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ relaciones: relsB })
+      });
+      b.relacion_directa = JSON.stringify(relsB);
+    }
+    renderProgramaRelaciones();
+    if(PROYECTO_ACTUAL) renderDiagramaRelaciones(PROYECTO_ACTUAL);
+  } catch(e){ console.error(e); }
+}
+
+async function eliminarRelacionDiagrama(edgeId){
+  const parts = edgeId.split('→');
+  if(parts.length!==2) return;
+  const from = parts[0], to = parts[1];
+  const programa = DATOS_PROYECTO?.programa;
+  const a = programa?.find(e => e.clave===from);
+  const b = programa?.find(e => e.clave===to);
+  try {
+    if(a){
+      const ra = (()=>{try{return JSON.parse(a.relacion_directa||'[]');}catch{return [];}})();
+      const ia = ra.indexOf(to);
+      if(ia!==-1){
+        ra.splice(ia,1);
+        await fetch('/programa/espacio/'+a.id+'/relaciones', {
+          method: 'PUT', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ relaciones: ra })
+        });
+        a.relacion_directa = JSON.stringify(ra);
+      }
+    }
+    if(b){
+      const rb = (()=>{try{return JSON.parse(b.relacion_directa||'[]');}catch{return [];}})();
+      const ib = rb.indexOf(from);
+      if(ib!==-1){
+        rb.splice(ib,1);
+        await fetch('/programa/espacio/'+b.id+'/relaciones', {
+          method: 'PUT', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ relaciones: rb })
+        });
+        b.relacion_directa = JSON.stringify(rb);
+      }
+    }
+    renderProgramaRelaciones();
+    if(PROYECTO_ACTUAL) renderDiagramaRelaciones(PROYECTO_ACTUAL);
+  } catch(e){ console.error(e); }
+}
+
+async function renderDiagramaRelaciones(proyectoId, zona){
+  const canvas = document.getElementById('diagrama-canvas');
+  const info = document.getElementById('diagrama-info');
+  if(!canvas) return;
+  if(!window.vis || !window.vis.Network){
+    if(info) info.textContent = 'Error: vis-network no cargó. Recarga la página.';
+    return;
+  }
+  const z = zona || parseInt(document.getElementById('diagrama-zona-filter')?.value||'0');
+  const url = `/api/diagrama/grafo/${proyectoId}${z>0?'?zona='+z:''}`;
+  const res = await apiGet(url);
+  if(!res || !res.nodes || !res.nodes.length){
+    if(info) info.textContent = 'Sin espacios en el programa arquitectónico para este proyecto.';
+    if(diagramaNetwork){ diagramaNetwork.destroy(); diagramaNetwork=null; }
+    return;
+  }
+  if(diagramaNetwork){ diagramaNetwork.destroy(); diagramaNetwork=null; }
+  canvas.innerHTML = '';
+  const savedKey = 'soma_diagrama_' + proyectoId + '_zona_' + z;
+  let savedPos = {};
+  try{ savedPos = JSON.parse(localStorage.getItem(savedKey)||'{}'); }catch(e){}
+
+  const nodeData = res.nodes.map(n => {
+    const pos = savedPos[n.id];
+    return {
+      id: n.id, label: n.label,
+      size: Math.max(12, Math.min(n.size, 60)),
+      color: { background: n.color, border: '#ffffff' },
+      font: { color: '#f4f1ee', size: Math.max(6, Math.min(n.size*0.45, 16)), face: 'Courier New', strokeWidth: 0 },
+      shape: 'dot',
+      title: '<b>'+esc(n.espacio)+'</b><br>Clave: '+esc(n.id)+'<br>Área: '+n.area+' m²<br>Zona: '+(ZONA_NOMBRE[n.zona]||n.zona)+'<br>Tipo: '+esc(n.tipo),
+      x: pos ? pos.x : undefined, y: pos ? pos.y : undefined
+    };
+  });
+  const edgeData = res.edges.map(e => ({
+    id: e.from+'→'+e.to, from: e.from, to: e.to,
+    color: { color: '#f4f1ee', opacity: 0.35 },
+    width: 1.5, smooth: { type: 'continuous' }
+  }));
+
+  try {
+    diagramaNetwork = new vis.Network(canvas, { nodes: nodeData, edges: edgeData }, {
+      physics: {
+        enabled: true, solver: 'barnesHut',
+        barnesHut: { gravitationalConstant: -800, centralGravity: 0.2, springLength: 150, springConstant: 0.03, damping: 0.6 },
+        stabilization: { iterations: 30 }
+      },
+      layout: { improvedLayout: true, randomSeed: 42 },
+      interaction: { hover: true, tooltipDelay: 200, navigationButtons: true, keyboard: true },
+      configure: { enabled: false }
+    });
+    diagramaNetwork.once('stabilizationIterationsDone', function(){
+      diagramaNetwork.setOptions({ physics: { enabled: false } });
+      diagramaNetwork.fit();
+      guardarPosicionesDiagrama();
+    });
+    diagramaNetwork.on('dragEnd', function(){ guardarPosicionesDiagrama(); });
+    diagramaNetwork.on('zoom', function(){ guardarPosicionesDiagrama(); });
+    if(info) info.textContent = res.nodes.length + ' espacios · ' + res.edges.length + ' relaciones';
+    diagramaNetwork.on('click', function(params){
+      const btn = document.getElementById('btn-connect-mode');
+      if(!btn || !btn.classList.contains('active')){ connectNode=null; return; }
+      handleDiagramClick(params);
+    });
+  } catch(e) {
+    if(info) info.textContent = 'Error al renderizar: ' + e.message;
+    console.error('Diagrama error:', e);
+  }
+}
+
+function guardarPosicionesDiagrama(){
+  if(!diagramaNetwork || !PROYECTO_ACTUAL) return;
+  const z = parseInt(document.getElementById('diagrama-zona-filter')?.value||'0');
+  const key = 'soma_diagrama_' + PROYECTO_ACTUAL + '_zona_' + z;
+  const pos = diagramaNetwork.getPositions();
+  try{ localStorage.setItem(key, JSON.stringify(pos)); }catch(e){}
+}
+
+function resetDiagrama(){
+  const z = parseInt(document.getElementById('diagrama-zona-filter')?.value||'0');
+  const key = 'soma_diagrama_' + PROYECTO_ACTUAL + '_zona_' + z;
+  localStorage.removeItem(key);
+  if(PROYECTO_ACTUAL) renderDiagramaRelaciones(PROYECTO_ACTUAL, z);
+}
+
+function exportDiagramaPDF(){
+  if(!diagramaNetwork) return;
+  const container = document.getElementById('diagrama-canvas');
+  const c = container.querySelector('canvas');
+  if(!c) return;
+  if(!window.jspdf){
+    const info = document.getElementById('diagrama-info');
+    if(info) info.textContent = 'Error: jsPDF no cargó. Recarga.';
+    return;
+  }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+  const pw = doc.internal.pageSize.getWidth();
+  const ph = doc.internal.pageSize.getHeight();
+
+  const imgData = c.toDataURL('image/png');
+  const cw = c.width, ch = c.height;
+  const aspect = cw / ch;
+  let iw = pw - 20, ih = iw / aspect;
+  if(ih > ph - 50){ ih = ph - 50; iw = ih * aspect; }
+  doc.addImage(imgData, 'PNG', 10, 25, iw, ih);
+
+  const proyecto = DATOS_PROYECTO?.lead;
+  const nombre = proyecto?.nombre_proyecto || proyecto?.contacto || 'Proyecto';
+  doc.setFontSize(10);
+  doc.text('Diagrama de Relaciones Espaciales — ' + nombre, 10, 10);
+  doc.setFontSize(7);
+  doc.text('SOMA Algoritmo 3.4', 10, 15);
+
+  const zonas = [
+    {color:'#4d7ae6', nombre:'Social'},
+    {color:'#e6cc33', nombre:'Operativa'},
+    {color:'#e64d4d', nombre:'Descanso'},
+    {color:'#e68033', nombre:'Soporte'},
+    {color:'#9933cc', nombre:'Transición'}
+  ];
+  const ly = Math.max(ih + 30, 30);
+  doc.setFontSize(8);
+  doc.text('Simbología de Zonas:', 10, ly);
+  let lx = 10;
+  zonas.forEach(z => {
+    doc.setFillColor(parseInt(z.color.slice(1,3),16), parseInt(z.color.slice(3,5),16), parseInt(z.color.slice(5,7),16));
+    doc.rect(lx, ly+3, 5, 5, 'F');
+    doc.setTextColor(100);
+    doc.text(z.nombre, lx+7, ly+7);
+    lx += 35;
+  });
+
+  const infoEl = document.getElementById('diagrama-info');
+  const edgeCount = infoEl ? infoEl.textContent : '';
+  doc.setTextColor(150); doc.setFontSize(6);
+  doc.text(edgeCount, 10, ph - 5);
+  doc.text(new Date().toLocaleDateString(), pw - 30, ph - 5);
+
+  doc.save('diagrama_soma_' + PROYECTO_ACTUAL + '.pdf');
+}
+
+
+
+function sectionBarHtml(s,name,counts,total){
+  const MAP = [
+    {cls:'bar-pendiente',c:'#555',status:'PENDIENTE'},
+    {cls:'bar-progreso', c:'#ff9800',status:'EN_PROGRESO'},
+    {cls:'bar-listo',    c:'#4caf50',status:'LISTO'},
+    {cls:'bar-aprobado', c:'#2196f3',status:'APROBADO'}
+  ];
+  const t = total||1;
+  const cN = counts.NO_APLICA||0;
+  return `<div class="ctrl-section"><div class="ctrl-section-header"><h3>${s}. ${name}</h3><span>${total} pasos ${cN?'('+cN+' NA)':''}</span></div><div class="ctrl-bar">
+    ${MAP.map(o=>'<div class="ctrl-bar-seg '+o.cls+'" style="width:'+((counts[o.status]||0)/t*100)+'%"></div>').join('')}
+    ${cN?'<div class="ctrl-bar-seg bar-noaplica" style="width:'+(cN/t*100)+'%"></div>':''}
+    </div><div style="display:flex;gap:12px;margin-top:6px;font-family:Courier New,monospace;font-size:.5rem">
+    ${MAP.map(o=>'<span style="color:'+o.c+'">● '+(counts[o.status]||0)+' '+o.status+'</span>').join('')}
+    ${cN?'<span style="color:#333;opacity:.5">○ '+cN+' NO_APLICA</span>':''}</div></div>`;
+}
+
+document.addEventListener('click', function(e){
+  if(e.target.closest('.step-status') && document.getElementById('sec-10')?.classList.contains('active')){
+    setTimeout(renderKanbanDashboard, 50);
+  }
+});
 
 // ─── DOMContentLoaded ───
 document.addEventListener('DOMContentLoaded',()=>{
@@ -1347,11 +2039,12 @@ document.addEventListener('DOMContentLoaded',()=>{
   const hash=window.location.hash.replace('#','');
   if(hash&&hash.startsWith('sec-')){
     const n=parseInt(hash.replace('sec-',''));
-    if(n>=1&&n<=9)showSection(n);
+    if(n>=1&&n<=10) showSection(n);
   }else{
     const t=document.getElementById('timeline');
-    if(t)t.querySelectorAll('.station')[3].scrollIntoView({inline:'center',block:'nearest'});
+    if(t) t.querySelectorAll('.station')[3].scrollIntoView({inline:'center',block:'nearest'});
   }
+  if(PROYECTO_ACTUAL) cargarDatosProyecto(PROYECTO_ACTUAL);
 });
 </script>
 </body>
