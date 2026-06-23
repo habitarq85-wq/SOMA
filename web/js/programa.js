@@ -59,8 +59,7 @@ const PROGRAMA = (() => {
                     <label style="font-size:.6rem;color:#888;">Estado</label>
                     <input type="text" id="prog-estado" value="${API.esc(ubicEstado(lead.ubicacion))}" style="padding:4px;border:1px solid #ddd;border-radius:3px;font-size:.7rem;">
                 </div>
-            </div>
-            <button class="cand-btn btn-green" style="width:100%;font-size:.65rem;padding:6px;margin-bottom:10px;" onclick="PROGRAMA.guardarDatos()">GUARDAR DATOS</button>`;
+            </div>`;
 
         UI.openModal('modal-programa');
         mostrarSeccion('programa');
@@ -135,6 +134,8 @@ const PROGRAMA = (() => {
                 </div>
             </div>`;
 
+            html += `<button class="cand-btn btn-green" style="width:100%;font-size:.65rem;padding:6px;margin-top:12px;" onclick="PROGRAMA.guardarDatos()">💾 GUARDAR DATOS Y PROGRAMA</button>`;
+
             content.innerHTML = html;
         } catch (_) {
             content.innerHTML = '<p class="loading-text">Error al cargar</p>';
@@ -198,7 +199,8 @@ const PROGRAMA = (() => {
                 <div style="text-align:right;">$${Number(data.obra_min_estimada || 0).toLocaleString()}</div>
                 <div>Obra estimada (máx)</div>
                 <div style="text-align:right;">$${Number(data.obra_max_estimada || 0).toLocaleString()}</div>
-            </div>`;
+            </div>
+            <button class="cand-btn btn-green" style="width:100%;font-size:.65rem;padding:6px;margin-top:12px;" onclick="PROGRAMA.guardarDatos()">💾 GUARDAR DATOS Y PROGRAMA</button>`;
         } catch (_) {
             el.innerHTML = '<p class="loading-text">Primero guarda el programa arquitectónico.</p>';
         }
