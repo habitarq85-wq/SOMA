@@ -226,6 +226,13 @@ const PROGRAMA = (() => {
         };
         try {
             await API.guardarDatosProyecto(id, data);
+            // Update local cache so re-open shows latest data
+            const leads = LEADS.getLeads();
+            const idx = leads.findIndex(l => l.id === id);
+            if (idx !== -1) {
+                Object.assign(leads[idx], data);
+                leads[idx].ubicacion = ubicacion;
+            }
             if (!silent) {
                 UI.notify('Datos guardados');
                 await App.refresh();
