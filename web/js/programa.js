@@ -118,11 +118,11 @@ const PROGRAMA = (() => {
 
             // Form to add new space
             html += `<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;font-size:.55rem;font-family:'JetBrains Mono',monospace;">
-                <span style="display:inline-flex;align-items:center;gap:3px;"><span style="width:10px;height:10px;border-radius:2px;background:#4d7ae6;display:inline-block;"></span> Social</span>
-                <span style="display:inline-flex;align-items:center;gap:3px;"><span style="width:10px;height:10px;border-radius:2px;background:#e6cc33;display:inline-block;"></span> Operativa</span>
-                <span style="display:inline-flex;align-items:center;gap:3px;"><span style="width:10px;height:10px;border-radius:2px;background:#e64d4d;display:inline-block;"></span> Descanso</span>
-                <span style="display:inline-flex;align-items:center;gap:3px;"><span style="width:10px;height:10px;border-radius:2px;background:#e68033;display:inline-block;"></span> Soporte</span>
-                <span style="display:inline-flex;align-items:center;gap:3px;"><span style="width:10px;height:10px;border-radius:2px;background:#9933cc;display:inline-block;"></span> Transición</span>
+                <span style="display:inline-flex;align-items:center;gap:3px;"><span style="width:10px;height:10px;border-radius:2px;background:#4d7ae6;display:inline-block;"></span> 1 Social</span>
+                <span style="display:inline-flex;align-items:center;gap:3px;"><span style="width:10px;height:10px;border-radius:2px;background:#e6cc33;display:inline-block;"></span> 2 Operativa</span>
+                <span style="display:inline-flex;align-items:center;gap:3px;"><span style="width:10px;height:10px;border-radius:2px;background:#e64d4d;display:inline-block;"></span> 3 Descanso</span>
+                <span style="display:inline-flex;align-items:center;gap:3px;"><span style="width:10px;height:10px;border-radius:2px;background:#e68033;display:inline-block;"></span> 4 Soporte</span>
+                <span style="display:inline-flex;align-items:center;gap:3px;"><span style="width:10px;height:10px;border-radius:2px;background:#9933cc;display:inline-block;"></span> 5 Transición</span>
             </div>
             <div style="margin-top:10px;padding:10px;background:#f9f9f9;border-radius:4px;">
                 <h4 style="font-size:.6rem;margin-bottom:6px;">Agregar espacio</h4>
