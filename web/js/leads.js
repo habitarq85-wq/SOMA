@@ -45,11 +45,14 @@ function buildCardDetails(l) {
     const honorarios = l.honorarios_diseno || 0;
     let parts = [];
     if (['lead','entrevistado','programado','cotizado'].includes(fase)) {
-        if (l.respuestas_json && l.respuestas_json !== '{}')
-            parts.push('🧠 Inmersión ✓');
+        const respCount = l.respuestas_json && l.respuestas_json !== '{}' ? Object.keys(JSON.parse(l.respuestas_json)).length : 0;
+        if (respCount >= 10) parts.push('🧠 Inmersión ✓');
+        else if (respCount > 0) parts.push('🧠 Inmersión ⚠');
         if (l.m2_original && l.nivel_original)
             parts.push(`📐 ${l.m2_original} m² · ${l.nivel_original}`);
+        if (l.presupuesto) parts.push(`💰 $${Number(l.presupuesto).toLocaleString()}`);
     } else {
+        if (l.nombre_proyecto) parts.push(`🏗 ${API.esc(l.nombre_proyecto)}`);
         if (nivel) parts.push(`📐 ${m2} m² · ${nivel}`);
         if (honorarios) parts.push(`💰 $${Number(honorarios).toLocaleString()}`);
     }
@@ -79,6 +82,7 @@ function buildCardActions(l) {
         b += btn('PAGO FINAL', 'btn-gold', `onclick="LEADS.pagarCobroDirecto(${l.id},'Tercer')"`);
         b += btn('TERMINADO', 'btn-red', `onclick="LEADS.cerrar(${l.id})"`);
     } else if (fase === 'terminado') {
+        b += btn('EXPEDIENTE', 'btn-dark', `onclick="LEADS.abrirExpediente(${l.id})"`);
         b += btn('ELIMINAR', 'btn-close', `onclick="LEADS.eliminar(${l.id})"`);
     }
     return `<div class="card-actions">${b}</div>`;
@@ -210,7 +214,9 @@ const LEADS = (() => {
     }
 
     async function eliminar(leadId) {
-        const ok = await UI.confirmDialog('¿Eliminar definitivamente este proyecto?');
+        const abrirPDF = await UI.confirmDialog('¿Descargar PDF de cierre antes de eliminar?');
+        if (abrirPDF) window.open(`/lead/${leadId}/cierre-pdf`, '_blank');
+        const ok = await UI.confirmDialog('⚠️ ¿Eliminar definitivamente este proyecto? Esta acción no se puede deshacer.');
         if (!ok) return;
         try {
             await API.eliminarProyecto(leadId);
@@ -305,12 +311,57 @@ const LEADS = (() => {
         const nivel = lead.nivel_proyecto || 'esencial';
         const precios = { esencial: 250, integral: 350, ejecutivo: 850 };
         const honorarios = lead.honorarios_diseno || Math.max(m2 * (precios[nivel] || 250), 6500);
+        const tieneOriginal = lead.m2_original && lead.nivel_original;
 
-        let html = `<div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;">
-            <p><strong>Honorarios:</strong> $${Number(honorarios).toLocaleString()}</p>
-            <p><strong>Inversión obra:</strong> $${Number(lead.inversion_obra_estimada || 0).toLocaleString()}</p>
-            <p><strong>Nivel:</strong> ${nivel.toUpperCase()} · <strong>m²:</strong> ${m2}</p>
-            <hr style="border:none;border-top:1px solid #eee;margin:10px 0;"></div>`;
+        let html = '';
+
+        // Comparativa Original vs Modificado
+        if (tieneOriginal) {
+            html += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px;">
+                <div style="padding:12px;background:#f9f9f9;border-radius:4px;border:1px solid #e0d5c1;">
+                    <h4 style="font-family:'JetBrains Mono';font-size:.55rem;color:#999;text-transform:uppercase;margin-bottom:8px;">▼ Inmersión (original)</h4>
+                    <div style="font-family:'Inter',sans-serif;font-size:.75rem;">
+                        <span style="color:#666;">${lead.m2_original} m² · ${lead.nivel_original||'---'}</span><br>
+                        <span style="font-weight:600;">$${(lead.honorarios_original||0).toLocaleString()}</span>
+                    </div>
+                </div>
+                <div style="padding:12px;background:#f0f7f0;border-radius:4px;border:1px solid #2e7d32;">
+                    <h4 style="font-family:'JetBrains Mono';font-size:.55rem;color:#2e7d32;text-transform:uppercase;margin-bottom:8px;">▲ PROGRAMA (modificado)</h4>
+                    <div style="font-family:'Inter',sans-serif;font-size:.75rem;">
+                        <span style="color:#666;">${m2} m² · ${nivel.charAt(0).toUpperCase()+nivel.slice(1)}</span><br>
+                        <span style="font-weight:600;color:#2e7d32;">$${honorarios.toLocaleString()}</span>
+                    </div>
+                </div>
+            </div>`;
+        } else {
+            html += `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:15px;">
+                <div class="kpi-card"><span class="label">Paquete</span><p class="value" style="font-size:.9rem;text-transform:capitalize;">${nivel}</p></div>
+                <div class="kpi-card"><span class="label">Metros²</span><p class="value" style="font-size:.9rem;">${m2} m²</p></div>
+                <div class="kpi-card"><span class="label" style="color:#2e7d32;">Honorarios</span><p class="value" style="font-size:.9rem;color:#2e7d32;">$${honorarios.toLocaleString()}</p></div>
+            </div>`;
+        }
+
+        // Programa arquitectónico (solo para terminados)
+        if (lead.pipeline_estado === 'terminado') {
+            try {
+                const espacios = await API.getPrograma(lead.id);
+                if (espacios && espacios.length) {
+                    const agrupados = {};
+                    espacios.forEach(e => {
+                        if (!agrupados[e.tipo]) agrupados[e.tipo] = [];
+                        agrupados[e.tipo].push(e);
+                    });
+                    html += Object.keys(agrupados).map(tipo => `
+                        <div style="margin-bottom:8px;">
+                            <h5 style="font-family:'JetBrains Mono';font-size:.6rem;color:#555;text-transform:uppercase;margin-bottom:4px;">${tipo}</h5>
+                            <table class="data-table">
+                                ${agrupados[tipo].map(e => `<tr><td style="padding:2px 4px;">${e.clave||''}</td><td style="padding:2px 4px;">${e.espacio}</td><td style="padding:2px 4px;text-align:right;">${e.area} m²</td></tr>`).join('')}
+                            </table>
+                        </div>
+                    `).join('');
+                }
+            } catch(_) {}
+        }
 
         // Análisis multidimensional
         if (lead.analisis_procesado && lead.analisis_procesado !== '{}') {
@@ -322,18 +373,38 @@ const LEADS = (() => {
                         ${analisis.multidimensional.map(d => `<tr><td>${API.esc(d.eje||'')}</td><td class="right">${d.valor||''}</td><td>${API.esc(d.justificacion||'')}</td></tr>`).join('')}
                         </table>`;
                 }
-                if (analisis.inmersion) {
-                    html += `<h4 style="font-size:.7rem;margin:10px 0 5px;">Respuestas de Inmersión</h4>
-                        <table class="data-table">
-                        ${Object.entries(analisis.inmersion).map(([k,v]) => `<tr><td>${API.esc(k)}</td><td>${API.esc(v)}</td></tr>`).join('')}
-                        </table>`;
-                }
             } catch (_) {}
+            html += `<pre style="background:#f4f1ea;padding:10px;font-family:'JetBrains Mono';font-size:.6rem;white-space:pre-wrap;max-height:300px;overflow-y:auto;margin-top:10px;">${API.esc(lead.analisis_procesado)}</pre>`;
         }
 
         // Cobros
         html += `<h4 style="font-size:.7rem;margin:15px 0 5px;">Cobros</h4>
             <div id="exp-cobros-${id}"><p class="loading-text">Cargando...</p></div>`;
+
+        // Cobros management (only for non-terminado)
+        if (lead.pipeline_estado !== 'terminado') {
+            html += `<div style="margin-top:10px;padding:10px;background:#f9f9f9;border-radius:4px;">
+                <div style="display:flex;gap:8px;margin-bottom:8px;">
+                    <button class="cand-btn btn-green" style="font-size:.6rem;padding:4px 10px;" onclick="LEADS.toggleFormCobro(${id})">+ Nuevo Cobro</button>
+                    <button class="cand-btn btn-gold" style="font-size:.6rem;padding:4px 10px;" onclick="LEADS.generarEsquema(${id})">⚡ 30/40/30</button>
+                </div>
+                <div id="form-cobro-${id}" style="display:none;border-top:1px solid #ddd;padding-top:8px;margin-top:8px;">
+                    <div class="form-group" style="gap:4px;">
+                        <input type="text" id="cobro-concepto-${id}" placeholder="Concepto" style="padding:4px;border:1px solid #ddd;border-radius:3px;font-size:.65rem;">
+                        <input type="number" id="cobro-monto-${id}" placeholder="Monto $" style="padding:4px;border:1px solid #ddd;border-radius:3px;font-size:.65rem;">
+                        <input type="date" id="cobro-vencimiento-${id}" style="padding:4px;border:1px solid #ddd;border-radius:3px;font-size:.65rem;">
+                        <button class="cand-btn btn-green" style="font-size:.6rem;padding:4px;" onclick="LEADS.registrarCobro(${id})">+ Registrar</button>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        // PDF Cierre button for terminados
+        if (lead.pipeline_estado === 'terminado') {
+            html += `<div style="margin-top:15px;border-top:2px solid #555;padding-top:12px;">
+                <button class="cand-btn btn-dark" style="font-size:.7rem;padding:6px 16px;" onclick="window.open('/lead/${lead.id}/cierre-pdf','_blank')">📄 PDF de Cierre</button>
+            </div>`;
+        }
 
         document.getElementById('modal-body').innerHTML = html;
         UI.openModal('modal-expediente');
@@ -373,12 +444,47 @@ const LEADS = (() => {
         } catch (e) { UI.notify(e.message, 'error'); }
     }
 
+    // ---- COBROS MANUALES ----
+    function toggleFormCobro(proyectoId) {
+        const form = document.getElementById(`form-cobro-${proyectoId}`);
+        if (form) form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+
+    async function registrarCobro(proyectoId) {
+        const concepto = document.getElementById(`cobro-concepto-${proyectoId}`).value.trim();
+        const monto = parseFloat(document.getElementById(`cobro-monto-${proyectoId}`).value);
+        const vencimiento = document.getElementById(`cobro-vencimiento-${proyectoId}`).value;
+        if (!concepto || !monto) { UI.notify('Completa concepto y monto', 'warning'); return; }
+        try {
+            await API.crearCobro(proyectoId, { concepto, monto, fecha_vencimiento: vencimiento });
+            UI.notify('Cobro registrado');
+            document.getElementById(`cobro-concepto-${proyectoId}`).value = '';
+            document.getElementById(`cobro-monto-${proyectoId}`).value = '';
+            document.getElementById(`cobro-vencimiento-${proyectoId}`).value = '';
+            document.getElementById(`form-cobro-${proyectoId}`).style.display = 'none';
+            cargarCobrosExpediente(proyectoId);
+            await App.refresh();
+        } catch (e) { UI.notify(e.message, 'error'); }
+    }
+
+    async function generarEsquema(proyectoId) {
+        const ok = await UI.confirmDialog('¿Generar esquema de pagos 30/40/30? Se crearán 3 cobros (Anticipo, 40%, 30%).');
+        if (!ok) return;
+        try {
+            const res = await API.generarEsquemaPagos(proyectoId);
+            UI.notify(`Esquema generado: 3 cobros (Total: $${(res.total||0).toLocaleString()})`);
+            cargarCobrosExpediente(proyectoId);
+            await App.refresh();
+        } catch (e) { UI.notify(e.message, 'error'); }
+    }
+
     return {
         load, getLeads,
         renderCandidatos, renderClientesMomento2, renderMomento3,
         avanzar, regresar, cerrar, eliminar,
         pagarCobroDirecto, pagarCobroExpediente,
         abrirContratar, confirmarContratar, cerrarContratar,
-        cambiarEstadoContacto, abrirExpediente
+        cambiarEstadoContacto, abrirExpediente,
+        toggleFormCobro, registrarCobro, generarEsquema
     };
 })();

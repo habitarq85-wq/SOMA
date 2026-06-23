@@ -1,6 +1,9 @@
 const PROGRAMA = (() => {
     let currentLeadId = null;
 
+    const TIPOS_PROYECTO = ['Vivienda unifamiliar','Vivienda plurifamiliar','Departamento','Casa habitación','Oficina','Local comercial','Restaurante','Hotel','Otro'];
+    const PRECIOS_NIVEL = { esencial: 250, integral: 350, ejecutivo: 850 };
+
     async function abrir(id, readonly) {
         currentLeadId = id;
         const lead = LEADS.getLeads().find(l => l.id === id);
@@ -8,7 +11,7 @@ const PROGRAMA = (() => {
         document.getElementById('modal-prog-titulo').textContent = lead.nombre_cliente || lead.temp_id || '---';
         document.getElementById('modal-prog-id').textContent = `${lead.temp_id || '---'} · ${lead.fecha ? new Date(lead.fecha).toLocaleString() : ''}`;
 
-        const precios = { esencial: 250, integral: 350, ejecutivo: 850 };
+        const precios = PRECIOS_NIVEL;
         const pM2 = precios[lead.nivel_proyecto || 'esencial'] || 250;
         const honorarios = lead.honorarios_diseno || 0;
         const m2 = lead.m2 || 0;
@@ -18,16 +21,21 @@ const PROGRAMA = (() => {
                 <div class="form-group" style="gap:4px;">
                     <label style="font-size:.6rem;color:#888;">Nombre</label>
                     <input type="text" id="prog-nombre" value="${API.esc(lead.nombre_cliente || '')}" style="padding:4px;border:1px solid #ddd;border-radius:3px;font-size:.7rem;">
+                    <label style="font-size:.6rem;color:#888;">Teléfono</label>
+                    <input type="text" id="prog-telefono" value="${API.esc(lead.contacto || '')}" readonly style="padding:4px;border:1px solid #ddd;border-radius:3px;font-size:.7rem;background:#f4f1ea;">
                     <label style="font-size:.6rem;color:#888;">Proyecto</label>
                     <input type="text" id="prog-proyecto" value="${API.esc(lead.nombre_proyecto || '')}" style="padding:4px;border:1px solid #ddd;border-radius:3px;font-size:.7rem;">
-                    <label style="font-size:.6rem;color:#888;">Tipo</label>
-                    <input type="text" id="prog-tipo" value="${API.esc(lead.tipo_proyecto || '')}" style="padding:4px;border:1px solid #ddd;border-radius:3px;font-size:.7rem;">
+                    <label style="font-size:.6rem;color:#888;">Tipo de Proyecto</label>
+                    <select id="prog-tipo" style="padding:4px;border:1px solid #ddd;border-radius:3px;font-size:.7rem;">
+                        <option value="">— Seleccionar —</option>
+                        ${TIPOS_PROYECTO.map(t => `<option value="${t}" ${lead.tipo_proyecto === t ? 'selected' : ''}>${t}</option>`).join('')}
+                    </select>
                 </div>
                 <div class="form-group" style="gap:4px;">
                     <label style="font-size:.6rem;color:#888;">Nivel</label>
                     <select id="prog-nivel" style="padding:4px;border:1px solid #ddd;border-radius:3px;font-size:.7rem;" onchange="PROGRAMA.actualizarPrecio()">
                         ${['esencial','integral','ejecutivo'].map(n =>
-                            `<option value="${n}" ${lead.nivel_proyecto === n ? 'selected' : ''}>${n.charAt(0).toUpperCase()+n.slice(1)}</option>`
+                            `<option value="${n}" ${lead.nivel_proyecto === n ? 'selected' : ''}>${n.charAt(0).toUpperCase()+n.slice(1)} (${PRECIOS_NIVEL[n]}/m²)</option>`
                         ).join('')}
                     </select>
                     <label style="font-size:.6rem;color:#888;">m²</label>
@@ -66,6 +74,7 @@ const PROGRAMA = (() => {
     function mostrarSeccion(seccion) {
         const id = currentLeadId;
         if (!id) return;
+        guardarDatos(true);
         if (seccion === 'programa') {
             cargarPrograma(id, 'modal-prog-body');
         } else {
@@ -94,6 +103,7 @@ const PROGRAMA = (() => {
         try {
             const espacios = await API.getPrograma(leadId);
             const filtrados = espacios.filter(e => e.tipo === tipo);
+            const totalArea = filtrados.reduce((s, e) => s + (e.area || 0), 0);
             let html = `<table class="data-table">
                 <tr><th>Espacio</th><th>Área m²</th><th>Zona</th><th>Clave</th><th></th></tr>
                 ${filtrados.map(e => `<tr>
@@ -103,6 +113,7 @@ const PROGRAMA = (() => {
                     <td>${API.esc(e.clave || '')}</td>
                     <td><button class="cand-btn btn-close" style="padding:2px 6px;font-size:.5rem;" onclick="PROGRAMA.eliminarEspacio(${e.id},${leadId},'${containerId}','${tipo}')">✕</button></td>
                 </tr>`).join('')}
+                <tr style="border-top:2px solid #000;font-weight:600;"><td><strong>Total ${tipo}</strong></td><td style="text-align:right;"><strong>${totalArea.toFixed(1)} m²</strong></td><td></td><td></td><td></td></tr>
             </table>`;
 
             // Form to add new space
@@ -160,25 +171,40 @@ const PROGRAMA = (() => {
         el.innerHTML = '<p class="loading-text">Generando cotización...</p>';
         try {
             const data = await API.getCotizacion(leadId);
-            el.innerHTML = `<table class="data-table">
-                <tr><th>Concepto</th><th class="right">Valor</th></tr>
-                <tr><td>m² (web)</td><td class="right">${data.m2_lead_original || 0}</td></tr>
-                <tr><td>m² (programa)</td><td class="right">${data.m2_programa_real || 0}</td></tr>
-                <tr><td>Nivel</td><td class="right">${API.esc(data.nivel || '')}</td></tr>
-                <tr><td>Precio m²</td><td class="right">$${Number(data.precio_m2 || 0).toLocaleString()}</td></tr>
-                <tr><td><strong>Honorarios</strong></td><td class="right"><strong>$${Number(data.honorarios_reales || 0).toLocaleString()}</strong></td></tr>
-                <tr><td>Inversión obra (mín)</td><td class="right">$${Number(data.obra_min_estimada || 0).toLocaleString()}</td></tr>
-                <tr><td>Inversión obra (máx)</td><td class="right">$${Number(data.obra_max_estimada || 0).toLocaleString()}</td></tr>
+            const tiposHtml = data.totales_por_tipo
+                ? Object.entries(data.totales_por_tipo).map(([t, a]) =>
+                    `<tr><td>${t}</td><td class="right">${a.toFixed(1)} m²</td></tr>`
+                  ).join('')
+                : '';
+            el.innerHTML = `
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <h4 style="font-family:'JetBrains Mono';font-size:.65rem;color:#2e7d32;text-transform:uppercase;">Cotización Formal</h4>
+                <button class="cand-btn btn-dark" style="font-size:.55rem;padding:6px 12px;width:auto;" onclick="window.open('/cotizacion/${leadId}/pdf','_blank')">📄 PDF</button>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-family:'JetBrains Mono';font-size:.6rem;margin-bottom:10px;">
+                <div>Cliente: <strong>${API.esc(data.contacto || '')}</strong></div>
+                <div>Nivel: <strong>${(data.nivel||'').toUpperCase()}</strong></div>
+                <div>m² Web (estimado): <strong>${data.m2_lead_original || 0}</strong></div>
+                <div>m² Programa Real: <strong style="color:#2e7d32;">${data.m2_programa_real || 0}</strong></div>
+            </div>
+            <table class="data-table" style="margin-bottom:10px;">
+                ${tiposHtml}
+                <tr style="border-top:2px solid #000;font-weight:600;"><td>Total Programa</td><td class="right">${data.m2_programa_real || 0} m²</td></tr>
             </table>
-            <div style="margin-top:10px;text-align:center;">
-                <button class="cand-btn btn-dark" style="font-size:.65rem;padding:6px 20px;" onclick="window.open('/cotizacion/${leadId}/pdf','_blank')">📄 GENERAR PDF</button>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-family:'JetBrains Mono';font-size:.6rem;background:#f4f1ea;padding:10px;border-radius:4px;">
+                <div>Honorarios x $${data.precio_m2}/m²</div>
+                <div style="text-align:right;font-weight:600;">$${Number(data.honorarios_reales || 0).toLocaleString()}</div>
+                <div>Obra estimada (mín)</div>
+                <div style="text-align:right;">$${Number(data.obra_min_estimada || 0).toLocaleString()}</div>
+                <div>Obra estimada (máx)</div>
+                <div style="text-align:right;">$${Number(data.obra_max_estimada || 0).toLocaleString()}</div>
             </div>`;
         } catch (_) {
             el.innerHTML = '<p class="loading-text">Primero guarda el programa arquitectónico.</p>';
         }
     }
 
-    async function guardarDatos() {
+    async function guardarDatos(silent) {
         const id = currentLeadId;
         if (!id) return;
         const ubicacion = JSON.stringify({
@@ -198,9 +224,11 @@ const PROGRAMA = (() => {
         };
         try {
             await API.guardarDatosProyecto(id, data);
-            UI.notify('Datos guardados');
-            await App.refresh();
-        } catch (e) { UI.notify(e.message, 'error'); }
+            if (!silent) {
+                UI.notify('Datos guardados');
+                await App.refresh();
+            }
+        } catch (e) { if (!silent) UI.notify(e.message, 'error'); }
     }
 
     function actualizarPrecio() {
@@ -235,6 +263,7 @@ const PROGRAMA = (() => {
         cargarPrograma, mostrarTipo,
         agregarEspacio, eliminarEspacio,
         generarCotizacion, guardarDatos,
-        actualizarPrecio, actualizarM2yHonorarios
+        actualizarPrecio, actualizarM2yHonorarios,
+        TIPOS_PROYECTO, PRECIOS_NIVEL
     };
 })();

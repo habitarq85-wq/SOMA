@@ -134,6 +134,32 @@ footer {
     font-family: 'JetBrains Mono', monospace;
 }
 
+/* ===== SECTION DESCRIPTIONS ===== */
+.section-desc {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .6rem;
+    color: #999;
+    margin-bottom: 15px;
+}
+
+/* ===== M2 PHASE CONTAINERS ===== */
+.phase-container {
+    border-radius: 6px;
+    padding: 10px;
+}
+.phase-container h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .65rem;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+.phase-container .phase-desc {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .5rem;
+    color: #999;
+    margin-bottom: 10px;
+}
+
 /* ===== CARDS ===== */
 .cards-grid {
     display: grid;
@@ -141,39 +167,47 @@ footer {
     gap: 10px;
 }
 .cand-card {
-    border: 2px solid #ddd;
+    background: #fff;
+    border: 1px solid #e0d5c1;
     border-radius: 6px;
-    overflow: hidden;
+    padding: 16px;
+    position: relative;
     transition: box-shadow .2s;
 }
 .cand-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,.08); }
 .card-header {
-    padding: 10px 12px;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
     user-select: none;
 }
-.card-header .cand-id { font-family: 'JetBrains Mono', monospace; font-size: .65rem; font-weight: 600; }
-.card-header .card-toggle { font-size: .7rem; transition: transform .2s; }
+.card-header:hover { opacity: .7; }
+.card-header .cand-id { font-family: 'JetBrains Mono', monospace; font-size: .7rem; font-weight: 600; }
+.card-header .card-toggle { font-size: .7rem; transition: transform .2s; color: #999; }
 .card-header .card-toggle.open { transform: rotate(90deg); }
-.card-body {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height .3s ease, opacity .3s ease;
-    opacity: 0;
-}
-.card-body.open {
-    max-height: 2000px;
-    opacity: 1;
-}
-.card-body-inner { padding: 0 12px 12px; }
+.card-body { overflow: hidden; max-height: 0; opacity: 0; transition: max-height .3s ease, opacity .3s ease, margin .3s ease; margin-top: 0; }
+.card-body.open { max-height: 2000px; opacity: 1; margin-top: 12px; }
 .card-detail {
     font-family: 'JetBrains Mono', monospace;
     font-size: .6rem;
     color: #666;
     margin-bottom: 4px;
+}
+.card-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: .75rem;
+}
+.card-field .label {
+    color: #888;
+    min-width: 80px;
+    font-size: .65rem;
+    text-transform: uppercase;
+    letter-spacing: .5px;
 }
 .card-actions {
     display: flex;
