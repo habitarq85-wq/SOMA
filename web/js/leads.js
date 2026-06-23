@@ -72,6 +72,7 @@ function buildCardActions(l) {
     if (fase === 'lead' || fase === 'entrevistado' || fase === 'programado' || fase === 'cotizado') {
         if (l.respuestas_json && l.respuestas_json !== '{}')
             b += btn('CONTRATAR', 'btn-blue', `onclick="LEADS.abrirContratar(${l.id})"`);
+        b += btn('ELIMINAR', 'btn-close', `onclick="LEADS.eliminar(${l.id})"`);
     } else if (fase === 'contratado') {
         b += btn('1RA ENTREGA', 'btn-blue', `onclick="LEADS.avanzar(${l.id},'primera_entrega','Anticipo')"`);
     } else if (fase === 'primera_entrega') {
