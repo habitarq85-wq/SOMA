@@ -4,15 +4,20 @@ const App = (() => {
 
     async function refresh() {
         if (isLoading) return;
-        if(document.querySelector('.modal-overlay.active')) return;
         isLoading = true;
         try {
-            await LEADS.load();
-            await EGRESOS.load();
-            await FONDOS.load();
-            updateClock();
+            await Promise.race([
+                (async () => {
+                    await LEADS.load();
+                    await EGRESOS.load();
+                    await FONDOS.load();
+                    updateClock();
+                })(),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Refresh timeout')), 15000))
+            ]);
         } catch (e) {
-            console.error('Refresh error:', e);
+            if (e.message === 'Refresh timeout') console.error('Refresh timed out after 15s');
+            else console.error('Refresh error:', e);
         } finally {
             isLoading = false;
         }
@@ -31,7 +36,9 @@ const App = (() => {
         if (mesSel) mesSel.value = mes;
         if (anoSel) anoSel.value = ano;
 
-        refreshTimer = setInterval(refresh, 30000);
+        refreshTimer = setInterval(() => {
+            if (!document.querySelector('.modal-overlay.active')) refresh();
+        }, 30000);
         refresh();
     }
 
@@ -39,17 +46,22 @@ const App = (() => {
 })();
 
 async function cargarMetrics() {
-    const mes = document.getElementById('period-mes').value;
-    const ano = document.getElementById('period-ano').value;
     try {
+        const mesEl = document.getElementById('period-mes');
+        const anoEl = document.getElementById('period-ano');
+        if (!mesEl || !anoEl) { console.warn('period-mes/ano not found'); return; }
+        const mes = mesEl.value;
+        const ano = anoEl.value;
         const d = await API.getMetrics(ano, mes);
-        document.getElementById('gp-total-clientes').innerText = d.total_clientes;
-        document.getElementById('gp-anticipos').innerText = '$' + Number(d.anticipos).toLocaleString();
-        document.getElementById('gp-primera-entrega').innerText = '$' + Number(d.primera_entrega).toLocaleString();
-        document.getElementById('gp-pagos-finales').innerText = '$' + Number(d.pagos_finales).toLocaleString();
-        document.getElementById('gp-ingresos-periodo').innerText = '$' + Number(d.ingresos_periodo).toLocaleString();
-        document.getElementById('gp-gasto-operacion').innerText = '$' + Number(d.gasto_operacion).toLocaleString();
-        document.getElementById('periodo-label').textContent = d.periodo;
+        const setText = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+        setText('gp-total-clientes', d.total_clientes);
+        setText('gp-anticipos', '$' + Number(d.anticipos).toLocaleString());
+        setText('gp-primera-entrega', '$' + Number(d.primera_entrega).toLocaleString());
+        setText('gp-pagos-finales', '$' + Number(d.pagos_finales).toLocaleString());
+        setText('gp-ingresos-periodo', '$' + Number(d.ingresos_periodo).toLocaleString());
+        setText('gp-gasto-operacion', '$' + Number(d.gasto_operacion).toLocaleString());
+        const pl = document.getElementById('periodo-label');
+        if (pl) pl.textContent = d.periodo;
     } catch (e) { console.error('Metrics error:', e); }
 }
 

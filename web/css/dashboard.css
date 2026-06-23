@@ -2,6 +2,9 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#0a0a0a;--surface:#141414;--surface2:#1a1a1a;--accent:#d45e2c;--text:#f0f0f0;--text2:#999;--text3:#666;--border:#222}
 body{background:var(--bg);color:var(--text);font-family:Georgia,'Times New Roman',serif;min-height:100vh}
+input[readonly]::-webkit-outer-spin-button,
+input[readonly]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+input[readonly][type="number"]{-moz-appearance:textfield;appearance:textfield}
 
 /* ===== LAYOUT ===== */
 .magazine-header {

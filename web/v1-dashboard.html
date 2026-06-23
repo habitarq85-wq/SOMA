@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOMA | Dashboard de Gestión</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        .axis-bar { display: flex; align-items: center; gap: 8px; font-size: 0.6rem; font-family: 'JetBrains Mono', monospace; }
+        .axis-bar .bar-track { flex: 1; height: 4px; background: #eee; position: relative; border-radius: 2px; }
+        .axis-bar .bar-fill { height: 100%; border-radius: 2px; position: absolute; top: 0; }
+        .axis-bar .bar-label { min-width: 60px; text-align: right; color: #888; }
+        .axis-bar .bar-value { min-width: 50px; text-align: left; font-weight: 600; }
+
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.85); z-index: 1000; overflow-y: auto; padding: 40px; }
+        .modal-overlay.active { display: flex; align-items: flex-start; justify-content: center; }
+        .modal-content { background: #fff; max-width: 800px; width: 100%; padding: 40px; position: relative; margin-top: 20px; }
+        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; background: none; border: none; font-family: 'Inter', sans-serif; }
+        .modal-close:hover { color: #a6937c; }
+        .modal-content pre { background: #f4f1ea; padding: 15px; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; white-space: pre-wrap; line-height: 1.6; max-height: 500px; overflow-y: auto; }
+
+        .lead-badge { display: inline-block; padding: 2px 8px; font-size: 0.55rem; font-family: 'JetBrains Mono', monospace; text-transform: uppercase; border-radius: 3px; }
+        .badge-esencial { background: #e8f5e9; color: #2e7d32; }
+        .badge-integral { background: #fff3e0; color: #ef6c00; }
+        .badge-ejecutivo { background: #fce4ec; color: #c62828; }
+
+        .filter-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .filter-bar input, .filter-bar select { padding: 8px 12px; font-family: 'Inter', sans-serif; font-size: 0.75rem; border: 1px solid #ddd; background: #fff; }
+        .filter-bar input { flex: 1; min-width: 200px; }
+
+        .candidatos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-bottom:10px}
+        .cand-card{background:#fff;border:1px solid #e0d5c1;border-radius:6px;padding:16px;position:relative}
+        .cand-card .cand-id{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:#d4af37;font-weight:600}
+        .cand-card .cand-field{display:flex;align-items:center;gap:8px;margin-top:8px;font-family:'Inter',sans-serif;font-size:.75rem}
+        .cand-card .cand-field .label{color:#888;min-width:80px;font-size:.65rem;text-transform:uppercase;letter-spacing:.5px}
+        .cand-card .cand-field .value{font-weight:500}
+        .cand-card .cand-inmersion{color:#2e7d32;font-weight:600}
+        .cand-card .cand-cotizacion{color:#333}
+        .cand-card select.cand-estado{padding:4px 8px;font-family:'Inter',sans-serif;font-size:.7rem;border:1px solid #ddd;border-radius:3px;background:#fff}
+        .cand-card .cand-btn{background:#d4af37;color:#fff;border:none;padding:6px 16px;border-radius:4px;font-family:'Inter',sans-serif;font-size:.7rem;cursor:pointer;margin-top:10px;font-weight:600}
+        .cand-card .cand-btn:hover{background:#b8962e}
+
+        .cand-card .card-header {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+        .cand-card .card-header:hover { opacity: .7; }
+        .cand-card .card-toggle { font-size: .7rem; color: #999; transition: transform .2s; }
+        .cand-card .card-toggle.open { transform: rotate(90deg); }
+        .cand-card .card-body { overflow: hidden; max-height: 0; opacity: 0; transition: max-height .3s ease, opacity .3s ease, margin .3s ease; margin-top: 0; }
+        .cand-card .card-body.open { max-height: 600px; opacity: 1; margin-top: 12px; }
+
+        @media (max-width: 768px) {
+            .magazine-layout { grid-template-columns: 1fr; }
+            .block-section.half-width { grid-column: span 1; }
+            .admin-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="magazine-header">
+        <div class="logo-area">
+            <h1>SOMA</h1>
+            <p class="subtitle">Dashboard de Gestión</p>
+        </div>
+        <div class="issue-info" style="text-align:right;font-family:'JetBrains Mono';font-size:.7rem;">
+            <span id="last-update">ACTUALIZANDO...</span><br>
+            <span>PUERTO 8080</span>
+        </div>
+    </header>
+
+    <main class="magazine-layout">
+
+        <!-- BLOQUE 1: GESTIÓN DE PROYECTOS -->
+        <section class="block-section full-width" style="border-top:4px solid #000;padding-top:20px;">
+            <div class="block-header">
+                <h2 class="block-title">BLOQUE 01: GESTIÓN DE PROYECTOS</h2>
+                <span class="block-num">GP</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;font-family:'JetBrains Mono';font-size:.6rem;">
+                <span style="color:#888;">Período:</span>
+                <select id="period-mes" onchange="cambiarPeriodo()" style="padding:4px 8px;border:1px solid #ddd;border-radius:3px;font-family:'JetBrains Mono';font-size:.65rem;">
+                    <option value="">— Año completo —</option>
+                    <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
+                    <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
+                    <option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
+                    <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+                </select>
+                <select id="period-ano" onchange="cambiarPeriodo()" style="padding:4px 8px;border:1px solid #ddd;border-radius:3px;font-family:'JetBrains Mono';font-size:.65rem;">
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                </select>
+                <span id="periodo-label" style="color:#2e7d32;font-weight:600;">2026</span>
+            </div>
+            <div class="admin-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:20px;margin-bottom:20px;">
+                <div class="admin-card"><span class="label">Clientes Activos</span><p id="gp-total-clientes" class="admin-val">0</p></div>
+                <div class="admin-card"><span class="label">Anticipos</span><p id="gp-anticipos" class="admin-val">$0</p></div>
+                <div class="admin-card"><span class="label">Pagos 1.ª Entrega</span><p id="gp-primera-entrega" class="admin-val">$0</p></div>
+                <div class="admin-card"><span class="label">Pagos Finales</span><p id="gp-pagos-finales" class="admin-val">$0</p></div>
+                <div class="admin-card"><span class="label" style="color:#2e7d32;font-weight:700;">Ingresos del Período</span><p id="gp-ingresos-periodo" class="admin-val" style="color:#2e7d32;font-weight:700;">$0</p></div>
+                <div class="admin-card"><span class="label" style="color:#c62828;">Gasto de Operación</span><p id="gp-gasto-operacion" class="admin-val" style="color:#c62828;">$0</p></div>
+            </div>
+        </section>
+
+        <!-- BLOQUE 1b: CANDIDATOS (MOMENTO 1) -->
+        <section class="block-section full-width" style="border-top:4px solid #d4af37;padding-top:20px;">
+            <div class="block-header">
+                <h2 class="block-title">CANDIDATOS — MOMENTO 1</h2>
+                <span class="block-num">INMERSIÓN</span>
+            </div>
+            <p style="font-family:'JetBrains Mono';font-size:.6rem;color:#999;margin-bottom:15px;">
+                Leads registrados vía página web. Pendientes de contacto y contratación.
+            </p>
+            <div id="candidatos-container" class="candidatos-grid">
+                <p style="font-family:'JetBrains Mono';font-size:.6rem;color:#999;">Cargando candidatos...</p>
+            </div>
+        </section>
+
+        <!-- CLIENTES — MOMENTO 2 -->
+        <section class="block-section full-width" style="border-top:4px solid #2e7d32;padding-top:20px;">
+            <div class="block-header">
+                <h2 class="block-title">CLIENTES — MOMENTO 2</h2>
+                <span class="block-num">3 FASES</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;margin-top:10px;">
+                <div style="border:1px solid #2e7d32;border-radius:6px;padding:10px;background:rgba(46,125,50,0.03);">
+                    <h4 style="font-family:'JetBrains Mono';font-size:.65rem;color:#2e7d32;text-transform:uppercase;margin-bottom:8px;">● FASE 1 — CONTRATADO</h4>
+                    <p style="font-family:'JetBrains Mono';font-size:.5rem;color:#999;margin-bottom:10px;">Anticipo pagado</p>
+                    <div id="momento2-fase1" class="candidatos-grid" style="grid-template-columns:1fr;"></div>
+                </div>
+                <div style="border:1px solid #1565c0;border-radius:6px;padding:10px;background:rgba(21,101,192,0.03);">
+                    <h4 style="font-family:'JetBrains Mono';font-size:.65rem;color:#1565c0;text-transform:uppercase;margin-bottom:8px;">● FASE 2 — 1RA ENTREGA</h4>
+                    <p style="font-family:'JetBrains Mono';font-size:.5rem;color:#999;margin-bottom:10px;">Primer bloque entregado</p>
+                    <div id="momento2-fase2" class="candidatos-grid" style="grid-template-columns:1fr;"></div>
+                </div>
+                <div style="border:1px solid #6a1b9a;border-radius:6px;padding:10px;background:rgba(106,27,154,0.03);">
+                    <h4 style="font-family:'JetBrains Mono';font-size:.65rem;color:#6a1b9a;text-transform:uppercase;margin-bottom:8px;">● FASE 3 — ENTREGA FINAL</h4>
+                    <p style="font-family:'JetBrains Mono';font-size:.5rem;color:#999;margin-bottom:10px;">Proyecto completo</p>
+                    <div id="momento2-fase3" class="candidatos-grid" style="grid-template-columns:1fr;"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MOMENTO 3: PROYECTOS CONCLUIDOS -->
+        <section class="block-section full-width" style="border-top:4px solid #555;padding-top:20px;">
+            <div class="block-header">
+                <h2 class="block-title" style="color:#555;">MOMENTO 3 — PROYECTOS CONCLUIDOS</h2>
+                <span class="block-num">ARCHIVO</span>
+            </div>
+            <div id="momento3-container" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;margin-top:10px;">
+                <p style="font-family:'JetBrains Mono';font-size:.6rem;color:#999;">Cargando...</p>
+            </div>
+        </section>
+
+        <!-- BLOQUE 02: EGRESOS -->
+        <section class="block-section full-width" style="border-top:4px solid #c62828;padding-top:20px;">
+            <div class="block-header">
+                <h2 class="block-title">BLOQUE 02: EGRESOS</h2>
+                <span class="block-num">GASTOS</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 2fr;gap:20px;margin-top:10px;">
+                <div style="border:1px solid #e0d5c1;border-radius:6px;padding:15px;">
+                    <h4 style="font-family:'JetBrains Mono';font-size:.65rem;text-transform:uppercase;margin-bottom:12px;">Registrar Gasto</h4>
+                    <div style="display:grid;gap:8px;">
+                        <select id="egr-categoria" style="padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;">
+                            <option value="">— Categoría —</option>
+                            <option value="Luz">Luz</option>
+                            <option value="Internet">Internet</option>
+                            <option value="Teléfono">Teléfono</option>
+                            <option value="Suscripciones">Suscripciones</option>
+                            <option value="Equipo">Equipo</option>
+                            <option value="Mantenimiento">Mantenimiento</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                        <input type="text" id="egr-concepto" placeholder="Concepto" style="padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;">
+                        <input type="number" id="egr-monto" placeholder="Monto $" style="padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;">
+                        <input type="date" id="egr-fecha" style="padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;">
+                        <button class="cand-btn" style="background:#c62828;color:#fff;font-size:.75rem;" onclick="registrarEgreso()">+ AGREGAR</button>
+                        <span id="egr-msg" style="font-size:.65rem;color:#2e7d32;"></span>
+                    </div>
+                </div>
+                <div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                        <h4 style="font-family:'JetBrains Mono';font-size:.65rem;text-transform:uppercase;">Historial</h4>
+                        <span id="egr-total-mes" style="font-family:'JetBrains Mono';font-size:.9rem;font-weight:700;color:#c62828;">$0</span>
+                    </div>
+                    <div id="egr-lista" style="font-family:'JetBrains Mono';font-size:.6rem;color:#999;">Cargando...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOQUE 03: FONDOS DE PROVISIÓN -->
+        <section class="block-section full-width" style="border-top:4px solid #d4af37;padding-top:20px;">
+            <div class="block-header">
+                <h2 class="block-title">BLOQUE 03: FONDOS DE PROVISIÓN</h2>
+                <span class="block-num">FONDOS</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 2fr;gap:20px;margin-top:10px;">
+                <div style="border:1px solid #e0d5c1;border-radius:6px;padding:15px;">
+                    <h4 style="font-family:'JetBrains Mono';font-size:.65rem;text-transform:uppercase;margin-bottom:12px;">Nuevo Fondo</h4>
+                    <div style="display:grid;gap:8px;">
+                        <input type="text" id="fnd-nombre" placeholder="Nombre (ej. Equipo Cómputo)" style="padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;">
+                        <input type="number" id="fnd-mensual" placeholder="Aportación mensual $" style="padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;">
+                        <button class="cand-btn" style="background:#d4af37;color:#fff;font-size:.75rem;" onclick="crearFondo()">+ CREAR FONDO</button>
+                        <span id="fnd-msg" style="font-size:.65rem;color:#2e7d32;"></span>
+                    </div>
+                    <h4 style="font-family:'JetBrains Mono';font-size:.65rem;text-transform:uppercase;margin:20px 0 12px;">Aportar / Retirar</h4>
+                    <div style="display:grid;gap:8px;">
+                        <select id="fnd-select" style="padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;">
+                            <option value="">— Seleccionar fondo —</option>
+                        </select>
+                        <input type="number" id="fnd-monto" placeholder="Monto $" style="padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;">
+                        <input type="text" id="fnd-concepto" placeholder="Concepto" style="padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;">
+                        <div style="display:flex;gap:8px;">
+                            <button class="cand-btn" style="flex:1;background:#2e7d32;color:#fff;font-size:.7rem;" onclick="apartarFondo()">+ APORTAR</button>
+                            <button class="cand-btn" style="flex:1;background:#c62828;color:#fff;font-size:.7rem;" onclick="retirarFondo()">− RETIRAR</button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div id="fnd-tarjetas" style="display:grid;gap:12px;">Cargando...</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL EXPEDIENTE TÉCNICO -->
+    <div id="modal-expediente" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" onclick="cerrarModal()">✕</button>
+            <h2 style="font-family:'Playfair Display';font-size:1.8rem;margin-bottom:5px;" id="modal-titulo">Expediente</h2>
+            <p style="font-family:'JetBrains Mono';font-size:.65rem;color:#999;margin-bottom:20px;" id="modal-id"></p>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- MODAL CONTRATAR (MOMENTO 2) -->
+    <div id="modal-contratar" class="modal-overlay">
+        <div class="modal-content" style="max-width:400px;">
+            <button class="modal-close" onclick="cerrarContratar()">✕</button>
+            <h2 style="font-family:'Playfair Display';font-size:1.8rem;margin-bottom:5px;">Confirmar Contratación</h2>
+            <p style="font-family:'JetBrains Mono';font-size:.65rem;color:#999;margin-bottom:20px;">¿Estás seguro de pasar este lead a <strong>Momento 2 (Clientes)</strong>?</p>
+            <div style="font-family:'Inter',sans-serif;text-align:center;">
+                <p style="font-size:.8rem;margin-bottom:20px;" id="cont-resumen">Cargando...</p>
+                <button onclick="confirmarContratar()" style="width:100%;padding:10px;background:#2e7d32;color:#fff;border:none;border-radius:4px;font-size:.85rem;font-weight:600;cursor:pointer;">✓ Sí, pasar a Momento 2</button>
+                <button onclick="cerrarContratar()" style="width:100%;padding:8px;background:transparent;color:#888;border:none;font-size:.75rem;cursor:pointer;margin-top:8px;">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PROGRAMA ARQUITECTONICO -->
+    <div id="modal-programa" class="modal-overlay">
+        <div class="modal-content" style="max-width:900px;">
+            <button class="modal-close" onclick="cerrarModalPrograma()">✕</button>
+            <h2 style="font-family:'Playfair Display';font-size:1.8rem;margin-bottom:5px;" id="modal-prog-titulo">Programa Arquitectónico</h2>
+            <p style="font-family:'JetBrains Mono';font-size:.65rem;color:#999;margin-bottom:10px;" id="modal-prog-id"></p>
+            <div id="modal-prog-header"></div>
+            <div style="display:flex;gap:8px;margin-bottom:15px;">
+                <button class="btn-soma" style="margin:0;font-size:.6rem;flex:1;background:#6b8f6b;color:#fff;" onclick="mostrarSeccionPrograma('programa')">📐 Programa</button>
+                <button class="btn-soma" style="margin:0;font-size:.6rem;flex:1;background:#d4af37;color:#fff;" onclick="mostrarSeccionPrograma('cotizacion')">💰 Cotización</button>
+            </div>
+            <div id="modal-prog-body"></div>
+        </div>
+    </div>
+
+    <footer>"Lo protocolario se programa, lo creativo se libera." | SOMA 2026</footer>
+
+    <script>
+        const API_BASE = window.location.origin;
+        const API_URL = API_BASE + "/get_leads";
+        const COBROS_API = API_BASE + "/cobros";
+        const FONDO_API = API_BASE + "/fondo_democratizacion";
+        const NOTIF_API = API_BASE + "/notificaciones/status";
+        const PROGRAMA_API = API_BASE + "/programa";
+        const COTIZACION_API = API_BASE + "/cotizacion";
+        const PIPELINE_ESTADOS = ['lead', 'entrevistado', 'programado', 'cotizado', 'contratado', 'primera_entrega', 'entrega_final', 'terminado'];
+        let leadsData = [];
+        async function cargarMetrics() {
+            const mes = document.getElementById('period-mes').value;
+            const ano = document.getElementById('period-ano').value;
+            let url = '/metrics/bloque01?year=' + ano;
+            if (mes) url += '&month=' + mes;
+            try {
+                const r = await fetch(url);
+                if (r.ok) {
+                    const d = await r.json();
+                    document.getElementById('gp-total-clientes').innerText = d.total_clientes;
+                    document.getElementById('gp-anticipos').innerText = '$' + Number(d.anticipos).toLocaleString();
+                    document.getElementById('gp-primera-entrega').innerText = '$' + Number(d.primera_entrega).toLocaleString();
+                    document.getElementById('gp-pagos-finales').innerText = '$' + Number(d.pagos_finales).toLocaleString();
+                    document.getElementById('gp-ingresos-periodo').innerText = '$' + Number(d.ingresos_periodo).toLocaleString();
+                    document.getElementById('gp-gasto-operacion').innerText = '$' + Number(d.gasto_operacion).toLocaleString();
+                    document.getElementById('periodo-label').textContent = d.periodo;
+                }
+            } catch(e) { console.error('Metrics error:', e); }
+        }
+
+        function cambiarPeriodo() {
+            cargarMetrics();
+            // Guardar preferencia en localStorage
+            localStorage.setItem('soma-period-mes', document.getElementById('period-mes').value);
+            localStorage.setItem('soma-period-ano', document.getElementById('period-ano').value);
+        }
+
+        async function cargarLeads() {
+            await cargarMetrics();
+            document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
+            try {
+                const r = await fetch(API_URL);
+                leadsData = await r.json();
+            } catch(e) {
+                leadsData = [];
+            }
+            renderCandidatos();
+            renderClientesMomento2();
+            renderMomento3(leadsData.filter(l => l.pipeline_estado === 'terminado'));
+            cargarEgresos();
+            const fechaInput = document.getElementById('egr-fecha');
+            if (fechaInput) fechaInput.value = new Date().toISOString().slice(0,10);
+        }
+
+        function toggleCard(el) {
+            const card = el.closest('.cand-card');
+            const body = card.querySelector('.card-body');
+            const toggle = card.querySelector('.card-toggle');
+            const isOpen = body.classList.toggle('open');
+            toggle.classList.toggle('open', isOpen);
+        }
+
+        function renderCandidatos() {
+            const container = document.getElementById('candidatos-container');
+            const candidatos = leadsData.filter(l => ['lead','entrevistado','programado','cotizado'].includes(l.pipeline_estado||'lead'));
+            if (candidatos.length === 0) {
+                container.innerHTML = '<p style="font-family:\'JetBrains Mono\';font-size:.6rem;color:#999;">Sin candidatos por el momento.</p>';
+                return;
+            }
+            container.innerHTML = candidatos.map(l => {
+                const resp = (() => { try { return JSON.parse(l.respuestas_json || '{}'); } catch { return {}; } })();
+                const countResp = Object.keys(resp).length;
+                const inmersiónOk = countResp >= 10 ? '<span style="color:#2e7d32;">● Completada</span>' : '<span style="color:#f39c12;">● Incompleta</span>';
+                const m2 = l.m2 || 0;
+                const nivel = l.nivel_proyecto || 'esencial';
+                const precioM2 = nivel === 'ejecutivo' ? 850 : nivel === 'integral' ? 350 : 250;
+                const honorarios = l.honorarios_diseno || Math.max(m2 * precioM2, 6500);
+                const presupuesto = Number(l.presupuesto) || 0;
+                const estContacto = l.estado_contacto || 'no programado';
+                const nombre = l.nombre_cliente || '';
+                return `<div class="cand-card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <div><span class="cand-id">${l.temp_id||'---'}</span>${nombre ? ` <span style="font-family:'Inter',sans-serif;font-size:.75rem;font-weight:500;margin-left:6px;">${nombre}</span>` : ''}</div>
+                        <span class="card-toggle">▶</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="cand-field"><span class="label">Inmersión</span><span class="cand-inmersion">${inmersiónOk}</span></div>
+                        <div class="cand-field"><span class="label">Cotización</span><span class="cand-cotizacion">${m2} m² · ${nivel.charAt(0).toUpperCase()+nivel.slice(1)} · <strong>$${honorarios.toLocaleString()} diseño</strong></span></div>
+                        ${presupuesto ? `<div class="cand-field"><span class="label">Presupuesto</span><span>$${presupuesto.toLocaleString()} MXN</span></div>` : ''}
+                        <div class="cand-field">
+                            <span class="label">Contacto</span>
+                            <select class="cand-estado" data-lead-id="${l.id}" onchange="actualizarEstadoContacto(this, '${l.id}')">
+                                <option value="no programado" ${estContacto==='no programado'?'selected':''}>No programado</option>
+                                <option value="programado" ${estContacto==='programado'?'selected':''}>Programado</option>
+                                <option value="no localizado" ${estContacto==='no localizado'?'selected':''}>No localizado</option>
+                            </select>
+                        </div>
+                        <div style="display:flex;gap:6px;margin-top:10px;">
+                            <button class="cand-btn" style="flex:1;font-size:.65rem;background:#555;" onclick="abrirModal(${l.id})">EXPEDIENTE</button>
+                            <button class="cand-btn" style="flex:1;font-size:.65rem;background:#6b8f6b;color:#fff;" onclick="abrirPrograma(${l.id})">PROGRAMA</button>
+                            <button class="cand-btn" style="flex:1;font-size:.65rem;" onclick="abrirContratar(${l.id})">CONTRATAR</button>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function renderClientesMomento2() {
+            const fases = {
+                contratado: { id: 'momento2-fase1', color: '#2e7d32', label: 'Fase 1' },
+                primera_entrega: { id: 'momento2-fase2', color: '#1565c0', label: 'Fase 2' },
+                entrega_final: { id: 'momento2-fase3', color: '#6a1b9a', label: 'Fase 3' }
+            };
+            const clientesPorFase = { contratado: [], primera_entrega: [], entrega_final: [], terminado: [] };
+            leadsData.forEach(l => {
+                const est = l.pipeline_estado || '';
+                if (clientesPorFase[est] !== undefined) clientesPorFase[est].push(l);
+            });
+            Object.keys(fases).forEach(fase => {
+                const container = document.getElementById(fases[fase].id);
+                const items = clientesPorFase[fase];
+                if (items.length === 0) {
+                    container.innerHTML = '<p style="font-family:\'JetBrains Mono\';font-size:.55rem;color:#999;">Vacío</p>';
+                    return;
+                }
+                container.innerHTML = items.map(l => {
+                    const ubic = (() => { try { return JSON.parse(l.ubicacion||'{}'); } catch { return {}; } })();
+                    const dirParts = [ubic.calle_numero, ubic.colonia].filter(Boolean).join(', ');
+                    const ciudadPart = [ubic.ciudad, ubic.estado].filter(Boolean).join(', ');
+                    let botones = '';
+                    if (fase === 'contratado') {
+                        botones += `<button class="cand-btn" style="flex:1;font-size:.6rem;background:#888;color:#fff;" onclick="regresarLead(${l.id})">REGRESAR</button>`;
+                        botones += `<button class="cand-btn" style="flex:1;font-size:.6rem;background:#d4af37;color:#fff;" onclick="pagarCobro(${l.id},'Anticipo')">ANTICIPO</button>`;
+                    }
+                    botones += `<button class="cand-btn" style="flex:1;font-size:.6rem;background:#555;" onclick="abrirModal(${l.id})">EXPEDIENTE</button>`;
+                    botones += `<button class="cand-btn" style="flex:1;font-size:.6rem;background:#6b8f6b;color:#fff;" onclick="abrirPrograma(${l.id},true)">PROGRAMA</button>`;
+                    if (fase === 'contratado') {
+                        botones += `<button class="cand-btn" style="flex:1;font-size:.6rem;background:#1565c0;color:#fff;" onclick="avanzarMomento2(${l.id},'primera_entrega','Anticipo')">1RA ENTREGA</button>`;
+                    } else if (fase === 'primera_entrega') {
+                        botones += `<button class="cand-btn" style="flex:1;font-size:.6rem;background:#d4af37;color:#fff;" onclick="pagarCobro(${l.id},'40%')">PAGO 1RA</button>`;
+                        botones += `<button class="cand-btn" style="flex:1;font-size:.6rem;background:#6a1b9a;color:#fff;" onclick="avanzarMomento2(${l.id},'entrega_final','40%')">ENTREGA FINAL</button>`;
+                    } else if (fase === 'entrega_final') {
+                        botones += `<button class="cand-btn" style="flex:1;font-size:.6rem;background:#d4af37;color:#fff;" onclick="pagarCobro(${l.id},'Tercer')">PAGO FINAL</button>`;
+                        botones += `<button class="cand-btn" style="flex:1;font-size:.6rem;background:#1b5e20;color:#fff;" onclick="cerrarProyecto(${l.id})">TERMINADO</button>`;
+                    }
+                    const nombre = l.nombre_cliente || '';
+                    return `<div class="cand-card" style="border-color:${fases[fase].color};">
+                        <div class="card-header" onclick="toggleCard(this)" style="color:${fases[fase].color};">
+                            <div><span class="cand-id" style="color:${fases[fase].color};">${l.temp_id||'---'}</span>${nombre ? ` <span style="font-family:'Inter',sans-serif;font-size:.75rem;font-weight:500;color:#000;">${nombre}</span>` : ''}</div>
+                            <span class="card-toggle">▶</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="cand-field"><span class="label">Proyecto</span><span class="value">${l.nombre_proyecto || '---'}</span></div>
+                            <div class="cand-field"><span class="label">Nivel</span><span>${(l.nivel_proyecto||'').charAt(0).toUpperCase()+(l.nivel_proyecto||'').slice(1)} · ${l.m2||0} m²</span></div>
+                            <div style="display:flex;gap:4px;margin-top:8px;flex-wrap:wrap;">${botones}</div>
+                        </div>
+                    </div>`;
+                }).join('');
+            });
+        }
+
+        function renderMomento3(items) {
+            const container = document.getElementById('momento3-container');
+            if (!container) return;
+            if (!items || items.length === 0) {
+                container.innerHTML = '<p style="font-family:\'JetBrains Mono\';font-size:.6rem;color:#999;">Ningún proyecto concluido.</p>';
+                return;
+            }
+            container.innerHTML = items.map(l => {
+                const nombre = l.nombre_cliente || '';
+                return `<div class="cand-card" style="border-color:#555;opacity:.7;">
+                    <div class="card-header" onclick="toggleCard(this)" style="color:#555;">
+                        <div><span class="cand-id" style="color:#555;">${l.temp_id||'---'}</span>${nombre ? ` <span style="font-family:'Inter',sans-serif;font-size:.75rem;font-weight:500;color:#000;">${nombre}</span>` : ''}</div>
+                        <span class="card-toggle">▶</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="cand-field"><span class="label">Proyecto</span><span>${l.nombre_proyecto || '---'}</span></div>
+                        <div class="cand-field"><span class="label">Nivel</span><span>${(l.nivel_proyecto||'').charAt(0).toUpperCase()+(l.nivel_proyecto||'').slice(1)} · ${l.m2||0} m²</span></div>
+                        <div style="display:flex;gap:4px;margin-top:8px;">
+                            <button class="cand-btn" style="flex:1;font-size:.6rem;background:#555;" onclick="abrirModal(${l.id})">EXPEDIENTE</button>
+                            <button class="cand-btn" style="flex:1;font-size:.6rem;background:#c62828;color:#fff;" onclick="eliminarProyecto(${l.id})">ELIMINAR</button>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        async function eliminarProyecto(leadId) {
+            if (!confirm('⚠️ ¿Descargar el PDF de cierre antes de eliminar?\n\nSe abrirá el PDF. Después confirma la eliminación.')) return;
+            window.open('/lead/' + leadId + '/cierre-pdf', '_blank');
+            await new Promise(r => setTimeout(r, 500));
+            if (!confirm('⚠️ ¿Eliminar definitivamente este proyecto de la base de datos?\n\nEsta acción no se puede deshacer.')) return;
+            try {
+                const r = await fetch('/lead/' + leadId, { method: 'DELETE' });
+                if (r.ok) {
+                    await cargarLeads();
+                } else {
+                    alert('Error al eliminar el proyecto');
+                }
+            } catch (e) {
+                alert('Error de conexión');
+            }
+        }
+
+        async function registrarEgreso() {
+            const categoria = document.getElementById('egr-categoria').value;
+            const concepto = document.getElementById('egr-concepto').value.trim();
+            const monto = parseFloat(document.getElementById('egr-monto').value);
+            const fecha = document.getElementById('egr-fecha').value || new Date().toISOString().slice(0,10);
+            if (!categoria || !concepto || !monto) { alert('Completa todos los campos'); return; }
+            try {
+                const r = await fetch('/egresos', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ categoria, concepto, monto, fecha })
+                });
+                if (r.ok) {
+                    document.getElementById('egr-categoria').value = '';
+                    document.getElementById('egr-concepto').value = '';
+                    document.getElementById('egr-monto').value = '';
+                    document.getElementById('egr-msg').textContent = '✓ Gasto registrado';
+                    setTimeout(() => document.getElementById('egr-msg').textContent = '', 3000);
+            cargarEgresos();
+            cargarFondos();
+                }
+            } catch(e) { alert('Error de conexión'); }
+        }
+
+        async function cargarEgresos() {
+            const lista = document.getElementById('egr-lista');
+            try {
+                const r = await fetch('/egresos');
+                const egresos = await r.json();
+                if (!egresos.length) {
+                    lista.innerHTML = '<p style="font-family:\'JetBrains Mono\';font-size:.6rem;color:#999;">Sin gastos registrados.</p>';
+                    document.getElementById('egr-total-mes').textContent = '$0';
+                    return;
+                }
+                const ahora = new Date();
+                const mesActual = `${ahora.getFullYear()}-${String(ahora.getMonth()+1).padStart(2,'0')}`;
+                const delMes = egresos.filter(e => e.fecha && e.fecha.startsWith(mesActual));
+                const totalMes = delMes.reduce((s, e) => s + (e.monto || 0), 0);
+                document.getElementById('egr-total-mes').textContent = '$' + totalMes.toLocaleString();
+                lista.innerHTML = `<table style="width:100%;border-collapse:collapse;">
+                    <tr style="border-bottom:1px solid #ddd;">
+                        <th style="text-align:left;padding:3px;">Fecha</th>
+                        <th style="text-align:left;padding:3px;">Categoría</th>
+                        <th style="text-align:left;padding:3px;">Concepto</th>
+                        <th style="text-align:right;padding:3px;">Monto</th>
+                        <th style="text-align:center;padding:3px;"></th>
+                    </tr>
+                    ${egresos.map(e => `<tr style="border-bottom:1px solid #eee;">
+                        <td style="padding:3px;">${e.fecha || '---'}</td>
+                        <td style="padding:3px;">${e.categoria}</td>
+                        <td style="padding:3px;">${e.concepto}</td>
+                        <td style="padding:3px;text-align:right;">$${Number(e.monto).toLocaleString()}</td>
+                        <td style="padding:3px;text-align:center;"><button style="background:none;border:none;color:#c62828;cursor:pointer;font-size:.6rem;" onclick="eliminarEgreso(${e.id})">✕</button></td>
+                    </tr>`).join('')}
+                </table>`;
+            } catch(e) {
+                lista.innerHTML = '<p style="font-family:\'JetBrains Mono\';font-size:.6rem;color:#c62828;">Error al cargar egresos</p>';
+            }
+        }
+
+        async function eliminarEgreso(id) {
+            if (!confirm('¿Eliminar este gasto?')) return;
+            try {
+                await fetch('/egresos/' + id, { method: 'DELETE' });
+                cargarEgresos();
+            } catch(e) { alert('Error'); }
+        }
+
+        // ---- FONDOS DE PROVISIÓN ----
+        async function cargarFondos() {
+            const tarjetas = document.getElementById('fnd-tarjetas');
+            const select = document.getElementById('fnd-select');
+            try {
+                const r = await fetch('/api/fondos');
+                const fondos = await r.json();
+                if (!fondos.length) {
+                    tarjetas.innerHTML = '<p style="font-family:\'JetBrains Mono\';font-size:.6rem;color:#999;">Sin fondos creados.</p>';
+                    select.innerHTML = '<option value="">— Seleccionar fondo —</option>';
+                    return;
+                }
+                select.innerHTML = '<option value="">— Seleccionar fondo —</option>' +
+                    fondos.map(f => `<option value="${f.id}">${f.nombre}</option>`).join('');
+                tarjetas.innerHTML = fondos.map(f => `
+                    <div style="border:1px solid #e0d5c1;border-radius:6px;padding:12px;background:#faf8f5;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                            <strong style="font-size:.8rem;">${f.nombre}</strong>
+                            <button style="background:none;border:none;color:#c62828;cursor:pointer;font-size:.6rem;" onclick="eliminarFondo(${f.id})">✕</button>
+                        </div>
+                        <div style="font-family:'JetBrains Mono';font-size:.65rem;">
+                            Balance: <strong style="color:${f.balance_actual >= 0 ? '#2e7d32' : '#c62828'};">$${Number(f.balance_actual).toLocaleString()}</strong>
+                            <span style="color:#999;margin-left:15px;">Aportación mensual: $${Number(f.monto_mensual).toLocaleString()}</span>
+                        </div>
+                    </div>
+                `).join('');
+            } catch(e) {
+                tarjetas.innerHTML = '<p style="font-family:\'JetBrains Mono\';font-size:.6rem;color:#c62828;">Error al cargar fondos</p>';
+            }
+        }
+
+        async function crearFondo() {
+            const nombre = document.getElementById('fnd-nombre').value.trim();
+            const monto = parseFloat(document.getElementById('fnd-mensual').value) || 0;
+            if (!nombre) { alert('Ingresa un nombre'); return; }
+            try {
+                const r = await fetch('/api/fondos', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ nombre, monto_mensual: monto })
+                });
+                if (r.ok) {
+                    document.getElementById('fnd-nombre').value = '';
+                    document.getElementById('fnd-mensual').value = '';
+                    document.getElementById('fnd-msg').textContent = '✓ Fondo creado';
+                    setTimeout(() => document.getElementById('fnd-msg').textContent = '', 3000);
+                    cargarFondos();
+                }
+            } catch(e) { alert('Error de conexión'); }
+        }
+
+        async function eliminarFondo(id) {
+            if (!confirm('¿Eliminar este fondo y todos sus movimientos?')) return;
+            try {
+                await fetch('/api/fondos/' + id, { method: 'DELETE' });
+                cargarFondos();
+            } catch(e) { alert('Error'); }
+        }
+
+        async function apartarFondo() {
+            const fondoId = document.getElementById('fnd-select').value;
+            const monto = parseFloat(document.getElementById('fnd-monto').value);
+            const concepto = document.getElementById('fnd-concepto').value.trim() || 'Aportación';
+            if (!fondoId || !monto) { alert('Selecciona un fondo e ingresa un monto'); return; }
+            try {
+                const r = await fetch('/api/fondos/' + fondoId + '/apartar', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ monto, concepto })
+                });
+                if (r.ok) {
+                    document.getElementById('fnd-monto').value = '';
+                    document.getElementById('fnd-concepto').value = '';
+                    cargarFondos();
+                } else {
+                    const d = await r.json();
+                    alert(d.message || 'Error');
+                }
+            } catch(e) { alert('Error de conexión'); }
+        }
+
+        async function retirarFondo() {
+            const fondoId = document.getElementById('fnd-select').value;
+            const monto = parseFloat(document.getElementById('fnd-monto').value);
+            const concepto = document.getElementById('fnd-concepto').value.trim() || 'Retiro';
+            if (!fondoId || !monto) { alert('Selecciona un fondo e ingresa un monto'); return; }
+            try {
+                const r = await fetch('/api/fondos/' + fondoId + '/retirar', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ monto, concepto })
+                });
+                if (r.ok) {
+                    document.getElementById('fnd-monto').value = '';
+                    document.getElementById('fnd-concepto').value = '';
+                    cargarFondos();
+                } else {
+                    const d = await r.json();
+                    alert(d.message || 'Error');
+                }
+            } catch(e) { alert('Error de conexión'); }
+        }
+
+        async function cerrarProyecto(leadId) {
+            try {
+                const r = await fetch(`${COBROS_API}/${leadId}`);
+                if (r.ok) {
+                    const cobros = await r.json();
+                    const cobro = cobros.find(c => c.concepto && c.concepto.includes('Tercer'));
+                    if (cobro && cobro.estado !== 'pagado') {
+                        if (!confirm(`El pago de "${cobro.concepto}" no está registrado. ¿Cerrar de todas formas?`)) {
+                            return;
+                        }
+                    }
+                }
+            } catch(e) {}
+            if (!confirm('¿Cerrar y archivar este proyecto?')) return;
+            try {
+                await fetch('/lead/'+leadId+'/pipeline', {
+                    method: 'PATCH',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({pipeline_estado: 'terminado'})
+                });
+                await cargarLeads();
+            } catch (e) {
+                alert('Error al cerrar proyecto: ' + e.message);
+            }
+        }
+
+        function actualizarEstadoContacto(el, id) {
+            const val = el.value;
+            fetch('/lead/'+id+'/estado-contacto', {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ estado_contacto: val })
+            }).catch(() => {});
+        }
+
+        let contratarLeadId = null;
+
+        function abrirContratar(id) {
+            const lead = leadsData.find(l => l.id === id);
+            if (!lead) return;
+
+            // Validación de campos obligatorios
+            const faltantes = [];
+            if (!(lead.nombre_cliente || '').trim()) faltantes.push("Nombre del Cliente");
+            if (!(lead.nombre_proyecto || '').trim()) faltantes.push("Nombre del Proyecto");
+            if (!(lead.tipo_proyecto || '').trim()) faltantes.push("Tipo de Proyecto");
+            
+            const ubic = (() => { try { return JSON.parse(lead.ubicacion||'{}'); } catch { return {}; } })();
+            if (!(ubic.calle_numero || '').trim()) faltantes.push("Calle y Número (Ubicación)");
+            if (!(ubic.colonia || '').trim()) faltantes.push("Colonia (Ubicación)");
+            if (!(ubic.ciudad || '').trim()) faltantes.push("Ciudad (Ubicación)");
+            if (!(ubic.estado || '').trim()) faltantes.push("Estado (Ubicación)");
+
+            if (faltantes.length > 0) {
+                alert("Para contratar este proyecto primero debes llenar los datos en el botón PROGRAMA.\n\nFalta por llenar:\n- " + faltantes.join("\n- "));
+                return;
+            }
+
+            const m2 = lead.m2 || 0;
+            const nivel = lead.nivel_proyecto || 'esencial';
+            const precioM2 = nivel === 'ejecutivo' ? 850 : nivel === 'integral' ? 350 : 250;
+            const honorarios = lead.honorarios_diseno || Math.max(m2 * precioM2, 6500);
+            const anticipo = honorarios * 0.3;
+            contratarLeadId = id;
+            document.getElementById('cont-resumen').innerHTML = `${lead.temp_id}<br><strong>${lead.nombre_cliente}</strong><br><span style="font-size:0.7rem;color:#666;">${lead.nombre_proyecto}</span>
+            <div style="margin-top:15px;padding:10px;background:#f4f1ea;border-radius:4px;">
+                <span style="font-family:'JetBrains Mono';font-size:.65rem;">Honorarios: <strong>$${honorarios.toLocaleString()}</strong></span><br>
+                <span style="font-family:'JetBrains Mono';font-size:.65rem;color:#2e7d32;">Anticipo 30%: <strong>$${Math.round(anticipo).toLocaleString()}</strong></span>
+            </div>`;
+            document.getElementById('modal-contratar').classList.add('active');
+        }
+
+        function cerrarContratar() {
+            document.getElementById('modal-contratar').classList.remove('active');
+            contratarLeadId = null;
+        }
+
+        function confirmarContratar() {
+            const id = contratarLeadId;
+            if (!id) return;
+            fetch('/lead/'+id+'/contratar', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({})
+            }).then(r => r.json()).then(res => {
+                if (res.status === 'success') {
+                    cerrarContratar();
+                    window.open('/lead/'+id+'/recibo-anticipo', '_blank');
+                    cargarLeads();
+                } else {
+                    alert('Error: ' + (res.message || 'desconocido'));
+                }
+            }).catch(() => { alert('Error de conexión'); });
+        }
+
+        async function regresarLead(leadId) {
+            if (!confirm('⚠️ ¿Regresar a Candidatos? Se eliminarán los cobros pendientes.')) return;
+            try {
+                const r = await fetch('/lead/' + leadId + '/regresar', { method: 'POST' });
+                if (r.ok) {
+                    await cargarLeads();
+                } else {
+                    alert('Error al regresar el proyecto');
+                }
+            } catch(e) {
+                alert('Error de conexión');
+            }
+        }
+
+        async function avanzarMomento2(leadId, nuevoEstado, conceptoSubstring) {
+            if (conceptoSubstring) {
+                try {
+                    const r = await fetch(`${COBROS_API}/${leadId}`);
+                    if (r.ok) {
+                        const cobros = await r.json();
+                        const cobro = cobros.find(c => c.concepto && c.concepto.includes(conceptoSubstring));
+                        if (cobro && cobro.estado !== 'pagado') {
+                            if (!confirm(`El pago de "${cobro.concepto}" no está registrado. ¿Avanzar de todas formas?`)) {
+                                return;
+                            }
+                        }
+                    }
+                } catch(e) {}
+            }
+            const reciboUrl = nuevoEstado === 'primera_entrega'
+                ? '/lead/'+leadId+'/recibo-segundo-pago'
+                : nuevoEstado === 'entrega_final'
+                ? '/lead/'+leadId+'/recibo-tercer-pago'
+                : null;
+            fetch('/lead/'+leadId+'/pipeline', {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ pipeline_estado: nuevoEstado })
+            }).then(r => {
+                if (r.ok) {
+                    if (reciboUrl) window.open(reciboUrl, '_blank');
+                    cargarLeads();
+                }
+            }).catch(() => {});
+        }
+
+        async function cargarCobrosLead(proyectoId, containerId) {
+            const el = document.getElementById(containerId);
+            try {
+                const r = await fetch(`${COBROS_API}/${proyectoId}`);
+                if (!r.ok) throw Error('No data');
+                const cobros = await r.json();
+                if (cobros.length === 0) {
+                    el.innerHTML = '<p style="font-family:\'JetBrains Mono\';font-size:.6rem;color:#999;">Sin cobros registrados.</p>';
+                    return;
+                }
+                el.innerHTML = `<table style="width:100%;font-family:'JetBrains Mono';font-size:.6rem;border-collapse:collapse;">
+                    <tr style="border-bottom:1px solid #ddd;"><th style="text-align:left;">Concepto</th><th style="text-align:right;">Monto</th><th style="text-align:center;">Estado</th><th style="text-align:right;">Pago</th><th style="text-align:center;"></th></tr>
+                    ${cobros.map(c => `<tr style="border-bottom:1px solid #eee;">
+                        <td>${c.concepto}</td>
+                        <td style="text-align:right;">$${c.monto.toLocaleString()}</td>
+                        <td style="text-align:center;color:${c.estado === 'pagado' ? '#27ae60' : '#c62828'};">${c.estado.toUpperCase()}</td>
+                        <td style="text-align:right;">${c.fecha_pago ? new Date(c.fecha_pago).toLocaleDateString() : '---'}</td>
+                        <td style="text-align:center;">${c.estado === 'pendiente' ? `<button style="background:#2e7d32;color:#fff;border:none;padding:2px 6px;border-radius:2px;font-size:.5rem;cursor:pointer;" onclick="marcarPagado(${c.id},${proyectoId},'${containerId}')">✓</button>` : ''}</td>
+                    </tr>`).join('')}
+                </table>`;
+            } catch(e) {
+                el.innerHTML = '<p style="font-family:\'JetBrains Mono\';font-size:.6rem;color:#999;">Usa el botón COBROS del lead para registrar pagos.</p>';
+            }
+        }
+
+        async function abrirModal(id) {
+            const lead = leadsData.find(l => l.id === id);
+            if (!lead) return;
+            document.getElementById('modal-titulo').textContent = lead.nombre_cliente || lead.temp_id || '---';
+            document.getElementById('modal-id').textContent = `${lead.temp_id || '---'} · ${lead.fecha ? new Date(lead.fecha).toLocaleString() : ''}`;
+            const m2 = lead.m2 || 0;
+            const nivel = lead.nivel_proyecto || 'esencial';
+            const precioM2 = nivel === 'ejecutivo' ? 850 : nivel === 'integral' ? 350 : 250;
+            const honorarios = lead.honorarios_diseno || Math.max(m2 * precioM2, 6500);
+            const respuestas = (() => {
+                try {
+                    const raw = JSON.parse(lead.respuestas_json || '{}');
+                    const traducidas = {};
+                    Object.keys(raw).forEach(k => {
+                        const num = k.replace('step', '');
+                        traducidas[`Pregunta ${num}`] = raw[k];
+                    });
+                    return JSON.stringify(traducidas, null, 2);
+                } catch { return lead.respuestas_json || '{}'; }
+            })();
+            const tieneOriginal = lead.m2_original && (lead.m2_original != m2 || lead.nivel_original != nivel);
+
+            let programaHtml = '';
+            if (lead.pipeline_estado === 'terminado') {
+                try {
+                    const r = await fetch(`${PROGRAMA_API}/${lead.id}`);
+                    if (r.ok) {
+                        const espacios = await r.json();
+                        const agrupados = {};
+                        espacios.forEach(e => {
+                            if (!agrupados[e.tipo]) agrupados[e.tipo] = [];
+                            agrupados[e.tipo].push(e);
+                        });
+                        programaHtml = Object.keys(agrupados).map(tipo => `
+                            <div style="margin-bottom:10px;">
+                                <h5 style="font-family:'JetBrains Mono';font-size:.6rem;color:#555;text-transform:uppercase;margin-bottom:4px;">${tipo}</h5>
+                                <table style="width:100%;font-family:'JetBrains Mono';font-size:.6rem;border-collapse:collapse;">
+                                    ${agrupados[tipo].map(e => `<tr><td style="padding:2px 4px;border-bottom:1px solid #eee;">${e.clave||''}</td><td style="padding:2px 4px;border-bottom:1px solid #eee;">${e.espacio}</td><td style="padding:2px 4px;border-bottom:1px solid #eee;text-align:right;">${e.area} m²</td></tr>`).join('')}
+                                </table>
+                            </div>
+                        `).join('');
+                    }
+                } catch(e) {}
+            }
+
+            document.getElementById('modal-body').innerHTML = `
+                <div style="display:grid;grid-template-columns:${tieneOriginal ? '1fr 1fr' : 'repeat(3,1fr)'};gap:15px;margin-bottom:20px;">
+                    ${tieneOriginal ? `
+                    <div style="padding:12px;background:#f9f9f9;border-radius:4px;border:1px solid #e0d5c1;">
+                        <h4 style="font-family:'JetBrains Mono';font-size:.55rem;color:#999;text-transform:uppercase;margin-bottom:8px;">▼ Inmersión (original)</h4>
+                        <div style="font-family:'Inter',sans-serif;font-size:.75rem;">
+                            <span style="color:#666;">${lead.m2_original} m² · ${lead.nivel_original||'---'}</span><br>
+                            <span style="font-weight:600;">$${(lead.honorarios_original||0).toLocaleString()}</span>
+                        </div>
+                    </div>
+                    <div style="padding:12px;background:#f0f7f0;border-radius:4px;border:1px solid #2e7d32;">
+                        <h4 style="font-family:'JetBrains Mono';font-size:.55rem;color:#2e7d32;text-transform:uppercase;margin-bottom:8px;">▲ PROGRAMA (modificado)</h4>
+                        <div style="font-family:'Inter',sans-serif;font-size:.75rem;">
+                            <span style="color:#666;">${m2} m² · ${nivel.charAt(0).toUpperCase()+nivel.slice(1)}</span><br>
+                            <span style="font-weight:600;color:#2e7d32;">$${honorarios.toLocaleString()}</span>
+                        </div>
+                    </div>` : `
+                    <div class="admin-card"><span class="label">Paquete</span><p class="admin-val" style="font-size:.9rem;text-transform:capitalize;">${nivel}</p></div>
+                    <div class="admin-card"><span class="label">Metros²</span><p class="admin-val" style="font-size:.9rem;">${m2} m²</p></div>
+                    <div class="admin-card"><span class="label" style="color:#2e7d32;">Honorarios</span><p class="admin-val" style="font-size:.9rem;color:#2e7d32;">$${honorarios.toLocaleString()}</p></div>
+                    `}
+                </div>
+                ${programaHtml ? `<h4 style="font-family:'JetBrains Mono';font-size:.65rem;color:#555;text-transform:uppercase;margin-bottom:10px;">Programa Arquitectónico</h4>${programaHtml}` : ''}
+                <h4 style="font-family:'JetBrains Mono';font-size:.65rem;color:#a6937c;text-transform:uppercase;margin-bottom:10px;">Análisis Multidimensional</h4>
+                <pre>${lead.analisis_procesado || 'Sin análisis disponible.'}</pre>
+                <h4 style="font-family:'JetBrains Mono';font-size:.65rem;color:#a6937c;text-transform:uppercase;margin-top:20px;margin-bottom:10px;">Respuestas de Inmersión (JSON)</h4>
+                <pre>${respuestas}</pre>
+                ${lead.pipeline_estado === 'terminado' ? `
+                <div style="margin-top:20px;border-top:2px solid #555;padding-top:15px;display:flex;gap:8px;">
+                    <button class="cand-btn" style="background:#555;color:#fff;font-size:.7rem;" onclick="window.open('/lead/${lead.id}/cierre-pdf','_blank')">📄 PDF de Cierre</button>
+                </div>` : ''}`;
+            document.getElementById('modal-expediente').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        async function registrarCobro(proyectoId, tempId) {
+            const concepto = document.getElementById('nuevo-concepto').value.trim();
+            const monto = parseFloat(document.getElementById('nuevo-monto').value);
+            const vencimiento = document.getElementById('nuevo-vencimiento').value.trim();
+            if (!concepto || !monto) { alert('Completa concepto y monto'); return; }
+            try {
+                const r = await fetch(COBROS_API, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ proyecto_id: proyectoId, concepto, monto, fecha_vencimiento: vencimiento, notas: `Lead: ${tempId}` })
+                });
+                if (r.ok) {
+                    document.getElementById('nuevo-concepto').value = '';
+                    document.getElementById('nuevo-monto').value = '';
+                    document.getElementById('nuevo-vencimiento').value = '';
+                    cargarCobrosLead(proyectoId, `cobros-list-${proyectoId}`);
+                    cargarMetrics();
+                } else {
+                    alert('Error al registrar cobro');
+                }
+            } catch(e) {
+                alert('Error de conexión con el servidor');
+            }
+        }
+
+        async function pagarCobro(proyectoId, conceptoSubstring) {
+            try {
+                const r = await fetch(`${COBROS_API}/${proyectoId}`);
+                if (!r.ok) throw Error();
+                const cobros = await r.json();
+                const cobro = cobros.find(c => c.concepto && c.concepto.includes(conceptoSubstring));
+                if (!cobro) { alert(`No hay cobro de ${conceptoSubstring} pendiente`); return; }
+                if (cobro.estado === 'pagado') { alert(`El cobro de ${conceptoSubstring} ya está pagado`); return; }
+                const r2 = await fetch(`${COBROS_API}/${cobro.id}/pagar`, {
+                    method: 'PATCH',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ fecha_pago: new Date().toISOString() })
+                });
+                if (r2.ok) { cargarLeads(); cargarMetrics(); }
+                else { alert('Error al marcar pago'); }
+            } catch(e) { alert('Error de conexión'); }
+        }
+
+        async function marcarPagado(cobroId, proyectoId, containerId) {
+            try {
+                const r = await fetch(`${COBROS_API}/${cobroId}/pagar`, {
+                    method: 'PATCH',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ fecha_pago: new Date().toISOString() })
+                });
+                if (r.ok) {
+                    cargarCobrosLead(proyectoId, containerId);
+                    cargarMetrics();
+                } else {
+                    alert('Error al marcar como pagado');
+                }
+            } catch(e) { alert('Error de conexión'); }
+        }
+
+        function toggleFormCobroManual(proyectoId) {
+            const form = document.getElementById(`form-cobro-manual-${proyectoId}`);
+            if (form) form.style.display = form.style.display === 'none' ? 'grid' : 'none';
+        }
+
+        async function generarEsquemaPagos(proyectoId) {
+            if (!confirm('¿Generar esquema de pagos 30/40/30 para este proyecto? Se crearán 3 cobros automáticamente.')) return;
+            try {
+                const r = await fetch(`${COBROS_API}/generar_esquema/${proyectoId}`, {
+                    method: 'POST'
+                });
+                const data = await r.json();
+                if (r.ok) {
+                    alert(`Esquema generado: 3 cobros creados (Total: $${data.total.toLocaleString()})`);
+                    cargarCobrosLead(proyectoId, `cobros-list-${proyectoId}`);
+                    cargarMetrics();
+                } else {
+                    alert('Error: ' + (data.message || 'No se pudo generar el esquema'));
+                }
+            } catch(e) {
+                alert('Error de conexión con el servidor');
+            }
+        }
+
+        // ---- PROGRAMA ARQUITECTONICO ----
+        const TIPOS_PROGRAMA = ["Deseado", "Complementario", "Lujo"];
+
+        async function cargarPrograma(leadId, containerId) {
+            const el = document.getElementById(containerId);
+            try {
+                const r = await fetch(`${PROGRAMA_API}/${leadId}`);
+                if (!r.ok) throw Error('No data');
+                const espacios = await r.json();
+                el.innerHTML = `<div style="display:flex;gap:8px;margin-bottom:15px;">
+                    ${TIPOS_PROGRAMA.map(t => `<button class="btn-soma" style="margin:0;font-size:.6rem;flex:1;background:#2e7d32;color:#fff;" onclick="mostrarTipoPrograma(${leadId},'${t}','${containerId}')">${t}</button>`).join('')}
+                </div>`;
+                window[`prog_${leadId}`] = espacios;
+                mostrarTipoPrograma(leadId, 'Deseado', containerId);
+                actualizarM2yHonorarios(leadId);
+            } catch(e) {
+                el.innerHTML = '<p style="font-family:\'JetBrains Mono\';font-size:.6rem;color:#999;">Agrega espacios para iniciar el programa arquitectónico.</p>';
+            }
+        }
+
+        function mostrarTipoPrograma(leadId, tipo, containerId) {
+            const espacios = window[`prog_${leadId}`] || [];
+            const filtrados = espacios.filter(e => e.tipo === tipo);
+            const totalArea = filtrados.reduce((s, e) => s + (e.area || 0), 0);
+            const el = document.getElementById(containerId);
+            const tabs = el.querySelector('div');
+            const proxNum = (window[`prog_${leadId}`] || []).length + 1;
+            let html = tabs ? tabs.outerHTML : '';
+            if (!modalProgramaReadOnly) {
+                html += `<div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
+                    <input type="text" id="nuevo-esp-${tipo}" placeholder="Espacio" style="flex:1.5;min-width:80px;padding:6px;font-size:.65rem;border:1px solid #ddd;">
+                    <input type="number" id="nueva-area-${tipo}" placeholder="m2" style="flex:0 0 55px;padding:6px;font-size:.65rem;border:1px solid #ddd;">
+                    <input type="number" id="nueva-zona-${tipo}" placeholder="Zona" min="1" max="5" style="flex:0 0 50px;padding:6px;font-size:.65rem;border:1px solid #ddd;">
+                    <input type="number" id="nueva-clave-${tipo}" placeholder="Núm. clave" value="${proxNum}" style="flex:0 0 55px;padding:6px;font-size:.65rem;border:1px solid #ddd;">
+                    <button class="btn-soma" style="margin:0;padding:6px 10px;font-size:.55rem;background:#a6937c;color:#fff;" onclick="agregarEspacio(${leadId},'${tipo}','${containerId}')">+</button>
+                </div>
+                <div style="font-family:'JetBrains Mono';font-size:.5rem;color:#999;margin-bottom:10px;line-height:1.6;">
+                    Zona: 1=Social · 2=Operativa · 3=Descanso · 4=Soporte · 5=Transición &nbsp;|&nbsp; Clave: solo número → se guarda como E{número} &nbsp;|&nbsp; 🔗 varios separados por coma
+                </div>`;
+            }
+            if (filtrados.length === 0) {
+                html += `<p style="font-family:'JetBrains Mono';font-size:.55rem;color:#999;">${tipo} — sin espacios.</p>`;
+            } else {
+                const totalRel = (esp) => {
+                    try { const r = JSON.parse(esp.relacion_directa || '[]'); return Array.isArray(r) ? r.length : 0; } catch { return 0; }
+                };
+                html += `<table style="width:100%;font-family:'JetBrains Mono';font-size:.5rem;border-collapse:collapse;">
+                    <tr style="border-bottom:2px solid #000;"><th style="text-align:left;">Espacio</th><th style="text-align:right;">m2</th><th style="text-align:center;">Z</th><th style="text-align:center;">Clave</th><th style="text-align:right;">🔗</th><th style="text-align:right;"></th></tr>
+                    ${filtrados.map(e => {
+                        const clave = e.clave || (e.id ? `E${e.id}` : '---');
+                        const nRel = totalRel(e);
+                        const relHtml = modalProgramaReadOnly
+                            ? `<span style="font-size:.5rem;color:#999;">${nRel > 0 ? `🔗${nRel}` : ''}</span>`
+                            : `<button class="btn-soma" style="margin:0;padding:2px 6px;font-size:.45rem;background:#6b8f6b;color:#fff;" onclick="editarRelaciones(${e.id},${leadId},'${containerId}','${tipo}')" title="${nRel} relación(es)">${nRel > 0 ? `🔗${nRel}` : '🔗'}</button>`;
+                        const delHtml = modalProgramaReadOnly ? '' : `<td style="text-align:right;"><button class="btn-soma" style="margin:0;padding:2px 6px;font-size:.45rem;background:#c62828;color:#fff;" onclick="eliminarEspacio(${e.id},${leadId},'${containerId}')">✕</button></td>`;
+                        return `<tr style="border-bottom:1px solid #eee;">
+                            <td>${e.espacio}</td>
+                            <td style="text-align:right;">${e.area}</td>
+                            <td style="text-align:center;">${e.zona}</td>
+                            <td style="text-align:center;">${clave}</td>
+                            <td style="text-align:right;">${relHtml}</td>
+                            ${delHtml}
+                        </tr>`;
+                    }).join('')}
+                </table>`;
+            }
+            html += `<div style="margin-top:8px;font-family:'JetBrains Mono';font-size:.6rem;font-weight:600;">
+                Total ${tipo}: <span style="color:#2e7d32;">${totalArea.toFixed(1)} m2</span>
+            </div>`;
+            el.innerHTML = html;
+        }
+
+        async function agregarEspacio(leadId, tipo, containerId) {
+            const espacio = document.getElementById(`nuevo-esp-${tipo}`).value.trim();
+            const area = parseFloat(document.getElementById(`nueva-area-${tipo}`).value) || 0;
+            const zona = parseInt(document.getElementById(`nueva-zona-${tipo}`).value) || 1;
+            const numClave = parseInt(document.getElementById(`nueva-clave-${tipo}`).value) || (window[`prog_${leadId}`] || []).length + 1;
+            const clave = `E${numClave}`;
+            if (!espacio) { alert('Nombre del espacio requerido'); return; }
+            try {
+                const r = await fetch(`${PROGRAMA_API}/espacio`, {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ lead_id: leadId, tipo, espacio, area, zona, clave, relacion_directa: [] })
+                });
+                if (r.ok) {
+                    document.getElementById(`nuevo-esp-${tipo}`).value = '';
+                    document.getElementById(`nueva-area-${tipo}`).value = '';
+                    document.getElementById(`nueva-zona-${tipo}`).value = '';
+                    const prox = (window[`prog_${leadId}`] || []).length + 2;
+                    if (document.getElementById(`nueva-clave-${tipo}`)) document.getElementById(`nueva-clave-${tipo}`).value = prox;
+                    const r2 = await fetch(`${PROGRAMA_API}/${leadId}`);
+                    window[`prog_${leadId}`] = await r2.json();
+                    mostrarTipoPrograma(leadId, tipo, containerId);
+                    actualizarM2yHonorarios(leadId);
+                }
+            } catch(e) {
+                alert('Error de conexión');
+            }
+        }
+
+        function editarRelaciones(espacioId, leadId, containerId, tipo) {
+            const espacios = window[`prog_${leadId}`] || [];
+            const actual = espacios.find(e => e.id === espacioId);
+            if (!actual) return;
+            const clavesDisponibles = espacios.filter(e => e.id !== espacioId && e.clave).map(e => e.clave);
+            const actuales = (() => { try { return JSON.parse(actual.relacion_directa || '[]'); } catch { return []; } })();
+
+            // Crear mini-modal movil
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:2000;display:flex;align-items:flex-start;justify-content:center;padding-top:80px;';
+            const box = document.createElement('div');
+            box.style.cssText = 'background:#fff;padding:20px;width:400px;max-width:90vw;border-radius:6px;box-shadow:0 10px 40px rgba(0,0,0,.3);font-family:JetBrains Mono,monospace;font-size:.65rem;cursor:move;position:relative;';
+            box.innerHTML = `
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                    <strong style="font-size:.75rem;">🔗 ${actual.espacio} (${actual.clave})</strong>
+                    <button onclick="this.parentElement.parentElement.parentElement.remove()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;">✕</button>
+                </div>
+                <div style="color:#888;margin-bottom:8px;">Claves disponibles: ${clavesDisponibles.join(', ') || '(ninguna)'}</div>
+                <label style="color:#555;">Números de espacios (separados por coma):</label>
+                <input id="rel-input" type="text" value="${actuales.map(c => c.replace('E', '')).join(', ')}" style="width:100%;padding:8px;margin:6px 0 10px;border:1px solid #ddd;font-family:inherit;font-size:.7rem;">
+                <div style="color:#999;font-size:.5rem;margin-bottom:10px;">Solo números, ej: 1,3,5 → se guarda como E1,E3,E5</div>
+                <div style="display:flex;gap:8px;">
+                    <button class="btn-soma" style="margin:0;padding:6px;font-size:.6rem;flex:1;background:#6b8f6b;color:#fff;" onclick="guardarRelaciones(${espacioId},${leadId},'${containerId}','${tipo||'Deseado'}')">Guardar</button>
+                    <button class="btn-soma" style="margin:0;padding:6px;font-size:.6rem;flex:1;background:#888;color:#fff;" onclick="this.parentElement.parentElement.parentElement.remove()">Cancelar</button>
+                </div>`;
+            overlay.appendChild(box);
+            document.body.appendChild(overlay);
+            overlay.onclick = function(e) { if (e.target === this) this.remove(); };
+
+            // Hacer movible
+            let offX = 0, offY = 0, mouseX = 0, mouseY = 0;
+            box.onmousedown = function(e) {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
+                e.preventDefault();
+                offX = e.clientX - box.offsetLeft;
+                offY = e.clientY - box.offsetTop;
+                document.onmousemove = function(ev) {
+                    box.style.left = (ev.clientX - offX) + 'px';
+                    box.style.top = (ev.clientY - offY) + 'px';
+                    box.style.position = 'fixed';
+                    box.style.margin = '0';
+                };
+                document.onmouseup = function() { document.onmousemove = null; document.onmouseup = null; };
+            };
+        }
+
+        function guardarRelaciones(espacioId, leadId, containerId, tipo) {
+            const input = document.getElementById('rel-input');
+            if (!input) return;
+            const overlay = input.closest('div[style]');
+            const nums = input.value.split(/[,\s]+/).filter(Boolean);
+            const espacios = window[`prog_${leadId}`] || [];
+            const actual = espacios.find(e => e.id === espacioId);
+            const relacion_directa = nums.map(n => `E${parseInt(n)}`).filter(c => c !== 'Enull' && c !== `E${(actual?.clave||'').replace('E','')}`);
+            input.disabled = true;
+            input.style.background = '#eee';
+            fetch(`${PROGRAMA_API}/espacio/${espacioId}`, {
+                method: 'PUT', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ ...actual, relacion_directa })
+            }).then(r => {
+                if (!r.ok) throw Error('HTTP ' + r.status);
+                return fetch(`${PROGRAMA_API}/${leadId}`);
+            }).then(r => {
+                if (!r.ok) throw Error('HTTP ' + r.status);
+                return r.json();
+            }).then(data => {
+                window[`prog_${leadId}`] = data;
+                if (overlay) overlay.remove();
+                mostrarTipoPrograma(leadId, tipo || 'Deseado', containerId);
+            }).catch(e => {
+                alert('Error al guardar relaciones: ' + e.message);
+                if (input) { input.disabled = false; input.style.background = ''; }
+            });
+        }
+
+        async function eliminarEspacio(espacioId, leadId, containerId) {
+            try {
+                await fetch(`${PROGRAMA_API}/espacio/${espacioId}`, { method: 'DELETE' });
+                const r = await fetch(`${PROGRAMA_API}/${leadId}`);
+                window[`prog_${leadId}`] = await r.json();
+                mostrarTipoPrograma(leadId, 'Deseado', containerId);
+                actualizarM2yHonorarios(leadId);
+            } catch(e) { alert('Error'); }
+        }
+
+        async function generarCotizacion(leadId, containerId) {
+            try {
+                const r = await fetch(`${COTIZACION_API}/${leadId}`);
+                if (!r.ok) throw Error();
+                const q = await r.json();
+                const el = document.getElementById(containerId);
+                el.innerHTML = `
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                        <h4 style="font-family:'JetBrains Mono';font-size:.65rem;color:#2e7d32;text-transform:uppercase;">Cotización Formal</h4>
+                        <button class="btn-soma" style="margin:0;padding:6px 12px;font-size:.55rem;width:auto;background:#1a1a1a;color:#fff;" onclick="window.open('${COTIZACION_API}/${leadId}/pdf','_blank')">📄 PDF</button>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-family:'JetBrains Mono';font-size:.6rem;">
+                        <div>Cliente: <strong>${q.contacto}</strong></div>
+                        <div>Nivel: <strong>${q.nivel.toUpperCase()}</strong></div>
+                        <div>m2 Web (estimado): <strong>${q.m2_lead_original || 0}</strong></div>
+                        <div>m2 Programa Real: <strong style="color:#2e7d32;">${q.m2_programa_real}</strong></div>
+                    </div>
+                    <table style="width:100%;font-family:'JetBrains Mono';font-size:.55rem;border-collapse:collapse;margin:10px 0;">
+                        ${Object.entries(q.totales_por_tipo || {}).map(([t, a]) => `
+                            <tr><td>${t}</td><td style="text-align:right;">${a.toFixed(1)} m2</td></tr>`).join('')}
+                        <tr style="border-top:2px solid #000;font-weight:600;">
+                            <td>Total Programa</td><td style="text-align:right;">${q.m2_programa_real} m2</td>
+                        </tr>
+                    </table>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-family:'JetBrains Mono';font-size:.6rem;background:#f4f1ea;padding:10px;border-radius:4px;">
+                        <div>Honorarios x $${q.precio_m2}/m2</div>
+                        <div style="text-align:right;font-weight:600;">$${q.honorarios_reales.toLocaleString()}</div>
+                        <div>Obra estimada (mín)</div>
+                        <div style="text-align:right;">$${q.obra_min_estimada.toLocaleString()}</div>
+                        <div>Obra estimada (máx)</div>
+                        <div style="text-align:right;">$${q.obra_max_estimada.toLocaleString()}</div>
+                    </div>`;
+            } catch(e) {
+                document.getElementById(containerId).innerHTML = '<p style="color:#c62828;font-size:.6rem;">Error al generar cotización. Registra espacios primero.</p>';
+            }
+        }
+
+        function cerrarModal() {
+            document.getElementById('modal-expediente').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        document.getElementById('modal-expediente').addEventListener('click', function(e) {
+            if (e.target === this) cerrarModal();
+        });
+        document.getElementById('modal-programa').addEventListener('click', function(e) {
+            if (e.target === this) cerrarModalPrograma();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') { cerrarModal(); cerrarModalPrograma(); }
+        });
+
+        let modalProgramaLeadId = null;
+        let modalProgramaReadOnly = false;
+
+        function abrirPrograma(id, readonly) {
+            const lead = leadsData.find(l => l.id === id);
+            if (!lead) return;
+            modalProgramaLeadId = lead.id;
+            modalProgramaReadOnly = readonly || false;
+            document.getElementById('modal-prog-titulo').textContent = `Programa: ${lead.nombre_cliente || '(nuevo)'}`;
+            document.getElementById('modal-prog-id').textContent = `${lead.temp_id || '---'}`;
+            const leadData = lead;
+            const progHeader = document.getElementById('modal-prog-header');
+            if (progHeader) {
+                const ubic = (() => { try { return JSON.parse(leadData.ubicacion||'{}'); } catch { return {}; } })();
+                progHeader.innerHTML = `
+                    <div style="font-family:'Inter',sans-serif;margin-bottom:20px;padding:15px;background:#f9f9f9;border-radius:6px;border:1px solid #eee;">
+                        <h4 style="font-family:'JetBrains Mono';font-size:.65rem;color:#a6937c;text-transform:uppercase;margin-bottom:12px;">Datos del Proyecto</h4>
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+                            <div><label style="font-size:.65rem;color:#666;">Nombre del Cliente</label>
+                                <input type="text" id="prog-nombre-cliente" value="${(leadData.nombre_cliente||'').replace(/"/g,'&quot;')}" ${modalProgramaReadOnly?'readonly style="background:#f4f4f4;"':''} placeholder="Ej. María Fernández" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;box-sizing:border-box;"></div>
+                            <div><label style="font-size:.65rem;color:#666;">Teléfono</label>
+                                <input type="text" readonly value="${(leadData.contacto||'').replace(/"/g,'&quot;')}" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;background:#f4f4f4;box-sizing:border-box;"></div>
+                            <div><label style="font-size:.65rem;color:#666;">Nombre del Proyecto</label>
+                                <input type="text" id="prog-nombre-proyecto" value="${(leadData.nombre_proyecto||'').replace(/"/g,'&quot;')}" ${modalProgramaReadOnly?'readonly style="background:#f4f4f4;"':''} placeholder="Ej. Casa Alina" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;box-sizing:border-box;"></div>
+                            <div style="grid-column: span 1;"><label style="font-size:.65rem;color:#666;">Tipo de Proyecto</label>
+                                <select id="prog-tipo-proyecto" ${modalProgramaReadOnly?'disabled':''} style="width:100%;padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;box-sizing:border-box;${modalProgramaReadOnly?'background:#f4f4f4;':''}">
+                                    <option value="">— Seleccionar —</option>
+                                    ${['Vivienda unifamiliar','Vivienda plurifamiliar','Departamento','Casa habitación','Oficina','Local comercial','Restaurante','Hotel','Otro'].map(t =>
+                                        `<option value="${t}" ${leadData.tipo_proyecto===t?'selected':''}>${t}</option>`
+                                    ).join('')}
+                                </select></div>
+                            <div style="grid-column: span 1;"><label style="font-size:.65rem;color:#666;">Nivel de Proyecto</label>
+                                <select id="prog-nivel-proyecto" onchange="recalcularHonorarios(${leadData.id})" ${modalProgramaReadOnly?'disabled':''} style="width:100%;padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;box-sizing:border-box;${modalProgramaReadOnly?'background:#f4f4f4;':''}">
+                                    <option value="esencial" ${leadData.nivel_proyecto==='esencial'?'selected':''}>Esencial (250/m²)</option>
+                                    <option value="integral" ${leadData.nivel_proyecto==='integral'?'selected':''}>Integral (350/m²)</option>
+                                    <option value="ejecutivo" ${leadData.nivel_proyecto==='ejecutivo'?'selected':''}>Ejecutivo (850/m²)</option>
+                                </select></div>
+                            <div><label style="font-size:.65rem;color:#666;">m² (del programa)</label>
+                                <input type="number" id="prog-m2" value="${leadData.m2||0}" readonly style="width:100%;padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;background:#f4f4f4;box-sizing:border-box;"></div>
+                            <div><label style="font-size:.65rem;color:#666;">Honorarios</label>
+                                <input type="text" id="prog-honorarios" readonly style="width:100%;padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;background:#f4f4f4;box-sizing:border-box;"></div>
+                        </div>
+                        ${leadData.m2_original ? `<div style="margin-top:8px;padding:6px 10px;background:#f4f1ea;border-radius:3px;font-family:'JetBrains Mono';font-size:.55rem;color:#999;">
+                            Cotización original de la web: ${leadData.m2_original} m² · ${leadData.nivel_original||'---'} · $${(leadData.honorarios_original||0).toLocaleString()}
+                        </div>` : ''}
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;">
+                            <div><label style="font-size:.65rem;color:#666;">Calle y Número</label>
+                                <input type="text" id="prog-calle-numero" value="${(ubic.calle_numero||'').replace(/"/g,'&quot;')}" ${modalProgramaReadOnly?'readonly style="background:#f4f4f4;"':''} placeholder="Ej. Calle 12 #345" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;box-sizing:border-box;"></div>
+                            <div><label style="font-size:.65rem;color:#666;">Colonia</label>
+                                <input type="text" id="prog-colonia" value="${(ubic.colonia||'').replace(/"/g,'&quot;')}" ${modalProgramaReadOnly?'readonly style="background:#f4f4f4;"':''} placeholder="Ej. Montecristo" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;box-sizing:border-box;"></div>
+                            <div><label style="font-size:.65rem;color:#666;">Ciudad</label>
+                                <input type="text" id="prog-ciudad" value="${(ubic.ciudad||'').replace(/"/g,'&quot;')}" ${modalProgramaReadOnly?'readonly style="background:#f4f4f4;"':''} placeholder="Ej. Mérida" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;box-sizing:border-box;"></div>
+                            <div><label style="font-size:.65rem;color:#666;">Estado</label>
+                                <input type="text" id="prog-estado" value="${(ubic.estado||'').replace(/"/g,'&quot;')}" ${modalProgramaReadOnly?'readonly style="background:#f4f4f4;"':''} placeholder="Ej. Yucatán" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;box-sizing:border-box;"></div>
+                        </div>
+                        ${modalProgramaReadOnly ? '' : '<button onclick="guardarDatosProyecto(' + leadData.id + ')" style="margin-top:10px;padding:6px 16px;background:#d4af37;color:#fff;border:none;border-radius:3px;font-size:.7rem;cursor:pointer;font-weight:600;">💾 Guardar Datos</button>'}
+                        <span id="prog-save-msg" style="font-size:.65rem;color:#2e7d32;margin-left:8px;"></span>
+                    </div>`;
+            }
+            document.getElementById('modal-programa').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            recalcularHonorarios(leadData.id);
+            mostrarSeccionPrograma('programa');
+        }
+
+        function cerrarModalPrograma() {
+            document.getElementById('modal-programa').classList.remove('active');
+            document.body.style.overflow = '';
+            modalProgramaLeadId = null;
+            modalProgramaReadOnly = false;
+        }
+
+        function calcularTotalPrograma(id) {
+            const espacios = window[`prog_${id}`] || [];
+            const total = espacios.reduce((s, e) => s + (e.area || 0), 0);
+            return total;
+        }
+
+        function actualizarM2yHonorarios(id) {
+            const total = calcularTotalPrograma(id);
+            const m2Field = document.getElementById('prog-m2');
+            if (m2Field) m2Field.value = total || 0;
+            const nivel = document.getElementById('prog-nivel-proyecto').value;
+            const precio = nivel === 'ejecutivo' ? 850 : nivel === 'integral' ? 350 : 250;
+            const honorarios = Math.max(total * precio, 6500);
+            const hField = document.getElementById('prog-honorarios');
+            if (hField) hField.value = '$' + honorarios.toLocaleString();
+        }
+
+        function recalcularHonorarios(id) {
+            actualizarM2yHonorarios(id);
+        }
+
+        function guardarDatosProyecto(id, silent = false) {
+            const data = {
+                nombre_cliente: document.getElementById('prog-nombre-cliente').value.trim(),
+                nombre_proyecto: document.getElementById('prog-nombre-proyecto').value.trim(),
+                tipo_proyecto: document.getElementById('prog-tipo-proyecto').value.trim(),
+                nivel_proyecto: document.getElementById('prog-nivel-proyecto').value,
+                m2: parseFloat(document.getElementById('prog-m2').value) || 0,
+                ubicacion: {
+                    calle_numero: document.getElementById('prog-calle-numero').value.trim(),
+                    colonia: document.getElementById('prog-colonia').value.trim(),
+                    ciudad: document.getElementById('prog-ciudad').value.trim(),
+                    estado: document.getElementById('prog-estado').value.trim()
+                }
+            };
+            return fetch('/lead/'+id+'/datos-proyecto', {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            }).then(r => r.json()).then(res => {
+                if (!silent) {
+                    const msg = document.getElementById('prog-save-msg');
+                    if (msg) {
+                        msg.textContent = res.status === 'success' ? '✓ Guardado' : 'Error: ' + (res.message||'');
+                        msg.style.color = res.status === 'success' ? '#2e7d32' : '#c62828';
+                        setTimeout(() => { msg.textContent = ''; }, 3000);
+                    }
+                }
+                if (res.status === 'success') {
+                    cargarLeads();
+                    if (!silent && document.getElementById('cotizacion-container')) {
+                        generarCotizacion(id, 'cotizacion-container');
+                    }
+                }
+            }).catch(() => {
+                if (!silent) {
+                    const msg = document.getElementById('prog-save-msg');
+                    if (msg) { msg.textContent = 'Error de conexión'; msg.style.color = '#c62828'; }
+                }
+            });
+        }
+
+        async function mostrarSeccionPrograma(seccion) {
+            const body = document.getElementById('modal-prog-body');
+            if (!modalProgramaLeadId) { body.innerHTML = '<p>Error: sin lead seleccionado</p>'; return; }
+            
+            if (document.getElementById('prog-nivel-proyecto') && !modalProgramaReadOnly) {
+                await guardarDatosProyecto(modalProgramaLeadId, true);
+            }
+
+            if (seccion === 'programa') {
+                body.innerHTML = '<div id="programa-container"><p style="font-family:\'JetBrains Mono\';font-size:.6rem;color:#999;">Cargando programa...</p></div>';
+                cargarPrograma(modalProgramaLeadId, 'programa-container');
+            } else {
+                body.innerHTML = '<div id="cotizacion-container"><p style="font-family:\'JetBrains Mono\';font-size:.6rem;color:#999;">Generando cotización...</p></div>';
+                generarCotizacion(modalProgramaLeadId, 'cotizacion-container');
+            }
+        }
+
+        window.onload = () => {
+            const savedMes = localStorage.getItem('soma-period-mes');
+            const savedAno = localStorage.getItem('soma-period-ano');
+            if (savedMes) document.getElementById('period-mes').value = savedMes;
+            if (savedAno) document.getElementById('period-ano').value = savedAno;
+            cargarLeads();
+            setInterval(cargarLeads, 30000);
+        };
+    </script>
+</body>
+</html>

@@ -3,10 +3,14 @@ const API = (() => {
 
     async function request(url, options = {}) {
         try {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), 10000);
             const res = await fetch(url, {
                 headers: { 'Content-Type': 'application/json', ...options.headers },
+                signal: controller.signal,
                 ...options
             });
+            clearTimeout(timer);
             if (!res.ok) {
                 const body = await res.json().catch(() => ({}));
                 throw new Error(body.message || `Error ${res.status}`);
@@ -15,6 +19,9 @@ const API = (() => {
         } catch (e) {
             if (e.name === 'TypeError' && e.message.includes('fetch')) {
                 throw new Error('Error de conexión con el servidor');
+            }
+            if (e.name === 'AbortError') {
+                throw new Error('La solicitud tardó demasiado. Verifica que el servidor esté corriendo.');
             }
             throw e;
         }

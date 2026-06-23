@@ -35,20 +35,20 @@
 - Considerar crear tabla `algoritmo_contenido` para almacenar outputs de cada estación
 - Lead magnet — decidir ubicación en página web
 
-## Sesión: 19 Jun 2026 (tarde/noche) ✅
+## Sesión: 22 Jun 2026 (madrugada) ✅
 
 ### Bitácora del día
-1. **KPIs por período contable**: `/metrics/bloque01` filtra por `?year=` y `?month=`. Clientes Activos excluye `terminado`. `Ingresos del Período` sobre `Monto Acumulado`. `Gasto de Operación` desde egresos.
-2. **Botones de pago directo**: ANTICIPO (F1), PAGO 1RA (F2), PAGO FINAL (F3) — marcan cobro como pagado sin confirm. Botones de avance advierten si falta pago.
-3. **Dashboard 2.0**: Reescribito en `web/` con módulos separados (api.js, ui.js, leads.js, egresos.js, fondos.js, programa.js, app.js). Sin `alert()`, datos escapados, botones con loading state, concurrencia controlada. CSS limpio en `web/css/dashboard.css`.
-4. **Fondos de provisión (B03)**: Tablas `fondos` + `movimientos_fondo`. API: CRUD + apartar/retirar. UI en dashboard.
-5. **Limpieza de BD**: Eliminadas 7 tablas vacías. Eliminadas columnas `presupuesto` y `habitantes` de `captura_web`. `init_db` actualizado.
-6. **Dashboard v1 archivado**: Movido a `antecedentes/dashboard_v1/`.
-7. **Algoritmo SOMA**: Dropdown reemplazado por tarjetas visuales colapsables. Muestra solo Momento 2. Clic expande/colapsa. Banner eliminado. Botón PROGRAMA abre dashboard.
+1. **Expediente simplificado (v1)**: removidos cobros del modal expediente. Orden exacto v1: datos de inmersión → análisis multidimensional → respuestas A/B línea por línea → programa arquitectónico → PDF de expediente.
+2. **Respuestas A/B en español**: formato "Pregunta 1: a Fachada abierta", "Pregunta 2: b Privacidad cerrada", etc. con labels descriptivos desde BD.
+3. **Ruta PDF expediente**: `/lead/<id>/expediente-pdf` genera HTML imprimible del expediente completo (datos, análisis, respuestas, programa).
+4. **DB limpia**: eliminados proyectos 7 (María Torres), 9 (Juan Pérez), 11 (Casa Alina). Único proyecto demo `SOMA-20260622-DEMO` con inmersión completa.
+5. **Fix métricas Bloque 01**: `cargarMetrics()` llamado directamente antes de `App.refresh()` en `pagarCobroDirecto` y `avanzar` para evitar que el guard de modal activo bloquee la actualización de KPIs.
 
 ### Próxima sesión
-- Continuar desarrollo del Algoritmo SOMA
-- Vincular estaciones del algoritmo con datos reales de la BD
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
+- Considerar crear tabla `algoritmo_contenido` para almacenar outputs de cada estación
+- Lead magnet — decidir ubicación en página web
+- Revisar deploy en Render (soma.onrender.com responde 404 no-server)
 
 ### Comandos
 ```bash
@@ -70,16 +70,26 @@ PGPASSWORD=soma_pass psql -h localhost -U soma_user -d soma_db
 
 # Métricas
 curl -s "http://127.0.0.1:8080/metrics/bloque01?year=2026&month=6" | python3 -m json.tool
+
+# Expediente PDF
+curl -s "http://127.0.0.1:8080/lead/12/expediente-pdf"
 ```
 
 ### Archivos clave
 ```
 web/
 ├── dashboard.html          # Dashboard 2.0
-├── css/dashboard.css       # Estilos
-├── js/                     # Módulos JS
-│   ├── api.js, ui.js, leads.js, egresos.js, fondos.js, programa.js, app.js
+├── css/dashboard.css       # Estilos oscuros (dark editorial)
+├── js/
+│   ├── api.js              # API calls
+│   ├── ui.js               # UI utilities
+│   ├── leads.js            # Leads, pipeline, expediente, pagos
+│   ├── egresos.js          # Gastos de operación
+│   ├── fondos.js           # Fondos de provisión
+│   ├── programa.js         # Programa arquitectónico + cotización
+│   └── app.js              # App shell, refresh loop, metrics
 └── algoritmo_soma.html     # Algoritmo con tarjetas de proyecto
-backend/server.py           # Flask (rutas actualizadas)
-antecedentes/dashboard_v1/  # Dashboard original
+
+backend/server.py           # Flask (rutas: leads, cobros, metrics, expediente-pdf)
+antecedentes/dashboard_v1/  # Dashboard original (referencia)
 ```

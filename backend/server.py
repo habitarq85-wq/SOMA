@@ -145,6 +145,10 @@ def init_db():
     nuevas_columnas = [
         ('m2_original', 'REAL'), ('nivel_original', 'TEXT'),
         ('honorarios_original', 'REAL'),
+        ('calle_numero', 'TEXT DEFAULT \'\''),
+        ('colonia', 'TEXT DEFAULT \'\''),
+        ('ciudad', 'TEXT DEFAULT \'\''),
+        ('estado_ubic', 'TEXT DEFAULT \'\''),
     ]
     for col_name, col_type in nuevas_columnas:
         try:
@@ -224,7 +228,7 @@ def save_immersion():
     respuestas = data.get('respuestas', {})
     contacto = data.get('contacto', 'Anónimo')
     cotizacion = data.get('cotizacion', {})
-    fecha_hoy = datetime.datetime.now().strftime("%Y%m%d-%H%M")
+    fecha_hoy = datetime.datetime.now().strftime("%d%m%Y-%H%M")
     temp_id = f"SOMA-{fecha_hoy}"
 
     m2 = cotizacion.get('m2', 0)
@@ -373,6 +377,19 @@ def get_activity_matrix(temp_id):
 # ---- PROGRAMA ARQUITECTONICO ----
 PRECIOS_M2 = {"esencial": 250, "integral": 350, "ejecutivo": 850}
 
+INMERSION_PREGUNTAS = {
+    "step1": {"pregunta": "Fachada", "A": "Abierta", "B": "Cerrada"},
+    "step2": {"pregunta": "Privacidad", "A": "Abiertos y francos", "B": "Protegidos"},
+    "step3": {"pregunta": "Espacios", "A": "Amplios e integrados", "B": "Divididos por muros"},
+    "step4": {"pregunta": "Iluminación", "A": "Mucha luz natural", "B": "Luz suave"},
+    "step5": {"pregunta": "Estilo", "A": "Texturas y ornamentos", "B": "Lisos y sobrios"},
+    "step6": {"pregunta": "Niveles", "A": "Un nivel", "B": "Varios niveles"},
+    "step7": {"pregunta": "Exteriores", "A": "Mucho jardín", "B": "Plaza pétrea"},
+    "step8": {"pregunta": "Sensación", "A": "Abiertos y altos", "B": "Acogedores e íntimos"},
+    "step9": {"pregunta": "Vida Social", "A": "Activa", "B": "Introvertida"},
+    "step10": {"pregunta": "Color", "A": "Neutros", "B": "Llamativos"},
+}
+
 @app.route('/programa/<int:lead_id>', methods=['GET'])
 def get_programa(lead_id):
     try:
@@ -458,7 +475,7 @@ def eliminar_espacio(espacio_id):
 def get_cotizacion(lead_id):
     try:
         conn = get_connection()
-        lead = fetchone(conn, "SELECT id, contacto, m2, nivel_proyecto, honorarios_diseno FROM captura_web WHERE id=?", (lead_id,))
+        lead = fetchone(conn, "SELECT id, contacto, nombre_cliente, nombre_proyecto, m2, nivel_proyecto, honorarios_diseno FROM captura_web WHERE id=?", (lead_id,))
         if not lead:
             conn.close()
             return jsonify({"status": "error", "message": "Lead no encontrado"}), 404
@@ -471,6 +488,8 @@ def get_cotizacion(lead_id):
         conn.close()
 
         contacto = lead["contacto"]
+        nombre_cliente = lead["nombre_cliente"]
+        nombre_proyecto = lead["nombre_proyecto"]
         m2_lead = lead["m2"]
         nivel = lead["nivel_proyecto"]
         honorarios_lead = lead["honorarios_diseno"]
@@ -482,6 +501,8 @@ def get_cotizacion(lead_id):
         return jsonify({
             "lead_id": lead_id,
             "contacto": contacto,
+            "nombre_cliente": nombre_cliente,
+            "nombre_proyecto": nombre_proyecto,
             "nivel": nivel_key,
             "m2_lead_original": m2_lead,
             "m2_programa_real": total_m2,
@@ -499,11 +520,12 @@ def get_cotizacion(lead_id):
 def cotizacion_pdf(lead_id):
     try:
         conn = get_connection()
-        lead = fetchone(conn, "SELECT id, contacto, m2, nivel_proyecto, honorarios_diseno, temp_id FROM captura_web WHERE id=?", (lead_id,))
+        lead = fetchone(conn, "SELECT id, contacto, nombre_cliente, nombre_proyecto, m2, nivel_proyecto, honorarios_diseno, temp_id FROM captura_web WHERE id=?", (lead_id,))
         if not lead:
             conn.close()
             return "Lead no encontrado", 404
         contacto = lead["contacto"]
+        nombre_cliente = lead["nombre_cliente"] or lead["nombre_proyecto"] or contacto
         m2_lead = lead["m2"]
         nivel = lead["nivel_proyecto"]
         honorarios_lead = lead["honorarios_diseno"]
@@ -550,9 +572,9 @@ td {{ padding: 5px 6px; border-bottom: 1px solid #ddd; }}
 <h2>COTIZACIÓN DE DISEÑO ARQUITECTÓNICO</h2>
 <hr>
 </div>
-<p><strong>Cliente:</strong> {contacto}</p>
+<p><strong>Cliente:</strong> {nombre_cliente}</p>
 <p><strong>ID:</strong> {temp_id or '---'} &nbsp;|&nbsp; <strong>Fecha:</strong> {fecha}</p>
-<p><strong>Paquete:</strong> {nivel_key.upper()} &nbsp;|&nbsp; <strong>m² estimados (web):</strong> {m2_lead or 0}</p>
+<p><strong>Paquete:</strong> {nivel_key.upper()}</p>
 <hr>
 <h3>PROGRAMA ARQUITECTÓNICO</h3>
 <table>
@@ -603,15 +625,14 @@ def cierre_pdf(lead_id):
         nivel = lead["nivel_proyecto"] or "—"
         m2_lead = lead["m2"] or 0
         honorarios = lead["honorarios_diseno"] or 0
+        nivel_orig = lead["nivel_original"] or "—"
+        m2_orig = lead["m2_original"] or 0
+        honorarios_orig = lead["honorarios_original"] or 0
         temp_id = lead["temp_id"] or "—"
         fecha = datetime.datetime.now().strftime("%d/%m/%Y")
-        ubic_str = ""
-        try:
-            ubic = json.loads(lead["ubicacion"] or "{}")
-            parts = [ubic.get("calle_numero",""), ubic.get("colonia",""), ubic.get("ciudad",""), ubic.get("estado","")]
-            ubic_str = ", ".join(p for p in parts if p)
-        except:
-            pass
+        parts = [lead.get("calle_numero","") or "", lead.get("colonia","") or "",
+                 lead.get("ciudad","") or "", lead.get("estado_ubic","") or ""]
+        ubic_str = ", ".join(p for p in parts if p)
 
         filas_cobros = "".join(
             f"<tr><td>{r['concepto'] or '—'}</td><td style='text-align:right'>${r['monto']:,.2f}</td>"
@@ -628,6 +649,26 @@ def cierre_pdf(lead_id):
             for r in prog_rows
         )
 
+        respuestas_lines2 = ""
+        try:
+            raw = json.loads(lead["respuestas_json"] or "{}")
+            for k, v in raw.items():
+                num = k.replace("step","").replace("Pregunta ","")
+                if isinstance(v, dict):
+                    r = (v.get("r") or v.get("selected") or "")
+                    lbl = (v.get("label") or "")
+                    respuestas_lines2 += f"<div>Pregunta {num}: {r.upper() if r else '?'}. {lbl}</div>"
+                elif isinstance(v, str) and v.strip():
+                    info = INMERSION_PREGUNTAS.get(k)
+                    if info:
+                        opt = info.get(v.strip().upper(), "")
+                        respuestas_lines2 += f"<div>Pregunta {num}: {v.strip().upper()}. {opt}</div>"
+                    else:
+                        respuestas_lines2 += f"<div>Pregunta {num}: {v.strip().upper()}</div>"
+        except:
+            pass
+
+        espacio_count = len(prog_rows)
         html = f"""<!DOCTYPE html><html><head><meta charset='utf-8'>
 <title>CIERRE DE PROYECTO — {nombre_cliente}</title>
 <style>
@@ -659,7 +700,8 @@ td {{ padding: 4px 5px; border-bottom: 1px solid #ddd; }}
 <tr><td style='font-weight:600;'>Tipo</td><td>{tipo_proyecto}</td></tr>
 <tr><td style='font-weight:600;'>Ubicación</td><td>{ubic_str}</td></tr>
 <tr><td style='font-weight:600;'>ID</td><td>{temp_id}</td></tr>
-<tr><td style='font-weight:600;'>Paquete</td><td>{nivel.upper()} · {m2_lead:.0f} m²</td></tr>
+<tr><td style='font-weight:600;'>Inmersión (cliente)</td><td>{nivel_orig.upper()} · {m2_orig:.0f} m² · ${honorarios_orig:,.2f}</td></tr>
+<tr><td style='font-weight:600;'>Programa (definitivo)</td><td>{nivel.upper()} · {m2_lead:.0f} m² · ${honorarios:,.2f}</td></tr>
 <tr><td style='font-weight:600;'>Fecha de cierre</td><td>{fecha}</td></tr>
 </table>
 </div>
@@ -676,7 +718,7 @@ td {{ padding: 4px 5px; border-bottom: 1px solid #ddd; }}
 </div>
 <div class='section'>
 <h3>Respuestas de Inmersión</h3>
-<pre style="font-family:'Courier New',monospace;font-size:7pt;line-height:1.3;background:#f9f9f9;padding:10px;border:1px solid #ddd;white-space:pre-wrap;">{json.dumps(json.loads(lead['respuestas_json'] or '{}'), indent=2) if lead.get('respuestas_json') else 'Sin respuestas.'}</pre>
+                <div style="font-family:'Courier New',monospace;font-size:8pt;line-height:1.6;background:#f9f9f9;padding:10px;border:1px solid #ddd;">{respuestas_lines2 or 'Sin respuestas.'}</div>
 </div>
 <div class='section'>
 <h3>Resumen Financiero</h3>
@@ -691,6 +733,114 @@ td {{ padding: 4px 5px; border-bottom: 1px solid #ddd; }}
 {filas_cobros}
 </table>
 </div>
+<div class='footer'>
+<p>SOMA Taller Virtual de Arquitectura — {fecha}</p>
+<p>info@soma-arquitectura.com</p>
+</div>
+</body></html>"""
+        return html, 200, {'Content-Type': 'text/html; charset=utf-8'}
+    except Exception as e:
+        return f"Error: {e}", 500
+
+@app.route('/lead/<int:lead_id>/expediente-pdf', methods=['GET'])
+def expediente_pdf(lead_id):
+    try:
+        conn = get_connection()
+        lead = fetchone(conn, "SELECT * FROM captura_web WHERE id=?", (lead_id,))
+        if not lead:
+            conn.close()
+            return "Proyecto no encontrado", 404
+        prog_rows = fetchall(conn, "SELECT espacio, area, tipo, clave FROM programa_arquitectonico WHERE lead_id=? ORDER BY id", (lead_id,))
+        conn.close()
+
+        nombre_cliente = lead["nombre_proyecto"] or lead["nombre_cliente"] or lead["contacto"] or "—"
+        temp_id = lead["temp_id"] or "—"
+        nivel = lead["nivel_proyecto"] or "—"
+        m2_lead = lead["m2"] or 0
+        honorarios = lead["honorarios_diseno"] or 0
+        nivel_orig = lead["nivel_original"] or "—"
+        m2_orig = lead["m2_original"] or 0
+        honorarios_orig = lead["honorarios_original"] or 0
+        fecha = datetime.datetime.now().strftime("%d/%m/%Y")
+        parts = [lead.get("calle_numero","") or "", lead.get("colonia","") or "",
+                 lead.get("ciudad","") or "", lead.get("estado_ubic","") or ""]
+        ubic_str = ", ".join(p for p in parts if p)
+
+        respuestas_lines = ""
+        try:
+            raw = json.loads(lead["respuestas_json"] or "{}")
+            for k, v in raw.items():
+                num = k.replace("step","").replace("Pregunta ","")
+                if isinstance(v, dict):
+                    r = (v.get("r") or v.get("selected") or "")
+                    lbl = (v.get("label") or "")
+                    respuestas_lines += f"<div>Pregunta {num}: {r.upper() if r else '?'}. {lbl}</div>"
+                elif isinstance(v, str) and v.strip():
+                    info = INMERSION_PREGUNTAS.get(k)
+                    if info:
+                        opt = info.get(v.strip().upper(), "")
+                        respuestas_lines += f"<div>Pregunta {num}: {v.strip().upper()}. {opt}</div>"
+                    else:
+                        respuestas_lines += f"<div>Pregunta {num}: {v.strip().upper()}</div>"
+        except:
+            pass
+
+        filas_prog = "".join(
+            f"<tr><td>{r['tipo'] or '—'}</td><td>{r['espacio'] or '—'}</td>"
+            f"<td style='text-align:right'>{r['area'] or 0:.1f}</td><td style='text-align:center'>{r['clave'] or '—'}</td></tr>"
+            for r in prog_rows
+        )
+
+        html = f"""<!DOCTYPE html><html><head><meta charset='utf-8'>
+<title>EXPEDIENTE — {nombre_cliente}</title>
+<style>
+@page {{ margin: 1.8cm; }}
+body {{ font-family: 'Helvetica', 'Arial', sans-serif; color: #1a1a1a; font-size: 10pt; line-height: 1.5; }}
+.header {{ text-align: center; margin-bottom: 25px; border-bottom: 3px solid #a6937c; padding-bottom: 15px; }}
+.header h1 {{ font-size: 24pt; letter-spacing: 4px; margin: 0; color: #a6937c; }}
+.header h2 {{ font-size: 9pt; color: #666; font-weight: normal; margin: 5px 0 0; }}
+.section {{ margin: 15px 0; }}
+.section h3 {{ font-size: 9pt; text-transform: uppercase; color: #a6937c; border-bottom: 1px solid #ccc; padding-bottom: 4px; }}
+table {{ width: 100%; border-collapse: collapse; font-size: 9pt; margin: 8px 0; }}
+th {{ background: #a6937c; color: #fff; padding: 5px; text-align: left; font-size: 7.5pt; text-transform: uppercase; }}
+td {{ padding: 4px 5px; border-bottom: 1px solid #ddd; }}
+.resumen {{ background: #f9f9f9; padding: 12px; margin: 10px 0; display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }}
+.resumen .item {{ text-align: center; }}
+.resumen .item .val {{ font-size: 16pt; font-weight: bold; color: #a6937c; }}
+.resumen .item .lbl {{ font-size: 7pt; text-transform: uppercase; color: #999; }}
+.footer {{ margin-top: 30px; font-size: 7.5pt; color: #999; text-align: center; border-top: 1px solid #ddd; padding-top: 10px; }}
+</style></head><body>
+<div class='header'>
+<h1>SOMA</h1>
+<h2>EXPEDIENTE TÉCNICO</h2>
+</div>
+<div class='section'>
+<h3>Datos del Proyecto</h3>
+<table>
+<tr><td style='width:140px;font-weight:600;'>Cliente</td><td>{nombre_cliente}</td></tr>
+<tr><td style='font-weight:600;'>ID</td><td>{temp_id}</td></tr>
+<tr><td style='font-weight:600;'>Contacto</td><td>{lead["contacto"] or "—"}</td></tr>
+<tr><td style='font-weight:600;'>Inmersión (cliente)</td><td>{nivel_orig.upper()} · {m2_orig:.0f} m² · ${honorarios_orig:,.2f}</td></tr>
+<tr><td style='font-weight:600;'>Programa (definitivo)</td><td>{nivel.upper()} · {m2_lead:.0f} m² · ${honorarios:,.2f}</td></tr>
+<tr><td style='font-weight:600;'>Ubicación</td><td>{ubic_str}</td></tr>
+</table>
+</div>
+<div class='section'>
+<h3>Análisis Multidimensional</h3>
+<pre style="font-family:'Courier New',monospace;font-size:7.5pt;line-height:1.4;background:#f9f9f9;padding:10px;border:1px solid #ddd;white-space:pre-wrap;">{lead['analisis_procesado'] or 'Sin análisis disponible.'}</pre>
+</div>
+<div class='section'>
+<h3>Respuestas de Inmersión</h3>
+<div style="font-family:'Courier New',monospace;font-size:8pt;line-height:1.6;background:#f9f9f9;padding:10px;border:1px solid #ddd;">{respuestas_lines or 'Sin respuestas.'}</div>
+</div>
+{f"""
+<div class='section'>
+<h3>Programa Arquitectónico</h3>
+<table>
+<tr><th>Tipo</th><th>Espacio</th><th style='text-align:right'>m²</th><th style='text-align:center'>Clave</th></tr>
+{filas_prog}
+</table>
+</div>""" if prog_rows else ""}
 <div class='footer'>
 <p>SOMA Taller Virtual de Arquitectura — {fecha}</p>
 <p>info@soma-arquitectura.com</p>
@@ -974,8 +1124,13 @@ def update_datos_proyecto(lead_id):
         nivel_proyecto = (data.get('nivel_proyecto') or '').strip()
         m2 = data.get('m2')
         honorarios = data.get('honorarios_diseno')
-        ubicacion = data.get('ubicacion', {})
-        ubicacion_json = json.dumps(ubicacion) if ubicacion else None
+        calle_numero = (data.get('calle_numero') or '').strip()
+        colonia = (data.get('colonia') or '').strip()
+        ciudad = (data.get('ciudad') or '').strip()
+        estado_ubic = (data.get('estado_ubic') or data.get('estado') or '').strip()
+        # Rebuild ubicacion JSON from individual fields for backward compat
+        ubicacion_obj = {"calle_numero": calle_numero, "colonia": colonia, "ciudad": ciudad, "estado": estado_ubic}
+        ubicacion_json = json.dumps(ubicacion_obj)
 
         PRECIOS = {'esencial': 250, 'integral': 350, 'ejecutivo': 850}
         precio_m2 = PRECIOS.get(nivel_proyecto, 250)
@@ -986,15 +1141,9 @@ def update_datos_proyecto(lead_id):
             honorarios_calc = None
         
         conn = get_connection()
-        if nivel_proyecto and m2 is not None:
-            execute(conn, "UPDATE captura_web SET nombre_cliente=?, nombre_proyecto=?, tipo_proyecto=?, nivel_proyecto=?, m2=?, honorarios_diseno=?, ubicacion=? WHERE id=?",
-                    (nombre_cliente, nombre_proyecto, tipo_proyecto, nivel_proyecto, m2, honorarios_calc, ubicacion_json, lead_id))
-        elif nivel_proyecto:
-            execute(conn, "UPDATE captura_web SET nombre_cliente=?, nombre_proyecto=?, tipo_proyecto=?, nivel_proyecto=?, ubicacion=? WHERE id=?",
-                    (nombre_cliente, nombre_proyecto, tipo_proyecto, nivel_proyecto, ubicacion_json, lead_id))
-        else:
-            execute(conn, "UPDATE captura_web SET nombre_cliente=?, nombre_proyecto=?, tipo_proyecto=?, ubicacion=? WHERE id=?",
-                    (nombre_cliente, nombre_proyecto, tipo_proyecto, ubicacion_json, lead_id))
+        base_sql = " UPDATE captura_web SET nombre_cliente=?, nombre_proyecto=?, tipo_proyecto=?, nivel_proyecto=?, m2=?, honorarios_diseno=?, ubicacion=?, calle_numero=?, colonia=?, ciudad=?, estado_ubic=? WHERE id=?"
+        params = [nombre_cliente, nombre_proyecto, tipo_proyecto, nivel_proyecto, m2, honorarios_calc, ubicacion_json, calle_numero, colonia, ciudad, estado_ubic, lead_id]
+        execute(conn, base_sql, params)
         conn.commit()
         conn.close()
         return jsonify({"status": "success"}), 200
@@ -1606,4 +1755,4 @@ def movimientos_fondo(fondo_id):
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))
-    app.run(port=port, debug=False, host='0.0.0.0')
+    app.run(port=port, debug=False, host='0.0.0.0', threaded=True)
