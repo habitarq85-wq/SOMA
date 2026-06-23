@@ -103,7 +103,7 @@ function toggleCard(el) {
 // ---- Estado de contacto ----
 function estadoContactoSelect(l) {
     const estados = ['no programado', 'programado', 'contactado', 'cerrado'];
-    return `<select style="padding:3px;border:1px solid #ddd;border-radius:2px;font-size:.55rem;font-family:'JetBrains Mono',monospace;"
+    return `<select class="estado-select"
         onchange="LEADS.cambiarEstadoContacto(this,${l.id})">
         ${estados.map(e => `<option value="${e}" ${l.estado_contacto === e ? 'selected' : ''}>${e}</option>`).join('')}
     </select>`;
@@ -268,9 +268,9 @@ const LEADS = (() => {
         document.getElementById('cont-resumen').innerHTML =
             `${API.esc(lead.temp_id)}<br><strong>${API.esc(lead.nombre_cliente)}</strong><br>
             <span style="font-size:.7rem;color:#666;">${API.esc(lead.nombre_proyecto)}</span>
-            <div style="margin-top:15px;padding:10px;background:#f4f1ea;border-radius:4px;">
-                <span style="font-family:'JetBrains Mono';font-size:.65rem;">Honorarios: <strong>$${Number(honorarios).toLocaleString()}</strong></span><br>
-                <span style="font-family:'JetBrains Mono';font-size:.65rem;color:#2e7d32;">Anticipo 30%: <strong>$${Math.round(anticipo).toLocaleString()}</strong></span>
+            <div style="margin-top:15px;padding:10px;background:var(--surface2);border-radius:4px;border:1px solid var(--border);">
+                <span style="font-family:'Courier New',monospace;font-size:.65rem;">Honorarios: <strong>$${Number(honorarios).toLocaleString()}</strong></span><br>
+                <span style="font-family:'Courier New',monospace;font-size:.65rem;color:#4caf50;">Anticipo 30%: <strong>$${Math.round(anticipo).toLocaleString()}</strong></span>
             </div>`;
         UI.openModal('modal-contratar');
     }
@@ -318,18 +318,18 @@ const LEADS = (() => {
         // Comparativa Original vs Modificado
         if (tieneOriginal) {
             html += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px;">
-                <div style="padding:12px;background:#f9f9f9;border-radius:4px;border:1px solid #e0d5c1;">
-                    <h4 style="font-family:'JetBrains Mono';font-size:.55rem;color:#999;text-transform:uppercase;margin-bottom:8px;">▼ Inmersión (original)</h4>
-                    <div style="font-family:'Inter',sans-serif;font-size:.75rem;">
-                        <span style="color:#666;">${lead.m2_original} m² · ${lead.nivel_original||'---'}</span><br>
+                <div style="padding:12px;background:var(--surface2);border-radius:4px;border:1px solid var(--border);">
+                    <h4 style="font-family:'Courier New',monospace;font-size:.55rem;color:var(--text3);text-transform:uppercase;margin-bottom:8px;">▼ Inmersión (original)</h4>
+                    <div style="font-family:Georgia,'Times New Roman',serif;font-size:.75rem;color:var(--text);">
+                        <span style="color:var(--text2);">${lead.m2_original} m² · ${lead.nivel_original||'---'}</span><br>
                         <span style="font-weight:600;">$${(lead.honorarios_original||0).toLocaleString()}</span>
                     </div>
                 </div>
-                <div style="padding:12px;background:#f0f7f0;border-radius:4px;border:1px solid #2e7d32;">
-                    <h4 style="font-family:'JetBrains Mono';font-size:.55rem;color:#2e7d32;text-transform:uppercase;margin-bottom:8px;">▲ PROGRAMA (modificado)</h4>
-                    <div style="font-family:'Inter',sans-serif;font-size:.75rem;">
-                        <span style="color:#666;">${m2} m² · ${nivel.charAt(0).toUpperCase()+nivel.slice(1)}</span><br>
-                        <span style="font-weight:600;color:#2e7d32;">$${honorarios.toLocaleString()}</span>
+                <div style="padding:12px;background:rgba(30,80,40,0.2);border-radius:4px;border:1px solid #2e7d32;">
+                    <h4 style="font-family:'Courier New',monospace;font-size:.55rem;color:#4caf50;text-transform:uppercase;margin-bottom:8px;">▲ PROGRAMA (modificado)</h4>
+                    <div style="font-family:Georgia,'Times New Roman',serif;font-size:.75rem;color:var(--text);">
+                        <span style="color:var(--text2);">${m2} m² · ${nivel.charAt(0).toUpperCase()+nivel.slice(1)}</span><br>
+                        <span style="font-weight:600;color:#4caf50;">$${honorarios.toLocaleString()}</span>
                     </div>
                 </div>
             </div>`;
@@ -353,7 +353,7 @@ const LEADS = (() => {
                     });
                     html += Object.keys(agrupados).map(tipo => `
                         <div style="margin-bottom:8px;">
-                            <h5 style="font-family:'JetBrains Mono';font-size:.6rem;color:#555;text-transform:uppercase;margin-bottom:4px;">${tipo}</h5>
+                            <h5 style="font-family:'Courier New',monospace;font-size:.6rem;color:var(--accent);text-transform:uppercase;margin-bottom:4px;">${tipo}</h5>
                             <table class="data-table">
                                 ${agrupados[tipo].map(e => `<tr><td style="padding:2px 4px;">${e.clave||''}</td><td style="padding:2px 4px;">${e.espacio}</td><td style="padding:2px 4px;text-align:right;">${e.area} m²</td></tr>`).join('')}
                             </table>
@@ -374,7 +374,7 @@ const LEADS = (() => {
                         </table>`;
                 }
             } catch (_) {}
-            html += `<pre style="background:#f4f1ea;padding:10px;font-family:'JetBrains Mono';font-size:.6rem;white-space:pre-wrap;max-height:300px;overflow-y:auto;margin-top:10px;">${API.esc(lead.analisis_procesado)}</pre>`;
+            html += `<pre style="background:var(--surface2);padding:10px;font-family:'Courier New',monospace;font-size:.6rem;white-space:pre-wrap;max-height:300px;overflow-y:auto;margin-top:10px;border:1px solid var(--border);border-radius:4px;color:var(--text2);">${API.esc(lead.analisis_procesado)}</pre>`;
         }
 
         // Cobros
@@ -383,7 +383,7 @@ const LEADS = (() => {
 
         // Cobros management (only for non-terminado)
         if (lead.pipeline_estado !== 'terminado') {
-            html += `<div style="margin-top:10px;padding:10px;background:#f9f9f9;border-radius:4px;">
+            html += `<div style="margin-top:10px;padding:10px;background:var(--surface2);border-radius:4px;border:1px solid var(--border);">
                 <div style="display:flex;gap:8px;margin-bottom:8px;">
                     <button class="cand-btn btn-green" style="font-size:.6rem;padding:4px 10px;" onclick="LEADS.toggleFormCobro(${id})">+ Nuevo Cobro</button>
                     <button class="cand-btn btn-gold" style="font-size:.6rem;padding:4px 10px;" onclick="LEADS.generarEsquema(${id})">⚡ 30/40/30</button>
@@ -401,7 +401,7 @@ const LEADS = (() => {
 
         // PDF Cierre button for terminados
         if (lead.pipeline_estado === 'terminado') {
-            html += `<div style="margin-top:15px;border-top:2px solid #555;padding-top:12px;">
+            html += `<div style="margin-top:15px;border-top:2px solid var(--border);padding-top:12px;">
                 <button class="cand-btn btn-dark" style="font-size:.7rem;padding:6px 16px;" onclick="window.open('/lead/${lead.id}/cierre-pdf','_blank')">📄 PDF de Cierre</button>
             </div>`;
         }

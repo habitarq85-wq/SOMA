@@ -3,24 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>SOMA | Dashboard 2.0</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<title>SOMA | Dashboard</title>
 <link rel="stylesheet" href="/web/css/dashboard.css">
 </head>
 <body>
 
 <header class="magazine-header">
-    <h1>SOMA <span>║</span> <span style="font-weight:300;">Dashboard 2.0</span></h1>
+    <h1>SOMA <span>║</span> <span style="font-weight:300;">Dashboard</span></h1>
     <div class="header-right">
         <span id="last-update"></span>
-        <span style="color:#888;">PUERTO 8080</span>
+        <span>PUERTO 8080</span>
     </div>
 </header>
 
 <main>
 
     <!-- BLOQUE 01: GESTIÓN DE PROYECTOS -->
-    <section class="block-section" style="border-top:4px solid #2e7d32;">
+    <section class="block-section" style="border-top:4px solid var(--accent);">
         <div class="block-header">
             <h2 class="block-title">BLOQUE 01: GESTIÓN DE PROYECTOS</h2>
             <span class="block-num">KPI</span>
@@ -51,9 +50,9 @@
     </section>
 
     <!-- CANDIDATOS — MOMENTO 1 -->
-    <section class="block-section" style="border-top:4px solid #d4af37;">
+    <section class="block-section" style="border-top:4px solid var(--accent);">
         <div class="block-header">
-            <h2 class="block-title" style="color:#d4af37;">CANDIDATOS — MOMENTO 1</h2>
+            <h2 class="block-title" style="color:var(--accent);">CANDIDATOS — MOMENTO 1</h2>
             <span class="block-num">INMERSIÓN</span>
         </div>
         <p class="section-desc">Leads registrados vía página web. Pendientes de contacto y contratación.</p>
@@ -63,24 +62,24 @@
     </section>
 
     <!-- CLIENTES — MOMENTO 2 -->
-    <section class="block-section" style="border-top:4px solid #2e7d32;">
+    <section class="block-section" style="border-top:4px solid #4caf50;">
         <div class="block-header">
-            <h2 class="block-title" style="color:#2e7d32;">CLIENTES — MOMENTO 2</h2>
+            <h2 class="block-title" style="color:#4caf50;">CLIENTES — MOMENTO 2</h2>
             <span class="block-num">3 FASES</span>
         </div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:15px;">
-            <div class="phase-container" style="border:1px solid #2e7d32;background:rgba(46,125,50,0.03);">
-                <h4 style="color:#2e7d32;">● FASE 1 — CONTRATADO</h4>
+            <div class="phase-container" style="border:1px solid #2e7d32;background:rgba(30,80,40,0.15);">
+                <h4 style="color:#4caf50;">● FASE 1 — CONTRATADO</h4>
                 <p class="phase-desc">Anticipo pagado</p>
                 <div id="fase-contratado-container" class="cards-grid"></div>
             </div>
-            <div class="phase-container" style="border:1px solid #1565c0;background:rgba(21,101,192,0.03);">
-                <h4 style="color:#1565c0;">● FASE 2 — 1RA ENTREGA</h4>
+            <div class="phase-container" style="border:1px solid #1565c0;background:rgba(21,101,192,0.1);">
+                <h4 style="color:#42a5f5;">● FASE 2 — 1RA ENTREGA</h4>
                 <p class="phase-desc">Primer bloque entregado</p>
                 <div id="fase-primera_entrega-container" class="cards-grid"></div>
             </div>
-            <div class="phase-container" style="border:1px solid #6a1b9a;background:rgba(106,27,154,0.03);">
-                <h4 style="color:#6a1b9a;">● FASE 3 — ENTREGA FINAL</h4>
+            <div class="phase-container" style="border:1px solid #6a1b9a;background:rgba(106,27,154,0.1);">
+                <h4 style="color:#ab47bc;">● FASE 3 — ENTREGA FINAL</h4>
                 <p class="phase-desc">Proyecto completo</p>
                 <div id="fase-entrega_final-container" class="cards-grid"></div>
             </div>
@@ -90,7 +89,7 @@
     <!-- MOMENTO 3: PROYECTOS CONCLUIDOS -->
     <section class="block-section" style="border-top:4px solid #555;">
         <div class="block-header">
-            <h2 class="block-title" style="color:#555;">MOMENTO 3 — PROYECTOS CONCLUIDOS</h2>
+            <h2 class="block-title" style="color:#888;">MOMENTO 3 — PROYECTOS CONCLUIDOS</h2>
             <span class="block-num">ARCHIVO</span>
         </div>
         <div id="momento3-container" class="cards-grid">
@@ -175,8 +174,8 @@
 <div id="modal-expediente" class="modal-overlay">
     <div class="modal-content">
         <button class="modal-close" onclick="UI.closeModal('modal-expediente')">✕</button>
-        <h2 style="font-family:'Playfair Display';font-size:1.8rem;margin-bottom:5px;" id="modal-titulo">Expediente</h2>
-        <p style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:#999;margin-bottom:20px;" id="modal-id"></p>
+        <h2 style="font-size:1.8rem;margin-bottom:5px;" id="modal-titulo">Expediente</h2>
+        <p style="font-family:'Courier New',monospace;font-size:.65rem;color:var(--text3);margin-bottom:20px;" id="modal-id"></p>
         <div id="modal-body"></div>
     </div>
 </div>
@@ -185,8 +184,8 @@
 <div id="modal-contratar" class="modal-overlay">
     <div class="modal-content" style="max-width:400px;">
         <button class="modal-close" onclick="LEADS.cerrarContratar()">✕</button>
-        <h2 style="font-family:'Playfair Display';font-size:1.8rem;margin-bottom:5px;">Confirmar Contratación</h2>
-        <p style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:#999;margin-bottom:20px;">¿Estás seguro de pasar este lead a <strong>Momento 2 (Clientes)</strong>?</p>
+        <h2 style="font-size:1.8rem;margin-bottom:5px;">Confirmar Contratación</h2>
+        <p style="font-family:'Courier New',monospace;font-size:.65rem;color:var(--text3);margin-bottom:20px;">¿Estás seguro de pasar este lead a <strong>Momento 2 (Clientes)</strong>?</p>
         <div style="text-align:center;">
             <p style="font-size:.8rem;margin-bottom:20px;" id="cont-resumen">Cargando...</p>
             <button onclick="LEADS.confirmarContratar()" class="cand-btn btn-green" style="width:100%;padding:10px;font-size:.85rem;">✓ Sí, pasar a Momento 2</button>
@@ -199,8 +198,8 @@
 <div id="modal-programa" class="modal-overlay">
     <div class="modal-content wide">
         <button class="modal-close" onclick="PROGRAMA.cerrar()">✕</button>
-        <h2 style="font-family:'Playfair Display';font-size:1.8rem;margin-bottom:5px;" id="modal-prog-titulo">Programa</h2>
-        <p style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:#999;margin-bottom:10px;" id="modal-prog-id"></p>
+        <h2 style="font-size:1.8rem;margin-bottom:5px;" id="modal-prog-titulo">Programa</h2>
+        <p style="font-family:'Courier New',monospace;font-size:.65rem;color:var(--text3);margin-bottom:10px;" id="modal-prog-id"></p>
         <div id="modal-prog-header"></div>
         <div style="display:flex;gap:8px;margin-bottom:15px;">
             <button class="cand-btn btn-green" style="flex:1;font-size:.6rem;" onclick="PROGRAMA.mostrarSeccion('programa')">📐 Programa</button>
