@@ -19,6 +19,29 @@ from db import get_connection, execute, fetchone, fetchall, get_lastrowid, dicti
 app = Flask(__name__)
 CORS(app)
 
+# Basic Auth to protect dashboard and admin/API endpoints
+def check_auth(username, password):
+    expected_user = os.environ.get('DASHBOARD_USER', 'admin')
+    expected_pass = os.environ.get('DASHBOARD_PASS', 'Yucata85')
+    return username == expected_user and password == expected_pass
+
+def authenticate():
+    return Response(
+        'Acceso restringido. Introduce las credenciales correctas.', 401,
+        {'WWW-Authenticate': 'Basic realm="Login SOMA"'}
+    )
+
+@app.before_request
+def require_login():
+    public_paths = ['/', '/save_immersion']
+    public_prefixes = ['/web/', '/css/', '/recursos_graficos/', '/backend/']
+    path = request.path
+    if path in public_paths or any(path.startswith(pref) for pref in public_prefixes):
+        return None
+    auth = request.authorization
+    if not auth or not check_auth(auth.username, auth.password):
+        return authenticate()
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROYECTO_DIR = os.path.dirname(BASE_DIR)
 DIAGNOSTICOS_PATH = os.path.join(BASE_DIR, "diagnosticos_master.json")
