@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SOMA Arquitectura — Tarjeta Digital</title>
+<meta name="description" content="SOMA Taller Virtual de Arquitectura — Juan José Piña May. Diseño arquitectónico de alta calidad.">
+<meta property="og:title" content="SOMA — Taller Virtual de Arquitectura">
+<meta property="og:description" content="Juan José Piña May · M. en Arq. Protocolizamos lo técnico para liberar lo creativo.">
+<meta property="og:image" content="https://soma-arquitectura.com/recursos_graficos/logo_soma.jpg">
+<meta property="og:image:width" content="385">
+<meta property="og:image:height" content="359">
+<meta property="og:type" content="website">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;700;900&family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0a;--surface:#141414;--surface2:#1a1a1a;--accent:#d45e2c;--text:#f4f1ee;--text2:#999;--text3:#666;--border:#222}
+body{background:var(--bg);color:var(--text);font-family:Georgia,'Times New Roman',serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.container{max-width:420px;width:100%}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;position:relative}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--accent),#e68033,var(--accent))}
+.card-inner{padding:32px 28px 28px}
+.logo-img{width:64px;height:64px;border-radius:12px;margin-bottom:16px;object-fit:contain;background:var(--surface2);padding:6px;border:1px solid var(--border)}
+.name{font-family:'Unbounded',sans-serif;font-size:1.3rem;font-weight:700;line-height:1.2;margin-bottom:2px}
+.title{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.subtitle{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--text3);font-style:italic;margin-bottom:20px}
+.desc{font-size:.8rem;color:var(--text2);line-height:1.5;margin-bottom:24px;padding:14px 16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--accent)}
+.contact-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.contact-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--surface2);border-radius:8px;transition:background .2s;cursor:pointer;text-decoration:none;color:var(--text)}
+.contact-item:hover{background:#1e1e1e}
+.contact-item .icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.contact-item .icon.wa{background:#25d366;color:#fff}
+.contact-item .icon.email{background:var(--accent);color:#fff}
+.contact-item .icon.globe{background:#4a9eff;color:#fff}
+.contact-item .icon.map{background:#e68033;color:#fff}
+.contact-item .label{font-family:'JetBrains Mono',monospace;font-size:.5rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px}
+.contact-item .value{font-size:.8rem;font-weight:600}
+.contact-item .value.small{font-size:.65rem;color:var(--text2);font-weight:400}
+.actions{display:flex;gap:10px;margin-bottom:20px}
+.btn{flex:1;padding:12px 16px;border:none;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;transition:all .2s;text-decoration:none;text-align:center}
+.btn-primary{background:var(--accent);color:var(--bg)}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+.btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+.social{display:flex;gap:12px;justify-content:center;padding-top:16px;border-top:1px solid var(--border)}
+.social a{width:40px;height:40px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--text2);font-size:1.1rem;transition:all .2s}
+.social a:hover{border-color:var(--accent);color:var(--accent);background:#1e1410}
+.footer-text{text-align:center;margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:.45rem;color:var(--text3);letter-spacing:1px}
+@media(max-width:480px){.card-inner{padding:24px 18px 20px}.name{font-size:1.1rem}.desc{font-size:.75rem}.contact-item{padding:8px 12px}.btn{font-size:.6rem;padding:10px 12px}}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="card">
+<div class="card-inner">
+<img class="logo-img" src="/recursos_graficos/logo_soma.jpg" alt="SOMA Arquitectura">
+<div class="title">Taller Virtual de Arquitectura</div>
+<div class="name">Juan José Piña May</div>
+<div class="subtitle">M. en Arq. · Fundador</div>
+
+<div class="desc">
+Protocolizamos lo técnico para liberar lo creativo. Arquitectura de alta calidad con procesos inteligentes, para quienes buscan un diseño claro, honesto y con mensaje.
+</div>
+
+<div class="contact-grid">
+<a class="contact-item" href="https://wa.me/529995314093" target="_blank" rel="noopener">
+<div class="icon wa">✉</div>
+<div><div class="label">WhatsApp</div><div class="value">999 531 4093</div></div>
+</a>
+
+<a class="contact-item" href="mailto:info@soma-arquitectura.com">
+<div class="icon email">@</div>
+<div><div class="label">Correo</div><div class="value">info@soma-arquitectura.com</div></div>
+</a>
+
+<a class="contact-item" href="https://soma-arquitectura.com" target="_blank" rel="noopener">
+<div class="icon globe">◉</div>
+<div><div class="label">Sitio Web</div><div class="value">soma-arquitectura.com</div></div>
+</a>
+
+<a class="contact-item" href="https://maps.google.com/?q=Merida+Yucatan+Mexico" target="_blank" rel="noopener">
+<div class="icon map">⚲</div>
+<div><div class="label">Ubicación</div><div class="value small">Mérida, Yucatán, México</div></div>
+</a>
+</div>
+
+<div class="actions">
+<a class="btn btn-primary" href="/tarjeta/contacto.vcf" download="soma_contacto.vcf">+ GUARDAR CONTACTO</a>
+<a class="btn btn-secondary" href="https://wa.me/529995314093?text=Hola%20SOMA%2C%20vi%20tu%20tarjeta%20digital%20y%20me%20gustar%C3%ADa%20saber%20m%C3%A1s" target="_blank" rel="noopener">✉ MENSAJE</a>
+</div>
+
+<div class="social">
+<a href="https://wa.me/529995314093" target="_blank" rel="noopener" title="WhatsApp">✉</a>
+<a href="mailto:info@soma-arquitectura.com" title="Correo">@</a>
+<a href="https://soma-arquitectura.com" target="_blank" rel="noopener" title="Web">◉</a>
+</div>
+</div>
+</div>
+<div class="footer-text">SOMA · Taller Virtual de Arquitectura · MMXXVI</div>
+</div>
+
+<script>
+document.querySelectorAll('.contact-item[href^="tel"], .contact-item[href^="mailto"]').forEach(el => {
+el.addEventListener('click', function(e) { e.stopPropagation(); });
+});
+</script>
+</body>
+</html>

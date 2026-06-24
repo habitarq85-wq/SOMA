@@ -33,7 +33,7 @@ def authenticate():
 
 @app.before_request
 def require_login():
-    public_paths = ['/', '/save_immersion']
+    public_paths = ['/', '/save_immersion', '/tarjeta', '/tarjeta/contacto.vcf']
     public_prefixes = ['/web/', '/css/', '/recursos_graficos/', '/backend/']
     path = request.path
     if path in public_paths or any(path.startswith(pref) for pref in public_prefixes):
@@ -1362,8 +1362,32 @@ def resumen_financiero():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+@app.route('/tarjeta')
+def tarjeta():
+    tarjeta_path = os.path.join(PROYECTO_DIR, "web", "tarjeta.html")
+    if os.path.exists(tarjeta_path):
+        with open(tarjeta_path, 'r', encoding='utf-8') as f:
+            return f.read(), 200, {'Content-Type': 'text/html; charset=utf-8'}
+    return "Tarjeta no encontrada", 404
+
+@app.route('/tarjeta/contacto.vcf')
+def tarjeta_vcf():
+    vcard = """BEGIN:VCARD
+VERSION:3.0
+FN:Juan José Piña May
+N:Piña May;Juan José
+ORG:SOMA Taller Virtual de Arquitectura
+TITLE:Maestro en Arquitectura · Fundador
+TEL;TYPE=CELL:+529995314093
+EMAIL:info@soma-arquitectura.com
+URL:https://soma-arquitectura.com
+ADR;TYPE=WORK:;;Mérida;Yucatán;;;México
+NOTE:Lo protocolario se programa, lo creativo se libera.
+END:VCARD"""
+    return Response(vcard, 200, {'Content-Type': 'text/vcard; charset=utf-8', 'Content-Disposition': 'attachment; filename="soma_contacto.vcf"'})
+
 @app.route('/')
-def serve_web():
+def index():
     web_path = os.path.join(PROYECTO_DIR, "web", "Pagina Web 6.html")
     if os.path.exists(web_path):
         with open(web_path, 'r', encoding='utf-8') as f:
