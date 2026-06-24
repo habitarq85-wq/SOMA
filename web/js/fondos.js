@@ -1,16 +1,15 @@
 const FONDOS = (() => {
     async function load() {
         const tarjetas = document.getElementById('fnd-tarjetas');
-        const select = document.getElementById('fnd-select');
         try {
             const fondos = await API.getFondos();
             if (!fondos.length) {
                 tarjetas.innerHTML = '<p class="loading-text">Sin fondos creados.</p>';
-                select.innerHTML = '<option value="">— Seleccionar fondo —</option>';
+                document.getElementById('fnd-total-acumulado').textContent = '$0';
                 return;
             }
-            select.innerHTML = '<option value="">— Seleccionar fondo —</option>' +
-                fondos.map(f => `<option value="${f.id}">${API.esc(f.nombre)}</option>`).join('');
+            const totalAcumulado = fondos.reduce((s, f) => s + (f.balance_actual || 0), 0);
+            document.getElementById('fnd-total-acumulado').textContent = '$' + totalAcumulado.toLocaleString();
             tarjetas.innerHTML = fondos.map(f => `
                 <div class="fund-card">
                     <div class="fund-header">
@@ -20,6 +19,10 @@ const FONDOS = (() => {
                     <div class="fund-balance">
                         Balance: <strong style="color:${f.balance_actual >= 0 ? '#2e7d32' : '#c62828'};">$${Number(f.balance_actual).toLocaleString()}</strong>
                         <span style="color:#999;margin-left:15px;">Aportación mensual: $${Number(f.monto_mensual).toLocaleString()}</span>
+                    </div>
+                    <div class="fund-aportar">
+                        <input type="number" id="fnd-aportar-${f.id}" placeholder="$ Aportar" style="flex:1;">
+                        <button class="cand-btn btn-green" style="padding:4px 10px;font-size:.65rem;" onclick="FONDOS.aportar(${f.id})">+</button>
                     </div>
                 </div>
             `).join('');
@@ -51,33 +54,17 @@ const FONDOS = (() => {
         } catch (e) { UI.notify(e.message, 'error'); }
     }
 
-    async function apartar() {
-        const fondoId = document.getElementById('fnd-select').value;
-        const monto = parseFloat(document.getElementById('fnd-monto').value);
-        const concepto = document.getElementById('fnd-concepto').value.trim() || 'Aportación';
-        if (!fondoId || !monto) { UI.notify('Selecciona un fondo e ingresa un monto', 'warning'); return; }
+    async function aportar(id) {
+        const input = document.getElementById(`fnd-aportar-${id}`);
+        const monto = parseFloat(input.value);
+        if (!monto || monto <= 0) { UI.notify('Ingresa un monto válido', 'warning'); return; }
         try {
-            await API.apartarFondo(fondoId, { monto, concepto });
-            document.getElementById('fnd-monto').value = '';
-            document.getElementById('fnd-concepto').value = '';
+            await API.apartarFondo(id, { monto, concepto: 'Aportación mensual' });
+            input.value = '';
             UI.notify('Aportación registrada');
             await load();
         } catch (e) { UI.notify(e.message, 'error'); }
     }
 
-    async function retirar() {
-        const fondoId = document.getElementById('fnd-select').value;
-        const monto = parseFloat(document.getElementById('fnd-monto').value);
-        const concepto = document.getElementById('fnd-concepto').value.trim() || 'Retiro';
-        if (!fondoId || !monto) { UI.notify('Selecciona un fondo e ingresa un monto', 'warning'); return; }
-        try {
-            await API.retirarFondo(fondoId, { monto, concepto });
-            document.getElementById('fnd-monto').value = '';
-            document.getElementById('fnd-concepto').value = '';
-            UI.notify('Retiro registrado');
-            await load();
-        } catch (e) { UI.notify(e.message, 'error'); }
-    }
-
-    return { load, crear, eliminar, apartar, retirar };
+    return { load, crear, eliminar, aportar };
 })();

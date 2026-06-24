@@ -921,6 +921,10 @@ def metrics_bloque01():
         gastos = fetchall(conn, "SELECT monto FROM egresos WHERE fecha >= ? AND fecha < ?", date_params)
         gasto_operacion = sum(dictify(r)['monto'] or 0 for r in gastos)
         
+        # Fondo acumulado
+        fondos = fetchall(conn, "SELECT balance_actual FROM fondos")
+        fondo_acumulado = sum(dictify(r)['balance_actual'] or 0 for r in fondos)
+        
         conn.close()
         
         periodo_label = f"{MESES[int(month)-1]} {year}" if month else str(year)
@@ -932,6 +936,7 @@ def metrics_bloque01():
             "pagos_finales": round(pagos_finales, 2),
             "ingresos_periodo": round(ingresos_periodo, 2),
             "gasto_operacion": round(gasto_operacion, 2),
+            "fondo_acumulado": round(fondo_acumulado, 2),
             "total_honorarios": round(total_honorarios, 2),
             "periodo": periodo_label,
             "year": year,

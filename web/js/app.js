@@ -10,6 +10,7 @@ const App = (() => {
                 (async () => {
                     await LEADS.load();
                     await EGRESOS.load();
+                    await EGRESOS.loadSalarios();
                     await FONDOS.load();
                     updateClock();
                 })(),
@@ -71,6 +72,7 @@ function cambiarPeriodo() {
     localStorage.setItem('soma-period-mes', mes);
     localStorage.setItem('soma-period-ano', ano);
     cargarMetrics();
+    App.refresh();
 }
 
 window.onload = () => App.init();

@@ -28,9 +28,10 @@ const UI = (() => {
                 </div>`;
             document.body.appendChild(overlay);
 
-            overlay.querySelector('#cfm-yes').onclick = () => { overlay.remove(); resolve(true); };
-            overlay.querySelector('#cfm-no').onclick = () => { overlay.remove(); resolve(false); };
-            overlay.onclick = e => { if (e.target === overlay) { overlay.remove(); resolve(false); } };
+            const closeOverlay = (result) => { overlay.remove(); if (!document.querySelector('.modal-overlay.active')) document.body.style.overflow = ''; resolve(result); };
+            overlay.querySelector('#cfm-yes').onclick = () => closeOverlay(true);
+            overlay.querySelector('#cfm-no').onclick = () => closeOverlay(false);
+            overlay.onclick = e => { if (e.target === overlay) closeOverlay(false); };
         });
     }
 
@@ -38,9 +39,13 @@ const UI = (() => {
         const el = document.getElementById(id);
         if (el) el.classList.add('active');
     }
+    function restoreScroll() {
+        document.body.style.overflow = '';
+    }
     function closeModal(id) {
         const el = document.getElementById(id);
         if (el) el.classList.remove('active');
+        if (!document.querySelector('.modal-overlay.active')) restoreScroll();
     }
 
     function loading(containerId, msg = 'Cargando...') {
@@ -54,10 +59,12 @@ const UI = (() => {
 document.addEventListener('click', e => {
     if (e.target.classList.contains('modal-overlay')) {
         e.target.classList.remove('active');
+        if (!document.querySelector('.modal-overlay.active')) document.body.style.overflow = '';
     }
 });
 document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
         document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+        document.body.style.overflow = '';
     }
 });

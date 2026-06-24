@@ -131,34 +131,41 @@
                 <div id="egr-lista"><p class="loading-text">Cargando...</p></div>
             </div>
         </div>
-    </section>
-
-    <!-- BLOQUE 03: FONDOS DE PROVISIÓN -->
-    <section class="block-section" style="border-top:4px solid #d4af37;">
-        <div class="block-header">
-            <h2 class="block-title">BLOQUE 03: FONDOS DE PROVISIÓN</h2>
-            <span class="block-num">FONDOS</span>
-        </div>
+        <div class="block-divider"></div>
         <div class="cols-2">
             <div class="form-panel">
-                <h4>Nuevo Fondo</h4>
+                <h4>Registrar Salario</h4>
+                <div class="form-group">
+                    <input type="text" id="sal-nombre" placeholder="Nombre" value="Juan Piña">
+                    <input type="number" id="sal-monto" placeholder="Sueldo mensual $">
+                    <input type="date" id="sal-fecha">
+                    <button class="cand-btn btn-blue" style="padding:6px;font-size:.75rem;" id="sal-registrar-btn" onclick="EGRESOS.registrarSalario()">+ AGREGAR SALARIO</button>
+                </div>
+            </div>
+            <div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                    <h4 style="font-family:'JetBrains Mono',monospace;font-size:.65rem;text-transform:uppercase;">Salarios del Período</h4>
+                    <span id="sal-total-mes" style="font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:700;color:#1565c0;">$0</span>
+                </div>
+                <div id="sal-lista"><p class="loading-text">Cargando...</p></div>
+            </div>
+        </div>
+
+        <div class="block-divider"></div>
+        <div class="cols-2">
+            <div class="form-panel">
+                <h4>Fondos de Reemplazo</h4>
                 <div class="form-group">
                     <input type="text" id="fnd-nombre" placeholder="Nombre (ej. Equipo Cómputo)">
                     <input type="number" id="fnd-mensual" placeholder="Aportación mensual $">
                     <button class="cand-btn btn-gold" style="padding:6px;font-size:.75rem;" onclick="FONDOS.crear()">+ CREAR FONDO</button>
                 </div>
-                <h4 style="margin-top:15px;">Aportar / Retirar</h4>
-                <div class="form-group">
-                    <select id="fnd-select"><option value="">— Seleccionar fondo —</option></select>
-                    <input type="number" id="fnd-monto" placeholder="Monto $">
-                    <input type="text" id="fnd-concepto" placeholder="Concepto">
-                    <div style="display:flex;gap:8px;">
-                        <button class="cand-btn btn-green" style="flex:1;padding:6px;font-size:.7rem;" onclick="FONDOS.apartar()">+ APORTAR</button>
-                        <button class="cand-btn btn-close" style="flex:1;padding:6px;font-size:.7rem;" onclick="FONDOS.retirar()">− RETIRAR</button>
-                    </div>
-                </div>
             </div>
             <div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                    <h4 style="font-family:'JetBrains Mono',monospace;font-size:.65rem;text-transform:uppercase;">Fondos Activos</h4>
+                    <span id="fnd-total-acumulado" style="font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:700;color:#d4af37;">$0</span>
+                </div>
                 <div id="fnd-tarjetas" style="display:grid;gap:12px;"><p class="loading-text">Cargando...</p></div>
             </div>
         </div>

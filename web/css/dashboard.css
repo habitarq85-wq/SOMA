@@ -61,6 +61,10 @@ footer {
     font-weight: 400;
     letter-spacing: 2px;
 }
+.block-divider {
+    border-top: 1px solid var(--border);
+    margin: 20px 0;
+}
 .block-num {
     font-family: 'Courier New', monospace;
     font-size: .55rem;
@@ -424,6 +428,22 @@ footer {
 .fund-card .fund-balance {
     font-family: 'Courier New', monospace;
     font-size: .65rem;
+}
+.fund-card .fund-aportar {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    align-items: center;
+}
+.fund-card .fund-aportar input {
+    padding: 4px 6px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-size: .65rem;
+    background: var(--surface);
+    color: var(--text);
+    font-family: 'Courier New', monospace;
+    min-width: 0;
 }
 
 /* ===== LOADING ===== */
