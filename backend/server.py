@@ -33,7 +33,7 @@ def authenticate():
 
 @app.before_request
 def require_login():
-    public_paths = ['/', '/save_immersion', '/tarjeta', '/tarjeta/contacto.vcf']
+    public_paths = ['/', '/save_immersion', '/tarjeta']
     public_prefixes = ['/web/', '/css/', '/recursos_graficos/', '/backend/']
     path = request.path
     if path in public_paths or any(path.startswith(pref) for pref in public_prefixes):
@@ -1366,22 +1366,6 @@ def resumen_financiero():
 def tarjeta_redirect():
     return redirect('/', 302)
 
-@app.route('/tarjeta/contacto.vcf')
-def tarjeta_vcf():
-    vcard = """BEGIN:VCARD
-VERSION:3.0
-FN:Juan José Piña May
-N:Piña May;Juan José
-ORG:SOMA Taller Virtual de Arquitectura
-TITLE:Maestro en Arquitectura · Fundador
-TEL;TYPE=CELL:+529995314093
-EMAIL:info@soma-arquitectura.com
-URL:https://soma-arquitectura.com
-ADR;TYPE=WORK:;;Mérida;Yucatán;;;México
-NOTE:Lo protocolario se programa, lo creativo se libera.
-END:VCARD"""
-    return Response(vcard, 200, {'Content-Type': 'text/vcard; charset=utf-8', 'Content-Disposition': 'attachment; filename="soma_contacto.vcf"'})
-
 @app.route('/')
 def index():
     web_path = os.path.join(PROYECTO_DIR, "web", "Pagina Web 6.html")
@@ -1462,15 +1446,6 @@ def serve_backend_static(filename):
     response.cache_control.public = True
     return response
 
-# ---- DIAGRAMA SOMA (Herramienta de Diseño - Bloque 2) ----
-
-@app.route('/diagrama')
-def serve_diagrama():
-    diagrama_path = os.path.join(PROYECTO_DIR, "metodologia", "Bloque 2 - Taller SOMA (OPERACION)", "02 Análisis", "DiagramaSoma.html")
-    if os.path.exists(diagrama_path):
-        with open(diagrama_path, 'r', encoding='utf-8') as f:
-            return f.read(), 200, {'Content-Type': 'text/html; charset=utf-8'}
-
 @app.route('/algoritmo')
 def serve_algoritmo():
     algo_path = os.path.join(PROYECTO_DIR, "web", "algoritmo_soma.html")
@@ -1478,15 +1453,6 @@ def serve_algoritmo():
         with open(algo_path, 'r', encoding='utf-8') as f:
             return f.read(), 200, {'Content-Type': 'text/html; charset=utf-8'}
     return "Not found", 404
-    return "DiagramaSoma no encontrado", 404
-
-@app.route('/carta-presentacion')
-def serve_carta_presentacion():
-    carta_path = os.path.join(PROYECTO_DIR, "metodologia", "Bloque 01 - GESTIÓN DE PROYECTOS", "CARTA_PRESENTACION_SOMA.html")
-    if os.path.exists(carta_path):
-        with open(carta_path, 'r', encoding='utf-8') as f:
-            return f.read(), 200, {'Content-Type': 'text/html; charset=utf-8'}
-    return "Carta de presentación no encontrada", 404
 
 # ---- ALGORITMO SOMA (Progreso + Datos por proyecto) ----
 
