@@ -1152,3 +1152,36 @@ Se analizó la disonancia entre el `01_PROTOCOLO_CONCEPTUALIZACION.md` (purament
 3. **[Media] Activar Google My Business** y subir renders como fotos de perfil.
 4. **[Media] Publicar lead magnet** como pop-up en la web.
 5. **[Media] Resolver bug cotizador** — Botón oculto en landscape mobile + página trabada en "Enviar".
+
+---
+
+## Sesión: 2026-06-23 — Dashboard: Scroll modal, Salarios, Fondos, Algoritmo estación 1
+
+### 87. LOGROS DE LA SESIÓN
+
+- **Fix scroll modal:** `document.body.style.overflow = 'hidden'` se restaura al cerrar cualquier modal (ui.js). Bug que dejaba la página estática sin scroll.
+- **Egresos filtrados por período:** Bloque 02 ahora usa el selector de mes/año (period-mes/period-ano) en lugar de `new Date()`. La tabla y total cambian al cambiar el período en Bloque 01.
+- **Salarios en Bloque 02:** Nuevo sub-apartado con registro y tabla separada. Usa categoría "Salario" en la tabla `egresos`. Los salarios se excluyen de la tabla de Gastos Operativos para no duplicarse.
+- **Fondos de Reemplazo:** Movido de Bloque 03 independiente a sub-apartado dentro de Bloque 02. Se eliminó la sección "Aportar/Retirar" y se agregó un campo de aportación directa en cada tarjeta de fondo. El balance total se muestra en la cabecera de la sección.
+- **Algoritmo SOMA filtro:** Ahora muestra proyectos de todos los estados del pipeline (lead→terminado), no solo Momento 2.
+- **Estación 1 del Algoritmo simplificada:** Reducida a 2 tarjetas (1.1 Contacto con el candidato, 1.2 Llenado de programa). Los datos reales se inyectan en un grid informativo debajo.
+
+### 88. CAMBIOS EN ARCHIVOS
+
+| Archivo | Cambio |
+|---------|--------|
+| `web/js/ui.js` | **Modificado** — Restaura scroll al cerrar modales |
+| `web/js/egresos.js` | **Modificado** — Filtra por período y excluye salarios de gastos operativos; nuevas funciones `loadSalarios`, `registrarSalario`, `eliminarSalario` |
+| `web/js/fondos.js` | **Modificado** — Eliminadas funciones `apartar`/`retirar`; agregada `aportar` directa por tarjeta |
+| `web/js/app.js` | **Modificado** — `cambiarPeriodo()` llama `App.refresh()`; carga `loadSalarios()` |
+| `web/dashboard.html` | **Modificado** — Salarios y Fondos como sub-apartados dentro de Bloque 02; eliminado Bloque 03 |
+| `web/css/dashboard.css` | **Modificado** — Estilos para `.block-divider` y `.fund-aportar` |
+| `backend/server.py` | **Modificado** — Fondo acumulado agregado a métricas (opcional) |
+| `web/algoritmo_soma.html` | **Modificado** — Filtro incluye todos los estados; Estación 1 simplificada a 2 tarjetas |
+| `AGENTS.md` | **Modificado** — Sesión registrada |
+
+### 89. PENDIENTES (PRÓXIMA SESIÓN)
+
+1. **[Alta] Revisar inconsistencias en el flujo de trabajo del Algoritmo SOMA**.
+2. Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD.
+3. Lead magnet — decidir ubicación en página web.

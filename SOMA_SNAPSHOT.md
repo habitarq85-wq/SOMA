@@ -301,11 +301,27 @@ Estrategias para redes sociales, Google y otras fuentes de leads. Solo cuando el
 
 ### 📋 PENDIENTES
 
-1. Mapear items del PROCESO 2.0 contra codebase real (Activity Matrix, Diagrama SOMA, Dashboard)
-2. Integrar biblioteca SOMA en template de proyecto (flujo automático de copia)
-3. Activar Google My Business y subir renders como fotos de perfil
-4. Publicar lead magnet como pop-up en la web
+1. Revisar inconsistencias en el flujo de trabajo del Algoritmo SOMA
+2. Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
+3. Lead magnet — decidir ubicación en página web
 
 ---
 
-## 📅 ÚLTIMA ACTUALIZACIÓN: 10/06/2026
+## 🖥️ DASHBOARD - ESTRUCTURA ACTUAL
+
+### BLOQUE 01: KPI
+- Clientes Activos, Anticipos, Pagos 1.ª Entrega, Pagos Finales, Ingresos del Período, Gasto de Operación
+- Selector de período (mes/año) que filtra todos los bloques
+
+### BLOQUE 02: EGRESOS
+- **Gastos Operativos** (Luz, Internet, Teléfono, Suscripciones, Equipo, Mantenimiento, Otro)
+- **Salarios** (nombre + sueldo mensual, categoría "Salario" en tabla `egresos`)
+- **Fondos de Reemplazo** (tabla `fondos` separada, aportación directa por tarjeta)
+
+### MOMENTO 1: Candidatos (lead, entrevistado, programado, cotizado)
+### MOMENTO 2: Clientes (contratado, primera_entrega, entrega_final)
+### MOMENTO 3: Terminados
+
+---
+
+## 📅 ÚLTIMA ACTUALIZACIÓN: 23/06/2026

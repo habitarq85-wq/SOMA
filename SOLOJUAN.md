@@ -608,3 +608,14 @@ La investigación de sitio y normativa NO va antes de la cotización; se ejecuta
 4. **faster-whisper + DeepSeek** — automatizar análisis
 5. **Tiempos de entrega** — definir tabla en TIEMPOS_ENTREGA_BASE.md
 
+---
+
+### [2026-06-23] — Dashboard: Estructura de Egresos
+"Los salarios deben ir separados de gastos operativos pero en el mismo bloque 02. El fondo de reemplazo debe estar dentro del bloque 02 también, no en bloque 03. Que la aportación se haga desde la misma tarjeta del fondo."
+
+**Decisiones:**
+- Bloque 02 unifica: Gastos Operativos + Salarios + Fondos de Reemplazo
+- Salarios se guardan en `egresos` con categoría "Salario" (no se duplican en gastos operativos)
+- Fondos en tabla separada `fondos` (no se suman al gasto de operación)
+- Aportación directa desde la tarjeta del fondo (sin sección Aportar/Retirar separada)
+
