@@ -347,32 +347,31 @@ Cada estación es una sección del PROCESO DE DISEÑO 2.0. Haz clic para ver el 
 <!-- ============================================ -->
 <div id="sec-1" class="detail-section">
 <div class="detail-header">
-<div><h2>1. Contacto con el Cliente</h2><p>Primer contacto, calificación del prospecto, agendar entrevista</p></div>
-<span class="range">Elementos 1</span>
+<div><h2>1. Contacto y Programa</h2><p>Datos del candidato y definición del programa arquitectónico</p></div>
+<span class="range">2 elementos</span>
 </div>
-<p class="proto-desc">El output real de contacto son las guías de Inmersión Web + Entrevista Física, que son procesos vivos en otros documentos. Contacto es transversal (ADM + Diseño).</p>
 <div class="step-grid">
 <div class="step-card" tabindex="0" onclick="toggle(this)">
-<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">Prospecto Cualificado</span><span class="step-proc proc-humano">HUMANO</span></div>
-<div class="step-desc">Lead cualificado en pipeline · Enlace de Inmersión Web enviado</div>
+<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">1.1 Contacto con el candidato</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Datos del cliente, contacto y estado del pipeline</div>
 <div class="step-detail">
 <div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">Lead de la web (captura_web + cotizador) o contacto directo</div></div>
-<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Primer contacto — presentar SOMA, entender alcance general, definir si hay viabilidad, agendar entrevista de inmersión</div></div>
-<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Lead cualificado en pipeline (estado "Contactado") · Enlace de Inmersión Web enviado al cliente · Fecha tentativa de entrevista presencial</div></div>
-<div class="detail-block"><div class="detail-label">REF</div><div class="detail-body">PROCESO 2.0 · Sección 1</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Revisar datos del prospecto, contactar, calificar, agendar entrevista de inmersión</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Proyecto activo en pipeline con datos de contacto confirmados</div></div>
 </div>
 </div>
 <div class="step-card" tabindex="0" onclick="toggle(this)">
-<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">Entrevista Agendada</span><span class="step-proc proc-humano">HUMANO</span></div>
-<div class="step-desc">Cita para entrevista presencial de inmersión con el cliente</div>
+<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">1.2 Llenado de programa</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Definición de espacios, m², zonas y relaciones del proyecto</div>
 <div class="step-detail">
-<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">Prospecto cualificado + disponibilidad de agenda</div></div>
-<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Coordinar fecha, hora y lugar para la entrevista presencial. Confirmar que el cliente completó la Inmersión Web (10 ejes A/B) antes de la cita</div></div>
-<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Fecha tentativa de entrevista presencial · Cliente tiene acceso a la Inmersión Web</div></div>
-<div class="detail-block"><div class="detail-label">REF</div><div class="detail-body">Protocolo: recepción_usuario</div></div>
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">Requerimientos del cliente + catálogo SOMA de espacios mínimos v3.0</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Registrar espacios en el programa arquitectónico desde el Dashboard (Momento 1 o 2)</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Programa arquitectónico con espacios, m², zonas y relaciones</div></div>
+<div class="detail-block"><div class="detail-label">REF</div><div class="detail-body">Dashboard → Botón PROGRAMA</div></div>
 </div>
 </div>
 </div>
+<div id="sec-1-datos-reales" style="margin-top:12px;"></div>
 </div>
 
 <!-- ============================================ -->
@@ -1400,38 +1399,41 @@ function renderContactoReal(){
   if(!lead) return;
   const h = document.querySelector('#sec-1 .detail-header p');
   if(h) h.textContent = `Proyecto: ${esc(lead.nombre_proyecto||lead.temp_id||'—')} · Cliente: ${esc(lead.nombre_cliente||lead.contacto||'—')} · Estado: ${lead.pipeline_estado||'—'}`;
-  const grid = document.querySelector('#sec-1 .step-grid');
-  if(!grid) return;
-  grid.querySelectorAll('.real-contacto-card').forEach(el => el.remove());
-  let extra = '';
-  if(lead.contacto) extra += `<div class="step-card real-contacto-card" onclick="toggle(this)"><div class="step-head"><span class="step-nature nat-ref">DAT</span><span class="step-name">Contacto: ${esc(lead.contacto)}</span><span class="step-proc proc-humano">HUMANO</span></div>
-    <div class="step-desc">Dato real desde la BD · ${lead.fecha ? new Date(lead.fecha).toLocaleDateString() : '—'}</div></div>`;
-  if(lead.nivel_proyecto && lead.m2){
-    extra += `<div class="step-card real-contacto-card" onclick="toggle(this)"><div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">${lead.nivel_proyecto.toUpperCase()} · ${lead.m2} m²</span><span class="step-proc proc-humano">HUMANO</span></div>
-      <div class="step-desc">Honorarios: $${Number(lead.honorarios_diseno||0).toLocaleString()} · Obra estimada: $${Number(lead.inversion_obra_estimada||0).toLocaleString()}</div></div>`;
-  }
+  const container = document.getElementById('sec-1-datos-reales');
+  if(!container) return;
+  let html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;">';
+  html += `<div style="background:var(--surface2);border-radius:6px;padding:12px;border:1px solid var(--border);">
+    <div style="font-family:'Courier New',monospace;font-size:.55rem;color:var(--accent);text-transform:uppercase;margin-bottom:6px;">Contacto</div>
+    <div style="font-size:.8rem;font-weight:600;">${esc(lead.nombre_cliente||lead.contacto||'—')}</div>
+    <div style="font-family:'Courier New',monospace;font-size:.6rem;color:var(--text2);margin-top:4px;">${esc(lead.contacto||'')}</div>
+  </div>`;
+  html += `<div style="background:var(--surface2);border-radius:6px;padding:12px;border:1px solid var(--border);">
+    <div style="font-family:'Courier New',monospace;font-size:.55rem;color:var(--accent);text-transform:uppercase;margin-bottom:6px;">Proyecto</div>
+    <div style="font-size:.8rem;font-weight:600;">${esc(lead.nombre_proyecto||lead.temp_id||'—')}</div>
+    <div style="font-family:'Courier New',monospace;font-size:.6rem;color:var(--text2);margin-top:4px;">${lead.nivel_proyecto||'—'} · ${lead.m2||'?'} m² · $${Number(lead.honorarios_diseno||0).toLocaleString()}</div>
+  </div>`;
   // Cobros
   const cobros = DATOS_PROYECTO?.cobros;
   if(cobros && cobros.length){
-    let cobrosHtml = `<div class="step-card real-contacto-card" onclick="toggle(this)" style="border-color:#4caf50;">
-      <div class="step-head"><span class="step-nature nat-out">FIN</span><span class="step-name">💰 Esquema de Cobros · ${cobros.length} pago(s)</span><span class="step-proc proc-humano">BD</span></div>
-      <div class="step-desc">Estado financiero del proyecto</div>
-      <div class="step-detail"><div class="detail-block"><div class="detail-label">PAGOS</div><div class="detail-body" style="display:grid;gap:4px;">`;
+    let cbHtml = '';
     cobros.forEach(c => {
       const monto = Number(c.monto||0).toLocaleString();
       const est = (c.estado||'pendiente').toLowerCase();
       const label = est==='pagado'||est==='completado' ? '✅ Pagado' : '⏳ Pendiente';
       const color = est==='pagado'||est==='completado' ? '#4caf50' : '#ff9800';
-      cobrosHtml += `<div style="display:flex;justify-content:space-between;padding:4px 6px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.6rem;">
-        <span>${esc(c.concepto||'Pago')}</span>
+      cbHtml += `<div style="display:flex;justify-content:space-between;padding:3px 0;font-size:.6rem;border-bottom:1px solid rgba(255,255,255,.04);">
+        <span>${esc(c.concepto||'')}</span>
         <span style="color:#4caf50;">$${monto}</span>
         <span style="color:${color};">${label}</span>
       </div>`;
     });
-    cobrosHtml += `</div></div></div></div>`;
-    extra += cobrosHtml;
+    html += `<div style="background:var(--surface2);border-radius:6px;padding:12px;border:1px solid var(--border);">
+      <div style="font-family:'Courier New',monospace;font-size:.55rem;color:var(--accent);text-transform:uppercase;margin-bottom:6px;">Cobros</div>
+      ${cbHtml}
+    </div>`;
   }
-  if(extra) grid.insertAdjacentHTML('beforeend', extra);
+  html += '</div>';
+  container.innerHTML = html;
 }
 
 // ─── ESTACIÓN 2: INMERSIÓN WEB (RESPUESTAS REALES) ───
