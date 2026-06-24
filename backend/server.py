@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory, send_file, Response
+from flask import Flask, request, jsonify, send_from_directory, send_file, Response, redirect
 from flask_cors import CORS
 import datetime
 import json
@@ -1363,12 +1363,8 @@ def resumen_financiero():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route('/tarjeta')
-def tarjeta():
-    tarjeta_path = os.path.join(PROYECTO_DIR, "web", "tarjeta.html")
-    if os.path.exists(tarjeta_path):
-        with open(tarjeta_path, 'r', encoding='utf-8') as f:
-            return f.read(), 200, {'Content-Type': 'text/html; charset=utf-8'}
-    return "Tarjeta no encontrada", 404
+def tarjeta_redirect():
+    return redirect('/', 302)
 
 @app.route('/tarjeta/contacto.vcf')
 def tarjeta_vcf():
