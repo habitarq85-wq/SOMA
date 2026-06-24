@@ -1327,15 +1327,15 @@ for(let s=1;s<=9;s++){
   const container = document.getElementById('proj-cards');
   if(!container) return;
   const saved = localStorage.getItem('soma_proyecto_id');
-  const MOMENTO2 = ['contratado','primera_entrega','entrega_final'];
+  const MOMENTOS = ['lead','entrevistado','programado','cotizado','contratado','primera_entrega','entrega_final','terminado'];
 
   function renderCards(proyectos){
-    const m2 = (proyectos||[]).filter(p => MOMENTO2.includes(p.pipeline_estado));
-    if(!m2.length){
-      container.innerHTML = '<p style="font-family:\'Courier New\',monospace;font-size:.65rem;color:var(--text3);padding:10px;">Sin proyectos activos en Momento 2.</p>';
+    const filtrados = (proyectos||[]).filter(p => MOMENTOS.includes(p.pipeline_estado));
+    if(!filtrados.length){
+      container.innerHTML = '<p style="font-family:\'Courier New\',monospace;font-size:.65rem;color:var(--text3);padding:10px;">Sin proyectos registrados.</p>';
       return;
     }
-    container.innerHTML = m2.map(p => {
+    container.innerHTML = filtrados.map(p => {
       const sel = String(p.id) === String(saved) ? ' selected' : '';
       return `<div class="proj-card${sel}" data-id="${p.id}">
         <div class="proj-name"><span>${esc(p.nombre_proyecto || p.temp_id || '—')}</span><span class="arrow${sel?' open':''}">▶</span></div>
