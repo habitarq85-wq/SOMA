@@ -307,6 +307,37 @@ Estrategias para redes sociales, Google y otras fuentes de leads. Solo cuando el
 
 ---
 
+## 📅 SESIÓN 25/06/2026: ALGORITMO SOMA — ESTACIÓN 2-3, GUÍA DE VISITA, PROGRAMA ARQUITECTÓNICO
+
+### ✅ COMPLETADO
+
+- **[NUEVO] 2.2.1 Datos del Cliente reorganizado**: 2.2.1.1 Datos de Inmersión (botón ABRIR EXPEDIENTE) + 2.2.1.2 Datos de Entrevista (síntesis → `datos_cliente_sintetico.txt`). Tarjeta dinámica "Respuestas de Inmersión Web" eliminada.
+- **[NUEVO] Guía de Entrevista → Guía de Visita**: `guia_visita.html` con checklists de sitio (2.2.2: levantamiento físico, elementos interiores/exteriores) y ambientales (2.2.4: fuentes de ruido y olores) + 6 tópicos conversacionales.
+- **[NUEVO] Análisis Procesado eliminado** de Estación 3.
+- **[NUEVO] Programa Real dentro de 3.3**: botón "GENERAR PROGRAMA ARQUITECTÓNICO" abre tabla editable.
+- **[NUEVO] Programa Arquitectónico editable**: `GET /programa/<id>/html` con tabla de 9 columnas. Campos: CLAVE, ZONA, ESPACIO, M², TIPO, AFORO (editable), MOBILIARIO (editable), INSTALACIONES (editable), ADYACENCIAS (readonly). Formato SOMA dark. Botón EXPORTAR PDF (window.print).
+- **[NUEVO] Batch-update**: `POST /programa/<id>/batch-update` guarda ediciones. Columna `instalaciones` agregada a BD.
+- **[NUEVO] Heurísticas eliminadas**: Ya no se adivinan valores por nombre de espacio. El arquitecto llena manualmente.
+- **[NUEVO] Estación 3 reestructurada**: Sin Análisis Procesado, sin Programa Real flotante. Programa real dentro de 3.3.
+
+### 📁 ARCHIVOS CREADOS/MODIFICADOS
+
+| Archivo | Descripción |
+|---------|-------------|
+| `web/js/algoritmo.js` | **Creado** — Lógica del Algoritmo SOMA |
+| `web/css/algoritmo.css` | **Creado** — Estilos del Algoritmo SOMA |
+| `web/guia_visita.html` | **Creado** — Guía unificada de visita |
+| `web/algoritmo_soma.html` | **Modificado** — Reorganización 2.2.1, estación 2-3 |
+| `backend/server.py` | **Modificado** — Rutas programa/html y batch-update, migración instalaciones |
+
+### 📋 PENDIENTES
+
+1. Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
+2. Considerar crear tabla `algoritmo_contenido` para almacenar outputs de cada estación
+3. Lead magnet — decidir ubicación en página web
+
+---
+
 ## 🖥️ DASHBOARD - ESTRUCTURA ACTUAL
 
 ### BLOQUE 01: KPI
@@ -324,4 +355,4 @@ Estrategias para redes sociales, Google y otras fuentes de leads. Solo cuando el
 
 ---
 
-## 📅 ÚLTIMA ACTUALIZACIÓN: 23/06/2026
+## 📅 ÚLTIMA ACTUALIZACIÓN: 25/06/2026

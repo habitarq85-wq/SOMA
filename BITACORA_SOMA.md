@@ -1185,3 +1185,41 @@ Se analizó la disonancia entre el `01_PROTOCOLO_CONCEPTUALIZACION.md` (purament
 1. **[Alta] Revisar inconsistencias en el flujo de trabajo del Algoritmo SOMA**.
 2. Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD.
 3. Lead magnet — decidir ubicación en página web.
+
+---
+
+## Sesión: 2026-06-25 — Algoritmo SOMA: Estación 2-3, Guía de Visita, Programa Arquitectónico
+
+### 90. LOGROS DE LA SESIÓN
+
+- **2.2.1 Datos del Cliente reorganizado** en dos tarjetas: 2.2.1.1 Datos de Inmersión (expediente) + 2.2.1.2 Datos de Entrevista (síntesis cliente → `datos_cliente_sintetico.txt`). Eliminada tarjeta dinámica "Respuestas de Inmersión Web".
+- **Guía de Entrevista → Guía de Visita**: `guia_visita.html` unifica checklists de sitio (2.2.2: terreno, elementos interiores, exteriores) y ambientales (2.2.4: ruido, olores) con los 6 tópicos de entrevista.
+- **Análisis Procesado eliminado** de Estación 3 (`renderAnalisisReal()` removida).
+- **Programa Real dentro de tarjeta 3.3** (`renderProgramaReal()` inyecta en el detalle de 3.3, no como tarjeta independiente).
+- **Programa Arquitectónico editable**: Nueva ruta `GET /programa/<id>/html` con tabla de 9 columnas (CLAVE, ZONA, ESPACIO, M², TIPO, AFORO, MOBILIARIO, INSTALACIONES, ADYACENCIAS). Formato SOMA dark. Campos editables: aforo (number), mobiliario, instalaciones. Adyacencias readonly (solo desde Diagrama 3.4). Botón EXPORTAR PDF.
+- **Batch-update**: `POST /programa/<id>/batch-update` guarda todos los campos editables. Columna `instalaciones` agregada a `programa_arquitectonico` con migración automática en `init_db()`.
+- **Heurísticas de sugerencia eliminadas**: Ya no se intenta adivinar aforo/mobiliario por nombre de espacio — el arquitecto llena manualmente.
+- **Zona/TIPO legibles**: texto oscuro sobre fondos pastel en ZONA; labels completos ("✔ Deseado", "+ Comp.", "★ Lujo") en TIPO.
+- **Deploy a Render**: commit 93c389e → push a main.
+
+### 91. ARCHIVOS CREADOS/MODIFICADOS
+
+| Archivo | Cambio |
+|---------|--------|
+| `web/js/algoritmo.js` | **Creado** — Lógica del Algoritmo SOMA (tarjetas, diagrama, programa) |
+| `web/css/algoritmo.css` | **Creado** — Estilos del Algoritmo SOMA |
+| `web/guia_visita.html` | **Creado** — Guía unificada de visita (checklist sitio + ambientales + 6 tópicos) |
+| `web/algoritmo_soma.html` | **Modificado** — Reorganización de tarjetas, botones a expediente/guía/programa |
+| `backend/server.py` | **Modificado** — Nuevas rutas programa/html y programa/batch-update; migración instalaciones; init_db actualizado |
+| `metodologia/…/PROCESO DE DISEÑO 2.0` | **Modificado** — 1.2 renombrado "Visita en Campo", referencias actualizadas |
+| `metodologia/…/protocolo_2.2.1.2_entrevista_inmersion.md` | **Modificado** — Renombrado como protocolo de Visita con checklists sitio + ambientales |
+| `AGENTS.md` | **Modificado** — Sesión registrada |
+| `SOLOJUAN.md` | **Modificado** — Instrucciones literales de la sesión |
+| `SOMA_SNAPSHOT.md` | **Modificado** — Nueva sesión registrada |
+| `BITACORA_SOMA.md` | **Modificado** — Esta entrada de sesión |
+
+### 92. PENDIENTES (PRÓXIMA SESIÓN)
+
+1. Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
+2. Considerar crear tabla `algoritmo_contenido` para almacenar outputs de cada estación
+3. Lead magnet — decidir ubicación en página web
