@@ -1,35 +1,97 @@
-# PROTOCOLO: ENTREVISTA DE INMERSIÓN PROFUNDA
+# PROTOCOLO: GUÍA DE VISITA — ENTREVISTA + LEVANTAMIENTO EN CAMPO
 ## Bloque 2 — Taller SOMA (Operación)
-## Referencia: PROCESO DE DISEÑO 2.0 — Items 2.2.1.2, 3.10
+## Referencia: PROCESO DE DISEÑO 2.0 — Items 2.2.1.2, 2.2.2, 2.2.4, 3.10
 
-**Propósito:** Primera reunión presencial con el cliente para extraer datos
-cualitativos que no pueden capturarse en la Inmersión Web.
+**Propósito:** Única visita presencial al sitio con el cliente para extraer
+datos cualitativos de la entrevista + levantar datos del sitio y ambientales,
+evitando una segunda visita.
 
 **Relación con el 2.0:**
 - **2.2.1.2 (Investigación)** — entrevista presencial con grabación y notas
+- **2.2.2 (Datos del Sitio)** — levantamiento físico, elementos interiores y exteriores
+- **2.2.4 (Datos Ambientales)** — fuentes de ruido y olores
 - **3.10.1–5 (Análisis)** — transcripción, perfiles, matrices, necesidades
 
-**Herramienta:** App de Entrevista (`aplicaciones_python/app_inmersion/`, puerto 5050)
-que graba la conversación y estructura los datos.
+**Herramienta:** Guía de Visita (guia_visita.html) + App de Entrevista
+(`aplicaciones_python/app_inmersion/`, puerto 5050) que graba la conversación
+y estructura los datos.
 
-**Dinámica:** Conversacional en 6 tópicos. El arquitecto lleva el hilo;
-la app registra audio continuo, tiempo por tópico y formulario post-entrevista.
+**Dinámica:** Llegar al sitio, primero recorrer el terreno y entorno para
+levantar datos (2.2.2, 2.2.4), luego sentarse a conversar los 6 tópicos.
+El arquitecto lleva el hilo; la app registra audio continuo, tiempo por tópico
+y formulario post-entrevista.
 
 ---
 
-## 2.2.1.2 Entrevista Presencial
+## Visita en Campo
 
 ```
-[ACC] Entrevista de Inmersión (P2.0 ref: 2.2.1.2)
+[ACC] Visita en Campo (P2.0 ref: 1.2, 2.2.1.2)
 ─────────────────────────────────
-INPUT:  Cita agendada + respuestas de Inmersión Web (10 ejes)
-OPERA:  Sesión presencial. Grabar audio continuo mientras se
-        conversan los 6 tópicos. El arquitecto toma notas de
-        observaciones no verbales. El audio se guarda en bruto
+INPUT:  Cita agendada + Guía de Visita (checklist sitio + ambientales +
+        6 tópicos) + respuestas de Inmersión Web (10 ejes)
+OPERA:  1. Recorrer el terreno y entorno — levantar datos del sitio (2.2.2)
+           y ambientales (2.2.4) — fotos, croquis, notas
+        2. Sentarse con el cliente — conversar los 6 tópicos con
+           grabación de audio continuo
+           El arquitecto toma notas de observaciones no verbales
 OUTPUT: • `entrevista.wav` o `.webm` (audio en bruto)
         • `notas_campo_entrevista.txt` (observaciones)
+        • `croquis_levantamiento.pdf` / `fotos_terreno/` (datos sitio)
+        • `mapa_fuentes_ruido.pdf` / `mapa_fuentes_olores.pdf` (ambientales)
 PROC:   HUMANO
 ```
+
+---
+
+## Checklist de Datos del Sitio (2.2.2)
+
+### 2.2.2.1 Levantamiento Físico del Terreno
+- [ ] Dimensiones y forma del terreno — medir poligonal, verificar escrituras
+- [ ] Niveles y pendientes
+- [ ] Tipo de suelo (observación superficial)
+- [ ] Vegetación existente — ubicación, especie, diámetro aprox.
+- [ ] Construcciones existentes
+- [ ] Fotografiar desde múltiples ángulos
+- [ ] Anotar medidas de escrituras / plano catastral
+
+### 2.2.2.2 Elementos Interiores del Predio
+- [ ] Árboles — especie, ubicación, diámetro de tronco
+- [ ] Pozos, cenotes, cuerpos de agua
+- [ ] Construcciones existentes — muros, pisos, losas, vanos, estado, materiales
+- [ ] Acometidas: agua, drenaje, electricidad, gas
+
+### 2.2.2.3 Elementos Exteriores (Entorno)
+- [ ] Recorrer el entorno inmediato a pie
+- [ ] Colindancias — alturas, materiales, usos, estado
+- [ ] Vialidades — ancho, tipo, flujo, velocidad
+- [ ] Banquetas — ancho, estado, materiales
+- [ ] Postes — luz, teléfono, CCTV
+- [ ] Alcantarillas y drenaje pluvial
+- [ ] Árboles públicos
+
+---
+
+## Checklist de Datos Ambientales (2.2.4)
+
+### 2.2.4.1 Fuentes de Ruido
+- [ ] Vialidades cercanas — flujo, tipo vehículos, horarios críticos
+- [ ] Industrias, talleres, escuelas, comercios con música
+- [ ] Aires acondicionados o maquinaria en colindancias
+- [ ] Registrar ubicación en croquis
+- [ ] Clasificar ruido: bajo / medio / alto
+- [ ] Anotar horarios críticos
+
+### 2.2.4.2 Fuentes de Olores
+- [ ] Basureros, granjas, industrias, pozos sépticos
+- [ ] Quemas o fogatas
+- [ ] Registrar dirección del viento
+- [ ] Anotar horarios y estacionalidad
+- [ ] Preguntar a vecinos (opcional)
+
+---
+
+## Entrevista — 6 Tópicos
 
 ### Tópico 1: La razón de estar aquí
 *Objetivo: Entender el encargo, el sitio y las reglas del juego.*

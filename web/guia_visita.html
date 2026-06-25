@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Guía de Visita — SOMA</title>
+<style>
+  :root{--bg:#0a0a0a;--text:#f4f1ee;--accent:#bc4b21;--card:#151515;--border:#2a2a2a}
+  *{box-sizing:border-box;margin:0;padding=0}
+  body{background:var(--bg);color:var(--text);font-family:'Inter','Helvetica',sans-serif;padding:40px 20px}
+  .header{text-align:center;margin-bottom:40px;border-bottom:2px solid var(--accent);padding-bottom:20px}
+  .header h1{font-size:2rem;letter-spacing:6px;color:var(--accent)}
+  .header p{color:#888;font-size:.85rem;margin-top:6px}
+  .section-title{font-size:1.1rem;font-weight:700;color:var(--accent);margin:36px 0 16px;text-transform:uppercase;letter-spacing:2px;border-bottom:1px solid var(--border);padding-bottom:6px}
+  .check-card{margin-bottom:16px;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:16px 20px;page-break-inside:avoid}
+  .check-card h3{font-size:.95rem;font-weight:700;margin-bottom:8px;color:#ddd}
+  .check-card .checklist{list-style:none;padding:0}
+  .check-card .checklist li{padding:4px 0;font-size:.82rem;color:#ccc;line-height:1.5;display:flex;align-items:flex-start;gap:8px}
+  .check-card .checklist li::before{content:"☐";color:var(--accent);font-size:.9rem;flex-shrink:0;margin-top:1px}
+  .check-card .checklist li .tag{font-size:.6rem;background:var(--accent);color:#fff;padding:1px 5px;border-radius:3px;margin-left:4px;white-space:nowrap;text-transform:uppercase}
+  .check-card .checklist li .tag-env{background:#6b4c8a}
+  .check-card .checklist li .tag-site{background:#2a6b4c}
+  .topic{margin-bottom:32px;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:20px;page-break-inside:avoid}
+  .topic-num{font-size:.65rem;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px}
+  .topic-title{font-size:1.3rem;font-weight:700;margin-bottom:10px}
+  .topic-pregunta{font-size:.92rem;line-height:1.6;color:#ccc;margin-bottom:10px;font-style:italic}
+  .topic-nota{font-size:.78rem;color:#777;border-left:3px solid var(--accent);padding:8px 12px;background:#111;border-radius:0 4px 4px 0;line-height:1.5;white-space:pre-wrap}
+  @media print{
+    body{background:#fff;color:#1a1a1a;padding:0}
+    .header h1{color:#a6937c}
+    .check-card{background:#fff;border:1px solid #ccc}
+    .check-card h3{color:#333}
+    .check-card .checklist li{color:#444}
+    .topic{background:#fff;border:1px solid #ddd;box-shadow:none}
+    .topic-num{color:#a6937c}
+    .topic-pregunta{color:#333}
+    .topic-nota{background:#f5f5f5;color:#555;border-left-color:#a6937c}
+    .section-title{color:#a6937c;border-bottom-color:#ccc}
+    .check-card .checklist li .tag{color:#fff}
+  }
+  .footer{text-align:center;padding:20px;color:#555;font-size:.7rem;margin-top:20px;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>SOMA</h1>
+  <p>Guía de Visita — Todo lo que necesitas hacer en campo con el cliente</p>
+</div>
+
+<!-- ============================================ -->
+<!-- ENTREVISTA — 6 TÓPICOS                       -->
+<!-- ============================================ -->
+<div class="section-title">🎙️ Entrevista — 6 tópicos conversacionales</div>
+
+<div class="topic">
+  <div class="topic-num">TÓPICO 1</div>
+  <div class="topic-title">La razón de estar aquí</div>
+  <div class="topic-pregunta">"Para empezar, me gustaría que me platique: ¿qué lo trae aquí? ¿Qué es lo que necesita construir o diseñar?"</div>
+  <div class="topic-nota">Deja que fluya. Si necesitas guiar: ¿Ya tiene terreno? ¿El fracc. tiene reglas? ¿Quién decide acabados y quién el presupuesto? ¿El presupuesto incluye terreno?</div>
+</div>
+
+<div class="topic">
+  <div class="topic-num">TÓPICO 2</div>
+  <div class="topic-title">Los habitantes</div>
+  <div class="topic-pregunta">"Ahora cuénteme de las personas que van a habitarlo. ¿Quiénes son?"</div>
+  <div class="topic-nota">Edades, salud/movilidad, hobbies (instrumentos, bicis, equipos), quién pasa más tiempo en casa, ¿reciben personas que se queden a dormir?</div>
+</div>
+
+<div class="topic">
+  <div class="topic-num">TÓPICO 3</div>
+  <div class="topic-title">El programa</div>
+  <div class="topic-pregunta">"Ahora hablemos de los espacios. ¿Qué es lo que no puede faltar?"</div>
+  <div class="topic-nota">¿Cuántas recámaras? ¿Baños propios? ¿Alguna en PB? ¿Oficina, estudio, gimnasio? ¿Cochera? ¿Servicio, bodega? ¿Alberca, terraza? ¿Colecciones o equipos grandes? No complementes ni sugieras — esto se analiza después.</div>
+</div>
+
+<div class="topic">
+  <div class="topic-num">TÓPICO 4</div>
+  <div class="topic-title">Dinámicas y rutinas</div>
+  <div class="topic-pregunta">"Esta es mi parte favorita. Platíqueme cómo es un día normal en su casa."</div>
+  <div class="topic-nota">¿A qué hora despiertan? ¿Sol u oscuridad? ¿Desayunan juntos? ¿Trabajo/escuela en casa? ¿Comida? ¿Noche? ¿Ritual de llegada? ¿Mascotas? ¿Visitas seguido? ¿Orden o desorden? ¿Materiales que envejecen o eternos? ¿Aire acondicionado o ventilación natural?</div>
+</div>
+
+<div class="topic">
+  <div class="topic-num">TÓPICO 5</div>
+  <div class="topic-title">Inversión</div>
+  <div class="topic-pregunta">"Ahora hablemos con toda confianza del dinero. Necesito un número realista para poder diseñar algo que sí se pueda construir."</div>
+  <div class="topic-nota">¿Presupuesto pensado? ¿Todo de golpe o por etapas? ¿Más metros o mejores acabados? ¿Honorarios incluidos o aparte?</div>
+</div>
+
+<div class="topic">
+  <div class="topic-num">TÓPICO 6</div>
+  <div class="topic-title">La cereza del pastel</div>
+  <div class="topic-pregunta">"Si usted entra a su casa terminada y pudiera sentir una sola emoción —paz, orgullo, libertad, alegría— ¿cuál le gustaría que fuera?"</div>
+  <div class="topic-nota">¿Recuerdo bonito de una casa feliz? ¿Un objeto que dicte el diseño? ¿Qué es lo que NO quiere? ¿Qué le preocupa?
+
+Al cerrar, explica: En SOMA diseñamos y coordinamos especialistas —no construimos ni gestionamos obra, tenemos coadyuvantes. Por etapas, entregables claros, anticipos. Filosofía: lo técnico se automatiza, lo creativo se libera.</div>
+</div>
+
+<!-- ============================================ -->
+<!-- CHECKLIST SITIO (2.2.2)                      -->
+<!-- ============================================ -->
+<div class="section-title">📐 Datos del Sitio <span style="font-weight:400;font-size:.7rem;color:#888;text-transform:none;letter-spacing:0">2.2.2</span></div>
+
+<div class="check-card">
+  <h3>2.2.2.1 Levantamiento Físico del Terreno</h3>
+  <ul class="checklist">
+    <li>Dimensiones y forma del terreno — medir poligonal, verificar contra escrituras <span class="tag tag-site">CROQUIS</span></li>
+    <li>Niveles y pendientes del terreno <span class="tag tag-site">CROQUIS</span></li>
+    <li>Tipo de suelo (observación superficial) <span class="tag tag-site">FOTO</span></li>
+    <li>Vegetación existente — ubicación, especie, diámetro aprox. <span class="tag tag-site">FOTO</span></li>
+    <li>Construcciones existentes (si las hay) <span class="tag tag-site">FOTO</span></li>
+    <li>Fotografiar todo el terreno desde múltiples ángulos <span class="tag tag-site">FOTO</span></li>
+    <li>Anotar medidas de escrituras / plano catastral <span class="tag tag-site">NOTA</span></li>
+  </ul>
+</div>
+
+<div class="check-card">
+  <h3>2.2.2.2 Elementos Interiores del Predio</h3>
+  <ul class="checklist">
+    <li>Árboles — especie, ubicación, diámetro de tronco <span class="tag tag-site">FOTO</span></li>
+    <li>Pozos, cenotes, cuerpos de agua <span class="tag tag-site">FOTO</span></li>
+    <li>Construcciones existentes — muros, pisos, losas, vanos, ángulos, estado, materiales <span class="tag tag-site">FOTO</span></li>
+    <li>Acometidas: agua, drenaje, electricidad, gas — ubicación y tipo <span class="tag tag-site">FOTO</span></li>
+  </ul>
+</div>
+
+<div class="check-card">
+  <h3>2.2.2.3 Elementos Exteriores (Entorno)</h3>
+  <ul class="checklist">
+    <li>Recorrer el entorno inmediato a pie <span class="tag tag-site">RECORRIDO</span></li>
+    <li>Colindancias — alturas, materiales, usos, estado de cada vecino <span class="tag tag-site">FOTO</span></li>
+    <li>Vialidades — ancho, tipo de calle, flujo vehicular, velocidad aprox. <span class="tag tag-site">FOTO</span></li>
+    <li>Banquetas — ancho, estado, materiales <span class="tag tag-site">FOTO</span></li>
+    <li>Postes — luz, teléfono, CCTV <span class="tag tag-site">FOTO</span></li>
+    <li>Alcantarillas y drenaje pluvial <span class="tag tag-site">FOTO</span></li>
+    <li>Árboles públicos en banqueta o vialidad <span class="tag tag-site">FOTO</span></li>
+  </ul>
+</div>
+
+<!-- ============================================ -->
+<!-- CHECKLIST AMBIENTAL (2.2.4)                  -->
+<!-- ============================================ -->
+<div class="section-title">🌿 Datos Ambientales Específicos <span style="font-weight:400;font-size:.7rem;color:#888;text-transform:none;letter-spacing:0">2.2.4</span></div>
+
+<div class="check-card">
+  <h3>2.2.4.1 Fuentes de Ruido</h3>
+  <ul class="checklist">
+    <li>Identificar vialidades cercanas — flujo, tipo de vehículos, horarios críticos <span class="tag tag-env">MAPA</span></li>
+    <li>Identificar industrias, talleres, escuelas, comercios con música <span class="tag tag-env">MAPA</span></li>
+    <li>Aires acondicionados o maquinaria en colindancias <span class="tag tag-env">MAPA</span></li>
+    <li>Registrar ubicación de cada fuente en croquis <span class="tag tag-env">CROQUIS</span></li>
+    <li>Clasificar nivel de ruido: bajo / medio / alto <span class="tag tag-env">NOTA</span></li>
+    <li>Anotar horarios críticos (si hay horarios específicos) <span class="tag tag-env">NOTA</span></li>
+  </ul>
+</div>
+
+<div class="check-card">
+  <h3>2.2.4.2 Fuentes de Olores</h3>
+  <ul class="checklist">
+    <li>Identificar basureros, granjas, industrias, pozos sépticos cercanos <span class="tag tag-env">MAPA</span></li>
+    <li>Identificar quemas o fogatas en el entorno <span class="tag tag-env">MAPA</span></li>
+    <li>Registrar dirección del viento que trae cada olor <span class="tag tag-env">NOTA</span></li>
+    <li>Anotar horarios y estacionalidad del olor <span class="tag tag-env">NOTA</span></li>
+    <li>Preguntar a vecinos sobre olores recurrentes (opcional) <span class="tag tag-env">VECINO</span></li>
+  </ul>
+</div>
+
+<div class="footer">
+  SOMA Taller Virtual de Arquitectura · info@soma-arquitectura.com
+</div>
+
+</body>
+</html>

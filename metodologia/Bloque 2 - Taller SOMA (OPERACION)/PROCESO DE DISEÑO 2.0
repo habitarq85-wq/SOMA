@@ -34,9 +34,11 @@ PROC:   Quién lo ejecuta (AI / HUMANO / AI→HUMANO / HUMANO→AI)
 
 ## 1. Contacto con el Cliente
 
+### 1.1 Contacto Inicial
+
 ```
-[OUT] 1. Contacto con el Cliente
-─────────────────────────────────
+[OUT] 1.1 Contacto Inicial
+───────────────────────────
 INPUT:  Lead de la web (captura_web + cotizador) o contacto directo
 OPERA:  Primer contacto — presentar SOMA, entender alcance general,
         definir si hay viabilidad, agendar entrevista de inmersión
@@ -47,6 +49,26 @@ OUTPUT: • Lead cualificado en pipeline (estado: "Contactado")
         + Entrevista Física, que son procesos vivos en otros documentos.
         Contacto es transversal (ADM + Diseño).
 PROC:   HUMANO
+```
+
+### 1.2 Visita en Campo (Entrevista + Levantamiento)
+PROTOCOLO: 01 Recepción e Investigación/protocolo_2.2.1.2_entrevista_inmersion.md (checklist sitio + ambientales + 6 tópicos)*
+
+```
+[ACC] 1.2 Visita en Campo
+────────────────────────────────
+INPUT:  Cita agendada con el cliente + Guía de Visita
+        (checklist sitio 2.2.2 + ambientales 2.2.4 + 6 tópicos) +
+        respuestas de Inmersión Web
+OPERA:  Visita presencial al sitio con el cliente. Recabar datos
+        del sitio (2.2.2) y ambientales (2.2.4) durante el recorrido.
+        Grabar audio continuo mientras se conversan los 6 tópicos.
+        Tomar notas de observaciones no verbales. El audio se guarda en bruto
+        para transcripción posterior
+OUTPUT: • `entrevista.wav` (audio en bruto de la conversación)
+        • `notas_campo_entrevista.txt` (observaciones del arquitecto)
+        Nota: la transcripción y análisis ocurren en 3.10
+PROC:   HUMANO (entrevista y grabación)
 ```
 
 ---
@@ -227,37 +249,30 @@ PROC:   AI
 *Datos que se colectan específicamente para cada proyecto.
 Operación: ir al campo, medir, fotografiar, entrevistar, registrar.
 PROTOCOLO: 01 Recepción e Investigación/protocolo_2.2.1-3.10_recepcion_usuario.md (UserEntity, CreativeCore, actividad)
-PROTOCOLO: 01 Recepción e Investigación/protocolo_2.2.1.2_entrevista_inmersion.md (6 tópicos de entrevista)*
-
 #### 2.2.1 Datos del Usuario/Cliente
 
 ```
-[REF→OUT] 2.2.1.1 Datos de Inmersión SOMA
+[OUT] 2.2.1.1 Datos de Inmersión (Expediente)
 ─────────────────────────────────
-INPUT:  Cliente responde Inmersión Web (10 ejes visuales A/B +
-        formulario de contacto con nombre, teléfono, email, etc.)
-OPERA:  El sistema guarda automáticamente las respuestas en la BD
-        (tabla captura_web). Recuperar el registro del cliente.
-        Exportar respuestas crudas a carpeta del proyecto
-OUTPUT: `respuestas_inmersion_web.json` (datos en bruto del cliente)
-        + `datos_contacto_cliente.txt` (nombre, teléfono, email)
-PROC:   AI (recuperación automática desde BD)
+INPUT:  1.1 Inmersión Web (10 ejes A/B desde BD)
+OPERA:  IA procesa y genera análisis multidimensional.
+        Acceso vía Expediente en Dashboard SOMA.
+OUTPUT: Reporte multidimensional en expediente del proyecto
+PROC:   AI
 ```
 
 ```
-[ACC] 2.2.1.2 Entrevista Presencial SOMA
+[OUT] 2.2.1.2 Datos de Entrevista (Síntesis)
 ─────────────────────────────────
-INPUT:  Cita agendada con el cliente + Guía de Entrevista
-        (6 tópicos conversacionales) + respuestas de 2.2.1.1
-OPERA:  Sesión presencial con el cliente. Grabar audio continuo
-        mientras se conversan los 6 tópicos. Tomar notas de
-        observaciones no verbales. El audio se guarda en bruto
-        para transcripción posterior
-OUTPUT: • `entrevista.wav` (audio en bruto de la conversación)
-        • `notas_campo_entrevista.txt` (observaciones del arquitecto)
-        Nota: la transcripción y análisis ocurren en 3.10
-PROC:   HUMANO (entrevista y grabación)
-```
+INPUT:  1.2 `entrevista.wav` (audio en bruto) +
+        1.2 `notas_campo_entrevista.txt` (observaciones del arquitecto)
+OPERA:  Escuchar el audio y consultar las notas de campo.
+        Sintetizar la información del cliente en un documento
+        estructurado: perfil, necesidades, programa deseado,
+        presupuesto, emociones, observaciones clave
+OUTPUT: `datos_cliente_sintetico.txt` (perfil sintetizado del cliente)
+PROC:   HUMANO→AI (arquitecto sintetiza, IA da formato)
+ ```
 
 #### 2.2.2 Datos del Sitio
 
@@ -411,8 +426,8 @@ PROC:   HUMANO
 ```
 [OUT] 3.3 Programa Arquitectónico
 ─────────────────────────────────
-INPUT:  2.2.1.1 `respuestas_inmersion_web.json` (necesidades del cliente)
-        2.2.1.2 `notas_campo_entrevista.txt` (necesidades no dichas)
+INPUT:  2.2.1.2 `datos_cliente_sintetico.txt` (necesidades del cliente)
+        1.2 `notas_campo_entrevista.txt` (necesidades no dichas)
         2.1.2.4 `tablas_neufert_ergonomia.pdf` (dimensiones mínimas)
         Catálogo SOMA de espacios mínimos (actualizado v3.0)
 OPERA:  Desglosar necesidades del usuario en espacios. Clasificar en:
@@ -450,8 +465,8 @@ PROC:   HUMANO→AI (humano define relaciones, AI genera diagrama)
 [DEC] 3.5 Selección de Patrones Importantes de Diseño
 ─────────────────────────────────
 INPUT:  2.1.3.3 `catalogo_patrones_diseno.pdf` (catálogo completo)
-        2.2.1.1 `respuestas_inmersion_web.json` (perfil de diseño)
-        2.2.1.2 `notas_campo_entrevista.txt` (contexto del usuario)
+        2.2.1.2 `datos_cliente_sintetico.txt` (perfil de diseño)
+        1.2 `notas_campo_entrevista.txt` (contexto del usuario)
         3.1 Gráfico General del Sitio (condiciones del sitio)
         3.3 Programa Arquitectónico (espacios y zonas)
 OPERA:  AI revisa el catálogo de patrones y selecciona los que
@@ -669,21 +684,10 @@ PROC:   AI→HUMANO
 ```
 [OUT] 3.10 Análisis del Usuario
 ─────────────────────────────────
-INPUT:  2.2.1.1 `respuestas_inmersion_web.json`
-        2.2.1.2 `entrevista.wav` + `notas_campo_entrevista.txt`
-OPERA:  Procesar los datos brutos del usuario para extraer un
-        perfil de diseño completo. Incluye transcripción del
-        audio de entrevista y estructuración de datos
-OUTPUT: Conjunto de documentos de análisis del usuario
-        (5 sub-items: 3.10.1 a 3.10.5)
-PROC:   AI→HUMANO
-```
+INPUT:  2.2.1.2 `datos_cliente_sintetico.txt`
 
-```
-[OUT] 3.10.1 Datos Demográficos
-─────────────────────────────────
-INPUT:  2.2.1.1 `respuestas_inmersion_web.json`
-        2.2.1.2 Transcripción de entrevista
+INPUT:  2.2.1.2 `datos_cliente_sintetico.txt`
+        1.2 Transcripción de entrevista
 OPERA:  Extraer y organizar: edad, género, ocupación, composición
         del hogar (quiénes viven, parentesco), nivel de movilidad,
         roles dentro del hogar (quién cocina, quién trabaja desde
@@ -695,7 +699,7 @@ PROC:   AI
 ```
 [OUT] 3.10.2 Matrices de Actividad
 ─────────────────────────────────
-INPUT:  2.2.1.2 Transcripción de entrevista + notas
+INPUT:  1.2 Transcripción de entrevista + notas
         3.10.1 Datos demográficos (habitantes identificados)
 OPERA:  Por cada habitante, desglosar 24 slots temporales (1h c/u)
         con: actividad principal, ubicación probable, necesidad de
@@ -723,8 +727,8 @@ PROC:   AI (generación de gráficos desde datos estructurados)
 ```
 [OUT] 3.10.4 Perfil de Diseño (Inmersión SOMA)
 ─────────────────────────────────
-INPUT:  2.2.1.1 `respuestas_inmersion_web.json` (10 ejes A/B)
-        2.2.1.2 Transcripción de entrevista (matices cualitativos)
+INPUT:  Inmersión Web (`respuestas_inmersion_web.json`, 10 ejes A/B)
+        1.2 Transcripción de entrevista (matices cualitativos)
 OPERA:  Cruzar datos de inmersión (selecciones A/B visuales) con
         las observaciones cualitativas de la entrevista para
         construir un perfil de diseño completo:
@@ -738,7 +742,7 @@ PROC:   AI (ejes) + HUMANO (interpretación de matices)
 ```
 [DEC] 3.10.5 Selección de Necesidades No Visibles
 ─────────────────────────────────
-INPUT:  2.2.1.2 Transcripción y notas de entrevista
+INPUT:  1.2 Transcripción y notas de entrevista
         Catálogo SOMA de necesidades comunes por tipo de proyecto
 OPERA:  AI sugiere lista de necesidades no visibles típicas para
         el tipo de proyecto (almacenamiento, lavandería, bodega,
@@ -761,7 +765,7 @@ PROTOCOLO: 03 Diseño/protocolo_4.9-4.15_evaluacion.md (evaluación de habitabil
 [OUT] 4.1 Manifiesto de Intenciones de Diseño
 ─────────────────────────────────
 INPUT:  3.1-3.10 (todo el análisis)
-        2.2.1.2 Transcripción de entrevista (expectativas)
+        1.2 Transcripción de entrevista (expectativas)
 OPERA:  Redactar las intenciones que guiarán todas las decisiones
         de diseño, organizadas en:
         - Intenciones formales (lenguaje, proporción, materialidad)
@@ -923,7 +927,7 @@ PROC:   HUMANO
 [ACC] 4.8.5 Colocación General de Materiales
 ─────────────────────────────────
 INPUT:  4.7 Partido + 4.2 Idea rectora
-        2.2.1.1 Inmersión (eje tacto: textura/liso)
+        Inmersión Web (eje tacto: textura/liso)
         2.1.3.1 Arquetipos (materiales regionales)
 OPERA:  Definir paleta general de materiales por sistema:
         pisos, muros, cubiertas y acabados por zona y uso
@@ -1086,7 +1090,7 @@ PROC:   HUMANO
 INPUT:  4.8.1 Ubicación de espacios
         3.8 Premisas ergométricas
         2.1.2.4 `tablas_neufert_ergonomia.pdf` (baños)
-        2.2.1.2 Entrevista (número de usuarios, preferencias)
+        1.2 Entrevista (número de usuarios, preferencias)
 OPERA:  Diseñar disposición de cada baño: mobiliario (wc, lavabo,
         regadera, tina), circulaciones, ventilación, iluminación,
         almacenamiento, según el número de usuarios y sus
@@ -1100,7 +1104,7 @@ PROC:   HUMANO
 ─────────────────────────────────
 INPUT:  4.8.1 Ubicación + 3.8 Premisas ergo
         2.1.2.4 `tablas_neufert_ergonomia.pdf` (cocinas)
-        2.2.1.2 Entrevista (hábitos de cocina)
+        1.2 Entrevista (hábitos de cocina)
 OPERA:  Diseñar disposición de cocina: triángulo de trabajo
         (refrigerador, estufa, fregadero), zonificación, mesas,
         barras, almacenamiento, ventilación e iluminación
@@ -1198,7 +1202,7 @@ PROC:   HUMANO
 ─────────────────────────────────
 INPUT:  4.11 Configuración detallada
         3.10 Análisis del usuario
-        2.2.1.2 Transcripción de entrevista (expectativas, emociones)
+        1.2 Transcripción de entrevista (expectativas, emociones)
 OPERA:  Evaluar el diseño contra:
         - Fisiológica: confort térmico, lumínico, acústico, salud
         - Psicológica: seguridad, pertenencia, identidad, privacidad
@@ -1230,7 +1234,7 @@ PROC:   HUMANO
 [DEC] 5.1 Selección de Vista(s)
 ─────────────────────────────────
 INPUT:  4.15 Diseño final + 4.2 Idea rectora
-        2.2.1.1 Inmersión (ejes de diseño del cliente)
+        Inmersión Web (ejes de diseño del cliente)
 OPERA:  Seleccionar las vistas que mejor comuniquen la intención
         del proyecto: exterior general, fachada principal, espacio
         interior principal, espacio clave (cocina, baño), zona

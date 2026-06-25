@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, send_from_directory, send_file, Response, redirect
 from flask_cors import CORS
 import datetime
+import html
 import json
 import os
 import re
@@ -181,6 +182,15 @@ def init_db():
                 execute(conn, f"ALTER TABLE captura_web ADD COLUMN {col_name} {col_type}")
         except Exception:
             pass
+
+    # Migración: instalaciones en programa_arquitectonico
+    try:
+        if use_pg:
+            execute(conn, "ALTER TABLE programa_arquitectonico ADD COLUMN IF NOT EXISTS instalaciones TEXT")
+        else:
+            execute(conn, "ALTER TABLE programa_arquitectonico ADD COLUMN instalaciones TEXT")
+    except Exception:
+        pass
     conn.commit()
     conn.close()
 
@@ -446,6 +456,26 @@ def crear_espacio():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+@app.route('/programa/<int:lead_id>/batch-update', methods=['POST'])
+def batch_update_programa(lead_id):
+    try:
+        data = request.json
+        espacios = data.get('espacios', [])
+        conn = get_connection()
+        for e in espacios:
+            execute(conn, """UPDATE programa_arquitectonico SET
+                usuarios=?, mobiliario=?, instalaciones=?
+                WHERE id=? AND lead_id=?""",
+                (e.get('usuarios', 0),
+                 json.dumps([x.strip() for x in e.get('mobiliario', '').split(',') if x.strip()]),
+                 e.get('instalaciones', ''),
+                 e['id'], lead_id))
+        conn.commit()
+        conn.close()
+        return jsonify({"status": "success", "actualizados": len(espacios)}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 @app.route('/programa/espacio/<int:espacio_id>', methods=['PUT'])
 def actualizar_espacio(espacio_id):
     try:
@@ -493,6 +523,173 @@ def eliminar_espacio(espacio_id):
         return jsonify({"status": "success"}), 200
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/programa/<int:lead_id>/html', methods=['GET'])
+def get_programa_html(lead_id):
+    try:
+        conn = get_connection()
+        lead = fetchone(conn, "SELECT nombre_proyecto, nombre_cliente FROM captura_web WHERE id=?", (lead_id,))
+        if not lead:
+            conn.close()
+            return "<h1>Proyecto no encontrado</h1>", 404
+        rows = fetchall(conn, """SELECT id, espacio, area, tipo, zona, clave,
+            relacion_directa, usuarios, mobiliario, instalaciones
+            FROM programa_arquitectonico WHERE lead_id=? ORDER BY zona, tipo, id""", (lead_id,))
+        conn.close()
+
+        zonas = {1:'Social',2:'Operativa',3:'Descanso',4:'Soporte',5:'Transición'}
+        colores_zona = {1:'#e8d5b7',2:'#b7d4e8',3:'#d4b7e8',4:'#b7e8c4',5:'#e8b7b7'}
+        tipo_badge = {'Deseado':'✔ Deseado','Complementario':'+ Comp.','Lujo':'★ Lujo'}
+
+        def valor_mob(val):
+            if not val: return ''
+            try: return ', '.join(json.loads(val)) if isinstance(json.loads(val), list) else str(val)
+            except: return str(val)
+
+        total_m2 = 0
+        filas = ''
+        for i, r in enumerate(rows, 1):
+            clave = f"E{i:02d}"
+            area_val = float(r['area'] or 0)
+            total_m2 += area_val
+            zona = zonas.get(r['zona'], f"Z{r['zona']}")
+            color_fondo = colores_zona.get(r['zona'], '#eee')
+            icon = tipo_badge.get(r['tipo'], r['tipo'] or '·')
+            espacio_id = r['id']
+            aforo_val = r['usuarios'] or 0
+            mob_val = valor_mob(r['mobiliario'])
+            inst_val = r['instalaciones'] or ''
+            rel = (r['relacion_directa'] or '').strip()
+            rel_html = f'<span style="font-size:.75rem;">{html.escape(rel)}</span>' if rel else '<span style="color:#bbb;font-size:.7rem;">—</span>'
+            filas += f'''<tr data-id="{espacio_id}">
+              <td style="text-align:center;font-weight:700;">{clave}</td>
+              <td style="background:{color_fondo};text-align:center;font-size:.75rem;color:#1a1a1a;font-weight:600;">{zona}</td>
+              <td>{html.escape(r['espacio'])}</td>
+              <td style="text-align:center;">{area_val:.1f}</td>
+              <td style="text-align:center;font-size:.68rem;color:var(--accent);font-weight:600;">{icon}</td>
+              <td style="text-align:center;"><input type="number" class="editable aforo" value="{aforo_val}" min="0" style="width:48px;padding:2px 4px;border:1px solid var(--border);border-radius:3px;background:var(--bg);color:var(--text);font-size:.78rem;text-align:center;"></td>
+              <td><input class="editable mob" value="{html.escape(mob_val)}" style="width:100%;padding:2px 4px;border:1px solid var(--border);border-radius:3px;background:var(--bg);color:var(--text);font-size:.78rem;"></td>
+              <td><input class="editable inst" value="{html.escape(inst_val)}" style="width:100%;padding:2px 4px;border:1px solid var(--border);border-radius:3px;background:var(--bg);color:var(--text);font-size:.78rem;"></td>
+              <td style="font-size:.78rem;">{rel_html}</td>
+            </tr>'''
+
+        pagina_html = f'''<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><title>Programa Arquitectónico — {html.escape(lead['nombre_proyecto'] or 'Proyecto')}</title>
+<style>
+  :root{{--bg:#0a0a0a;--text:#f4f1ee;--accent:#bc4b21;--card:#151515;--border:#2a2a2a;--text2:#999;--text3:#555}}
+  *{{box-sizing:border-box;margin:0;padding:0}}
+  body{{background:var(--bg);color:var(--text);font-family:'Inter','Helvetica',sans-serif;padding:40px 32px}}
+  .encabezado{{margin-bottom:28px}}
+  .encabezado h1{{font-size:1.8rem;font-weight:300;letter-spacing:6px;color:var(--accent);margin-bottom:2px}}
+  .encabezado .linea{{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px}}
+  .encabezado .meta{{color:var(--text2);font-size:.82rem;letter-spacing:.5px}}
+  .encabezado .meta strong{{color:var(--text)}}
+  .toolbar{{display:flex;gap:8px;align-items:center}}
+  .btn{{background:var(--accent);color:#fff;border:none;padding:7px 20px;border-radius:4px;cursor:pointer;font-size:.72rem;letter-spacing:1.5px;text-transform:uppercase;transition:background .2s;white-space:nowrap}}
+  .btn:hover{{background:#a33d1a}}
+  .btn:active{{background:#8a2e12}}
+  .btn-sec{{background:var(--card);color:var(--text);border:1px solid var(--border)}}
+  .btn-sec:hover{{background:var(--border);color:#fff}}
+  .btn-success{{background:#1a7a3a}}
+  .btn-success:hover{{background:#14622e}}
+  #status{{font-size:.72rem;color:var(--text2);transition:opacity .3s}}
+  #status.saving{{color:var(--accent)}}
+  #status.done{{color:#4caf50}}
+  #status.err{{color:#e74c3c}}
+  table{{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:4px}}
+  th{{background:var(--card);color:var(--accent);padding:8px 10px;text-align:left;font-weight:600;font-size:.62rem;text-transform:uppercase;letter-spacing:1.5px;border-bottom:2px solid var(--accent)}}
+  th.center{{text-align:center}}
+  td{{padding:6px 8px;border-bottom:1px solid var(--border);vertical-align:middle;color:#ddd}}
+  tr:hover td{{background:var(--card)}}
+  input.editable:focus{{outline:1px solid var(--accent);border-color:var(--accent)}}
+  .nota-ady{{font-size:.68rem;color:var(--text3);font-style:italic;margin-top:10px;border-left:3px solid var(--accent);padding-left:10px}}
+  .footer{{margin-top:24px;padding-top:14px;border-top:1px solid var(--border);font-size:.68rem;color:var(--text3);display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}}
+  .sello{{text-align:center;margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:.6rem;color:var(--text3);letter-spacing:2px;text-transform:uppercase}}
+  @media print{{
+    body{{background:#fff;color:#1a1a1a;padding:16px}}
+    .encabezado h1{{color:#a6937c}}
+    th{{background:#f0ebe7;color:#a6937c;border-bottom-color:#a6937c}}
+    td{{color:#333;border-bottom-color:#ddd}}
+    tr:hover td{{background:transparent}}
+    .nota-ady{{color:#888}}
+    .footer{{color:#888;border-top-color:#ccc}}
+    .sello{{border-top-color:#ccc;color:#888}}
+    .no-print{{display:none!important}}
+    input.editable{{border:1px solid #ccc!important;background:#fff!important;color:#333!important}}
+  }}
+</style></head>
+<body>
+
+<div class="encabezado">
+  <h1>PROGRAMA ARQUITECTÓNICO</h1>
+  <div class="linea">
+    <div class="meta">
+      <strong>{html.escape(lead['nombre_proyecto'] or 'Proyecto')}</strong> · {html.escape(lead['nombre_cliente'] or 'Cliente')} · {len(rows)} espacios · {total_m2:.1f} m²
+    </div>
+    <div class="toolbar">
+      <button class="btn btn-success no-print" onclick="guardarTodo()">💾 GUARDAR CAMBIOS</button>
+      <button class="btn btn-sec no-print" onclick="window.print()">📄 EXPORTAR PDF</button>
+      <span id="status"></span>
+    </div>
+  </div>
+</div>
+
+<table>
+<thead><tr>
+  <th class="center" style="width:45px;">CLAVE</th>
+  <th class="center" style="width:75px;">ZONA</th>
+  <th>ESPACIO</th>
+  <th class="center" style="width:48px;">M²</th>
+  <th class="center" style="width:40px;">TIPO</th>
+  <th class="center" style="width:60px;">AFORO</th>
+  <th>MOBILIARIO ESPECIAL</th>
+  <th>INSTALACIONES ESPECIALES</th>
+  <th>ADYACENCIAS</th>
+</tr></thead>
+<tbody>{filas}</tbody>
+</table>
+
+<div class="nota-ady">Las Adyacencias se rellenan automáticamente desde el Diagrama de Relaciones (3.4) — no se editan manualmente.</div>
+
+<div class="footer">
+  <span>Aforo, mobiliario e instalaciones se guardan en BD. Edita los campos y presiona 💾 GUARDAR CAMBIOS.</span>
+</div>
+
+<div class="sello no-print">SOMA Taller Virtual de Arquitectura</div>
+
+<script>
+function guardarTodo(){{
+  const status = document.getElementById('status');
+  status.textContent = 'Guardando…'; status.className = 'saving';
+  const updates = [];
+  document.querySelectorAll('tr[data-id]').forEach(tr => {{
+    const id = tr.dataset.id;
+    const aforo = tr.querySelector('.aforo')?.value || 0;
+    const mob = tr.querySelector('.mob')?.value || '';
+    const inst = tr.querySelector('.inst')?.value || '';
+    updates.push({{id: parseInt(id), usuarios: parseInt(aforo)||0, mobiliario: mob, instalaciones: inst}});
+  }});
+  fetch('/programa/{lead_id}/batch-update', {{
+    method:'POST',
+    headers:{{'Content-Type':'application/json'}},
+    body:JSON.stringify({{espacios: updates}})
+  }})
+  .then(r => r.json())
+  .then(d => {{
+    if(d.status==='success'){{ status.textContent='✓ Guardado'; status.className='done'; }}
+    else{{ status.textContent='✗ Error: '+d.message; status.className='err'; }}
+  }})
+  .catch(e => {{ status.textContent='✗ Error de red'; status.className='err'; }});
+  setTimeout(() => {{ status.textContent=''; status.className=''; }}, 3000);
+}}
+</script>
+
+</body></html>'''
+
+        return pagina_html, 200, {'Content-Type':'text/html; charset=utf-8'}
+    except Exception as e:
+        return f"<h1>Error</h1><pre>{str(e)}</pre>", 500
 
 @app.route('/cotizacion/<int:lead_id>', methods=['GET'])
 def get_cotizacion(lead_id):
