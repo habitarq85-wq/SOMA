@@ -4,18 +4,29 @@
 - ✅ **DASHBOARD funcional**: Pipeline completo (3 momentos), expediente, PDFs, métricas, auth.
 - ✅ **Base de datos arrancada para clientes**: PostgreSQL con migración automática, columnas de ubicación, leads demo, auth en Render.
 
-## Sesión: 23 Jun 2026 ✅
+## Sesión: 25 Jun 2026 ✅
 
 ### Bitácora del día
-1. **Fix scroll modal**: `document.body.style.overflow = 'hidden'` ahora se restaura al cerrar modales (ui.js).
-2. **Egresos filtrados por período**: Bloque 02 ahora usa el selector de mes/año como los KPI (egresos.js).
-3. **Salarios en Bloque 02**: Nuevo sub-apartado con registro y tabla independiente (categoría "Salario").
-4. **Fondos de Reemplazo**: Movido de Bloque 03 a Bloque 02, con aportación directa desde cada tarjeta.
-5. **Algoritmo SOMA**: Muestra proyectos desde Momento 1, no solo Momento 2.
-6. **Estación 1 simplificada**: Solo 2 tarjetas (1.1 Contacto, 1.2 Programa) + datos reales inyectados.
+1. **2.2.1 Datos del Cliente reorganizado**: 2.2.1.1 Datos de Inmersión (expediente) + 2.2.1.2 Datos de Entrevista (síntesis). Eliminada tarjeta dinámica "Respuestas de Inmersión Web".
+2. **Guía de Entrevista → Guía de Visita**: `guia_visita.html` unifica checklists de sitio (2.2.2) y ambientales (2.2.4) con los 6 tópicos de entrevista. Entrevista arriba, checklists abajo.
+3. **Análisis Procesado eliminado de Estación 3**: función `renderAnalisisReal()` y llamadas removidas.
+4. **Programa Real dentro de 3.3**: `renderProgramaReal()` ahora inyecta dentro de la tarjeta 3.3 en vez de flotar en el grid. Botón "GENERAR PROGRAMA ARQUITECTÓNICO".
+5. **Programa Arquitectónico editable**: nueva ruta `GET /programa/<id>/html` con tabla en formato SOMA dark. Campos editables: AFORO (number), MOBILIARIO (text), INSTALACIONES (text). Adyacencias solo desde diagrama (readonly). Botón EXPORTAR PDF.
+6. **Batch-update**: `POST /programa/<id>/batch-update` guarda todos los campos editables a la vez. Columna `instalaciones` agregada a BD con migración automática.
+7. **Heurísticas eliminadas**: Las sugerencias de aforo/mobiliario/instalaciones eran frágiles con nombres exóticos/errores ortográficos. El arquitecto llena manualmente.
+8. **Zona/TIPO legibles**: texto oscuro sobre fondos pastel en ZONA; labels completos ("✔ Deseado") en TIPO.
+9. **Deploy a Render**: commit + push a `main` (93c389e).
 
 ### Próxima sesión
-- Revisar inconsistencias en el flujo de trabajo del Algoritmo SOMA
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
+- Considerar crear tabla `algoritmo_contenido` para almacenar outputs de cada estación
+
+## Sesión: 24 Jun 2026 ✅
+
+### Bitácora del día
+1. **Estación 1 simplificada**: Solo tarjeta 1.1 Contacto (eliminada 1.2 Programa y datos reales inyectados).
+2. **Mensaje placeholder**: Cambiado "Sin proyectos activos en Momento 2" → "Sin proyectos registrados."
+3. **Lección**: No mezclar cambios visuales con cambios de infraestructura (server.py / fetch). Mantener server.py intacto para evitar romper auth.
 
 ## Sesión: 22 Jun 2026 (p.m.) ✅
 
@@ -100,7 +111,9 @@ curl -s "http://127.0.0.1:8080/lead/12/expediente-pdf"
 ```
 web/
 ├── dashboard.html          # Dashboard 2.0
-├── css/dashboard.css       # Estilos oscuros (dark editorial)
+├── css/
+│   ├── dashboard.css       # Estilos oscuros (dark editorial)
+│   └── algoritmo.css       # Estilos del Algoritmo SOMA
 ├── js/
 │   ├── api.js              # API calls
 │   ├── ui.js               # UI utilities
@@ -108,9 +121,12 @@ web/
 │   ├── egresos.js          # Gastos de operación
 │   ├── fondos.js           # Fondos de provisión
 │   ├── programa.js         # Programa arquitectónico + cotización
-│   └── app.js              # App shell, refresh loop, metrics
-└── algoritmo_soma.html     # Algoritmo con tarjetas de proyecto
+│   ├── app.js              # App shell, refresh loop, metrics
+│   └── algoritmo.js        # Algoritmo SOMA (tarjetas, diagrama, programa)
+├── algoritmo_soma.html     # Algoritmo con tarjetas de proyecto
+├── guia_visita.html        # Guía de visita (checklist sitio + ambientales + 6 tópicos)
+└── guia_entrevista.html    # (obsoleto, reemplazado por guia_visita)
 
-backend/server.py           # Flask (rutas: leads, cobros, metrics, expediente-pdf)
+backend/server.py           # Flask (rutas: leads, cobros, metrics, expediente-pdf, programa/html)
 antecedentes/dashboard_v1/  # Dashboard original (referencia)
 ```

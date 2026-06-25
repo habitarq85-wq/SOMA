@@ -619,3 +619,68 @@ La investigación de sitio y normativa NO va antes de la cotización; se ejecuta
 - Fondos en tabla separada `fondos` (no se suman al gasto de operación)
 - Aportación directa desde la tarjeta del fondo (sin sección Aportar/Retirar separada)
 
+---
+
+### [2026-06-25] — Algoritmo SOMA: Estación 2-3, Programa Arquitectónico y Guía de Visita
+
+**1. Reorganización de 2.2.1 Datos del Cliente:**
+"2.2.1 Datos del cliente va a tener dos tarjetas: 2.2.1.1 Datos de inmersión, donde ahi se va a poder ver el análisis multidimensional del expediente; y 2.2.1.2 Datos de entrevista, aqui la salida es el documento sintético del cliente que yo voy a generar con el audio de la entrevista y las notas de campo."
+
+**2. Eliminar tarjeta duplicada:**
+"aun conserva la tarjeta Respuestas de inmersión web esa ya no va, fue reemplazada por la 2.2.1.1"
+
+**3. Guía de Entrevista → Guía de Visita con checklists de sitio y ambientales:**
+"En la guía de entrevista necesito poner un checklist de cosas que necesito hacer en el sitio y con el cliente además de la entrevista necesito poner todas las actividades para recavar los datos del sitio 2.2.2 y los datos ambientales específicos 2.2.4."
+
+**4. Orden de la guía:**
+"puedes poner arriba la entrevista y abajo datos del sitio"
+
+**5. Eliminar Análisis Procesado de Estación 3:**
+"En la estación 3 hay una tarjeta llamada análisis procesado, no lo vamos a poner alli."
+
+**6. Programa Real dentro de 3.3:**
+"veo que en la estación 3 tienes una tarjeta llamada programa real, no va alli. El programa real va dentro de la tarjeta 3.3"
+
+**7. Programa extenso → botón a archivo:**
+"cuando tenga un programa muy extenso se va a desbordar, no sería mejor que a partir de un botón tengamos un archivo de programa"
+
+**8. Programa Arquitectónico con campos nuevos:**
+"Creo que es una buena oportunidad de que programa completo se transforme en un programa arquitectónico, para ello vamos a hacer lo siguiente: ya tenemos en la base de datos el programa real que tiene los espacios los metros cuadrados y su zona; con esa información en la tarjeta 3.3 vamos a poner un botón de generar programa arquitectónico que va a utilizar la información de programa completo y la vamos a ampliar dentro de un html en forma de tabla. La tabla puede tener estos campos: clave (ya la tenemos, ordenarla 1,2,etc), zona (ya la tenemos), nombre del espacio (ya lo tenemos), área (ya la tenemos), aforo (nuevo campo), mobiliario especial (nuevo, lista de objetos no convencionales que debe llevar el espacio)."
+
+**9. Adyacencias solo desde diagrama + export PDF:**
+"evita que las adyacencias las pueda modificar manualmente, solo debe rellenarse por el diagrama de relaciones. coloca una forma para que pueda exportar a pdf una vez que la tabla este llena."
+
+**10. Formato SOMA y jerarquía visual:**
+"Puedes utilizar el formato SOMA, además veo el html con el título a un costado y no arriba, que se vea claramente la jerarquía de elementos."
+
+**11. Campos adicionales en programa:**
+"consideras que un programa arquitectónico necesita mas campos, analiza para que yo decida" → "pon el 3 (lo tenemos), pon el 9 y el 10 puede estar conectado al diagrama de relaciones"
+
+**12. Heurísticas de mobiliario no escalan:**
+"El problema es que cuando llegue un usuario con valores exóticos no se van a colocar, cierto?" → "además si coloco alguna falta de ortografía en el programa, no se van a leer los valores que pusiste cierto?"
+
+**13. Editor en 3.3, no en dashboard:**
+"que se rellene pero no desde el dashboard sino desde el 3.3. botón generar programa arquitectónico."
+
+**14. Tolerancia a errores con BD progresiva:**
+"cuando digo que me importa es que no genere errores"
+
+**15. Legibilidad de tabla:**
+"Las letras de ZONA en la tabla no se ven porque están en blanco con fondo de color claro, y en TIPO que significan las palomitas?"
+
+**16. Deploy:**
+"podemos subir algoritmo soma a render"
+
+**Decisiones de implementación:**
+- `guia_entrevista.html` → `guia_visita.html` con checklists de 2.2.2 y 2.2.4
+- `renderImmersionReal()` eliminada (ya no inyecta tarjeta de respuestas)
+- `renderAnalisisReal()` eliminada (Análisis Procesado fuera de Estación 3)
+- `renderProgramaReal()` inyecta dentro de tarjeta 3.3 (no como tarjeta independiente)
+- Nueva ruta `GET /programa/<id>/html` con tabla editable (aforo, mobiliario, instalaciones) en formato SOMA dark
+- Nueva ruta `POST /programa/<id>/batch-update` para guardar ediciones
+- Columna `instalaciones` agregada a `programa_arquitectonico` + migración automática en `init_db()`
+- Adyacencias readonly, solo desde Diagrama de Relaciones (3.4)
+- Botón EXPORTAR PDF (window.print)
+- Heurísticas de sugerencia eliminadas — el arquitecto llena los campos manualmente
+- Commit `93c389e` y push a Render
+
