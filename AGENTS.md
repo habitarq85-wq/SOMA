@@ -3,6 +3,19 @@
 ## Estado del Proyecto
 - ✅ **DASHBOARD funcional**: Pipeline completo (3 momentos), expediente, PDFs, métricas, auth.
 - ✅ **Base de datos arrancada para clientes**: PostgreSQL con migración automática, columnas de ubicación, leads demo, auth en Render.
+- ✅ **Cloudflare Cache**: 3 Page Rules activas (Cache Everything + Edge TTL 2h) para carga instantánea de la web.
+
+## Sesión: 26 Jun 2026 ✅
+
+### Bitácora del día
+1. **Botón Cotizador SOMA en portada**: texto naranja "Cotizador SOMA" debajo de "Taller Virtual de Arquitectura", con fondo negro 40% opacity, padding ajustado, cursor pointer. Llama a `openImmersion()`.
+2. **Cache de Cloudflare**: 3 Page Rules configuradas (`/`, `/recursos_graficos/*`, `/web/*`) con Cache Everything + Edge Cache TTL 2h. La web se sirve desde el edge de Cloudflare, eliminando cold start de Render.
+3. **`_redirects` creado** (para futura migración a Cloudflare Pages): mapea rutas estáticas directo y APIs proxy a `soma-853c.onrender.com`.
+
+### Próxima sesión
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
+- Considerar crear tabla `algoritmo_contenido` para almacenar outputs de cada estación
+- Lead magnet — decidir ubicación en página web
 
 ## Sesión: 25 Jun 2026 ✅
 
