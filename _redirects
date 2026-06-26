@@ -1,0 +1,36 @@
+# SOMA — Cloudflare Pages Redirects
+# Status 200 = proxy (rewrite, transparent para el usuario)
+# Status 301 = redirect
+
+# --- Static pages (Cloudflare Pages sirve directo desde web/) ---
+/dashboard  /web/dashboard.html  200
+/algoritmo  /web/algoritmo_soma.html  200
+/guia_visita  /web/guia_visita.html  200
+/tarjeta  /  301
+
+# --- API routes exactas → proxy a Render ---
+/get_leads  https://soma-853c.onrender.com/get_leads  200
+/leads/kanban  https://soma-853c.onrender.com/leads/kanban  200
+/save_immersion  https://soma-853c.onrender.com/save_immersion  200
+/save_lead_magnet  https://soma-853c.onrender.com/save_lead_magnet  200
+/programa/espacio  https://soma-853c.onrender.com/programa/espacio  200
+/notificaciones/status  https://soma-853c.onrender.com/notificaciones/status  200
+/fondo_democratizacion  https://soma-853c.onrender.com/fondo_democratizacion  200
+/resumen_financiero  https://soma-853c.onrender.com/resumen_financiero  200
+
+# --- API routes con wildcard → proxy a Render ---
+/metrics/*  https://soma-853c.onrender.com/metrics/:splat  200
+/lead/*  https://soma-853c.onrender.com/lead/:splat  200
+/cobros/*  https://soma-853c.onrender.com/cobros/:splat  200
+/programa/*  https://soma-853c.onrender.com/programa/:splat  200
+/cotizacion/*  https://soma-853c.onrender.com/cotizacion/:splat  200
+/api/*  https://soma-853c.onrender.com/api/:splat  200
+/egresos/*  https://soma-853c.onrender.com/egresos/:splat  200
+/activity_matrix/*  https://soma-853c.onrender.com/activity_matrix/:splat  200
+
+# --- CSS, backend static → proxy a Render (rutas especiales fuera del repo root) ---
+/css/*  https://soma-853c.onrender.com/css/:splat  200
+/backend/*  https://soma-853c.onrender.com/backend/:splat  200
+
+# --- Recursos gráficos, web static → servidos directo por Cloudflare Pages ---
+# /recursos_graficos/* y /web/* existen en el repo, se sirven automáticamente
