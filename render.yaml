@@ -6,7 +6,7 @@ services:
     startCommand: bash start.sh
     envVars:
       - key: SUPABASE_URL
-        value: postgresql://postgres.dejojumyyydrlqoegqnf:IAFN4oKy9GAO1vN6@aws-0-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require&pgbouncer=true
+        value: postgresql://postgres.dejojumyyydrlqoegqnf:IAFN4oKy9GAO1vN6@aws-0-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require
       - key: SENDGRID_API_KEY
         sync: false
 
