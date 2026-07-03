@@ -10,13 +10,16 @@ import json
 def _get_db_url():
     for key in ('SUPABASE_URL', 'DATABASE_URL'):
         url = os.environ.get(key, '')
+        # Strip "KEY=" prefix if Render double-injected it
+        prefix = f'{key}='
+        if url.startswith(prefix):
+            url = url[len(prefix):]
         if url and (url.startswith('postgresql://') or url.startswith('postgres://')):
             return url
-    # Debug: log qué variables existen
     for k in ('SUPABASE_URL', 'DATABASE_URL', 'RENDER', 'PGHOST', 'PGDATABASE'):
         v = os.environ.get(k, '')
         if v:
-            safe = v[:15] + '...' if k.endswith('URL') and '@' in v else v
+            safe = v[:20] + '...' if k.endswith('URL') and '@' in v else v
             print(f"[DB DEBUG] {k}={safe}")
     return ''
 
