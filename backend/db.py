@@ -12,6 +12,12 @@ def _get_db_url():
         url = os.environ.get(key, '')
         if url and (url.startswith('postgresql://') or url.startswith('postgres://')):
             return url
+    # Debug: log qué variables existen
+    for k in ('SUPABASE_URL', 'DATABASE_URL', 'RENDER', 'PGHOST', 'PGDATABASE'):
+        v = os.environ.get(k, '')
+        if v:
+            safe = v[:15] + '...' if k.endswith('URL') and '@' in v else v
+            print(f"[DB DEBUG] {k}={safe}")
     return ''
 
 def _use_postgres():
