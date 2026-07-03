@@ -7,8 +7,15 @@ import os
 import sqlite3
 import json
 
+def _get_db_url():
+    for key in ('SUPABASE_URL', 'DATABASE_URL'):
+        url = os.environ.get(key, '')
+        if url and (url.startswith('postgresql://') or url.startswith('postgres://')):
+            return url
+    return ''
+
 def _use_postgres():
-    return bool(os.environ.get('DATABASE_URL', ''))
+    return bool(_get_db_url())
 
 def _get_sqlite_path():
     base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -16,10 +23,11 @@ def _get_sqlite_path():
     return os.path.join(proyecto_dir, "web", "EjemploBD", "proyectos_arquitectonicos.db")
 
 def get_connection():
-    if _use_postgres():
+    url = _get_db_url()
+    if url:
         import psycopg2
         from psycopg2.extras import RealDictCursor
-        conn = psycopg2.connect(os.environ['DATABASE_URL'], cursor_factory=RealDictCursor)
+        conn = psycopg2.connect(url, cursor_factory=RealDictCursor)
         return conn
     else:
         db_path = _get_sqlite_path()

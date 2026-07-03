@@ -8,8 +8,8 @@ services:
       pip install -r requirements.txt
     startCommand: bash start.sh
     envVars:
-      - key: DATABASE_URL
-        value: postgresql://postgres:IAFN4oKy9GAO1vN6@db.dejojumyyydrlqoegqnf.supabase.co:5432/postgres
+      - key: SUPABASE_URL
+        value: postgresql://postgres:IAFN4oKy9GAO1vN6@db.dejojumyyydrlqoegqnf.supabase.co:5432/postgres?sslmode=require
       - key: SENDGRID_API_KEY
         sync: false
 
@@ -30,8 +30,4 @@ services:
       - key: VINCULAR_NUMERO
         value: "5219995314093"
 
-databases:
-  - name: soma-db
-    plan: free
-    databaseName: soma
-    postgresMajorVersion: 16
+
