@@ -108,7 +108,7 @@ def num_to_words(n):
 
 def init_db():
     conn = get_connection()
-    use_pg = bool(os.environ.get('DATABASE_URL', ''))
+    use_pg = bool(os.environ.get('SUPABASE_URL', '') or os.environ.get('DATABASE_URL', ''))
     tables = {
         'captura_web': [
             ('id', 'SERIAL PRIMARY KEY' if use_pg else 'INTEGER PRIMARY KEY AUTOINCREMENT'),
@@ -255,9 +255,35 @@ def enviar_whatsapp(contacto, temp_id, nivel_key, m2):
         print(f"--- WHATSAPP NO DISPONIBLE (Baileys): {e} ---")
         return False
 
+# Anti-bot: rate limiting (max 5 submissions/IP por hora)
+_RATE_LIMIT = {}
+_RATE_WINDOW = 3600
+_RATE_MAX = 5
+_MIN_IMMERSION_MS = 5000
+
+def _check_rate_limit(ip):
+    now = datetime.datetime.now().timestamp()
+    window = _RATE_LIMIT.get(ip, [])
+    window = [t for t in window if now - t < _RATE_WINDOW]
+    if len(window) >= _RATE_MAX:
+        return False
+    window.append(now)
+    _RATE_LIMIT[ip] = window
+    return True
+
 @app.route('/save_immersion', methods=['POST'])
 def save_immersion():
     data = request.json
+    # Anti-bot checks
+    honeypot = data.get('_h', '')
+    elapsed = data.get('_t', 0)
+    if honeypot:
+        return jsonify({"status": "error", "message": "bot"}), 403
+    if isinstance(elapsed, (int, float)) and 0 < elapsed < _MIN_IMMERSION_MS:
+        return jsonify({"status": "error", "message": "too_fast"}), 429
+    ip = request.remote_addr or 'unknown'
+    if not _check_rate_limit(ip):
+        return jsonify({"status": "error", "message": "rate_limit"}), 429
     respuestas = data.get('respuestas', {})
     contacto = data.get('contacto', 'Anónimo')
     cotizacion = data.get('cotizacion', {})
