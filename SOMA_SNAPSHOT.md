@@ -355,4 +355,61 @@ Estrategias para redes sociales, Google y otras fuentes de leads. Solo cuando el
 
 ---
 
-## 📅 ÚLTIMA ACTUALIZACIÓN: 25/06/2026
+## 📅 SESIÓN 27/06/2026: CLOUDFLARE WORKER KEEP-WARM
+
+### ✅ COMPLETADO
+
+- **[NUEVO] Cloudflare Worker keep-warm desplegado:** Worker `soma-keep-warm` con cron `*/5 * * * *` pinguea `soma-853c.onrender.com` cada 5 minutos para evitar que Render se duerma por inactividad.
+- **[NUEVO] Token Cloudflare:** Token `SOMA Workers Deploy` creado con permisos `Workers Scripts -> Edit` y `User Details -> Read`.
+- **[NUEVO] Estructura:** `workers/keep-warm/wrangler.toml` + `src/index.js`. Worker URL: `https://soma-keep-warm.habitarq85.workers.dev`.
+- **[NUEVO] Verificación:** Endpoint `GET /__ping` responde `Render status: 200`.
+
+### 📁 ARCHIVOS CREADOS/MODIFICADOS
+
+| Archivo | Descripción |
+|---------|-------------|
+| `workers/keep-warm/wrangler.toml` | **Creado** — Configuración del worker con cron cada 5 min |
+| `workers/keep-warm/src/index.js` | **Creado** — Worker que pinguea Render periódicamente |
+| `AGENTS.md` | **Modificado** — Registro de sesión 27 Jun 2026 |
+
+---
+
+## 📅 SESIÓN 03/07/2026: MIGRACIÓN A SUPABASE (IPv6 → POOLER IPv4)
+
+### ✅ COMPLETADO
+
+- **[CRÍTICO] Render DB eliminada** — Ya no inyecta `DATABASE_URL` malformada.
+- **[CRÍTICO] Supabase pooler con IPv4** — Usando `aws-0-us-east-1.pooler.supabase.com:6543`. Render ahora puede conectar.
+- **[FIX] db.py** — `_get_db_url()` prueba `SUPABASE_URL` primero, luego `DATABASE_URL`. Hace stripping de `KEY=` prefix.
+- **[FIX] server.py** — `use_pg` verifica `SUPABASE_URL or DATABASE_URL`.
+- **[FIX] render.yaml** — URL actualizada al pooler IPv4, sin `pgbouncer=true`.
+- **[UPD] Worker keep-warm** — Ahora también pinguea `https://dejojumyyydrlqoegqnf.supabase.co` cada 5 min.
+- **[UPD] .env** — URL pooler + `CLOUDFLARE_API_TOKEN` guardado (gitignored).
+- **[DEPLOY] Deploy exitoso** — Clientes visibles en dashboard, datos accesibles.
+
+### ⚡ CONEXIÓN SUPABASE (POOLER IPv4)
+
+```
+Host: aws-0-us-east-1.pooler.supabase.com
+Port: 6543
+User: postgres.dejojumyyydrlqoegqnf
+SSL: require
+Database: postgres
+```
+
+### 🔄 FALLBACK LOCAL (SQLite)
+
+Si Supabase falla, el servidor usa automáticamente la base SQLite local:
+- **Ruta:** `web/EjemploBD/proyectos_arquitectonicos.db`
+- **Backups con timestamp:** `antecedentes/backups_sqlite/`
+- **Backup diario:** Cron 12pm ejecuta `backend/backup_pg_to_sqlite.py`
+- **Script manual:** `cd backend && python backup_pg_to_sqlite.py`
+
+### 🟢 KEEP-WARM (evita otra pausa)
+
+- **Endpoint:** `GET /keepwarm` (público, ejecuta `SELECT 1` en la BD)
+- **Worker:** Pinguea cada 5 min `https://soma-853c.onrender.com/keepwarm`
+
+---
+
+## 📅 ÚLTIMA ACTUALIZACIÓN: 21/07/2026

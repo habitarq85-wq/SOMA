@@ -64,7 +64,7 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 ## BLOQUE 3: LABORATORIO DE HERRAMIENTAS (I+D)
 - [x] **Aplicaciones:** App de Entrevistas (Ejes de Inmersión y ActivityMatrix operativos en Backend). App de Entrevista v2 con 6 tópicos + grabación + post-formulario.
 - [x] **Automatización:** Procesamiento con DeepSeek Flash (pendiente de API key). Whisper (pendiente de instalación).
-- [x] **Programación:** Backend Flask (Persistencia y Correo reparados, SendGrid API activo, Railway no bloquea HTTPS), Persistencia SQLite. Env vars con `.strip()`. Debug endpoint `/notificaciones/status` (verifica API key).
+- [x] **Programación:** Backend Flask (Persistencia y Correo reparados, SendGrid API activo, Railway no bloquea HTTPS), Persistencia PostgreSQL/Supabase con pooler IPv4. Env vars con `.strip()` + `KEY=` prefix stripping. Debug endpoint `/notificaciones/status` (verifica API key).
 - [x] **Activity Matrix en Dashboard:** Endpoint `GET /activity_matrix/<temp_id>`, grid 24h interactivo con tooltips y colores SOMA por habitante. Fusión de leads captura_web + proyectos app_inmersion.
 - [x] **Pruebas de Sistema:** Revisión Dashboard y Funcionamiento Cotizador (Finalizado).
 
@@ -113,6 +113,15 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 - [x] **Otros dinámico:** Filas con nombre + m² + botón +/×. Sin cantidad.
 - [x] **Padding btn-back:** Corregido para no montarse en imágenes.
 
+## 🧪 BLOQUE 7: INFRAESTRUCTURA — Sesión 03/07/2026
+- [x] **Base de datos**: Migrada de Render PostgreSQL → Supabase. Pooler IPv4: `aws-0-us-east-1.pooler.supabase.com:6543`. Usuario: `postgres.dejojumyyydrlqoegqnf`.
+- [x] **Código**: `SUPABASE_URL` tiene prioridad. Stripping automático de `KEY=` prefix en `_get_db_url()`.
+- [x] **Cloudflare Worker keep-warm**: `soma-keep-warm` desplegado en `https://soma-keep-warm.habitarq85.workers.dev`. Cron cada 5 min pinguea Render + `/keepwarm` (query SQL real) para evitar cold start/pausa.
+- [x] **Token Workers Deploy**: Creado con permisos `Workers Scripts -> Edit` + `User Details -> Read`. Guardado en `.env` (gitignored).
+- [x] **Estructura**: `workers/keep-warm/wrangler.toml` + `src/index.js`.
+- [x] **Fallback local SQLite**: `db.py` atrapa errores de conexión PostgreSQL y usa automáticamente SQLite local.
+- [x] **Backup diario Supabase→SQLite**: `backend/backup_pg_to_sqlite.py`. Cron 12pm. 8 tablas, 60 registros.
+
 ## 🎯 PRIORIDADES 29/05/2026 — ROADMAP A PRODUCCIÓN
 
 | Prioridad | Acción | Por qué |
@@ -121,8 +130,8 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 | 🔥 Crítica | **Conseguir RFC en RESICO** | Sin factura no hay cobro formal |
 | ✅ Hecha | **Dominio propio** | `soma-arquitectura.com` registrado + Cloudflare |
 | ✅ Hecha | **Autenticar dominio en SendGrid** | SPF/DKIM configurado. Correos desde `info@...` |
-| ✅ Hecha | **Migrar a PostgreSQL** | SQLite → PostgreSQL vía Render. `db.py` maneja ambos backends |
+| ✅ Hecha | **Migrar a Supabase (Pooler IPv4)** | SQLite → Render PostgreSQL → Supabase. Pooler IPv4. `db.py` maneja ambos backends |
 | Media | **faster-whisper + DeepSeek** | Automatización real del análisis |
 | Media | **Optimizar web: CDN o Cloudflare** | Velocidad de carga en celular |
-| ✅ Hecha | **Migrar a Render** | Railway → Render con PostgreSQL gratis. `render.yaml` |
+| ✅ Hecha | **Migrar a Render + Supabase** | Railway → Render (web) + Supabase (DB pooler IPv4). `render.yaml` |
 | Alta | **Dashboard con login** | Proteger `/dashboard` con contraseña |

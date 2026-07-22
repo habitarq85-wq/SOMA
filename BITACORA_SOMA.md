@@ -1,5 +1,33 @@
 # MEMORIA EVOLUTIVA - SOMA TALLER VIRTUAL DE ARQUITECTURA
 
+## Sesión: 2026-07-21 — Supabase Paused + Fallback Local + Keepwarm
+
+### Diagnóstico
+- El proyecto de Supabase (`dejojumyyydrlqoegqnf`) fue pausado por inactividad. Dashboard y algoritmo en Render no leían datos.
+- Causa: el worker keep-warm pingueaba solo el API REST de Supabase, no la BD directamente — Supabase mide inactividad a nivel de PostgreSQL, no de hits HTTP.
+
+### Soluciones aplicadas
+1. **Reactivación:** Juan resumió el proyecto desde el dashboard de Supabase. Datos intactos (3 leads, 17 programa_arquitectonico, 24 algoritmo_progreso, 6 matriz_inversion, 5 egresos, 2 fondos, 3 movimientos_fondo).
+2. **Keep-warm real:** Se agregó endpoint público `/keepwarm` en `server.py` que ejecuta `SELECT 1` en la BD. Worker actualizado para pinguear este endpoint en vez del API de Supabase.
+3. **Backup local:** `backend/backup_pg_to_sqlite.py` — exporta todas las tablas de Supabase → SQLite local en `web/EjemploBD/proyectos_arquitectonicos.db` y backups con timestamp en `antecedentes/backups_sqlite/`.
+4. **Fallback automático:** `db.py` modificado — si PostgreSQL falla, usa SQLite local automáticamente. No requiere cambios de configuración.
+5. **Cron diario:** Backup automático cada 12pm (mediodía).
+
+### Archivos creados/modificados
+- `backend/backup_pg_to_sqlite.py` — Nuevo (backup Supabase→SQLite)
+- `backend/db.py` — Modificado (fallback automático PG→SQLite)
+- `backend/server.py` — Modificado (endpoint `/keepwarm` público)
+- `workers/keep-warm/src/index.js` — Modificado (ping a `/keepwarm` con query SQL)
+- `.env` — DATABASE_URL re-activado
+- `AGENTS.md`, `BITACORA_SOMA.md`, `SOMA_CORE_INDEX.md`, `SOMA_SNAPSHOT.md` — Actualizados
+
+### Pendientes
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
+- Crear tabla `algoritmo_contenido` para outputs de cada estación
+- Lead magnet — decidir ubicación en página web
+
+---
+
 ## [Evolución de la Visión]
 El proyecto nace de la necesidad de democratizar la arquitectura de alta calidad. La tesis central es: **"Lo protocolario se programa, lo creativo se libera"**. SOMA no busca repetir edificios, sino repetir la excelencia mediante procesos industrializados para resultados artesanales y únicos. 
 
@@ -1219,6 +1247,100 @@ Se analizó la disonancia entre el `01_PROTOCOLO_CONCEPTUALIZACION.md` (purament
 | `BITACORA_SOMA.md` | **Modificado** — Esta entrada de sesión |
 
 ### 92. PENDIENTES (PRÓXIMA SESIÓN)
+
+1. Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
+2. Considerar crear tabla `algoritmo_contenido` para almacenar outputs de cada estación
+3. Lead magnet — decidir ubicación en página web
+
+---
+
+## Sesión: 2026-06-27 — Cloudflare Worker Keep-Warm + Token Workers Deploy
+
+### 93. LOGROS DE LA SESIÓN
+
+- **Cloudflare Worker keep-warm desplegado:** `soma-keep-warm` en `https://soma-keep-warm.habitarq85.workers.dev` con cron `*/5 * * * *` (cada 5 minutos) que pinguea `soma-853c.onrender.com` para evitar que Render se duerma por inactividad.
+- **Token Cloudflare creado:** `SOMA Workers Deploy` con permisos `Workers Scripts -> Edit` + `User Details -> Read`.
+- **Estructura:** `workers/keep-warm/wrangler.toml` + `src/index.js` en el repo.
+- **Verificación:** Endpoint `GET /__ping` responde `Render status: 200`.
+- **Documentos actualizados:** AGENTS.md, SOMA_SNAPSHOT.md, SOMA_CORE_INDEX.md, BITACORA_SOMA.md.
+
+### 94. ARCHIVOS CREADOS/MODIFICADOS
+
+| Archivo | Cambio |
+|---------|--------|
+| `workers/keep-warm/wrangler.toml` | **Creado** — Configuración Wrangler con account_id + cron cada 5 min |
+| `workers/keep-warm/src/index.js` | **Creado** — Worker que pinguea Render (cron + fetch handler) |
+| `AGENTS.md` | **Modificado** — Sesión 27 Jun registrada |
+| `SOMA_SNAPSHOT.md` | **Modificado** — Nueva sesión + última actualización 27/06/2026 |
+| `SOMA_CORE_INDEX.md` | **Modificado** — Bloque 7 (Infraestructura) agregado |
+| `BITACORA_SOMA.md` | **Modificado** — Esta entrada de sesión |
+
+### 95. PENDIENTES (PRÓXIMA SESIÓN)
+
+1. Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
+2. Considerar crear tabla `algoritmo_contenido` para almacenar outputs de cada estación
+3. Lead magnet — decidir ubicación en página web
+
+---
+
+## SESIÓN 03/07/2026 — MIGRACIÓN A SUPABASE (IPv6 → POOLER IPv4)
+
+### 96. CONTEXTO
+
+Render PostgreSQL inyectaba `DATABASE_URL` con valor malformado (`DATABASE_URL=postgresql://...`). Se decide migrar a Supabase. Primer intento falla porque Supabase free tier solo expone IPv6 y Render no puede enrutar a `2600:1f18::`.
+
+### 97. PROBLEMAS ENCONTRADOS
+
+| # | Problema | Síntoma | Solución |
+|---|----------|---------|----------|
+| 1 | `DATABASE_URL` malformada por Render | `invalid dsn: invalid connection option "DATABASE_URL"` | Eliminar DB de Render + stripping de `KEY=` prefix en `_get_db_url()` |
+| 2 | Supabase solo IPv6 | `connection to server at ... failed: Network is unreachable` | Usar **connection pooler** `aws-0-us-east-1.pooler.supabase.com:6543` (tiene IPv4) |
+| 3 | `pgbouncer=true` no válido | `invalid URI query parameter: "pgbouncer"` | Quitar `pgbouncer=true`, psycopg2 no lo reconoce |
+| 4 | Render no lee `render.yaml` | `SUPABASE_URL` no aparecía en logs | Variables de Dashboard sobreescriben `render.yaml` — se fija valor exacto en Dashboard |
+
+### 98. CAMBIOS REALIZADOS
+
+| Archivo | Cambio |
+|---------|--------|
+| `backend/db.py` | `_get_db_url()` prueba SUPABASE_URL primero, luego DATABASE_URL. Si el valor empieza con `KEY=`, lo limpia. Debug logging de env vars. |
+| `backend/server.py` | `use_pg` verifica `SUPABASE_URL or DATABASE_URL` |
+| `render.yaml` | `SUPABASE_URL` apunta al pooler: `postgresql://postgres.dejojumyyydrlqoegqnf:...@aws-0-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require` |
+| `workers/keep-warm/src/index.js` | Agregado ping a `https://dejojumyyydrlqoegqnf.supabase.co` para evitar pausa por inactividad |
+| `.env` | URL pooler + `CLOUDFLARE_API_TOKEN` guardado |
+| `start.sh` | WhatsApp Baileys eliminado |
+
+### 99. CONEXIÓN FINAL (Pooler IPv4)
+
+```
+Host: aws-0-us-east-1.pooler.supabase.com
+Port: 6543
+User: postgres.dejojumyyydrlqoegqnf
+SSL: require
+Database: postgres
+```
+
+### 100. LOGROS DE LA SESIÓN
+
+- **Render DB eliminada** — ya no inyecta `DATABASE_URL` malformada
+- **Supabase pooler con IPv4** — Render conecta sin problema
+- **Deploy exitoso** — clientes visibles en dashboard, datos accesibles
+- **Cloudflare Worker actualizado** — pinguea Supabase cada 5 min
+- **Token guardado** en `.env` para futuros deploys
+
+### 101. ARCHIVOS CREADOS/MODIFICADOS
+
+| Archivo | Cambio |
+|---------|--------|
+| `backend/db.py` | **Modificado** — KEY= stripping + debug |
+| `backend/server.py` | **Modificado** — use_pg con SUPABASE_URL |
+| `render.yaml` | **Modificado** — URL pooler IPv4 |
+| `.env` | **Modificado** — Token + URL pooler |
+| `workers/keep-warm/src/index.js` | **Modificado** — Ping a Supabase |
+| `AGENTS.md` | **Modificado** — Sesión 03 Jul |
+| `SOMA_SNAPSHOT.md` | **Modificado** — Nueva sesión |
+| `SOMA_CORE_INDEX.md` | **Modificado** — Bloque infraestructura |
+
+### 102. PENDIENTES (PRÓXIMA SESIÓN)
 
 1. Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
 2. Considerar crear tabla `algoritmo_contenido` para almacenar outputs de cada estación
