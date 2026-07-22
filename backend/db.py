@@ -1,50 +1,51 @@
 """
 Abstracción de base de datos para SOMA.
 Soporta SQLite (desarrollo local) y PostgreSQL (producción en Render).
-Selecciona automáticamente según la variable DATABASE_URL.
+Fallback automático: si PostgreSQL no está disponible, usa SQLite.
 """
 import os
 import sqlite3
 import json
 
+_pg_available = None  # None = no probado, True/False
+
 def _get_db_url():
     for key in ('SUPABASE_URL', 'DATABASE_URL'):
         url = os.environ.get(key, '')
-        # Strip "KEY=" prefix if Render double-injected it
         prefix = f'{key}='
         if url.startswith(prefix):
             url = url[len(prefix):]
         if url and (url.startswith('postgresql://') or url.startswith('postgres://')):
             return url
-    for k in ('SUPABASE_URL', 'DATABASE_URL', 'RENDER', 'PGHOST', 'PGDATABASE'):
-        v = os.environ.get(k, '')
-        if v:
-            safe = v[:20] + '...' if k.endswith('URL') and '@' in v else v
-            print(f"[DB DEBUG] {k}={safe}")
     return ''
-
-def _use_postgres():
-    return bool(_get_db_url())
 
 def _get_sqlite_path():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     proyecto_dir = os.path.dirname(base_dir)
     return os.path.join(proyecto_dir, "web", "EjemploBD", "proyectos_arquitectonicos.db")
 
+def _use_postgres():
+    return _pg_available is True
+
 def get_connection():
+    global _pg_available
     url = _get_db_url()
-    if url:
-        import psycopg2
-        from psycopg2.extras import RealDictCursor
-        conn = psycopg2.connect(url, cursor_factory=RealDictCursor)
-        return conn
-    else:
-        db_path = _get_sqlite_path()
-        os.makedirs(os.path.dirname(db_path), exist_ok=True)
-        conn = sqlite3.connect(db_path)
-        conn.row_factory = sqlite3.Row
-        conn.execute("PRAGMA foreign_keys = ON")
-        return conn
+    if url and _pg_available is not False:
+        try:
+            import psycopg2
+            from psycopg2.extras import RealDictCursor
+            conn = psycopg2.connect(url, cursor_factory=RealDictCursor, connect_timeout=5)
+            _pg_available = True
+            return conn
+        except Exception as e:
+            print(f"[DB] PostgreSQL no disponible ({e}). Usando SQLite local.")
+            _pg_available = False
+    db_path = _get_sqlite_path()
+    os.makedirs(os.path.dirname(db_path), exist_ok=True)
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON")
+    return conn
 
 def adapt_sql(sql):
     if _use_postgres():
