@@ -34,7 +34,7 @@ def authenticate():
 
 @app.before_request
 def require_login():
-    public_paths = ['/', '/save_immersion', '/tarjeta']
+    public_paths = ['/', '/save_immersion', '/tarjeta', '/keepwarm']
     public_prefixes = ['/web/', '/css/', '/recursos_graficos/', '/backend/']
     path = request.path
     if path in public_paths or any(path.startswith(pref) for pref in public_prefixes):
@@ -64,6 +64,13 @@ RANGOS_OBRA = {
 }
 
 os.makedirs(REPORTES_DIR, exist_ok=True)
+
+@app.route('/keepwarm')
+def keepwarm():
+    conn = get_connection()
+    execute(conn, 'SELECT 1')
+    conn.close()
+    return 'OK'
 
 UNIDADES = ["", "un", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve"]
 DIEZ_DIECINUEVE = ["diez", "once", "doce", "trece", "catorce", "quince", "dieciséis", "diecisiete", "dieciocho", "diecinueve"]
