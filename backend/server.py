@@ -207,6 +207,32 @@ except Exception as e:
     print(f"Error cargando base de conocimiento: {e}")
     MASTER_DIAGNOSTICOS = {}
 
+def _smtp_connect(timeout):
+    import smtplib
+    import socket as _socket
+
+    class _SMTP4(smtplib.SMTP):
+        def _get_socket(self, host, port, timeout):
+            infos = _socket.getaddrinfo(host, port, _socket.AF_INET, _socket.SOCK_STREAM)
+            if not infos:
+                raise OSError("getaddrinfo returns an empty list for " + host)
+            return _socket.create_connection(infos[0][4], timeout)
+
+    class _SMTP4SSL(smtplib.SMTP_SSL):
+        def _get_socket(self, host, port, timeout):
+            infos = _socket.getaddrinfo(host, port, _socket.AF_INET, _socket.SOCK_STREAM)
+            if not infos:
+                raise OSError("getaddrinfo returns an empty list for " + host)
+            return _socket.create_connection(infos[0][4], timeout)
+
+    if SMTP_USE_SSL:
+        return _SMTP4SSL(SMTP_SERVER, SMTP_PORT, timeout=timeout)
+    server = _SMTP4(SMTP_SERVER, SMTP_PORT, timeout=timeout)
+    server.ehlo()
+    server.starttls()
+    server.ehlo()
+    return server
+
 def enviar_correo(destinatario, asunto, cuerpo):
     filename = f"reporte_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
     filepath = os.path.join(REPORTES_DIR, filename)
@@ -221,7 +247,6 @@ def enviar_correo(destinatario, asunto, cuerpo):
         print("--- SMTP_USER / SMTP_PASSWORD no configurados ---")
         return False, "SMTP_USER / SMTP_PASSWORD no configurados"
 
-    import smtplib
     from email.mime.text import MIMEText
     from email.mime.multipart import MIMEMultipart
     from email.utils import formataddr
@@ -233,14 +258,7 @@ def enviar_correo(destinatario, asunto, cuerpo):
         msg['Subject'] = asunto
         msg.attach(MIMEText(cuerpo, 'plain', 'utf-8'))
 
-        if SMTP_USE_SSL:
-            server = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, timeout=30)
-        else:
-            server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=30)
-            server.ehlo()
-            server.starttls()
-            server.ehlo()
-
+        server = _smtp_connect(30)
         server.login(SMTP_USER, SMTP_PASSWORD)
         server.sendmail(SMTP_USER, [destinatario], msg.as_string())
         server.quit()
@@ -1910,14 +1928,7 @@ def notificaciones_status():
     if SMTP_USER and SMTP_PASSWORD:
         status["correo"]["configurado"] = True
         try:
-            import smtplib
-            if SMTP_USE_SSL:
-                server = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, timeout=15)
-            else:
-                server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=15)
-                server.ehlo()
-                server.starttls()
-                server.ehlo()
+            server = _smtp_connect(15)
             server.login(SMTP_USER, SMTP_PASSWORD)
             server.quit()
             status["correo"]["conectado"] = True
