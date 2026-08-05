@@ -6,6 +6,7 @@ import json
 import os
 import re
 import sys
+import time
 import urllib.request
 import urllib.error
 from dotenv import load_dotenv
@@ -13,7 +14,7 @@ from dotenv import load_dotenv
 load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '.env'))
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from db import get_connection, execute, fetchone, fetchall, get_lastrowid, dictify, json_loads
+from db import get_connection, execute, fetchone, fetchall, get_lastrowid, dictify, json_loads, _use_postgres
 
 app = Flask(__name__)
 CORS(app)
@@ -32,7 +33,7 @@ def authenticate():
 
 @app.before_request
 def require_login():
-    public_paths = ['/', '/save_immersion', '/tarjeta', '/keepwarm']
+    public_paths = ['/', '/save_immersion', '/tarjeta', '/keepwarm', '/health', '/health/alert']
     public_prefixes = ['/web/', '/css/', '/recursos_graficos/', '/backend/']
     path = request.path
     if path in public_paths or any(path.startswith(pref) for pref in public_prefixes):
@@ -64,6 +65,73 @@ def keepwarm():
     execute(conn, 'SELECT 1')
     conn.close()
     return 'OK'
+
+# Monitoreo de salud: reporta estado de servidor, BD y correo (Brevo)
+# Estado de alertas por componente para no spamear (1 alerta por componente cada 30 min)
+_ALERT_STATE = {}
+_ALERT_WINDOW = 1800
+
+@app.route('/health')
+def health():
+    checks = {}
+
+    # 1. Servidor
+    checks['server'] = 'ok'
+
+    # 2. Base de datos
+    try:
+        conn = get_connection()
+        execute(conn, 'SELECT 1')
+        conn.close()
+        checks['db'] = 'ok'
+        checks['db_backend'] = 'postgres' if _use_postgres() else 'sqlite'
+    except Exception as e:
+        checks['db'] = f'error: {e}'
+
+    # 3. Correo (Brevo API)
+    if not BREVO_API_KEY:
+        checks['brevo'] = 'no configurado'
+    else:
+        try:
+            req = urllib.request.Request(
+                "https://api.brevo.com/v3/account",
+                headers={"api-key": BREVO_API_KEY, "accept": "application/json"},
+            )
+            resp = urllib.request.urlopen(req, timeout=15)
+            checks['brevo'] = 'ok' if resp.status == 200 else f'error: status {resp.status}'
+        except Exception as e:
+            checks['brevo'] = f'error: {e}'
+
+    degraded = [k for k, v in checks.items() if k != 'db_backend' and isinstance(v, str) and v != 'ok']
+    return jsonify({
+        "status": "ok" if not degraded else "degraded",
+        "checks": checks,
+        "time": datetime.datetime.now().isoformat()
+    }), 200
+
+@app.route('/health/alert', methods=['POST'])
+def health_alert():
+    data = request.get_json(silent=True) or {}
+    component = str(data.get('component', 'unknown'))[:50]
+    detalle = str(data.get('detail', ''))[:500]
+
+    now = time.time()
+    if _ALERT_STATE.get(component, 0) + _ALERT_WINDOW > now:
+        return jsonify({"status": "throttled"}), 200
+
+    _ALERT_STATE[component] = now
+
+    asunto = f"⚠️ ALERTA SOMA: {component} caído"
+    cuerpo = (f"Detectado el {datetime.datetime.now().isoformat()}\n\n"
+              f"Componente: {component}\n"
+              f"Detalle: {detalle}\n\n"
+              f"Revisa el dashboard o el estado online.")
+    email_ok, smtp_error = enviar_correo(EMAIL_DESTINO, asunto, cuerpo)
+    return jsonify({
+        "status": "sent" if email_ok else "failed",
+        "component": component,
+        "error": smtp_error
+    }), 200
 
 UNIDADES = ["", "un", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve"]
 DIEZ_DIECINUEVE = ["diez", "once", "doce", "trece", "catorce", "quince", "dieciséis", "diecisiete", "dieciocho", "diecinueve"]
