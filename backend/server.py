@@ -8,8 +8,6 @@ import re
 import sys
 import urllib.request
 import urllib.error
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
 from dotenv import load_dotenv
 
 load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '.env'))
@@ -54,7 +52,6 @@ SMTP_PORT = int(os.environ.get("SMTP_PORT", "587").strip())
 SMTP_USER = os.environ.get("SMTP_USER", "").strip()
 SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD", "").strip()
 SMTP_USE_SSL = os.environ.get("SMTP_USE_SSL", "false").strip().lower() == "true"
-SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY", "").strip()
 
 MINIMO_TALLER = 6500
 RANGOS_OBRA = {
@@ -220,27 +217,41 @@ def enviar_correo(destinatario, asunto, cuerpo):
         f.write(cuerpo)
     print(f"\n--- REPORTE GUARDADO: {filepath} ---")
 
-    if not SENDGRID_API_KEY:
-        print("--- SENDGRID_API_KEY no configurada ---")
-        return False, "SENDGRID_API_KEY no configurada"
+    if not SMTP_USER or not SMTP_PASSWORD:
+        print("--- SMTP_USER / SMTP_PASSWORD no configurados ---")
+        return False, "SMTP_USER / SMTP_PASSWORD no configurados"
+
+    import smtplib
+    from email.mime.text import MIMEText
+    from email.mime.multipart import MIMEMultipart
+    from email.utils import formataddr
 
     try:
-        message = Mail(
-            from_email="info@soma-arquitectura.com",
-            to_emails=destinatario,
-            subject=asunto,
-            plain_text_content=cuerpo
-        )
-        sg = SendGridAPIClient(SENDGRID_API_KEY)
-        response = sg.send(message)
-        if response.status_code in (200, 201, 202):
-            print(f"--- CORREO ENVIADO a {destinatario} via SendGrid ---")
-            return True, None
+        msg = MIMEMultipart()
+        msg['From'] = formataddr(("SOMA Taller Virtual", SMTP_USER))
+        msg['To'] = destinatario
+        msg['Subject'] = asunto
+        msg.attach(MIMEText(cuerpo, 'plain', 'utf-8'))
+
+        if SMTP_USE_SSL:
+            server = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, timeout=30)
         else:
-            print(f"--- ERROR SENDGRID: status {response.status_code} ---")
-            return False, f"SendGrid status {response.status_code}"
+            server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=30)
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
+
+        server.login(SMTP_USER, SMTP_PASSWORD)
+        server.sendmail(SMTP_USER, [destinatario], msg.as_string())
+        server.quit()
+        print(f"--- CORREO ENVIADO a {destinatario} via SMTP ({SMTP_SERVER}) ---")
+        return True, None
     except Exception as e:
         print(f"--- ERROR AL ENVIAR CORREO: {e} ---")
+        try:
+            server.quit()
+        except Exception:
+            pass
         return False, str(e)
 
 def enviar_whatsapp(contacto, temp_id, nivel_key, m2):
@@ -1896,10 +1907,19 @@ def notificaciones_status():
         "correo": {"configurado": False, "conectado": False},
         "whatsapp": {"configurado": False, "conectado": False}
     }
-    if SENDGRID_API_KEY:
+    if SMTP_USER and SMTP_PASSWORD:
         status["correo"]["configurado"] = True
         try:
-            sg = SendGridAPIClient(SENDGRID_API_KEY)
+            import smtplib
+            if SMTP_USE_SSL:
+                server = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, timeout=15)
+            else:
+                server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=15)
+                server.ehlo()
+                server.starttls()
+                server.ehlo()
+            server.login(SMTP_USER, SMTP_PASSWORD)
+            server.quit()
             status["correo"]["conectado"] = True
         except Exception as e:
             status["correo"]["conectado"] = False
