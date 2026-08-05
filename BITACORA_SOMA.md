@@ -1,5 +1,34 @@
 # MEMORIA EVOLUTIVA - SOMA TALLER VIRTUAL DE ARQUITECTURA
 
+## Sesión: 2026-08-05 — Correo Brevo: sender no verificado (el correo no llegaba aunque no había error)
+
+### Diagnóstico
+- Después de migrar a Brevo (04/08), el correo del cotizador seguía sin llegar: la web respondía sin error (`email: sent`) pero `habitarq85@gmail.com` no recibía nada.
+- **Causa raíz encontrada:** el sender `info@soma-arquitectura.com` **NO estaba verificado** en Brevo. Brevo acepta la petición (status 201) pero **descarta silenciosamente** el correo en su cola (`event: error` — "sender not valid"). Por eso no aparecía ningún error en la página.
+- Confirmado consultando `GET /v3/smtp/statistics/events`: los envíos con `info@` daban `event: error`, los de `habitarq85@gmail.com` (único sender activo) daban `event: delivered`.
+
+### Soluciones aplicadas
+1. **Dominio autenticado en Brevo:** registrado `soma-arquitectura.com` (id `6a72ab58668a28afd40c4697`) y añadidos en Cloudflare los 4 registros DNS:
+   - CNAME `brevo1._domainkey` → `b1.soma-arquitectura-com.dkim.brevo.com`
+   - CNAME `brevo2._domainkey` → `b2.soma-arquitectura-com.dkim.brevo.com`
+   - TXT `@` → `brevo-code:2bf45070a3e8ed77548a4fb34e7577d0`
+   - TXT `_dmarc` → `v=DMARC1; p=none; rua=mailto:rua@dmarc.brevo.com`
+   - SPF actualizado a `v=spf1 include:_spf.mx.cloudflare.net include:spf.brevo.com ~all`
+2. **Sender creado y verificado:** `POST /v3/senders` creó `info@soma-arquitectura.com` (id 2) y se validó con el código OTP de 6 dígitos que Brevo envió por email (`PUT /v3/senders/2/validate` → 204). El sender quedó `active: true`.
+3. **Verificación final:** envío real desde Render (`SOMA-05082026-0352`) → `event: delivered`. Lead de prueba eliminado de Supabase (id 30).
+4. **Nota:** los registros DNS individuales marcaron `status: true` casi de inmediato, pero el dominio tardó más en quedar `authenticated`. La vía rápida fue la verificación del sender por OTP.
+
+### Archivos creados/modificados
+- `AGENTS.md`, `BITACORA_SOMA.md` — Actualizados
+- `render.yaml` — Pendiente limpiar SMTP/SendGrid obsoletos (no afecta al código, ya solo usa BREVO_API_KEY)
+
+### Pendientes
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
+- Crear tabla `algoritmo_contenido` para outputs de cada estación
+- Lead magnet — decidir ubicación en página web
+
+---
+
 ## Sesión: 2026-08-04 — Correo del Cotizador: SendGrid → Brevo (SendGrid sin créditos, Gmail SMTP bloqueado por Render)
 
 ### Diagnóstico

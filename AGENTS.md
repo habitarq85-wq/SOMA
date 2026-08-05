@@ -15,6 +15,31 @@
 
 **Regla:** servicios externos desde Render SIEMPRE por **HTTPS (puerto 443)** — es lo único garantizado. Nunca usar SMTP directo (Gmail) desde Render; usar API de correo por HTTPS (Brevo/Resend).
 
+## Sesión: 05 Ago 2026 ✅ — Correo Brevo arreglado: sender `info@` no estaba verificado
+
+### Bitácora del día
+1. **Diagnóstico**: tras la migración a Brevo (04/08), la web respondía sin error (`email: sent`) pero el correo no llegaba.
+2. **Causa raíz**: el sender `info@soma-arquitectura.com` **no estaba verificado** en Brevo. Brevo acepta el POST (201) y **descarta el correo silenciosamente** (`event: error`). Por eso nunca había error en pantalla.
+3. **Cómo se detectó**: `GET /v3/smtp/statistics/events` muestra `event: error` con reason *"sender not valid"*. El único sender activo era `habitarq85@gmail.com` (`GET /v3/senders`).
+4. **Solución**: dominio autenticado en Brevo (4 registros DNS en Cloudflare: DKIM×2, brevo-code, DMARC + SPF `include:spf.brevo.com`) + sender `info@` creado y validado con **código OTP** (`PUT /v3/senders/2/validate`).
+5. **Verificado online**: envío real desde Render (`SOMA-05082026-0352`) → `event: delivered`. Lead de prueba eliminado.
+
+### ⚠️ LECCIÓN (nueva): Brevo no rechaza remitentes no verificados, los descarta
+- Brevo devuelve **201 aunque el sender no sea válido** — el correo se pierde en silencio. **Nunca confiar en `status 201` ni en `email: sent` para dar por bueno un envío.**
+- Siempre verificar en `GET /v3/senders` que el remitente esté `active: true`, y mirar `GET /v3/smtp/statistics/events` para confirmar `delivered` (no `error`).
+- Para crear/verificar un sender por API: `POST /v3/senders` → Brevo envía OTP por email → `PUT /v3/senders/{id}/validate` con `{"otp": 123456}`.
+
+### Archivos creados/modificados
+- `AGENTS.md`, `BITACORA_SOMA.md` — Actualizados
+- `render.yaml` — Pendiente limpiar SMTP/SendGrid obsoletos
+
+### Próxima sesión
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
+- Considerar crear tabla `algoritmo_contenido` para almacenar outputs de cada estación
+- Lead magnet — decidir ubicación en página web
+
+---
+
 ## Sesión: 04 Ago 2026 ✅ — Correo del cotizador: SendGrid → Brevo
 
 ### Bitácora del día
