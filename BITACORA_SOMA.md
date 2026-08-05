@@ -1,5 +1,41 @@
 # MEMORIA EVOLUTIVA - SOMA TALLER VIRTUAL DE ARQUITECTURA
 
+## Sesión: 2026-08-05 (noche) — Monitoreo de salud: endpoint /health + alertas por correo
+
+### Contexto
+Tras varias "sorpresas" del free tier (Supabase pausada, Render, SendGrid sin créditos, sender no verificado), se implementó monitoreo preventivo para detectar fallas en minutos, no en días.
+
+### Solución implementada
+1. **Endpoint `GET /health`** (público) en `server.py` — chequea y reporta:
+   - `server`: el proceso Flask responde
+   - `db`: `SELECT 1` real + `db_backend` indica si usa PostgreSQL (Supabase) o SQLite (fallback)
+   - `brevo`: `GET /v3/account` para confirmar que el correo puede enviar
+   - Devuelve `status: ok` o `degraded` con el detalle de qué falló.
+2. **Endpoint `POST /health/alert`** (público, con rate-limit) — envía correo de alerta a `habitarq85@gmail.com` vía Brevo. Throttle de 30 min por componente (`_ALERT_STATE`) para no spamear.
+3. **Worker keep-warm actualizado** (`workers/keep-warm/src/index.js`):
+   - Mantiene su función de keep-warm (Render + `/keepwarm`)
+   - Cada 5 min consulta `/health`
+   - Si un componente falla → `POST /health/alert` (una vez cada 30 min, estado en Cache API)
+   - Si un componente se recupera → limpia el estado de alerta
+   - Endpoints manuales: `__ping` y `__health` (proxy al health de Render)
+
+### Verificación
+- Local: `/health` → `status: ok`, alerta enviada y throttled correctamente
+- Online: Render `/health` → `status: ok`; worker `__health` → JSON de salud OK
+- Alerta de prueba → `event: delivered` en Brevo
+
+### Archivos creados/modificados
+- `backend/server.py` — `/health`, `/health/alert`, import `_use_postgres` y `time`
+- `workers/keep-warm/src/index.js` — health check + alertas + Cache API
+- `AGENTS.md`, `BITACORA_SOMA.md` — Actualizados
+
+### Pendientes
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
+- Crear tabla `algoritmo_contenido` para outputs de cada estación
+- Lead magnet — decidir ubicación en página web
+
+---
+
 ## Sesión: 2026-08-05 — Correo Brevo: sender no verificado (el correo no llegaba aunque no había error)
 
 ### Diagnóstico

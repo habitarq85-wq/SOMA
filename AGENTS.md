@@ -15,6 +15,30 @@
 
 **Regla:** servicios externos desde Render SIEMPRE por **HTTPS (puerto 443)** — es lo único garantizado. Nunca usar SMTP directo (Gmail) desde Render; usar API de correo por HTTPS (Brevo/Resend).
 
+## Sesión: 05 Ago 2026 ✅ — Monitoreo de salud: /health + alertas automáticas por correo
+
+### Bitácora del día
+1. **Motivación**: varias sorpresas del free tier (Supabase pausada, Render, SendGrid, sender no verificado). Se quiso detectar fallas en minutos, no en días.
+2. **`GET /health`** (público): chequea servidor + BD (`SELECT 1`, indica postgres/sqlite) + Brevo (`/v3/account`). Devuelve `status: ok` o `degraded`.
+3. **`POST /health/alert`** (público, rate-limit 30 min/componente): envía correo de alerta a `habitarq85@gmail.com` vía Brevo.
+4. **Worker keep-warm actualizado**: cada 5 min consulta `/health`; si falla algo → alerta por correo (1 vez/30 min vía Cache API); al recuperarse limpia estado. Endpoints manuales `__ping` y `__health`.
+5. **Verificado online**: Render `/health` → ok; worker `__health` → ok; alerta de prueba `delivered`.
+
+### Archivos creados/modificados
+- `backend/server.py` — endpoints `/health` y `/health/alert`
+- `workers/keep-warm/src/index.js` — health check + alertas
+- `AGENTS.md`, `BITACORA_SOMA.md` — Actualizados
+
+### ⚠️ LECCIÓN: probar la integración completa, no solo "sin error"
+- El flujo completo quedó: **worker (Cloudflare) → /health (Render) → /health/alert (Render) → Brevo → correo**. Cualquier eslabón roto se detecta ahora por el propio sistema.
+
+### Próxima sesión
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
+- Considerar crear tabla `algoritmo_contenido` para almacenar outputs de cada estación
+- Lead magnet — decidir ubicación en página web
+
+---
+
 ## Sesión: 05 Ago 2026 ✅ — Correo Brevo arreglado: sender `info@` no estaba verificado
 
 ### Bitácora del día
