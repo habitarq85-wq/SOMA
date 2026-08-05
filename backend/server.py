@@ -47,11 +47,7 @@ DIAGNOSTICOS_PATH = os.path.join(BASE_DIR, "diagnosticos_master.json")
 REPORTES_DIR = os.path.join(BASE_DIR, "reportes")
 EMAIL_DESTINO = "habitarq85@gmail.com"
 
-SMTP_SERVER = os.environ.get("SMTP_SERVER", "smtp.gmail.com").strip()
-SMTP_PORT = int(os.environ.get("SMTP_PORT", "587").strip())
-SMTP_USER = os.environ.get("SMTP_USER", "").strip()
-SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD", "").strip()
-SMTP_USE_SSL = os.environ.get("SMTP_USE_SSL", "false").strip().lower() == "true"
+BREVO_API_KEY = os.environ.get("BREVO_API_KEY", "").strip()
 
 MINIMO_TALLER = 6500
 RANGOS_OBRA = {
@@ -207,47 +203,6 @@ except Exception as e:
     print(f"Error cargando base de conocimiento: {e}")
     MASTER_DIAGNOSTICOS = {}
 
-def _smtp_connect(timeout):
-    import smtplib
-    import socket as _socket
-
-    class _SMTP4(smtplib.SMTP):
-        def _get_socket(self, host, port, timeout):
-            infos = _socket.getaddrinfo(host, port, _socket.AF_INET, _socket.SOCK_STREAM)
-            if not infos:
-                raise OSError("getaddrinfo returns an empty list for " + host)
-            return _socket.create_connection(infos[0][4], timeout)
-
-    class _SMTP4SSL(smtplib.SMTP_SSL):
-        def _get_socket(self, host, port, timeout):
-            infos = _socket.getaddrinfo(host, port, _socket.AF_INET, _socket.SOCK_STREAM)
-            if not infos:
-                raise OSError("getaddrinfo returns an empty list for " + host)
-            return _socket.create_connection(infos[0][4], timeout)
-
-    attempts = []
-    if SMTP_USE_SSL:
-        attempts.append(("ssl", SMTP_SERVER, SMTP_PORT))
-        attempts.append(("starttls", SMTP_SERVER, 587))
-    else:
-        attempts.append(("starttls", SMTP_SERVER, SMTP_PORT))
-        attempts.append(("ssl", SMTP_SERVER, 465))
-    last = None
-    for kind, host, port in attempts:
-        try:
-            if kind == "ssl":
-                server = _SMTP4SSL(host, port, timeout=timeout)
-            else:
-                server = _SMTP4(host, port, timeout=timeout)
-                server.ehlo()
-                server.starttls()
-                server.ehlo()
-            return server
-        except Exception as e:
-            last = e
-            continue
-    raise last
-
 def enviar_correo(destinatario, asunto, cuerpo):
     filename = f"reporte_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
     filepath = os.path.join(REPORTES_DIR, filename)
@@ -258,33 +213,35 @@ def enviar_correo(destinatario, asunto, cuerpo):
         f.write(cuerpo)
     print(f"\n--- REPORTE GUARDADO: {filepath} ---")
 
-    if not SMTP_USER or not SMTP_PASSWORD:
-        print("--- SMTP_USER / SMTP_PASSWORD no configurados ---")
-        return False, "SMTP_USER / SMTP_PASSWORD no configurados"
+    if not BREVO_API_KEY:
+        print("--- BREVO_API_KEY no configurada ---")
+        return False, "BREVO_API_KEY no configurada"
 
-    from email.mime.text import MIMEText
-    from email.mime.multipart import MIMEMultipart
-    from email.utils import formataddr
-
+    # Brevo API vía HTTPS (puerto 443) — Render sí alcanza HTTPS, no SMTP directo
     try:
-        msg = MIMEMultipart()
-        msg['From'] = formataddr(("SOMA Taller Virtual", SMTP_USER))
-        msg['To'] = destinatario
-        msg['Subject'] = asunto
-        msg.attach(MIMEText(cuerpo, 'plain', 'utf-8'))
-
-        server = _smtp_connect(45)
-        server.login(SMTP_USER, SMTP_PASSWORD)
-        server.sendmail(SMTP_USER, [destinatario], msg.as_string())
-        server.quit()
-        print(f"--- CORREO ENVIADO a {destinatario} via SMTP ({SMTP_SERVER}) ---")
-        return True, None
+        payload = {
+            "sender": {"email": "info@soma-arquitectura.com", "name": "SOMA Taller Virtual"},
+            "to": [{"email": destinatario}],
+            "subject": asunto,
+            "textContent": cuerpo
+        }
+        req = urllib.request.Request(
+            "https://api.brevo.com/v3/smtp/email",
+            data=json.dumps(payload).encode("utf-8"),
+            headers={
+                "api-key": BREVO_API_KEY,
+                "Content-Type": "application/json",
+                "accept": "application/json",
+            },
+            method="POST"
+        )
+        resp = urllib.request.urlopen(req, timeout=30)
+        if resp.status in (200, 201, 202):
+            print(f"--- CORREO ENVIADO a {destinatario} via Brevo (status {resp.status}) ---")
+            return True, None
+        return False, f"Brevo status {resp.status}"
     except Exception as e:
-        print(f"--- ERROR AL ENVIAR CORREO: {e} ---")
-        try:
-            server.quit()
-        except Exception:
-            pass
+        print(f"--- ERROR AL ENVIAR CORREO (Brevo): {e} ---")
         return False, str(e)
 
 def enviar_whatsapp(contacto, temp_id, nivel_key, m2):
@@ -1940,13 +1897,16 @@ def notificaciones_status():
         "correo": {"configurado": False, "conectado": False},
         "whatsapp": {"configurado": False, "conectado": False}
     }
-    if SMTP_USER and SMTP_PASSWORD:
+    if BREVO_API_KEY:
         status["correo"]["configurado"] = True
         try:
-            server = _smtp_connect(20)
-            server.login(SMTP_USER, SMTP_PASSWORD)
-            server.quit()
-            status["correo"]["conectado"] = True
+            req = urllib.request.Request(
+                "https://api.brevo.com/v3/account",
+                headers={"api-key": BREVO_API_KEY, "accept": "application/json"},
+            )
+            resp = urllib.request.urlopen(req, timeout=20)
+            if resp.status == 200:
+                status["correo"]["conectado"] = True
         except Exception as e:
             status["correo"]["conectado"] = False
             status["correo"]["error"] = str(e)
