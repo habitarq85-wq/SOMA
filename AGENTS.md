@@ -6,6 +6,36 @@
 - ✅ **Fallback local SQLite**: Si Supabase falla, `db.py` usa automáticamente el backup local (`web/EjemploBD/proyectos_arquitectonicos.db`).
 - ✅ **Backup diario**: Cron a las 12pm ejecuta `backup_pg_to_sqlite.py` para mantener el SQLite local sincronizado.
 - ✅ **Cloudflare Cache**: 3 Page Rules activas (Cache Everything + Edge TTL 2h) para carga instantánea de la web.
+- ✅ **Correo del cotizador vía Brevo API**: HTTPS 443 (Render no alcanza SMTP). `BREVO_API_KEY` en `.env` y Render. Free 300 correos/día. Remitente `info@soma-arquitectura.com` verificado.
+
+## ⚠️ LECCIÓN CRÍTICA DE RED (no repetir)
+**Render free NO alcanza ciertos servicios externos.** Ya pasó 2 veces:
+1. **Supabase IPv6**: Render no enruta IPv6 → `Network is unreachable` (se resolvió con pooler IPv4).
+2. **Gmail SMTP (puertos 587/465)**: desde Render dan `timed out` (Gmail bloquea/ralentiza IPs de datacenter).
+
+**Regla:** servicios externos desde Render SIEMPRE por **HTTPS (puerto 443)** — es lo único garantizado. Nunca usar SMTP directo (Gmail) desde Render; usar API de correo por HTTPS (Brevo/Resend).
+
+## Sesión: 04 Ago 2026 ✅ — Correo del cotizador: SendGrid → Brevo
+
+### Bitácora del día
+1. **Diagnóstico**: correo del cotizador fallaba online. SendGrid (cuenta free) sin créditos → `401 Maximum credits exceeded`. El lead sí se guarda en BD.
+2. **Migración a SMTP Gmail**: `enviar_correo()` reescrito a `smtplib`. Probado localmente OK.
+3. **Nuevo fallo online**: Gmail SMTP (587/465) da `timed out` desde Render (Gmail bloquea IPs de datacenter). Documentado en sección LECCIÓN CRÍTICA arriba.
+4. **Email público `info@`**: intacto, gestionado por Cloudflare Email Routing → reenvía a `habitarq85@gmail.com`. Independiente del sistema de notificaciones.
+5. **Solución final — Brevo API**: `enviar_correo()` usa `POST https://api.brevo.com/v3/smtp/email` (HTTPS 443, `urllib`, sin dependencias). Cuenta free 300 correos/día. Remitente `info@soma-arquitectura.com` verificado.
+6. **Verificado online**: `/notificaciones/status` → `conectado: true`. Envío real desde Render → `email: sent`. Lead de prueba eliminado de Supabase (se conservaron los leads reales `Pimay12@hotmail.com`).
+
+### Archivos creados/modificados
+- `backend/server.py` — `enviar_correo()` vía Brevo API + `/notificaciones/status` con GET `/v3/account`. Eliminados `_smtp_connect()`, SMTP y SendGrid.
+- `.env`, `.env.example` — `BREVO_API_KEY` configurada; SMTP/SendGrid eliminadas
+- `AGENTS.md`, `BITACORA_SOMA.md` — Actualizados con lección de red y resolución
+
+### Próxima sesión
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
+- Considerar crear tabla `algoritmo_contenido` para almacenar outputs de cada estación
+- Lead magnet — decidir ubicación en página web
+
+---
 
 ## Sesión: 21 Jul 2026 ✅
 
@@ -30,6 +60,37 @@
 - Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
 - Considerar crear tabla `algoritmo_contenido` para almacenar outputs de cada estación
 - Lead magnet — decidir ubicación en página web
+
+---
+
+## Sesión: 24 Jul 2026 ✅
+
+### Bitácora del día
+1. **10 posts Instagram creados** sobre "Errores comunes en diseño arquitectónico" (serie educativa 1/10 a 10/10).
+2. **Formato Editorial Split** (50/50 imagen + texto, barra acento terracota) usado para temas conceptuales.
+3. **Imágenes de proyectos propios** reutilizadas (Casa Alina, Casona Cristi, Casa-Taller Roma) + img_tendencias.
+4. **PNGs generados**: 10 nuevas imágenes en `publicaciones/` (post_11 a post_20).
+5. **Tooling permanente**: `npm run generate` funcionando sin reinstalar Puppeteer.
+
+### Archivos creados/modificados
+- `recursos_graficos/material_instagram/post_11_error_contexto.html` — Nuevo
+- `recursos_graficos/material_instagram/post_12_error_orientacion.html` — Nuevo
+- `recursos_graficos/material_instagram/post_13_error_jerarquia.html` — Nuevo
+- `recursos_graficos/material_instagram/post_14_error_iluminacion.html` — Nuevo
+- `recursos_graficos/material_instagram/post_15_error_escala.html` — Nuevo
+- `recursos_graficos/material_instagram/post_16_error_flexibilidad.html` — Nuevo
+- `recursos_graficos/material_instagram/post_17_error_conectividad.html` — Nuevo
+- `recursos_graficos/material_instagram/post_18_error_forma_funcion.html` — Nuevo
+- `recursos_graficos/material_instagram/post_19_error_instalaciones.html` — Nuevo
+- `recursos_graficos/material_instagram/post_20_error_presupuesto.html` — Nuevo
+- `recursos_graficos/material_instagram/screenshot.js` — Actualizado (10 nuevos posts)
+- `recursos_graficos/material_instagram/publicaciones/` — 10 PNGs nuevos generados
+
+### Próxima sesión
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
+- Considerar crear tabla `algoritmo_contenido` para almacenar outputs de cada estación
+- Lead magnet — decidir ubicación en página web
+- Programar publicación de serie "10 errores de diseño arquitectónico" en Instagram
 
 ---
 

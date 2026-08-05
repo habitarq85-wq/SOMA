@@ -64,7 +64,7 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 ## BLOQUE 3: LABORATORIO DE HERRAMIENTAS (I+D)
 - [x] **Aplicaciones:** App de Entrevistas (Ejes de Inmersión y ActivityMatrix operativos en Backend). App de Entrevista v2 con 6 tópicos + grabación + post-formulario.
 - [x] **Automatización:** Procesamiento con DeepSeek Flash (pendiente de API key). Whisper (pendiente de instalación).
-- [x] **Programación:** Backend Flask (Persistencia y Correo reparados, SendGrid API activo, Railway no bloquea HTTPS), Persistencia PostgreSQL/Supabase con pooler IPv4. Env vars con `.strip()` + `KEY=` prefix stripping. Debug endpoint `/notificaciones/status` (verifica API key).
+- [x] **Programación:** Backend Flask (Persistencia y Correo reparados, correo vía **Brevo API** HTTPS 443 — Render no alcanza SMTP/SendGrid ya no usado), Persistencia PostgreSQL/Supabase con pooler IPv4. Env vars con `.strip()` + `KEY=` prefix stripping. Debug endpoint `/notificaciones/status` (verifica API key de Brevo).
 - [x] **Activity Matrix en Dashboard:** Endpoint `GET /activity_matrix/<temp_id>`, grid 24h interactivo con tooltips y colores SOMA por habitante. Fusión de leads captura_web + proyectos app_inmersion.
 - [x] **Pruebas de Sistema:** Revisión Dashboard y Funcionamiento Cotizador (Finalizado).
 

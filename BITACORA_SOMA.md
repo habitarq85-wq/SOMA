@@ -1,5 +1,37 @@
 # MEMORIA EVOLUTIVA - SOMA TALLER VIRTUAL DE ARQUITECTURA
 
+## Sesión: 2026-08-04 — Correo del Cotizador: SendGrid → Brevo (SendGrid sin créditos, Gmail SMTP bloqueado por Render)
+
+### Diagnóstico
+- El envío de correo del cotizador (`/save_immersion`) fallaba online. El lead sí se guardaba en BD, solo fallaba el correo de notificación a `habitarq85@gmail.com`.
+- Causa 1: la cuenta **SendGrid gratis se quedó sin créditos** → `401 Maximum credits exceeded` (`remain: 0`, `is_hard_limit: true`).
+- Causa 2 (al intentar Gmail SMTP): **Render NO puede alcanzar los puertos SMTP de Gmail** (587 STARTTLS y 465 SSL ambos dan `timed out` desde Render).
+
+### Lección aprendida (CRÍTICA — ya nos había pasado antes)
+- **Render free no enruta ciertos protocolos/IPs de datacenter.** Antes falló con IPv6 de Supabase (`Network is unreachable`) y ahora con SMTP de Gmail (`timed out` en puertos 587/465).
+- **Regla para servicios externos desde Render:** usar SIEMPRE APIs por **HTTPS (puerto 443)** — es lo único garantizado alcanzable. Ejemplos que SÍ funcionaron: SendGrid API, Supabase pooler IPv4, Brevo API.
+- **Regla para SMTP:** Gmail SMTP (`smtp.gmail.com`) resuelve a IPv6 primero y Gmail ralentiza/bloquea IPs de datacenter → no usar SMTP directo desde Render. Preferir API por HTTPS.
+
+### Soluciones aplicadas
+1. **Verificación:** `GET /v3/scopes` de SendGrid confirmó key válida; `GET /v3/verified_senders` mostró `verified: false`; `GET /v3/user/credits` mostró `total: 0`. El dominio `soma-arquitectura.com` sí estaba autenticado (DKIM/SPF válido), el problema era solo saldo.
+2. **Código:** `backend/server.py` — `enviar_correo()` reescrito de SendGrid a SMTP (`smtplib`), luego reforzado con conexión forzada IPv4 y fallback 587/465. Verificado que ambos tiempos de espera agotan desde Render.
+3. **Email público `info@soma-arquitectura.com`:** NO se tocó — sigue gestionado por Cloudflare Email Routing (MX = `mx.cloudflare.net`) y reenvía a `habitarq85@gmail.com`. Es independiente del sistema de notificaciones.
+4. **SOLUCIÓN FINAL — Brevo API:** `enviar_correo()` usa `POST https://api.brevo.com/v3/smtp/email` por HTTPS (443), con `urllib` (sin dependencias nuevas). Remitente `info@soma-arquitectura.com` verificado por clic. Cuenta free: 300 correos/día (se reinicia diario, no hay créditos de por vida como SendGrid).
+5. **Verificado online:** `/notificaciones/status` → `conectado: true`. Envío real desde Render → `email: sent`. Lead de prueba borrado de Supabase (id 27); se conservaron leads reales de hoy.
+
+### Archivos creados/modificados
+- `backend/server.py` — `enviar_correo()` vía Brevo API + `/notificaciones/status` (GET `/v3/account`). Eliminados `_smtp_connect()`, SMTP y SendGrid.
+- `.env` — `BREVO_API_KEY` configurada; SMTP app password y `SENDGRID_API_KEY` eliminadas
+- `.env.example` — actualizado con `BREVO_API_KEY`
+- `AGENTS.md`, `BITACORA_SOMA.md` — Actualizados
+
+### Pendientes
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
+- Crear tabla `algoritmo_contenido` para outputs de cada estación
+- Lead magnet — decidir ubicación en página web
+
+---
+
 ## Sesión: 2026-07-21 — Supabase Paused + Fallback Local + Keepwarm
 
 ### Diagnóstico
