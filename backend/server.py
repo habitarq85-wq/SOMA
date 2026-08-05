@@ -225,13 +225,28 @@ def _smtp_connect(timeout):
                 raise OSError("getaddrinfo returns an empty list for " + host)
             return _socket.create_connection(infos[0][4], timeout)
 
+    attempts = []
     if SMTP_USE_SSL:
-        return _SMTP4SSL(SMTP_SERVER, SMTP_PORT, timeout=timeout)
-    server = _SMTP4(SMTP_SERVER, SMTP_PORT, timeout=timeout)
-    server.ehlo()
-    server.starttls()
-    server.ehlo()
-    return server
+        attempts.append(("ssl", SMTP_SERVER, SMTP_PORT))
+        attempts.append(("starttls", SMTP_SERVER, 587))
+    else:
+        attempts.append(("starttls", SMTP_SERVER, SMTP_PORT))
+        attempts.append(("ssl", SMTP_SERVER, 465))
+    last = None
+    for kind, host, port in attempts:
+        try:
+            if kind == "ssl":
+                server = _SMTP4SSL(host, port, timeout=timeout)
+            else:
+                server = _SMTP4(host, port, timeout=timeout)
+                server.ehlo()
+                server.starttls()
+                server.ehlo()
+            return server
+        except Exception as e:
+            last = e
+            continue
+    raise last
 
 def enviar_correo(destinatario, asunto, cuerpo):
     filename = f"reporte_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
@@ -258,7 +273,7 @@ def enviar_correo(destinatario, asunto, cuerpo):
         msg['Subject'] = asunto
         msg.attach(MIMEText(cuerpo, 'plain', 'utf-8'))
 
-        server = _smtp_connect(30)
+        server = _smtp_connect(45)
         server.login(SMTP_USER, SMTP_PASSWORD)
         server.sendmail(SMTP_USER, [destinatario], msg.as_string())
         server.quit()
@@ -1928,7 +1943,7 @@ def notificaciones_status():
     if SMTP_USER and SMTP_PASSWORD:
         status["correo"]["configurado"] = True
         try:
-            server = _smtp_connect(15)
+            server = _smtp_connect(20)
             server.login(SMTP_USER, SMTP_PASSWORD)
             server.quit()
             status["correo"]["conectado"] = True
