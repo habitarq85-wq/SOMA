@@ -346,8 +346,8 @@
                 const inmersiónOk = countResp >= 10 ? '<span style="color:#2e7d32;">● Completada</span>' : '<span style="color:#f39c12;">● Incompleta</span>';
                 const m2 = l.m2 || 0;
                 const nivel = l.nivel_proyecto || 'esencial';
-                const precioM2 = nivel === 'ejecutivo' ? 850 : nivel === 'integral' ? 350 : 250;
-                const honorarios = l.honorarios_diseno || Math.max(m2 * precioM2, 6500);
+                const precioM2 = nivel === 'ejecutivo' ? 420 : nivel === 'integral' ? 300 : 230;
+                const honorarios = l.honorarios_diseno || Math.max(m2 * precioM2, 7000);
                 const presupuesto = Number(l.presupuesto) || 0;
                 const estContacto = l.estado_contacto || 'no programado';
                 const nombre = l.nombre_cliente || '';
@@ -706,8 +706,8 @@
 
             const m2 = lead.m2 || 0;
             const nivel = lead.nivel_proyecto || 'esencial';
-            const precioM2 = nivel === 'ejecutivo' ? 850 : nivel === 'integral' ? 350 : 250;
-            const honorarios = lead.honorarios_diseno || Math.max(m2 * precioM2, 6500);
+            const precioM2 = nivel === 'ejecutivo' ? 420 : nivel === 'integral' ? 300 : 230;
+            const honorarios = lead.honorarios_diseno || Math.max(m2 * precioM2, 7000);
             const anticipo = honorarios * 0.3;
             contratarLeadId = id;
             document.getElementById('cont-resumen').innerHTML = `${lead.temp_id}<br><strong>${lead.nombre_cliente}</strong><br><span style="font-size:0.7rem;color:#666;">${lead.nombre_proyecto}</span>
@@ -819,8 +819,8 @@
             document.getElementById('modal-id').textContent = `${lead.temp_id || '---'} · ${lead.fecha ? new Date(lead.fecha).toLocaleString() : ''}`;
             const m2 = lead.m2 || 0;
             const nivel = lead.nivel_proyecto || 'esencial';
-            const precioM2 = nivel === 'ejecutivo' ? 850 : nivel === 'integral' ? 350 : 250;
-            const honorarios = lead.honorarios_diseno || Math.max(m2 * precioM2, 6500);
+            const precioM2 = nivel === 'ejecutivo' ? 420 : nivel === 'integral' ? 300 : 230;
+            const honorarios = lead.honorarios_diseno || Math.max(m2 * precioM2, 7000);
             const respuestas = (() => {
                 try {
                     const raw = JSON.parse(lead.respuestas_json || '{}');
@@ -1246,9 +1246,9 @@
                                 </select></div>
                             <div style="grid-column: span 1;"><label style="font-size:.65rem;color:#666;">Nivel de Proyecto</label>
                                 <select id="prog-nivel-proyecto" onchange="recalcularHonorarios(${leadData.id})" ${modalProgramaReadOnly?'disabled':''} style="width:100%;padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;box-sizing:border-box;${modalProgramaReadOnly?'background:#f4f4f4;':''}">
-                                    <option value="esencial" ${leadData.nivel_proyecto==='esencial'?'selected':''}>Esencial (250/m²)</option>
-                                    <option value="integral" ${leadData.nivel_proyecto==='integral'?'selected':''}>Integral (350/m²)</option>
-                                    <option value="ejecutivo" ${leadData.nivel_proyecto==='ejecutivo'?'selected':''}>Ejecutivo (850/m²)</option>
+                                    <option value="esencial" ${leadData.nivel_proyecto==='esencial'?'selected':''}>Esencial (230/m²)</option>
+                                    <option value="integral" ${leadData.nivel_proyecto==='integral'?'selected':''}>Integral (300/m²)</option>
+                                    <option value="ejecutivo" ${leadData.nivel_proyecto==='ejecutivo'?'selected':''}>Ejecutivo (420/m²)</option>
                                 </select></div>
                             <div><label style="font-size:.65rem;color:#666;">m² (del programa)</label>
                                 <input type="number" id="prog-m2" value="${leadData.m2||0}" readonly style="width:100%;padding:6px;border:1px solid #ddd;border-radius:3px;font-size:.75rem;background:#f4f4f4;box-sizing:border-box;"></div>
@@ -1296,8 +1296,8 @@
             const m2Field = document.getElementById('prog-m2');
             if (m2Field) m2Field.value = total || 0;
             const nivel = document.getElementById('prog-nivel-proyecto').value;
-            const precio = nivel === 'ejecutivo' ? 850 : nivel === 'integral' ? 350 : 250;
-            const honorarios = Math.max(total * precio, 6500);
+            const precio = nivel === 'ejecutivo' ? 420 : nivel === 'integral' ? 300 : 230;
+            const honorarios = Math.max(total * precio, 7000);
             const hField = document.getElementById('prog-honorarios');
             if (hField) hField.value = '$' + honorarios.toLocaleString();
         }

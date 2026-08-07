@@ -38,10 +38,10 @@ Cada estación es una sección del PROCESO DE DISEÑO 2.0. Haz clic para ver el 
 <div class="timeline-wrapper">
 <div class="timeline" id="timeline">
 <div class="timeline-track"></div>
-<div class="station passed" onclick="showSection(1)"><div class="station-circle">1</div><div class="station-label">Contacto</div><div class="station-sub">Prospecto → Proceso</div></div>
+<div class="station active" onclick="showSection(1)"><div class="station-circle">1</div><div class="station-label">Contacto</div><div class="station-sub">Prospecto → Proceso</div></div>
 <div class="station passed" onclick="showSection(2)"><div class="station-circle">2</div><div class="station-label">Investigación</div><div class="station-sub">Constante+Variable</div></div>
 <div class="station passed" onclick="showSection(3)"><div class="station-circle">3</div><div class="station-label">Análisis</div><div class="station-sub">Sitio·Norma·Programa</div></div>
-<div class="station active" onclick="showSection(4)"><div class="station-circle">4</div><div class="station-label">Conceptualización</div><div class="station-sub">15 pasos de diseño</div></div>
+<div class="station passed" onclick="showSection(4)"><div class="station-circle">4</div><div class="station-label">Conceptualización</div><div class="station-sub">15 pasos de diseño</div></div>
 <div class="station future" onclick="showSection(5)"><div class="station-circle">5</div><div class="station-label">Modelado+Vis.</div><div class="station-sub">3D·Renders·Post</div></div>
 <div class="station future" onclick="showSection(6)"><div class="station-circle">6</div><div class="station-label">Antep. Básico</div><div class="station-sub">Plantas·Alzados</div></div>
 <div class="station future" onclick="showSection(7)"><div class="station-circle">7</div><div class="station-label">Representación</div><div class="station-sub">Documento HTML+PDF</div></div>
@@ -61,7 +61,7 @@ Cada estación es una sección del PROCESO DE DISEÑO 2.0. Haz clic para ver el 
 <!-- ============================================ -->
 <!-- SECCIÓN 1: CONTACTO                          -->
 <!-- ============================================ -->
-<div id="sec-1" class="detail-section">
+<div id="sec-1" class="detail-section active">
 <div class="detail-header">
 <div><h2>1. Contacto</h2><p>Datos del candidato y estado del pipeline</p></div>
 <span class="range">Elem. 1.1-1.2</span>
@@ -182,7 +182,19 @@ Cada estación es una sección del PROCESO DE DISEÑO 2.0. Haz clic para ver el 
 <div class="step-desc">Lámina única de síntesis del sitio — capa base para todo análisis posterior</div>
 <div class="step-detail">
 <div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">2.2.2.1-3 Croquis + fotos · 2.2.4.1-2 Mapas ruido/olores · 2.1.1.1-3 Clima, carta solar, vientos</div></div>
-<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Integrar croquis y datos brutos en un solo gráfico de síntesis: geometría, niveles, vegetación, colindancias, vialidades, ruido, olores, sol, viento, temperatura</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Integrar croquis y datos brutos en un solo gráfico de síntesis. Checklist:
+<label class="chk" onclick="event.stopPropagation()"><input type="checkbox" data-chk="3.1-geometria" onchange="marcarCheck(this,event)"> Geometría del terreno</label>
+<label class="chk" onclick="event.stopPropagation()"><input type="checkbox" data-chk="3.1-niveles" onchange="marcarCheck(this,event)"> Niveles</label>
+<label class="chk" onclick="event.stopPropagation()"><input type="checkbox" data-chk="3.1-vegetacion" onchange="marcarCheck(this,event)"> Vegetación existente</label>
+<label class="chk" onclick="event.stopPropagation()"><input type="checkbox" data-chk="3.1-colindancias" onchange="marcarCheck(this,event)"> Colindancias</label>
+<label class="chk" onclick="event.stopPropagation()"><input type="checkbox" data-chk="3.1-acometidas" onchange="marcarCheck(this,event)"> Acometidas</label>
+<label class="chk" onclick="event.stopPropagation()"><input type="checkbox" data-chk="3.1-vialidades" onchange="marcarCheck(this,event)"> Vialidades y banquetas</label>
+<label class="chk" onclick="event.stopPropagation()"><input type="checkbox" data-chk="3.1-ruido-olor" onchange="marcarCheck(this,event)"> Fuentes de ruido y olor</label>
+<label class="chk" onclick="event.stopPropagation()"><input type="checkbox" data-chk="3.1-recorrido-solar" onchange="marcarCheck(this,event)"> Recorrido solar (trayectoria)</label>
+<label class="chk" onclick="event.stopPropagation()"><input type="checkbox" data-chk="3.1-viento" onchange="marcarCheck(this,event)"> Dirección de viento dominante</label>
+<label class="chk" onclick="event.stopPropagation()"><input type="checkbox" data-chk="3.1-temperatura" onchange="marcarCheck(this,event)"> Temperatura crítica</label>
+<label class="chk" onclick="event.stopPropagation()"><input type="checkbox" data-chk="3.1-humedad" onchange="marcarCheck(this,event)"> Humedad promedio</label>
+</div></div>
 <div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Lámina única de síntesis del sitio (análoga o digital)</div></div>
 <div class="detail-block"><div class="detail-label">REF</div><div class="detail-body">PROCESO 2.0 elem. 3.1</div></div>
 </div>
@@ -192,7 +204,15 @@ Cada estación es una sección del PROCESO DE DISEÑO 2.0. Haz clic para ver el 
 <div class="step-desc">Análisis ambiental específico: visuales, ruido, temperatura, ventilación</div>
 <div class="step-detail">
 <div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">3.1 Gráfico General · 2.2.4.1-2 Mapas ruido/olores · 2.2.2.3 Fotos entorno</div></div>
-<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Procesar información ambiental: visuales (ext→int, int→ext), gradiente de ruido, temperatura (islas de calor), ventilación (canales de viento), conflictos de infraestructura</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Procesar información ambiental del sitio. Checklist:
+<label class="chk" onclick="event.stopPropagation()"><input type="checkbox" data-chk="3.2-visuales" onchange="marcarCheck(this,event)"> Visuales (exterior → interior, interior → exterior)</label>
+<label class="chk" onclick="event.stopPropagation()"><input type="checkbox" data-chk="3.2-gradiente-ruido" onchange="marcarCheck(this,event)"> Gradiente de ruido (zonas quietas vs ruidosas)</label>
+<label class="chk" onclick="event.stopPropagation()"><input type="checkbox" data-chk="3.2-gradiente-temp" onchange="marcarCheck(this,event)"> Gradiente de temperatura (islas de calor)</label>
+<label class="chk" onclick="event.stopPropagation()"><input type="checkbox" data-chk="3.2-gradiente-vent" onchange="marcarCheck(this,event)"> Gradiente de ventilación (canales de viento)</label>
+<label class="chk" onclick="event.stopPropagation()"><input type="checkbox" data-chk="3.2-conflictos" onchange="marcarCheck(this,event)"> Conflictos de infraestructura</label>
+<label class="chk" onclick="event.stopPropagation()"><input type="checkbox" data-chk="3.2-visuales-perj" onchange="marcarCheck(this,event)"> Visuales perjudiciales</label>
+<label class="chk" onclick="event.stopPropagation()"><input type="checkbox" data-chk="3.2-colindancias-conf" onchange="marcarCheck(this,event)"> Colindancias conflictivas</label>
+</div></div>
 <div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Lámina de análisis ambiental particular del sitio</div></div>
 <div class="detail-block"><div class="detail-label">REF</div><div class="detail-body">PROCESO 2.0 elem. 3.2</div></div>
 </div>
@@ -314,164 +334,193 @@ Cada estación es una sección del PROCESO DE DISEÑO 2.0. Haz clic para ver el 
 <!-- ============================================ -->
 <!-- SECCIÓN 4: CONCEPTUALIZACIÓN                  -->
 <!-- ============================================ -->
-<div id="sec-4" class="detail-section active">
+<div id="sec-4" class="detail-section">
 <div class="detail-header">
-<div><h2>4. Conceptualización</h2><p>Núcleo creativo del algoritmo. 15 pasos de la idea al documento de concepto</p></div>
+<div><h2>4. Conceptualización</h2><p>Núcleo creativo del algoritmo. 15 pasos de la idea al diseño conceptual</p></div>
 <span class="range">Elem. 4.1-4.15</span>
 </div>
 
 <div class="step-grid">
 
 <div class="step-card" tabindex="0" onclick="toggle(this)">
-<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">4.1 Manifiesto de Intenciones</span><span class="step-proc proc-humano">HUMANO</span></div>
-<div class="step-desc">Declaración escrita de la intención del proyecto antes de cualquier decisión formal</div>
+<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">4.1 Manifiesto de Intenciones de Diseño</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Declaración escrita de las intenciones del proyecto antes de cualquier decisión formal</div>
 <div class="step-detail">
-<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">3.1–3.10 Análisis completo · 2.2.1 Perfil del usuario · Brief inicial del cliente</div></div>
-<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Redactar manifiesto de 1–2 párrafos que capture la esencia del proyecto: quién, qué, dónde, por qué, para qué. Define la dirección sin cerrar posibilidades.</div></div>
-<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Manifiesto de Intenciones firmado por el equipo</div></div>
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">3.1–3.10 Análisis completo · 1.2 Transcripción de entrevista (expectativas)</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Redactar intenciones organizadas en: formales (lenguaje, proporción, materialidad), funcionales (cómo debe operar la casa), espaciales (cómo debe sentirse), bioclimáticas (relación con el clima).</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Manifiesto de 3–5 intenciones rectoras del proyecto</div></div>
 </div>
 </div>
 
 <div class="step-card" tabindex="0" onclick="toggle(this)">
-<div class="step-head"><span class="step-nature nat-dec">DEC</span><span class="step-name">4.2 Idea Matriz + Adjetivo</span><span class="step-proc proc-mixto">AI→HUMANO</span></div>
-<div class="step-desc">Concepto rector en tres palabras: un sustantivo + dos adjetivos que sinteticen la experiencia espacial deseada</div>
+<div class="step-head"><span class="step-nature nat-dec">DEC</span><span class="step-name">4.2 Selección de Idea(s) Rectora(s) — Concepto</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Concepto rector que sintetice la esencia del proyecto, trazable desde la idea hasta el último detalle</div>
 <div class="step-detail">
-<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.1 Manifiesto · 3.10 Perfil de diseño · Inmersión Web (ejes A/B del cliente) · 3.5-3.6 Patrones seleccionados</div></div>
-<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Extraer del manifiesto y perfil de usuario la idea matriz. Elegir adjetivos que describan atmósfera, materialidad y relación con el entorno. AI sugiere tríadas, humano elige.</div></div>
-<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Idea Matriz registrada: sustantivo + 2 adjetivos · Guía para todas las decisiones de diseño subsecuentes</div></div>
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.1 Manifiesto · 3.5 Patrones seleccionados · 3.6 Patrones Alexander · 2.1.3.1 Arquetipos históricos · 2.1.3.2 Repertorio de referencia</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Destilar las intenciones en una o dos ideas rectoras. El concepto debe ser comunicable en una frase. AI sugiere tríadas (sustantivo + 2 adjetivos), humano elige y documenta con referencias visuales.</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Idea rectora documentada (texto + referencias visuales) · Guía para todas las decisiones de diseño subsecuentes</div></div>
 </div>
 </div>
 
 <div class="step-card" tabindex="0" onclick="toggle(this)">
-<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">4.3 Documento de Intenciones</span><span class="step-proc proc-humano">HUMANO</span></div>
-<div class="step-desc">Documento compilado de 4.1–4.2 + inputs de análisis como base del proceso</div>
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">4.3 Volumetrización del Programa</span><span class="step-proc proc-mixto">HUMANO→AI</span></div>
+<div class="step-desc">Agrupación del programa en volúmenes primarios según zonas y relaciones espaciales</div>
 <div class="step-detail">
-<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.1 Manifiesto · 4.2 Idea Matriz · 3.1–3.10 Outputs de análisis · 2.1 Constantes</div></div>
-<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Compilar manifiesto, idea matriz, programa, patrones, premisas, estrategias y normativas en un solo documento de referencia. Sirve como brief interno del proyecto.</div></div>
-<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Documento de Intenciones completo (brief interno)</div></div>
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">3.3 Programa Arquitectónico (m² por espacio y zona) · 3.7 Restricciones normativas (COS, CUS, alturas máximas)</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Agrupar espacios del programa en volúmenes primarios según zona SOMA y relaciones del diagrama (3.4). Asignar alturas preliminares por tipo de espacio. Verificar que la huella total no exceda el COS disponible.</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Diagrama de masas inicial (bloques volumétricos sin forma final, solo proporciones de programa)</div></div>
 </div>
 </div>
 
 <div class="step-card" tabindex="0" onclick="toggle(this)">
-<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">4.4 Volumetrización + Zonificación</span><span class="step-proc proc-mixto">AI→HUMANO</span></div>
-<div class="step-desc">Primera exploración formal: masas, alturas, relaciones volumétricas en el predio</div>
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">4.4 Zonificación Volumétrica y del Terreno</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Colocación de volúmenes en el terreno respetando retiros, orientación y entorno</div>
 <div class="step-detail">
-<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.3 Documento de Intenciones · 3.1 Gráfico del sitio · 3.7 Envolvente normativa · 3.3 Programa</div></div>
-<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Ubicar volúmenes en el predio respetando retiros, COS, CUS y altura máxima. Zonificar según programa y criterios de ventilación/asoleamiento. AI genera opciones, humano evalúa.</div></div>
-<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Esquema volumétrico con zonificación por niveles</div></div>
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.3 Volumetrización · 3.1 Gráfico del sitio (geometría, niveles) · 3.2 Gráfico ambiental (viento, sol, ruido) · 3.9.3 Estrategias bioclimáticas · 3.7 Restricciones normativas (retiros, alturas)</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Colocar los volúmenes del programa en el terreno respetando retiros, orientación solar, viento, ruido, accesos y vegetación a conservar.</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Planta de zonificación volumétrica (bloques ubicados en el terreno con orientación)</div></div>
 </div>
 </div>
 
 <div class="step-card" tabindex="0" onclick="toggle(this)">
-<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">4.5 Ubicación + Accesos</span><span class="step-proc proc-humano">HUMANO</span></div>
-<div class="step-desc">Definición de posición exacta de volúmenes, accesos peatonales y vehiculares</div>
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">4.5 Ubicación de la Volumetría en el Terreno</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Posición exacta de cada volumen en coordenadas del terreno</div>
 <div class="step-detail">
-<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.4 Volumetría · 3.1 Gráfico del sitio (vialidades, colindancias) · 3.9.4 Estrategias de integración urbana</div></div>
-<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Sobre el esquema volumétrico, definir acceso principal (peatonal), acceso de servicio, y estacionamiento. Relacionar con vialidades y banquetas existentes.</div></div>
-<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Planta de conjunto esquemática con accesos marcados</div></div>
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.4 Zonificación volumétrica · 3.1 Gráfico del sitio (niveles, pendientes)</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Ubicar exactamente cada volumen en coordenadas del terreno. Decidir nivel de desplante, excavación o relleno según topografía existente.</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Planta de implantación (posición exacta de volúmenes)</div></div>
 </div>
 </div>
 
 <div class="step-card" tabindex="0" onclick="toggle(this)">
-<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">4.6 Partido Arquitectónico</span><span class="step-proc proc-humano">HUMANO</span></div>
-<div class="step-desc">Diagrama fundamental: organización espacial, ejes, jerarquías, flujos</div>
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">4.6 Ubicación de Accesos al Terreno</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Definición de accesos peatonales, vehiculares y de servicio</div>
 <div class="step-detail">
-<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.5 Ubicación + accesos · 3.4 Diagrama de relaciones · 3.9 Estrategias de diseño</div></div>
-<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Dibujar el partido arquitectónico: ejes compositivos, jerarquía espacial, organización pública/privada/servicio, flujos principales. Es la huella digital del proyecto.</div></div>
-<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Partido arquitectónico dibujado (esquema conceptual)</div></div>
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.5 Implantación · 2.2.2.3 Levantamiento de vialidades y banquetas · 3.9.4 Estrategias de integración urbana</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Definir acceso peatonal, acceso vehicular y acceso de servicio. Relación con banquetas, niveles de calle y visuales desde el exterior hacia el interior.</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Planta de accesos y circulaciones en el terreno</div></div>
 </div>
 </div>
 
 <div class="step-card" tabindex="0" onclick="toggle(this)">
-<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">4.7 Espacialidad + Circulación</span><span class="step-proc proc-humano">HUMANO</span></div>
-<div class="step-desc">Desarrollo de la experiencia espacial: alturas, conexiones visuales, recorridos</div>
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">4.7 Partido Arquitectónico — Desdoblamiento Volumétrico</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Transformación de volúmenes genéricos en composición arquitectónica con intención</div>
 <div class="step-detail">
-<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.6 Partido · 4.5 Accesos · 3.4 Matriz de relaciones · 3.10 Activity Matrix</div></div>
-<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Definir alturas libres, dobles alturas, conexiones visuales entre espacios, recorridos interiores/exteriores, transiciones público→privado. La circulación como experiencia.</div></div>
-<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Diagrama de espacialidad + circulación</div></div>
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.3–4.6 Implantación + accesos + volumetría · 4.2 Idea rectora · 3.5–3.6 Patrones seleccionados</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Transformar los volúmenes genéricos en una composición arquitectónica con intención. Aplicar proporciones, módulos, escalas, ritmos, jerarquías y operaciones formales (sustracción, adición, torsión, intersección).</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Partido arquitectónico — boceto conceptual (plantas, fachadas, maqueta volumétrica)</div></div>
 </div>
 </div>
 
 <div class="step-card" tabindex="0" onclick="toggle(this)">
-<div class="step-head"><span class="step-nature nat-eva">EVA</span><span class="step-name">4.8 Evaluación Ambiental I</span><span class="step-proc proc-ai">AI</span></div>
-<div class="step-desc">Evaluación del esquema contra 8 criterios ambientales: orientación, sol, viento, ruido, etc.</div>
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">4.8 Espacialidad Particular de la Volumetría</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Configuración espacial detallada: ubicación de espacios, circulaciones, aperturas, símbolos, materiales, estructura</div>
 <div class="step-detail">
-<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.7 Espacialidad · 4.4 Volumetría · 2.1.1.1-3 Clima, carta solar, vientos · 3.2 Ambiental</div></div>
-<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Evaluar 8 criterios: orientación fachadas, penetración solar, captación de viento, mitigación ruido, control olores, eficiencia volumétrica, relación visual exterior, protección climática. AI puntúa cada criterio.</div></div>
-<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Matriz de evaluación ambiental I con puntuaciones por criterio</div></div>
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.7 Partido arquitectónico · 3.3 Programa (espacios) · 3.4 Diagrama de relaciones espaciales</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Configurar la espacialidad interna: dónde va cada espacio, cómo se circula, relación con exterior, colocación de elementos simbólicos, materiales y sistema estructural.</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Configuración espacial detallada (6 sub-items expandibles abajo)</div></div>
+</div>
+<div class="sub-items">
+<div class="sub-item"><span class="snum">4.8.1</span><h5>Ubicación de Espacios</h5><p>Colocar cada espacio del programa dentro de los volúmenes del partido, respetando las relaciones definidas en 3.4</p><span class="stag sh">HUMANO</span></div>
+<div class="sub-item"><span class="snum">4.8.2</span><h5>Sistema de Circulaciones</h5><p>Circulaciones horizontales (pasillos, galerías, puentes) y verticales (escaleras, rampas) con jerarquías principal/secundario/servicio</p><span class="stag sh">HUMANO</span></div>
+<div class="sub-item"><span class="snum">4.8.3</span><h5>Aperturas al Exterior</h5><p>Ubicación, tamaño y tipo de ventanas según orientación, relación visual interior-exterior, ventilación y protección solar</p><span class="stag sh">HUMANO</span></div>
+<div class="sub-item"><span class="snum">4.8.4</span><h5>Colocación de Elementos Simbólicos</h5><p>Entrada, pórtico, elemento de identidad en fachada, transiciones con carga simbólica según idea rectora</p><span class="stag sh">HUMANO</span></div>
+<div class="sub-item"><span class="snum">4.8.5</span><h5>Colocación General de Materiales</h5><p>Paleta general de materiales por sistema: pisos, muros, cubiertas y acabados por zona y uso</p><span class="stag sh">HUMANO</span></div>
+<div class="sub-item"><span class="snum">4.8.6</span><h5>Propuesta de Sistema Estructural</h5><p>Sistema estructural según claros, luces, alturas, materiales disponibles, presupuesto y condiciones del suelo</p><span class="stag sm">HUMANO→AI</span></div>
 </div>
 </div>
 
 <div class="step-card" tabindex="0" onclick="toggle(this)">
-<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">4.9 Ajustes Evaluación I</span><span class="step-proc proc-humano">HUMANO</span></div>
-<div class="step-desc">Ajustar esquema según resultados de la evaluación ambiental. Bucle de iteración con Fase B</div>
+<div class="step-head"><span class="step-nature nat-eva">EVA</span><span class="step-name">4.9 Evaluación Ambiental I</span><span class="step-proc proc-mixto">AI→HUMANO</span></div>
+<div class="step-desc">Evaluación del diseño contra 8 criterios ambientales: asoleamiento, ventilación, accesibilidad, seguridad, etc.</div>
 <div class="step-detail">
-<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.8 Evaluación I · 4.7 Espacialidad · 4.4 Volumetría</div></div>
-<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Revisar criterios con baja puntuación. Modificar volúmenes, orientación, protección solar, ventilación. Puede requerir volver a Fase B (04–07) si los cambios son significativos.</div></div>
-<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Esquema ajustado tras evaluación I</div></div>
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.8 Espacialidad (propuesta de diseño) · 3.1–3.2 Análisis del sitio · 3.9.3 Estrategias bioclimáticas</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Evaluar diseño contra 8 criterios ambientales. Cada criterio se evalúa como ✅ (cumple), ⚠️ (ajuste menor), ❌ (requiere rediseño). Si algún criterio es ❌, se ejecuta 4.10 (Ajustes).</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Tabla de evaluación con 8 criterios + decisión de ajuste</div></div>
 </div>
-<div class="loop-badge">↺ Puede iterar con Fase B</div>
+<div class="sub-items">
+<div class="sub-item"><span class="snum">4.9.1</span><h5>Evaluación de Asoleamiento</h5><p>Proyección de sombras en fechas críticas (solsticios, equinoccios) y verificación de protección solar por fachada</p><span class="stag sm">AI→HUMANO</span></div>
+<div class="sub-item"><span class="snum">4.9.2</span><h5>Evaluación de Ventilación</h5><p>Cruce de viento en espacios principales, ubicación de entradas/salidas de aire, obstrucciones al flujo</p><span class="stag sm">AI→HUMANO</span></div>
+<div class="sub-item"><span class="snum">4.9.3</span><h5>Evaluación de Accesibilidad y Conectividad</h5><p>Verificación de anchos de circulación, pendientes, puertas y espacios de giro contra norma de accesibilidad universal</p><span class="stag sm">AI→HUMANO</span></div>
+<div class="sub-item"><span class="snum">4.9.4</span><h5>Evaluación de Seguridad, Territorialidad y Privacidad</h5><p>Privacidad visual desde calle y colindancias, gradiente público-privado, seguridad pasiva e iluminación nocturna</p><span class="stag sh">HUMANO</span></div>
+<div class="sub-item"><span class="snum">4.9.5</span><h5>Evaluación de Comportamiento en Lluvia</h5><p>Pendientes de cubierta, canalización pluvial, áreas de inundación, protección de accesos y manejo de agua en patios</p><span class="stag sh">HUMANO</span></div>
+<div class="sub-item"><span class="snum">4.9.6</span><h5>Evaluación de Elementos Simbólicos</h5><p>Legibilidad, ubicación jerárquica, no competencia entre elementos y funcionamiento a escala humana y urbana</p><span class="stag sh">HUMANO</span></div>
+<div class="sub-item"><span class="snum">4.9.7</span><h5>Evaluación Ergonómica, Proxémica y Antropométrica</h5><p>Verificación de dimensiones contra estándares: alturas de planos de trabajo, distancias proxémicas, mobiliario fijo</p><span class="stag sm">AI→HUMANO</span></div>
+<div class="sub-item"><span class="snum">4.9.8</span><h5>Evaluación de Eficiencia del Programa</h5><p>Verificación de m² previstos vs reales, COS/CUS, proporción construido/abierto coherente</p><span class="stag sa">AI</span></div>
+</div>
 </div>
 
 <div class="step-card" tabindex="0" onclick="toggle(this)">
-<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">4.10 Configuración Avanzada</span><span class="step-proc proc-mixto">AI→HUMANO</span></div>
-<div class="step-desc">Desarrollo fino: sistema constructivo, plantas de distribución, fachadas</div>
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">4.10 Ajustes de la Evaluación Ambiental I</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Corregir el diseño para resolver items ❌ de la evaluación. Bucle de iteración con Fase B</div>
 <div class="step-detail">
-<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.9 Ajustes · 3.8 Premisas ergométricas · 3.3 Programa detallado · 3.5 Patrones SOMA</div></div>
-<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Desarrollar plantas de distribución por nivel, definir sistema constructivo, diseñar fachadas según orientación, integrar patrones SOMA seleccionados. AI ayuda con dimensionamiento y optimización.</div></div>
-<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Plantas de distribución + esquema de fachadas + sistema constructivo</div></div>
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.9 Resultados (items ❌ y ⚠️)</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Corregir el diseño para resolver items ❌ (obligatorio). Evaluar items ⚠️ (opcional). Volver a 4.4 (o sub-item correspondiente) y repetir hasta que todos sean ✅ o ⚠️.</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Diseño ajustado (nueva iteración de 4.4–4.8)</div></div>
+</div>
+<div class="loop-badge">↺ Puede iterar con Fase B (4.4–4.8)</div>
+</div>
+
+<div class="step-card" tabindex="0" onclick="toggle(this)">
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">4.11 Proceso Avanzado de Configuración</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Configuración detallada de baños, cocina, escalera, vanos, fachadas y terrazas</div>
+<div class="step-detail">
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.8 Espacialidad ajustada · 4.10 Ajustes</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Configuración detallada de baños, cocina, escalera, vanos, fachadas y terrazas. Se ejecuta solo si el paquete lo requiere (Integral o Ejecutivo).</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Configuración detallada (6 sub-items expandibles abajo)</div></div>
+</div>
+<div class="sub-items">
+<div class="sub-item"><span class="snum">4.11.1</span><h5>Diseño General de Baños</h5><p>Disposición de cada baño: mobiliario (wc, lavabo, regadera, tina), circulaciones, ventilación, iluminación, almacenamiento</p><span class="stag sh">HUMANO</span></div>
+<div class="sub-item"><span class="snum">4.11.2</span><h5>Diseño General de Cocina</h5><p>Triángulo de trabajo (refrigerador, estufa, fregadero), zonificación, barras, almacenamiento, ventilación e iluminación</p><span class="stag sh">HUMANO</span></div>
+<div class="sub-item"><span class="snum">4.11.3</span><h5>Diseño General de Escalera</h5><p>Huella y contrahuella, ancho, descansos, barandales, material e iluminación</p><span class="stag sh">HUMANO</span></div>
+<div class="sub-item"><span class="snum">4.11.4</span><h5>Diseño de Vanos</h5><p>Dimensión, tipo y material de cada vano: puertas (entrada, interiores, servicio), ventanas (fijas, abatibles, corredizas), protecciones</p><span class="stag sh">HUMANO</span></div>
+<div class="sub-item"><span class="snum">4.11.5</span><h5>Diseño de Fachadas</h5><p>Composición (llenos/vacíos, ritmo), materialidad, protecciones solares, color, relación con nivel de calle</p><span class="stag sh">HUMANO</span></div>
+<div class="sub-item"><span class="snum">4.11.6</span><h5>Diseño de Terrazas</h5><p>Relación interior-exterior, orientación, protección solar, mobiliario exterior, vegetación</p><span class="stag sh">HUMANO</span></div>
 </div>
 </div>
 
 <div class="step-card" tabindex="0" onclick="toggle(this)">
-<div class="step-head"><span class="step-nature nat-gui">GUI</span><span class="step-name">4.11 Iluminación Artificial</span><span class="step-proc proc-mixto">AI→HUMANO</span></div>
-<div class="step-desc">Criterio de iluminación artificial: tipos, temperaturas, controles por espacio</div>
+<div class="step-head"><span class="step-nature nat-gui">GUI</span><span class="step-name">4.12 Criterio de Diseño de Iluminación Artificial</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Definición de iluminación artificial por espacio: tipo, temperatura de color, controles</div>
 <div class="step-detail">
-<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.10 Configuración avanzada · 3.10 Activity Matrix (horarios de uso) · 4.2 Idea Matriz (atmósfera)</div></div>
-<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Definir tipos de luminarias, temperatura de color por espacio, niveles lumínicos, controles (sensores, dimmers), escenas. AI sugiere esquemas según actividad, humano ajusta.</div></div>
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.8.1–3 Espacialidad · 4.9.1 Asoleamiento · 3.10.4 Perfil de diseño (eje iluminación: directa/tenue)</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Definir por espacio: tipo de iluminación (general, puntual, ambiental), temperatura de color, altura de luminarias, controles (sensores, dimmers), eficiencia energética.</div></div>
 <div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Criterio de iluminación artificial por espacio</div></div>
 </div>
 </div>
 
 <div class="step-card" tabindex="0" onclick="toggle(this)">
-<div class="step-head"><span class="step-nature nat-gui">GUI</span><span class="step-name">4.12 Paisaje</span><span class="step-proc proc-mixto">AI→HUMANO</span></div>
-<div class="step-desc">Integración paisajística: vegetación, áreas verdes, paleta vegetal, mobiliario exterior</div>
+<div class="step-head"><span class="step-nature nat-gui">GUI</span><span class="step-name">4.13 Criterio de Diseño de Paisaje</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Integración paisajística: vegetación, especies nativas, mobiliario exterior, riego</div>
 <div class="step-detail">
-<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.10 Configuración · 2.2.2.1-2 Vegetación existente · 3.9.1 Estrategia de olores · 3.9.3 Estrategias bioclimáticas</div></div>
-<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Diseñar áreas verdes, seleccionar especies nativas (bajo consumo de agua), ubicar árboles para sombra, integrar vegetación como barrera de olores/ruido. AI sugiere paleta vegetal regional.</div></div>
-<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Plano de paisaje + paleta vegetal</div></div>
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.4 Zonificación (áreas exteriores) · 2.2.2.1–2 Vegetación existente · 3.9.4 Integración urbana · 3.9.3 Estrategias bioclimáticas</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Definir: vegetación a conservar, especies propuestas (locales, bajo consumo de agua), zonificación del jardín, mobiliario exterior, riego e iluminación exterior.</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Criterio de paisaje + propuesta de especies</div></div>
 </div>
 </div>
 
 <div class="step-card" tabindex="0" onclick="toggle(this)">
-<div class="step-head"><span class="step-nature nat-eva">EVA</span><span class="step-name">4.13 Evaluación Ambiental II</span><span class="step-proc proc-ai">AI</span></div>
-<div class="step-desc">Segunda evaluación: 5 dimensiones — confort térmico, lumínico, acústico, eficiencia, integración</div>
+<div class="step-head"><span class="step-nature nat-eva">EVA</span><span class="step-name">4.14 Evaluación Ambiental II</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Evaluación cualitativa centrada en la experiencia del usuario: 5 dimensiones humanas</div>
 <div class="step-detail">
-<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.10-4.12 Configuración avanzada + iluminación + paisaje · 2.1.1 Normales climatológicas</div></div>
-<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Evaluar 5 dimensiones: confort térmico (temperatura operativa), confort lumínico (luxes), confort acústico (dB), eficiencia energética (W/m²), integración paisajística. AI modela y puntúa.</div></div>
-<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Matriz de evaluación ambiental II con 5 dimensiones</div></div>
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.11 Configuración avanzada · 4.12–4.13 Criterios · 3.10.4 Perfil de diseño (datos cualitativos del usuario)</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Segunda evaluación, cualitativa, centrada en la experiencia del usuario. Evalúa 5 dimensiones humanas: fisiológica, psicológica, funcional, social y cultural.</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Evaluación cualitativa con items ✅/⚠️/❌</div></div>
+</div>
+<div class="sub-items">
+<div class="sub-item"><span class="snum">4.14.1</span><h5>Evaluación Fisiológica, Psicológica, Funcional, Social y Cultural</h5><p>Confort térmico/lumínico/acústico · seguridad, pertenencia, identidad · eficiencia de recorridos, mantenimiento · espacios de reunión, integración familiar · pertinencia tipológica y materialidad local</p><span class="stag sh">HUMANO</span></div>
 </div>
 </div>
 
 <div class="step-card" tabindex="0" onclick="toggle(this)">
-<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">4.14 Ajustes Evaluación II</span><span class="step-proc proc-humano">HUMANO</span></div>
-<div class="step-desc">Ajustes finos según evaluación II. Bucle de iteración con Fase C</div>
+<div class="step-head"><span class="step-nature nat-acc">ACC</span><span class="step-name">4.15 Ajustes II de la Evaluación Ambiental</span><span class="step-proc proc-humano">HUMANO</span></div>
+<div class="step-desc">Ajustes finos según evaluación cualitativa. Bucle de iteración con Fase C</div>
 <div class="step-detail">
-<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.13 Evaluación II · 4.10-4.12 Configuración · 4.9 Ajustes anteriores</div></div>
-<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Revisar dimensiones con baja calificación. Ajustar: protecciones solares, ventilación, aislamiento, selección de especies, orientación de vanos. Puede requerir iterar con Fase C (10–12).</div></div>
-<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Proyecto ajustado tras evaluación II</div></div>
+<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.14 Resultados (items ❌ y ⚠️)</div></div>
+<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Corregir configuración avanzada según evaluación cualitativa. Repetir hasta que todos los criterios sean al menos ⚠️. Al pasar, el diseño está listo para visualización.</div></div>
+<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Diseño final ajustado → listo para 5. Visualización</div></div>
 </div>
-<div class="loop-badge">↺ Puede iterar con Fase C</div>
-</div>
-
-<div class="step-card" tabindex="0" onclick="toggle(this)">
-<div class="step-head"><span class="step-nature nat-out">OUT</span><span class="step-name">4.15 Documento de Concepto</span><span class="step-proc proc-humano">HUMANO</span></div>
-<div class="step-desc">Entrega final de sección 4: compilación de todo el proceso conceptual para modelado 3D</div>
-<div class="step-detail">
-<div class="detail-block"><div class="detail-label">INPUT</div><div class="detail-body">4.1–4.14 Todo el proceso · 3.1–3.10 Inputs de análisis · 2.1 Constantes</div></div>
-<div class="detail-block"><div class="detail-label">OPERA</div><div class="detail-body">Compilar: manifiesto, idea matriz, partido, plantas, fachadas, cortes conceptuales, evaluaciones ambientales, criterios. Es el input directo para modelado 3D (sección 5).</div></div>
-<div class="detail-block"><div class="detail-label">OUTPUT</div><div class="detail-body">Documento de Concepto completo → Alimenta Sección 5 (Modelado 3D)</div></div>
-</div>
+<div class="loop-badge">↺ Puede iterar con Fase C (4.11–4.13)</div>
 </div>
 
 </div>

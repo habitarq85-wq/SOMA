@@ -106,6 +106,20 @@ Píldoras de la carta de presentación:
 | Mié | Proceso | "Así funciona nuestra inmersión visual" (video/captura) |
 | Vie | Resumen | Repost de los 5 proyectos en un carrusel resumen |
 
+### Semana 7 — Nuevas formas de habitar I
+| Día | Tipo | Título |
+|-----|------|--------|
+| Lun | Educativo | "Tiny Houses: menos espacio, más libertad" (carrusel) |
+| Mié | Educativo | "Cohousing: tu casa, tu comunidad, tu decisión" |
+| Vie | Educativo | "Coliving: la ciudad como extensión de tu hogar" |
+
+### Semana 8 — Nuevas formas de habitar II
+| Día | Tipo | Título |
+|-----|------|--------|
+| Lun | Educativo | "De casa a departamentos: una misma casa, dos hogares" |
+| Mié | Educativo | "5 formas alternativas de habitar en 2026" |
+| Vie | Proyecto | Retomar calendario: Casa-Taller Roma (carrusel) |
+
 ---
 
 ## Frecuencia
@@ -267,3 +281,56 @@ Nada de esto requiere imágenes nuevas. Solo consistencia.
 > Casa Alina · Casa-Taller Roma · Casona Cristi · Biblioteca FAUADY · Hotel Telchac
 >
 > Todos diferentes. Todos con la misma calidad. Eso es SOMA.
+
+### Semana 7
+
+**Lunes — Educativo (Carrusel) — Tiny Houses**
+> ¿Podrías vivir en 30 m²? 🏡
+>
+> Las Tiny Houses están llegando a México como una alternativa real para quienes buscan su primera vivienda sin hipotecas de 30 años. De 15 a 40 m², menor costo, menor impacto ambiental y la posibilidad de ser móviles.
+>
+> No es una casa pequeña. Es una decisión consciente sobre lo que realmente necesitas para vivir bien.
+>
+> ¿Te mudarías a una Tiny House? Te leemos en comentarios 👇
+>
+> #TinyHouses #ArquitecturaMérida #ViviendaAccesible #PrimeraCasa #SOMATallerVirtual
+
+**Miércoles — Educativo — Cohousing**
+> Tu casa + una comunidad que te respalde. 🤝
+>
+> El cohousing está ganando fuerza en México: viviendas privadas con cocina, huerto y talleres compartidos. Autogestión, costos más bajos y una red de apoyo real. La versión senior permite envejecer activo, en comunidad, sin asilos.
+>
+> ¿Vivirías en un cohousing? 👇
+>
+> #Cohousing #ViviendaColaborativa #NuevasFormasDeHabitar #ArquitecturaMérida
+
+**Viernes — Educativo — Coliving**
+> La ciudad como extensión de tu hogar. 🌆
+>
+> Coliving: habitación privada + áreas comunes con todo incluido. Ideal para nómadas digitales, freelancers y jóvenes profesionales que valoran la flexibilidad sobre la propiedad.
+>
+> Crece en México como respuesta a la demanda de vivienda flexible en zonas urbanas consolidadas.
+>
+> #Coliving #NómadaDigital #ViviendaFlexible #Arquitectura
+
+### Semana 8
+
+**Lunes — Educativo — Conversión casa a departamentos**
+> ¿Una casa grande convertible en dos hogares? 🔄
+>
+> Subdividir viviendas unifamiliares en 2-3 departamentos independientes. Renta extra sin comprar otro inmueble, hijos independizados en el mismo predio, casas vacías que vuelven a la vida. En Guadalajara ya existe programa de desdoblamiento.
+>
+> ¿Sabías que esto es posible en Mérida? Depende de la normativa municipal. ¿Te interesaría explorarlo? 👇
+>
+> #Remodelación #Desdoblamiento #ViviendaAccesible #ArquitecturaMérida
+
+**Miércoles — Educativo (resumen) — 5 formas de habitar**
+> 5 formas alternativas de habitar en 2026. ¿Cuál es la tuya? 🎯
+>
+> Tiny House · Cohousing · Coliving · Conversión a departamentos · Vivienda sustentable
+>
+> La arquitectura accesible no es un solo modelo. Es encontrar el que funciona para ti. En SOMA diseñamos cualquier forma de habitar con la misma calidad.
+>
+> ¿Cuál te llama más la atención? 👇
+>
+> #ArquitecturaAccesible #Vivienda #NuevasFormasDeHabitar #SOMATallerVirtual

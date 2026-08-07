@@ -684,3 +684,41 @@ La investigación de sitio y normativa NO va antes de la cotización; se ejecuta
 - Heurísticas de sugerencia eliminadas — el arquitecto llena los campos manualmente
 - Commit `93c389e` y push a Render
 
+## [2026-08-07] — Sesión: Precios v4.0
+
+### Nueva Escala de Precios Oficial (SOMA v4.0)
+- **SOMA Esencial:** $220/m² (bajó de $250)
+- **SOMA Integral:** $270/m² (bajó de $350)
+- **SOMA Ejecutivo:** $350/m² (bajó de $850)
+- **Cargo mínimo operativo:** $6,500 (se mantiene)
+
+"Vamos a pasar soma esencial a 220, soma integral a 270 y soma ejecutivo a 350. Mantenemos el cargo mínimo."
+
+**Decisión:** Nueva escala de precios v4.0 aplicada en todo el ecosistema (server.py, Pagina Web 6, Pagina Web 5, dashboard, leads.js, programa.js, PROTOCOLO, CARTA, CONTRATO, CONVENIO).
+
+## [2026-08-07] — Sesión: Precios v4.1 (Opción A implementada, Opción B en reserva)
+
+### Contexto: investigación de mercado 2025-2026
+- Costo construcción Mérida 2026: medio $12.5–16k/m², alto $16.5–21k, premium $22–30k+.
+- Honorarios México: básico (anteproyecto+ejecutivo) $250–600/m²; completo con ingenierías $450–900/m²; solo diseño = 6–10% de obra.
+- Ejecutivo residencial Mérida: $180–260/m² (maquila) a $300–750/m² (freelance con criterio); ~$150k total (~$1,250/m²) documentado CON ingenierías para ~120 m².
+- Escalera de producto confirmada: **Anteproyecto → Anteproyecto + plano de permiso + criterios → Ejecutivo arquitectónico SIN ingenierías** (las ingenierías se cotizan aparte).
+
+### Nueva Escala de Precios Oficial (SOMA v4.1) — Opción A
+- **SOMA Esencial:** $230/m² (subió de $220)
+- **SOMA Integral:** $300/m² (subió de $270)
+- **SOMA Ejecutivo:** $420/m² (subió de $350)
+- **Cargo mínimo operativo:** $7,000 (subió de $6,500)
+
+**Lógica:** Apenas toca el mercado real; entra barato pero con lógica. Progresión sana ×1.30 / ×1.40.
+
+### Opción B (RESERVADA — implementar cuando convenga)
+- **SOMA Esencial:** $250/m²
+- **SOMA Integral:** $350/m²
+- **SOMA Ejecutivo:** $500/m²
+- **Cargo mínimo operativo:** $7,500
+
+**Cuándo implementar:** cuando la demanda/confianza permita acercarse al estándar profesional ($250–600/m² básico). Progresión ×1.40 / ×1.43.
+
+**Decisión:** v4.1 (Opción A) aplicada en todo el ecosistema (server.py, Pagina Web 6, Pagina Web 5, v1-dashboard, leads.js, programa.js, PROTOCOLO, CARTA, CONTRATO, CONVENIO, dashboard/Dashboard.html). Opción B documentada aquí para futura implementación.
+

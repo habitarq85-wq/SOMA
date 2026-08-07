@@ -8,6 +8,33 @@ let DB_PROGRESO = {};
 
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
+function marcarCheck(el,e){
+  if(e) e.stopPropagation();
+  if(!PROYECTO_ACTUAL) return;
+  const label=el.closest('label');
+  if(el.checked){label.style.textDecoration='line-through';label.style.opacity='0.5'}
+  else{label.style.textDecoration='none';label.style.opacity='1'}
+  if(el.dataset.chk){
+    const key='soma_chk_'+PROYECTO_ACTUAL+'_'+el.dataset.chk;
+    if(el.checked) localStorage.setItem(key,'1');
+    else localStorage.removeItem(key);
+  }
+}
+
+function restaurarCheckboxes(){
+  document.querySelectorAll('[data-chk]').forEach(function(el){
+    el.checked=false;
+    const label=el.closest('label');
+    if(label){label.style.textDecoration='none';label.style.opacity='1'}
+    if(!PROYECTO_ACTUAL) return;
+    const key='soma_chk_'+PROYECTO_ACTUAL+'_'+el.dataset.chk;
+    if(localStorage.getItem(key)==='1'){
+      el.checked=true;
+      if(label){label.style.textDecoration='line-through';label.style.opacity='0.5'}
+    }
+  });
+}
+
 function lsKey(s){ return 'soma_kanban_'+(PROYECTO_ACTUAL||'0')+'_'+s; }
 
 // ─── SECTION NAV ───
@@ -76,6 +103,7 @@ async function cargarDatosProyecto(proyectoId){
       else if(id==='sec-3') { renderProgramaReal(); if(document.getElementById('diagrama-section')?.classList.contains('visible')){ renderProgramaRelaciones(); renderDiagramaRelaciones(proyectoId); } }
       else if(id==='sec-10') renderKanbanDashboard();
     }
+    restaurarCheckboxes();
   }
 }
 
@@ -285,6 +313,7 @@ for(let s=1;s<=9;s++){
           localStorage.removeItem('soma_proyecto_id');
           PROYECTO_ACTUAL = null;
           DATOS_PROYECTO = null;
+          restaurarCheckboxes();
           return;
         }
         container.querySelectorAll('.proj-card').forEach(c => {
@@ -314,6 +343,13 @@ for(let s=1;s<=9;s++){
 
   fetch('/get_leads').then(r=>r.json()).then(p=>{
     if(Array.isArray(p)) renderCards(p);
+    if(!PROYECTO_ACTUAL && Array.isArray(p) && p.length){
+      const first=p.find(proj=>['lead','entrevistado','programado','cotizado','contratado','primera_entrega','entrega_final','terminado'].includes(proj.pipeline_estado));
+      if(first){
+        const card=container.querySelector(`.proj-card[data-id="${first.id}"]`);
+        if(card) setTimeout(()=>card.click(), 50);
+      }
+    }
   }).catch(()=>{});
 })();
 
@@ -853,7 +889,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     if(n>=1&&n<=10) showSection(n);
   }else{
     const t=document.getElementById('timeline');
-    if(t) t.querySelectorAll('.station')[3].scrollIntoView({inline:'center',block:'nearest'});
+    if(t) t.querySelectorAll('.station')[0].scrollIntoView({inline:'center',block:'nearest'});
   }
   if(PROYECTO_ACTUAL) cargarDatosProyecto(PROYECTO_ACTUAL);
 });

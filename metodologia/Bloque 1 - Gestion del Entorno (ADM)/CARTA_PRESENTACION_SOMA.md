@@ -51,9 +51,9 @@ Ser un taller de arquitectura que demuestre que la excelencia en el diseño no e
 
 | Paquete | Inversión | Perfil |
 |---------|-----------|--------|
-| **SOMA Esencial** | $250/m² | Democratización real. Diseño completo con plantas, alzados, análisis de sitio y perspectiva del proyecto. |
-| **SOMA Integral** | $350/m² | Equilibrio diseño-técnica. Incluye moodboard de acabados, criterios de ingenierías y planos de permiso. |
-| **SOMA Ejecutivo** | $850/m² | Máxima profundidad técnica. Coordinación integral de ingenierías, detalles constructivos y planos ejecutivos. |
+| **SOMA Esencial** | $230/m² | Democratización real. Diseño completo con plantas, alzados, análisis de sitio y perspectiva del proyecto. |
+| **SOMA Integral** | $300/m² | Equilibrio diseño-técnica. Incluye moodboard de acabados, criterios de ingenierías y planos de permiso. |
+| **SOMA Ejecutivo** | $420/m² | Máxima profundidad técnica. Coordinación integral de ingenierías, detalles constructivos y planos ejecutivos. |
 
 ---
 

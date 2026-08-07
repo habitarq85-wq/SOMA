@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SOMA | Taller Virtual de Arquitectura</title>
-    <meta name="description" content="SOMA Taller Virtual de Arquitectura — Diseño arquitectónico de alta calidad democratizado mediante tecnología. Mérida, Yucatán.">
+    <meta name="description" content="Arquitecto en Mèrida, Yucatàn. Diseñamos casas habitación, remodelaciones, locales comerciales, hoteles pequeños. Proyectos ejecutivos, renders, planos, modelos BIM y planos. Cotiza en linea.">
     <meta property="og:title" content="SOMA — Taller Virtual de Arquitectura">
     <meta property="og:description" content="Protocolizamos lo técnico para liberar lo creativo. Diseño arquitectónico de alta calidad con procesos inteligentes.">
     <meta property="og:image" content="https://soma-arquitectura.com/recursos_graficos/og_tarjeta.jpg">
@@ -16,7 +16,6 @@
     <link rel="preload" as="image" href="../recursos_graficos/Carrusel_Caratula_proyectos/Biblioteca FAUADY.webp">
     <link rel="preload" as="image" href="../recursos_graficos/Carrusel_Caratula_proyectos/Hotel Telchac.webp">
     <link rel="preload" as="image" href="../recursos_graficos/Foto trayectoria/retrato final.webp">
-    <link rel="preload" as="audio" href="../recursos_graficos/background_music.mp3">
     <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;700;900&family=JetBrains+Mono:wght@300;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -61,21 +60,33 @@
             opacity: 0.03; pointer-events: none; white-space: nowrap; z-index: 1;
         }
 
-        /* --- AUDIO CONTROL --- */
-        .audio-btn {
-            position: fixed; top: 20px; left: 20px; z-index: 999;
-            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15);
-            color: rgba(244,241,238,0.5); font-size: 1rem; cursor: pointer;
-            width: 36px; height: 36px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.3s ease; font-family: 'JetBrains Mono', monospace;
-            backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-        }
-        .audio-btn:hover { background: rgba(255,255,255,0.12); color: var(--accent); border-color: var(--accent); }
-        .audio-btn.playing { color: var(--accent); border-color: var(--accent); }
         @media (max-width: 480px) {
-            .audio-btn { top: 12px; left: 12px; width: 32px; height: 32px; font-size: 0.85rem; }
-            .scroll-hint { bottom: 10vh; }
+            .scroll-hint { bottom: 16vh; }
+        }
+
+        /* --- WHATSAPP FLOAT --- */
+        .wa-btn, .soma-btn {
+            position: fixed; bottom: 24px; right: 24px; z-index: 1500;
+            width: 48px; height: 48px; border-radius: 50%;
+            background: rgba(168,62,24,0.35);
+            backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+            border: none; outline: none;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .wa-btn svg { width: 22px; height: 22px; fill: rgba(176,70,26,0.9); transition: all 0.3s ease; }
+        .soma-btn svg { width: 26px; height: 26px; fill: rgba(176,70,26,0.9); transition: all 0.3s ease; }
+        .wa-btn:hover, .soma-btn:hover { background: var(--accent); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(212,94,44,0.35); }
+        .wa-btn:hover svg, .soma-btn:hover svg { fill: #fff; opacity: 1; }
+        .wa-btn { right: 84px; }
+        .soma-btn { right: 24px; }
+        @media (max-width: 480px) {
+            .wa-btn, .soma-btn { bottom: 16px; right: 16px; width: 42px; height: 42px; }
+            .wa-btn svg { width: 20px; height: 20px; }
+            .soma-btn svg { width: 23px; height: 23px; }
+            .wa-btn { right: 66px; }
+            .soma-btn { right: 16px; }
         }
 
         /* --- 00. HOME --- */
@@ -181,7 +192,7 @@
         .interactive-list { list-style: none; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; line-height: 2.2; border-left: 2px solid var(--accent); padding-left: 25px; }
         .interactive-list li { cursor: pointer; opacity: 0.4; transition: 0.4s var(--ease); }
         .interactive-list li.active { opacity: 1; color: var(--accent); }
-        .services-visual { width: 100%; max-width: 200px; border: 1px solid rgba(255,255,255,0.05); background: #1a1a1a; }
+        .services-visual { width: 100%; max-width: 150px; border: 1px solid rgba(255,255,255,0.05); background: #1a1a1a; }
         .services-visual img { width: 100%; height: auto; display: none; filter: grayscale(1); transition: 0.6s var(--ease); }
         .services-visual img.active-img { display: block; opacity: 0.8; }
         .services-wrapper > div > div:last-child {
@@ -354,7 +365,7 @@
 
             .services-row { grid-template-columns: 1fr auto; gap: 12px; }
             .interactive-list { font-size: 0.65rem; line-height: 2; padding-left: 15px; }
-            .services-visual { width: 130px !important; }
+            .services-visual { width: 110px !important; }
             .services-wrapper > div > div:last-child p { font-size: 0.65rem !important; margin-top: 4px !important; }
             .contacto-block.contacto-block { margin-top: 8vh !important; }
             .services-wrapper > div > div:last-child {
@@ -422,7 +433,7 @@
             .img-option img { object-fit: contain; height: auto; max-height: 200px; }
             #input-program > div { grid-template-columns: 1fr; }
             .services-row { grid-template-columns: 1fr auto; gap: 12px; }
-            .services-visual { width: 110px !important; }
+            .services-visual { width: 80px !important; }
             .interactive-list { font-size: 0.55rem; line-height: 1.6; padding-left: 12px; }
             .services-wrapper > div > div:last-child p { font-size: 0.55rem !important; margin-top: 3px !important; }
             .contacto-block.contacto-block { margin-top: 6vh !important; }
@@ -462,7 +473,7 @@
             .topic-slide { width: 200px; padding: 8px 12px; }
             .services-row { grid-template-columns: 1fr auto; gap: 4px; align-items: center; }
             .interactive-list { font-size: 0.45rem; line-height: 1.4; padding-left: 8px; }
-            .services-visual { width: 90px !important; }
+            .services-visual { width: 80px !important; }
             .contacto-block.contacto-block { margin-top: 4vh !important; }
             .services-wrapper > div { position: relative; }
             .services-wrapper > div > div:last-child {
@@ -532,11 +543,21 @@
 
 <div class="scroll-container" id="main-viewport">
     
+    <a class="wa-btn" href="https://wa.me/529995314093" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp" title="Escríbenos por WhatsApp">
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M16.04 3C9.01 3 3.27 8.71 3.27 15.7c0 2.24.59 4.43 1.71 6.36L3.3 28.9l7.02-1.84a12.9 12.9 0 0 0 5.72 1.34h.01c7.02 0 12.76-5.71 12.76-12.7C28.8 8.71 23.05 3 16.04 3zm0 23.25h-.01a10.7 10.7 0 0 1-5.44-1.49l-.39-.23-4.17 1.09 1.11-4.06-.25-.4a10.6 10.6 0 0 1-1.63-5.66c0-5.86 4.78-10.62 10.66-10.62 5.87 0 10.65 4.76 10.65 10.62 0 5.86-4.78 10.61-10.53 10.75zM22.6 17.7c-.32-.16-1.9-.93-2.19-1.04-.29-.11-.5-.16-.72.16-.21.32-.82 1.04-1.01 1.25-.19.21-.37.24-.69.08-.32-.16-1.36-.5-2.59-1.6-.96-.85-1.6-1.9-1.79-2.22-.19-.32-.02-.49.14-.65.14-.14.32-.37.48-.56.16-.19.21-.32.32-.53.11-.21.05-.4-.03-.56-.08-.16-.72-1.73-.98-2.37-.26-.62-.52-.54-.72-.55h-.61c-.21 0-.56.08-.85.4-.29.32-1.12 1.09-1.12 2.66 0 1.57 1.14 3.08 1.3 3.29.16.21 2.25 3.43 5.45 4.81.76.33 1.36.53 1.82.67.77.24 1.46.21 2.01.13.61-.09 1.9-.78 2.17-1.53.27-.75.27-1.39.19-1.53-.08-.13-.29-.21-.61-.37z"/>
+        </svg>
+    </a>
+
+    <button type="button" class="soma-btn" onclick="openImmersion()" aria-label="Abrir Cotizador SOMA" title="Cotizador SOMA">
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M 23.42 23.42 A 10.5 10.5 0 1 1 23.42 8.58 A 3.5 3.5 0 1 1 18.47 13.53 A 3.5 3.5 0 1 0 18.47 18.47 A 3.5 3.5 0 1 1 23.42 23.42 Z"/>
+        </svg>
+    </button>
+
     <section class="dark">
         <video id="hero-video" class="bg-video" autoplay muted loop playsinline webkit-playsinline preload="auto" src="../recursos_graficos/Video_Fondo/hero_loop.mp4"></video>
         <div class="video-overlay"></div>
-        <audio id="bg-music" autoplay muted loop preload="auto" src="../recursos_graficos/background_music.mp3"></audio>
-        <button id="audio-toggle" class="audio-btn" aria-label="Activar/desactivar música" title="Música de fondo">♫</button>
         <div class="bg-keyword" style="color: rgba(255,255,255,0.05);">SOMA</div>
         <div class="hero-flex">
             <div>
@@ -545,7 +566,7 @@
                     <span class="soma-main">SOMA</span>
                     <span class="soma-sub">Taller Virtual de Arquitectura</span>
                 </h2>
-                <div style="margin-top:8px; cursor:pointer; text-align:left; display:inline-block; background:rgba(0,0,0,0.4); padding:4px 10px; border-radius:0;" onclick="openImmersion()">
+                <div style="margin-top:8px; cursor:pointer; text-align:left; display:inline-block;" onclick="openImmersion()">
                     <span style="font-family:'JetBrains Mono',monospace; font-size:clamp(0.6rem,1.4vw,0.75rem); color:var(--accent); letter-spacing:2px; text-transform:none; transition:opacity 0.3s ease;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">Cotizador SOMA</span>
                 </div>
             </div>
@@ -679,6 +700,7 @@
         </div>
         <div class="services-wrapper">
             <div>
+                <p style="font-family: 'JetBrains Mono', monospace; font-size: clamp(0.65rem, 1vw, 0.8rem); color: rgba(244,241,238,0.7); line-height: 1.6; margin-bottom: 25px; max-width: 720px;">
                 <div class="services-row">
                     <ul class="interactive-list">
                         <li class="active" onclick="changeService(this, 0)">DISEÑO ARQUITECTÓNICO</li>
@@ -804,6 +826,10 @@
         <span class="label">Paso 11 / Contacto</span>
         <h2>Casi terminamos.</h2>
         <p style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: #888; margin-bottom: 20px;">Ingresa tu correo o número de WhatsApp para contactarnos.</p>
+        <div style="position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden;" aria-hidden="true">
+            <label for="soma-website">Sitio web</label>
+            <input type="text" id="soma-website" name="website" tabindex="-1" autocomplete="off">
+        </div>
         <input type="text" class="soma-input" placeholder="Correo electrónico o WhatsApp" id="soma-contacto">
         <p style="font-family: 'JetBrains Mono'; font-size: 0.55rem; color: #aaa; margin-top: 5px;">Tus datos están protegidos. Solo los usaremos para enviarte información.</p>
         <button type="button" class="btn-soma" style="margin-top:25px; background: var(--accent); color: white;" onclick="registerContact()">Enviar</button>
@@ -856,20 +882,21 @@
         <span class="label">Cotizador / Configuración</span>
         <h2>Profundidad del Proyecto:</h2>
         <div style="display: flex; flex-direction: column; gap: 10px;">
-            <div class="package-option" onclick="setSomaLevel(250, 15)" style="background: rgba(255,255,255,0.05); padding: 12px; border: 1px solid #333; cursor: pointer;">
+            <div class="package-option" onclick="setSomaLevel(230, 15)" style="background: rgba(255,255,255,0.05); padding: 12px; border: 1px solid #333; cursor: pointer;">
                 <h3 style="color: var(--accent); font-size: 0.8rem; margin-bottom: 5px;">SOMA ESENCIAL</h3>
                 <p style="font-family: 'JetBrains Mono'; font-size: 0.65rem; color: #ccc; margin: 0 0 4px 0;">El paquete ideal para darle forma a tu proyecto. Incluye los planos necesarios para que un contratista estime el costo de construcción.</p>
                 <p style="font-family: 'JetBrains Mono'; font-size: 0.5rem; color: #666; margin: 0;">Diseño arquitectónico, plantas, alzados, análisis de sitio y perspectiva general del proyecto.</p>
             </div>
-            <div class="package-option" onclick="setSomaLevel(350, 15)" style="background: rgba(255,255,255,0.05); padding: 12px; border: 1px solid #333; cursor: pointer;">
+            <div class="package-option" onclick="setSomaLevel(300, 15)" style="background: rgba(255,255,255,0.05); padding: 12px; border: 1px solid #333; cursor: pointer;">
                 <h3 style="color: var(--accent); font-size: 0.8rem; margin-bottom: 5px;">SOMA INTEGRAL</h3>
                 <p style="font-family: 'JetBrains Mono'; font-size: 0.65rem; color: #ccc; margin: 0 0 4px 0;">El paquete ideal para proyectos que requieren permiso municipal. Incluye la documentación técnica para solicitar la licencia de construcción y recibir cotizaciones de contratistas.</p>
                 <p style="font-family: 'JetBrains Mono'; font-size: 0.5rem; color: #666; margin: 0;">Diseño arquitectónico, plantas, alzados, moodboard de acabados, criterios de ingenierías, planos de permiso, perspectivas adicionales.</p>
             </div>
-            <div class="package-option" onclick="setSomaLevel(850, 15)" style="background: rgba(255,255,255,0.05); padding: 12px; border: 1px solid #333; cursor: pointer;">
+            <div class="package-option" onclick="setSomaLevel(420, 15)" style="background: rgba(255,255,255,0.05); padding: 12px; border: 1px solid #333; cursor: pointer;">
                 <h3 style="color: var(--accent); font-size: 0.8rem; margin-bottom: 5px;">SOMA EJECUTIVO</h3>
-                <p style="font-family: 'JetBrains Mono'; font-size: 0.65rem; color: #ccc; margin: 0 0 4px 0;">El paquete ideal para proyectos que requieren ingenierías especializadas. La documentación completa que una constructora profesional necesita para cotizar y ejecutar tu obra con precisión.</p>
-                <p style="font-family: 'JetBrains Mono'; font-size: 0.5rem; color: #666; margin: 0;">Planos técnicos ejecutivos, detalles constructivos, coordinación integral de ingenierías, planos de permiso, diseño arquitectónico completo.</p>
+                <p style="font-family: 'JetBrains Mono'; font-size: 0.65rem; color: #ccc; margin: 0 0 4px 0;">El paquete ideal para proyectos que requieren detalles constructivos y elementos arquitectónicos definidos. La documentación completa que una constructora profesional necesita para cotizar y ejecutar tu obra con precisión.</p>
+                <p style="font-family: 'JetBrains Mono'; font-size: 0.5rem; color: #666; margin: 0;">Diseño arquitectónico completo, planos ejecutivos, detalles constructivos y planos de permiso.</p>
+                <p style="font-family: 'JetBrains Mono'; font-size: 0.5rem; color: #666; margin: 4px 0 0 0;">Coordinación de ingenierías, cálculos estructurales, instalaciones mecánicas y eléctricas se cotizan por separado (no incluidos).</p>
             </div>
             <button type="button" class="btn-soma" style="background:transparent; border:1px solid #333; color: white; margin-top:5px; padding: 10px; font-size: 0.7rem;" onclick="nextStep(13)">← Volver</button>
         </div>
@@ -987,27 +1014,7 @@
         if (document.hidden) window.__somaCleanup.forEach(function(fn) { fn(); });
     });
 
-    // --- MÚSICA DE FONDO ---
-    const bgMusic = document.getElementById('bg-music');
-    const audioBtn = document.getElementById('audio-toggle');
-    let audioActive = false;
-
-    audioBtn.addEventListener('click', function() {
-        if (audioActive) {
-            bgMusic.pause();
-            audioBtn.textContent = '♫';
-            audioBtn.classList.remove('playing');
-        } else {
-            bgMusic.muted = false;
-            bgMusic.volume = 0.25;
-            bgMusic.play().catch(function(){});
-            audioBtn.textContent = '♪';
-            audioBtn.classList.add('playing');
-        }
-        audioActive = !audioActive;
-    });
-
-    // --- SERVICIOS ---
+// --- SERVICIOS ---
     function changeService(element, index) {
         const listItems = element.parentElement.querySelectorAll('li');
         listItems.forEach(li => li.classList.remove('active'));
@@ -1157,8 +1164,10 @@
     // --- INMERSIÓN SOMA ---
     let somaData = { respuestas: {}, contacto: '', cotizacion: { m2: 0, precioDiseno: 0 } };
 
+    let immersionStartTime = 0;
     function openImmersion() {
         somaData.respuestas = {};
+        immersionStartTime = Date.now();
         nextStep(1);
         immersionModal.classList.add('active');
         viewport.style.overflow = 'hidden';
@@ -1220,7 +1229,7 @@
     }
 
     // --- COTIZADOR ---
-    const MINIMO_TALLER = 6500;
+    const MINIMO_TALLER = 7000;
     let currentQuoteType = 'program';
 
     function setQuoteType(type) {
@@ -1245,7 +1254,7 @@
 
     async function calculateSomaQuote() {
         const type = currentQuoteType;
-        const pDiseno = somaData.cotizacion.precioDiseno || 250;
+        const pDiseno = somaData.cotizacion.precioDiseno || 230;
         const resultDiv = document.getElementById('quote-result');
 
         let m2 = 0;
@@ -1262,17 +1271,17 @@
             m2 = base;
         } else if (type === 'money') {
             const inv = parseFloat(document.getElementById('quote-money-val').value) || 0;
-            const promObra = pDiseno === 250 ? 15000 : (pDiseno === 350 ? 20000 : 32000);
+            const promObra = pDiseno === 230 ? 15000 : (pDiseno === 300 ? 20000 : 32000);
             m2 = inv / (promObra + pDiseno);
         }
 
         let totalDiseno = Math.max(m2 * pDiseno, MINIMO_TALLER);
         const niveles = {
-            250: { nombre: "SOMA Esencial", min: 14000, max: 16500 },
-            350: { nombre: "SOMA Integral", min: 18500, max: 23000 },
-            850: { nombre: "SOMA Ejecutivo", min: 28000, max: 40000 }
+            230: { nombre: "SOMA Esencial", min: 14000, max: 16500 },
+            300: { nombre: "SOMA Integral", min: 18500, max: 23000 },
+            420: { nombre: "SOMA Ejecutivo", min: 28000, max: 40000 }
         };
-        const n = niveles[pDiseno] || niveles[250];
+        const n = niveles[pDiseno] || niveles[230];
 
         let html = `<h3 style="color:var(--accent); margin-bottom:15px;">ESCENARIO DE PROYECTO</h3>
                     <p><b>Nivel:</b> ${n.nombre}</p>
@@ -1294,6 +1303,8 @@
         const timeout = setTimeout(() => controller.abort(), 20000);
         let mensaje = "¡Inmersión registrada! Te contactaremos pronto.";
         try {
+            somaData._t = Date.now() - immersionStartTime;
+            somaData._h = document.getElementById('soma-website') ? document.getElementById('soma-website').value : '';
             const res = await fetch('/save_immersion', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

@@ -50,11 +50,11 @@ EMAIL_DESTINO = "habitarq85@gmail.com"
 
 BREVO_API_KEY = os.environ.get("BREVO_API_KEY", "").strip()
 
-MINIMO_TALLER = 6500
+MINIMO_TALLER = 7000
 RANGOS_OBRA = {
-    250: {"min": 14000, "max": 16500},
-    350: {"min": 18500, "max": 23000},
-    850: {"min": 28000, "max": 40000}
+    230: {"min": 14000, "max": 16500},
+    300: {"min": 18500, "max": 23000},
+    420: {"min": 28000, "max": 40000}
 }
 
 os.makedirs(REPORTES_DIR, exist_ok=True)
@@ -369,7 +369,7 @@ def save_immersion():
     m2 = cotizacion.get('m2', 0)
     precio_diseno_m2 = cotizacion.get('precioDiseno', 0)
 
-    nivel_map = {250: "esencial", 350: "integral", 850: "ejecutivo"}
+    nivel_map = {230: "esencial", 300: "integral", 420: "ejecutivo"}
     nivel_key = nivel_map.get(precio_diseno_m2, "esencial")
 
     total_diseno = m2 * precio_diseno_m2
@@ -510,7 +510,7 @@ def get_activity_matrix(temp_id):
         return jsonify({"status": "error", "message": str(e)}), 500
 
 # ---- PROGRAMA ARQUITECTONICO ----
-PRECIOS_M2 = {"esencial": 250, "integral": 350, "ejecutivo": 850}
+PRECIOS_M2 = {"esencial": 230, "integral": 300, "ejecutivo": 420}
 
 INMERSION_PREGUNTAS = {
     "step1": {"pregunta": "Fachada", "A": "Abierta", "B": "Cerrada"},
@@ -816,7 +816,7 @@ def get_cotizacion(lead_id):
         nivel = lead["nivel_proyecto"]
         honorarios_lead = lead["honorarios_diseno"]
         nivel_key = nivel or "esencial"
-        precio_m2 = PRECIOS_M2.get(nivel_key, 250)
+        precio_m2 = PRECIOS_M2.get(nivel_key, 230)
         honorarios_reales = max(total_m2 * precio_m2, MINIMO_TALLER)
         rango = RANGOS_OBRA.get(precio_m2, {"min": 18500, "max": 23000})
 
@@ -853,7 +853,7 @@ def cotizacion_pdf(lead_id):
         honorarios_lead = lead["honorarios_diseno"]
         temp_id = lead["temp_id"]
         nivel_key = nivel or "esencial"
-        precio_m2 = PRECIOS_M2.get(nivel_key, 250)
+        precio_m2 = PRECIOS_M2.get(nivel_key, 230)
         espacios_rows = fetchall(conn, "SELECT tipo, espacio, area, zona, clave FROM programa_arquitectonico WHERE lead_id=? ORDER BY tipo, id", (lead_id,))
         espacios = [(r["tipo"], r["espacio"], r["area"], r["zona"], r["clave"]) for r in espacios_rows]
         total_m2 = sum(e[2] or 0 for e in espacios)
@@ -1298,7 +1298,7 @@ def contratar_lead(lead_id):
         if lead:
             m2 = lead["m2"] or 0
             nivel = lead["nivel_proyecto"] or "esencial"
-            honorarios = lead["honorarios_diseno"] or max(m2 * PRECIOS_M2.get(nivel, 250), MINIMO_TALLER)
+            honorarios = lead["honorarios_diseno"] or max(m2 * PRECIOS_M2.get(nivel, 230), MINIMO_TALLER)
             if honorarios > 0:
                 esquema = [
                     ("Anticipo 30%", honorarios * 0.3),
@@ -1334,7 +1334,7 @@ def _recibo_pago_html(lead, pct, label, conn):
     temp_id = lead["temp_id"] or "—"
     nivel = lead["nivel_proyecto"] or "esencial"
     m2_lead = lead["m2"] or 0
-    precio_m2 = PRECIOS_M2.get(nivel, 250)
+    precio_m2 = PRECIOS_M2.get(nivel, 230)
     espacios_rows = fetchall(conn, "SELECT area FROM programa_arquitectonico WHERE lead_id=?", (lead["id"],))
     if espacios_rows:
         total_m2_prog = sum(r["area"] for r in espacios_rows)
@@ -1459,8 +1459,8 @@ def update_datos_proyecto(lead_id):
         ubicacion_obj = {"calle_numero": calle_numero, "colonia": colonia, "ciudad": ciudad, "estado": estado_ubic}
         ubicacion_json = json.dumps(ubicacion_obj)
 
-        PRECIOS = {'esencial': 250, 'integral': 350, 'ejecutivo': 850}
-        precio_m2 = PRECIOS.get(nivel_proyecto, 250)
+        PRECIOS = {'esencial': 230, 'integral': 300, 'ejecutivo': 420}
+        precio_m2 = PRECIOS.get(nivel_proyecto, 230)
         if m2 is not None and nivel_proyecto:
             m2 = float(m2)
             honorarios_calc = max(m2 * precio_m2, 6500)

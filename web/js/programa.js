@@ -3,7 +3,7 @@ const PROGRAMA = (() => {
     let currentReadonly = false;
 
     const TIPOS_PROYECTO = ['Vivienda unifamiliar','Vivienda plurifamiliar','Departamento','Casa habitación','Oficina','Local comercial','Restaurante','Hotel','Otro'];
-    const PRECIOS_NIVEL = { esencial: 250, integral: 350, ejecutivo: 850 };
+    const PRECIOS_NIVEL = { esencial: 230, integral: 300, ejecutivo: 420 };
 
     async function abrir(id, readonly) {
         currentLeadId = id;
@@ -14,7 +14,7 @@ const PROGRAMA = (() => {
         document.getElementById('modal-prog-id').textContent = `${lead.temp_id || '---'} · ${lead.fecha ? new Date(lead.fecha).toLocaleString() : ''}`;
 
         const precios = PRECIOS_NIVEL;
-        const pM2 = precios[lead.nivel_proyecto || 'esencial'] || 250;
+        const pM2 = precios[lead.nivel_proyecto || 'esencial'] || 230;
         const honorarios = lead.honorarios_diseno || 0;
         const m2 = lead.m2 || 0;
 
@@ -285,10 +285,10 @@ const PROGRAMA = (() => {
             const m2Input = document.getElementById('prog-m2');
             if (m2Input) m2Input.value = totalM2;
             const nivel = document.getElementById('prog-nivel')?.value || 'esencial';
-            const precios = { esencial: 250, integral: 350, ejecutivo: 850 };
+            const precios = { esencial: 230, integral: 300, ejecutivo: 420 };
             const honorariosInput = document.getElementById('prog-honorarios');
             if (honorariosInput && !honorariosInput.dataset.manual) {
-                honorariosInput.value = Math.max(totalM2 * (precios[nivel] || 250), 6500);
+                honorariosInput.value = Math.max(totalM2 * (precios[nivel] || 230), 7000);
             }
         } catch (_) {}
     }

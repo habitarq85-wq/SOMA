@@ -252,9 +252,9 @@ const LEADS = (() => {
         }
         const m2 = lead.m2 || 0;
         const nivel = lead.nivel_proyecto || 'esencial';
-        const precios = { esencial: 250, integral: 350, ejecutivo: 850 };
-        const precioM2 = precios[nivel] || 250;
-        const honorarios = lead.honorarios_diseno || Math.max(m2 * precioM2, 6500);
+        const precios = { esencial: 230, integral: 300, ejecutivo: 420 };
+        const precioM2 = precios[nivel] || 230;
+        const honorarios = lead.honorarios_diseno || Math.max(m2 * precioM2, 7000);
         const anticipo = honorarios * 0.3;
         contratarLeadId = id;
         document.getElementById('cont-resumen').innerHTML =
@@ -301,8 +301,8 @@ const LEADS = (() => {
 
         const m2 = lead.m2 || 0;
         const nivel = lead.nivel_proyecto || 'esencial';
-        const precios = { esencial: 250, integral: 350, ejecutivo: 850 };
-        const honorarios = lead.honorarios_diseno || Math.max(m2 * (precios[nivel] || 250), 6500);
+        const precios = { esencial: 230, integral: 300, ejecutivo: 420 };
+        const honorarios = lead.honorarios_diseno || Math.max(m2 * (precios[nivel] || 230), 7000);
         const m2Orig = lead.m2_original || 0;
         const nivelOrig = lead.nivel_original || '';
         const honorariosOrig = lead.honorarios_original || 0;

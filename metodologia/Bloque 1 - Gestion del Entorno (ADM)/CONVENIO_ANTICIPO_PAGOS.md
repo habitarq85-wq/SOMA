@@ -21,9 +21,9 @@
 
 | Paquete | Precio | Marcar |
 |---------|--------|--------|
-| SOMA Esencial | $250/m² | [ ] |
-| SOMA Integral | $350/m² | [ ] |
-| SOMA Ejecutivo | $850/m² | [ ] |
+| SOMA Esencial | $230/m² | [ ] |
+| SOMA Integral | $300/m² | [ ] |
+| SOMA Ejecutivo | $420/m² | [ ] |
 
 **Escala estimada:** _________ m²
 **Honorarios totales:** $_________________________

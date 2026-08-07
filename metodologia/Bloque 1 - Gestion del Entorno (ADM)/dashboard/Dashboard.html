@@ -426,7 +426,7 @@
                 const m2 = l.m2 || 0;
                 const nivel = l.nivel_proyecto || 'esencial';
                 const precioM2 = nivel === 'ejecutivo' ? 850 : nivel === 'integral' ? 350 : 250;
-                const honorarios = Math.max(m2 * precioM2, 6500);
+                const honorarios = Math.max(m2 * precioM2, 7000);
                 const presupuesto = Number(l.presupuesto) || 0;
                 const estContacto = l.estado_contacto || 'no programado';
                 return `<div class="cand-card">
@@ -609,7 +609,7 @@
 
                 const honorarios = m2 > 0 ? (() => {
                     const p = nivel === 'ejecutivo' ? 850 : nivel === 'integral' ? 350 : 250;
-                    const total = Math.max(m2 * p, 6500);
+                    const total = Math.max(m2 * p, 7000);
                     return `$${total.toLocaleString()}`;
                 })() : '---';
 
@@ -708,7 +708,7 @@
                             const m2 = l.m2 || 0;
                             const nivel = l.nivel_proyecto || 'pendiente';
                             const p = nivel === 'ejecutivo' ? 850 : nivel === 'integral' ? 350 : 250;
-                            const hon = m2 > 0 ? Math.max(m2 * p, 6500) : 0;
+                            const hon = m2 > 0 ? Math.max(m2 * p, 7000) : 0;
                             const estIdx = PIPELINE_ESTADOS.indexOf(est);
                             html += `<div style="background:#fff;padding:8px;margin-bottom:6px;border-radius:4px;border:1px solid #eee;font-family:\'JetBrains Mono\';font-size:.55rem;">
                                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">

@@ -19,9 +19,9 @@ alcance de los entregables.
 
 | Paquete | Precio | Entregables |
 |---------|--------|-------------|
-| **SOMA Esencial** | $250/m2 | Diseno arquitectonico, plantas, alzados, analisis de sitio y normativa, perspectiva de proyecto. |
-| **SOMA Integral** | $350/m2 | Esencial + moodboard de acabados, criterio de ingenierias, planos de permiso, perspectivas adicionales. |
-| **SOMA Ejecutivo** | $850/m2 | Integral + planos tecnicos ejecutivos, detalles constructivos, coordinacion integral de ingenierias. |
+| **SOMA Esencial** | $230/m2 | Diseno arquitectonico, plantas, alzados, analisis de sitio y normativa, perspectiva de proyecto. |
+| **SOMA Integral** | $300/m2 | Esencial + moodboard de acabados, criterio de ingenierias, planos de permiso, perspectivas adicionales. |
+| **SOMA Ejecutivo** | $420/m2 | Integral + planos tecnicos ejecutivos, detalles constructivos, coordinacion integral de ingenierias. |
 
 ### Reglas de visualizacion en el cotizador (SOLOJUAN 2026-05-15)
 - En los entregables **no deben aparecer los precios de los paquetes**.
@@ -30,7 +30,7 @@ alcance de los entregables.
 - El cliente no debe ver explicaciones tecnicas del cargo minimo.
 
 ### Cargo Minimo Operativo
-- **$6,500 MXN** — se aplica silenciosamente para proteger la viabilidad de
+- **$7,000 MXN** — se aplica silenciosamente para proteger la viabilidad de
   proyectos pequenos. El cliente no ve esta regla.
 
 ---

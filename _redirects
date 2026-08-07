@@ -1,11 +1,11 @@
 # SOMA — Cloudflare Pages Redirects
-# Status 200 = proxy (rewrite, transparent para el usuario)
+# Status 200 = proxy (rewrite transparente)
 # Status 301 = redirect
 
-# --- Static pages (Cloudflare Pages sirve directo desde web/) ---
-/dashboard  /web/dashboard.html  200
-/algoritmo  /web/algoritmo_soma.html  200
-/guia_visita  /web/guia_visita.html  200
+# --- Página principal → servida desde Pages ---
+/  /web/Pagina%20Web%206.html  200
+
+# --- Redirecciones ---
 /tarjeta  /  301
 
 # --- API routes exactas → proxy a Render ---
@@ -28,9 +28,8 @@
 /egresos/*  https://soma-853c.onrender.com/egresos/:splat  200
 /activity_matrix/*  https://soma-853c.onrender.com/activity_matrix/:splat  200
 
-# --- CSS, backend static → proxy a Render (rutas especiales fuera del repo root) ---
-/css/*  https://soma-853c.onrender.com/css/:splat  200
+# --- Backend static → proxy a Render ---
 /backend/*  https://soma-853c.onrender.com/backend/:splat  200
 
-# --- Recursos gráficos, web static → servidos directo por Cloudflare Pages ---
-# /recursos_graficos/* y /web/* existen en el repo, se sirven automáticamente
+# /dashboard, /algoritmo, /guia_visita → manejados por Pages Functions (con Basic Auth)
+# /web/*, /recursos_graficos/* → servidos directamente por Cloudflare Pages
