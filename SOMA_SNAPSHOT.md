@@ -94,6 +94,7 @@
   - **BIM LOD 300:** Vivienda $90 · Residencial $110 · Comercial $130 · Industrial $150 por m². Solo Arquitectura y Estructura (mismo precio, **sin MEP**). Descuentos >500 m² −5%, >1,000 m² −10%. Tarifa mínima **$12,000 MXN**. Entregable: **solo archivo Revit (RVT)**. Tiempo referencia: 2-3 sem (≤1,000 m²), 3-4 sem (1,000-3,000 m²), 4-6 sem (>3,000 m²). Endpoint `POST /cotizar_bim`.
   - **Planos Ejecutivos:** Vivienda $130 · Residencia $160 · Comercial $190 por m² (**sin industrial/naves industriales**). Complejidad del proyecto ×0.85 (Simple) / ×1.0 (Estándar) / ×1.6 (Complejo). Descuentos >300 m² −5%, >600 m² −10%. Tarifa mínima **$10,000 MXN**. Entregable: **PDF + DWG** (plantas, cortes, fachadas, acabados, carpinterías/cancelería, detalles, especificaciones). Tiempo referencia: 3-4 sem (≤300 m²), 4-6 sem (300-600 m²), 6-8 sem (>600 m²). Endpoint `POST /cotizar_planos`. **Reemplaza al servicio "PLANOS DE ANTEPROYECTO" (eliminado de la lista).**
   - **Los tres:** validación de contacto real (correo o teléfono ≥10 dígitos), precio oculto hasta presionar "VER COTIZACIÓN", total muestra "+ IVA", pago dinámico **50/50** (<$15,000) o **30/40/30** (≥$15,000), solo transferencia. Los tiempos mostrados son **referencia de mercado**; el plazo definitivo se compromete en la **entrevista de alcance**.
+  - **Formato unificado (11/08/2026):** los 3 paneles miden 418-419×281px idénticos en desktop (`min-width: 420px`), espaciado interno holgado (padding 16×18px, gaps 12/8px, botones 7×10px). Sección contacto bajada (margin-top 45px desktop / 40px tablet) dejando aire bajo el último texto. Landscape compactado (padding 10×12px) para mantener 100vh.
 - **Diagnóstico técnico:** Al elegir paquete se muestran los análisis del `diagnosticos_master.json`. Excluido de la interfaz web (solo correo/WhatsApp).
 - **Notificaciones:** Los leads activan: (1) guardado en DB, (2) reporte en `backend/reportes/`, (3) correo SMTP (puerto 465 SSL) a habitarq85@gmail.com, (4) WhatsApp Twilio a Juan. Integración con App de Entrevista vía carpeta `backend/proyectos/` compartida. (Correo actual vía **Brevo API HTTPS 443** desde 04/08/2026.)
 
@@ -131,6 +132,7 @@
 - [x] Immersion imágenes sin crop en móvil vertical
 - [x] Cotizador: email síncrono, toast feedback, timeout 20s
 - [x] `web/Pagina Web 6.html` creada con todas las correcciones
+- [x] **Cotizadores de servicios unificados (11/08/2026):** rectángulos idénticos (418-419×281px desktop), espaciado interno holgado, contacto con aire, fix desborde vertical (franja negra) y deploy a Render (`b2a0d43`).
 
 ### PRIORIDAD 3 — MARKETING (Después de P1 + P2)
 Estrategias para redes sociales, Google y otras fuentes de leads. Solo cuando el embudo completo funcione: lead → cotización → pago → factura.

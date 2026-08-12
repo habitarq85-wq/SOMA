@@ -1,5 +1,35 @@
 # MEMORIA EVOLUTIVA - SOMA TALLER VIRTUAL DE ARQUITECTURA
 
+## Sesión: 2026-08-11 — Revisión en vivo de formatos: rectángulos de cotizadores unificados, sección contacto con aire, fix desborde vertical y deploy a Render
+
+### Contexto
+Tras revisar en vivo los 3 cotizadores de la sección Servicios, cada panel tenía un ancho distinto en desktop (causado por la columna `auto` del grid: D5 316px, BIM 388px, Planos 342px), los campos se veían apiñados y el bloque de contacto quedaba pegado a los cotizadores. En pantallas verticales cortas, además, el contacto se salía del fondo naranja y aparecía una franja negra debajo.
+
+### Solución implementada
+1. **Rectángulos de cotizadores unificados en desktop**: `.services-visual.cotizador-on { max-width: 440px; min-width: 420px; height: auto; }` → los 3 paneles miden ahora **418-419×281px** idénticos (antes D5 316, BIM 388, Planos 342). En móviles se resetea `min-width: 0` para no forzar 420px.
+2. **Más aire dentro de cada panel**: padding del panel 16×18px, gap del cuerpo 12px, entre bloque y bloque 12px, entre opciones 8px, botones de opción más holgados (7×10px), inputs y botón "VER COTIZACIÓN" con más espaciado. Arregla el D5 "achocado", los campos pegados del BIM y los botones juntos de Planos.
+3. **Sección contacto bajada**: `margin-top` del bloque de contacto subió a 45px en desktop (40px en tablet, ajustado en landscape). El último texto queda con aire hasta el borde inferior de la sección en todos los formatos.
+4. **Fix desborde vertical (franja negra)**: conflicto de especificidad CSS — la regla base `section:last-of-type { height: 100vh }` (0,1,1) vencía a `section { height: auto }` (0,0,1) del media query `≤768px`, dejando la sección naranja clavada en 100vh y el contacto desbordando sobre el fondo negro. Se cambió el media query a `section, section:last-of-type { min-height: 100vh; height: auto; }` para igualar especificidad.
+5. **Landscape compactado**: padding del cotizador reducido dentro de `max-height:520px` (10×12px, gaps menores) para que la sección vuelva a caber en 100vh (movil_h: sección 390px, contacto bottom 378; movil_h_small: 380/375).
+6. **Deploy a Render**: commit `b2a0d43` pusheado a `main` (6 archivos). Verificado en línea: HTML con corrección `section:last-of-type` y cotizadores presentes, endpoint `POST /cotizar_planos` respondiendo (`email: sent`).
+
+### Verificación
+- Capturas en `recursos_graficos/_revision_formatos/`: `laptop_cotizador_{d5,bim,planos}.png`, `movil_v_sec4_{diseno,visual,bim,planos}.png` y capturas de todos los formatos (desktop 1366×768, tablet 768×1024, móvil vertical 390×844, horizontal 844×390 y 667×375).
+- Barrido de tamaños verticales (320×568 a 414×896): **todos sin desborde** — la sección ahora crece con su contenido. Caso crítico 320×568: sección 592-625px (crece) y contacto dentro del fondo naranja.
+- Overflow horizontal 0px y sin errores JS en laptop, tablet, movil_v, movil_h, movil_h_small. Test funcional (portafolio, filosofía, slider, cotizador D5) pasando.
+
+### Archivos creados/modificados
+- `web/Pagina Web 6.html` — rectángulos de cotizadores unificados, espaciado interno, sección contacto con aire, fix `section:last-of-type` en media query `≤768px`, landscape compactado.
+- `AGENTS.md`, `BITACORA_SOMA.md`, `SOMA_SNAPSHOT.md`, `SOMA_CORE_INDEX.md` — Actualizados.
+- Commit `b2a0d43` desplegado a Render (soma-853c.onrender.com).
+
+### Pendientes
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD.
+- Lead magnet — decidir ubicación en página web.
+- Definir tiempos de entrega formales en `TIEMPOS_ENTREGA_BASE.md` para proyectos SOMA completos (los cotizadores ya muestran referencia de mercado).
+
+---
+
 ## Sesión: 2026-08-11 — Cotizador Planos Ejecutivos Arquitectónicos (actividades y precios definidos)
 
 ### Contexto
