@@ -1,7 +1,71 @@
 # Contexto de Sesión — Algoritmo SOMA
 
+## Sesión: 11 Ago 2026 ✅ — Cotizadores D5 + BIM LOD 300 + Planos Ejecutivos: actividades y precios definidos
+
+### Bitácora del día
+1. **Cotizador D5 (Visualización) terminado**: botón "VER COTIZACIÓN" con validación de contacto real (correo válido o teléfono ≥10 dígitos), total oculto hasta presionar, POST `/cotizar_perspectivas` → correo a `habitarq85@gmail.com` vía Brevo.
+2. **Cotizador BIM LOD 300 (nuevo)** en sección Servicios (index 2 en `changeService`):
+   - Precios base por m² (rango bajo del mercado): Vivienda **$90**, Residencial **$110**, Comercial **$130**, Industrial **$150**.
+   - Disciplinas: **solo Arquitectura y Estructura, mismo precio, sin MEP**.
+   - Descuentos por volumen: >500 m² −5%, >1,000 m² −10%. Tarifa mínima **$12,000 MXN**.
+   - Entregable: **solo archivo Revit (RVT)** (se quitó DWG/PDF).
+   - Backend: endpoint público **`POST /cotizar_bim`** (espejo de `/cotizar_perspectivas`), correo confirmado (`email: sent`).
+3. **Análisis crítico de los cotizadores** (formas de pago y tiempos) + investigación de mercado 2026 (Budgeto MX, Carnet 3D, myarchitectai, ENGINYRING, Arrival 3D, GCC).
+4. **Tiempos de entrega actualizados** a referencia de mercado (el compromiso real se cierra en la entrevista de alcance):
+   - D5: 3–5 días hábiles/vista · 3–5 vistas 1–2 semanas · 6+ vistas 2–3 semanas.
+   - BIM: 2–3 semanas ≤1,000 m² · 3–4 semanas 1,000–3,000 m² · 4–6 semanas >3,000 m².
+5. **Esquema de pago dinámico**: **50/50** si total < $15,000; **30/40/30** si ≥ $15,000 (umbral definido por Juan). Solo transferencia.
+6. **IVA explícito**: los totales ahora muestran **"+ IVA"** (antes "no incluye IVA" ambiguo).
+7. **Verificación**: `/cotizar_bim` probado localmente → `email: sent`, reporte correcto en `backend/reportes/`.
+8. **Cotizador PLANOS EJECUTIVOS (nuevo, sin industrial)** en sección Servicios (index 3 en `changeService`; reemplaza a "PLANOS DE ANTEPROYECTO", que se eliminó de la lista):
+   - Precios base por m² (validados contra mercado 2026: Arqbeat, Resendiz, Arqzon, PE BIM, Cronoshare Mérida): Vivienda **$130**, Residencia **$160**, Comercial **$190**. **Sin industrial/naves industriales** (decisión de Juan).
+   - Complejidad del proyecto: Simple ×0.85 · Estándar ×1.0 · Complejo ×1.6.
+   - Descuentos por volumen: >300 m² −5%, >600 m² −10%. Tarifa mínima **$10,000 MXN**.
+   - Entregables: planos en **PDF y DWG** (plantas, cortes, fachadas, acabados, carpinterías/cancelería, detalles, especificaciones).
+   - Tiempos (referencia): 3–4 semanas ≤300 m² · 4–6 semanas 300–600 m² · 6–8 semanas >600 m².
+   - Backend: endpoint público **`POST /cotizar_planos`** (espejo de `/cotizar_bim`).
+9. **Estilo visual de los 3 cotizadores (D5, BIM, Planos)**: fondo pasa de negro `#1a1a1a` a **panel semitransparente** `rgba(168,62,24,0.35)` con `backdrop-filter: blur(4px)` (igual que el botón de cotizador del servicio Diseño), con `#services-visual.cotizador-on` transparente para que el blur tome el fondo terracota. Textos que usaban `--accent` (h3, total, botón, hint) reescritos a tono claro `#ffd2bd` para contraste.
+
+### Archivos creados/modificados
+- `web/Pagina Web 6.html` — cotizador BIM LOD 300 (HTML+JS), `changeService` index 2, tiempos de mercado, esquema de pago dinámico, "+ IVA", entregable solo RVT.
+- `backend/server.py` — endpoint `POST /cotizar_bim` + `public_paths` actualizado.
+- `web/Pagina Web 6.html` — cotizador Planos Ejecutivos (HTML+JS), `changeService` index 3, reemplaza a "PLANOS DE ANTEPROYECTO" (eliminado), tiempos de mercado, pago dinámico, + IVA.
+- `backend/server.py` — endpoint `POST /cotizar_planos` + `public_paths` actualizado.
+- `AGENTS.md`, `BITACORA_SOMA.md`, `SOMA_SNAPSHOT.md`, `SOMA_CORE_INDEX.md` — Actualizados.
+
+### Próxima sesión
+- Continuar con la web: revisar los cotizadores en vivo y pulir copy de Servicios.
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
+- Lead magnet — decidir ubicación en página web
+
+---
+
+## Sesión: 07 Ago 2026 ✅ — Rediseño de Servicios e Integración de Mini-Cotizador D5 en Web Local
+
+### Bitácora del día
+1. **Reordenamiento**: Mover "VISUALIZACIÓN ARQUITECTÓNICA D5 RENDER" a la posición 2 en la lista de servicios (después de Diseño Arquitectónico).
+2. **Mini-Cotizador D5**: Implementado en la zona visual de servicios cuando se selecciona Visualización. Los demás servicios siguen mostrando su imagen correspondiente de forma instantánea.
+3. **Precios y Reglas (Ajuste Mérida)**:
+   - Base por vista: Interior $2,500, Exterior $3,000, Aéreo $4,500.
+   - Complejidad renombrada a tipo de proyecto para mayor claridad: Vivienda (×1.0), Residencia (×1.5), Comercial (×2.0).
+   - Paquete de vistas: 3-5 vistas (-10%), 6+ vistas (-15%).
+   - Animación opcional: $700/segundo (mínimo 10s).
+   - Se removió la distinción por calidad (Estándar/Premium) y el botón directo de WhatsApp a petición del usuario.
+4. **Desborde Solucionado**: Corregido bug donde la transición del contenedor `max-width` en desktop provocaba un desborde temporal hacia el borde derecho de la pantalla (ahora la expansión del contenedor es instantánea al hacer clic y la animación del cotizador es únicamente por opacidad fade sin desplazamiento físico).
+5. **Términos y condiciones**: Agregada la leyenda legal indicando que la cotización final se confirmará tras la entrevista de alcance.
+6. **Validación responsive**: Verificada la maquetación y el cálculo en PC (340px derecha), tablet (baja y ajusta), móvil vertical y horizontal sin scroll horizontal.
+
+### Archivos creados/modificados
+- `web/Pagina Web 6.html` — servicios ordenados, HTML/JS/CSS del mini-cotizador D5, fixes responsive.
+
 ## Estado del Proyecto
 - ✅ **DASHBOARD funcional**: Pipeline completo (3 momentos), expediente, PDFs, métricas, auth.
+- ✅ **Cotizadores en web (D5 + BIM LOD 300 + Planos Ejecutivos)**: Servicios muestran mini-cotizadores interactivos con validación de contacto, precio oculto hasta presionar y correo a `habitarq85@gmail.com` vía Brevo.
+  - **D5 (Visualización)**: Interior $2,500 · Exterior $3,000 · Aéreo $4,500 por vista. Complejidad ×0.8/×1.0/×1.65/×2.5. Paquete 3-5 vistas −10%, 6+ −15%. Endpoint `/cotizar_perspectivas`.
+  - **BIM LOD 300**: Vivienda $90 · Residencial $110 · Comercial $130 · Industrial $150/m². Solo Arq/Est (sin MEP), mismo precio. >500 m² −5%, >1,000 m² −10%, mínimo $12,000. Entregable: Revit (RVT). Endpoint `/cotizar_bim`.
+  - **Planos Ejecutivos**: Vivienda $130 · Residencia $160 · Comercial $190/m² (**sin industrial**). Complejidad del proyecto ×0.85 (Simple)/×1.0 (Estándar)/×1.6 (Complejo). >300 m² −5%, >600 m² −10%, mínimo $10,000. Entregable: PDF + DWG. Endpoint `/cotizar_planos`.
+  - **Tiempos (referencia de mercado)**: D5 3-5 días/vista, paquetes 1-3 semanas; BIM 2-6 semanas según m². Compromiso real en entrevista de alcance.
+  - **Pago dinámico**: 50/50 si total < $15,000; 30/40/30 si ≥ $15,000. Precios + IVA explícito. Solo transferencia.
 - ✅ **Base de datos en Supabase (Pooler IPv4)**: PostgreSQL vía `aws-0-us-east-1.pooler.supabase.com:6543`. Keep-warm cada 5 min con query SQL real (`/keepwarm`).
 - ✅ **Fallback local SQLite**: Si Supabase falla, `db.py` usa automáticamente el backup local (`web/EjemploBD/proyectos_arquitectonicos.db`).
 - ✅ **Backup diario**: Cron a las 12pm ejecuta `backup_pg_to_sqlite.py` para mantener el SQLite local sincronizado.

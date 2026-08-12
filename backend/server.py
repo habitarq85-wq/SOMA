@@ -33,7 +33,7 @@ def authenticate():
 
 @app.before_request
 def require_login():
-    public_paths = ['/', '/save_immersion', '/tarjeta', '/keepwarm', '/health', '/health/alert']
+    public_paths = ['/', '/save_immersion', '/cotizar_perspectivas', '/cotizar_bim', '/cotizar_planos', '/tarjeta', '/keepwarm', '/health', '/health/alert']
     public_prefixes = ['/web/', '/css/', '/recursos_graficos/', '/backend/']
     path = request.path
     if path in public_paths or any(path.startswith(pref) for pref in public_prefixes):
@@ -455,6 +455,130 @@ def save_immersion():
         "email": "sent" if email_ok else "failed",
         "smtp_error": smtp_error,
         "whatsapp": "sent" if whatsapp_ok else "failed"
+    }), 200
+
+@app.route('/cotizar_perspectivas', methods=['POST'])
+def cotizar_perspectivas():
+    data = request.json or {}
+    ip = request.remote_addr or 'unknown'
+    if not _check_rate_limit(ip):
+        return jsonify({"status": "error", "message": "rate_limit"}), 429
+
+    tipo = data.get('tipo', 'interior')
+    complejidad = data.get('complejidad', 'MEDIO')
+    cantidad = int(data.get('cantidad', 1) or 1)
+    total = float(data.get('total', 0))
+    contacto = data.get('contacto', 'No proporcionado')
+
+    tipo_nombre = {'interior': 'Interior', 'exterior': 'Exterior', 'aereo': 'Aéreo'}.get(tipo, tipo)
+
+    now = datetime.datetime.now()
+    reporte = f"========== COTIZACIÓN DE PERSPECTIVAS ==========\n"
+    reporte += f"Alguien cotizó perspectivas con las siguientes características:\n\n"
+    reporte += f"• Contacto: {contacto}\n"
+    reporte += f"• Tipo de vista: {tipo_nombre}\n"
+    reporte += f"• Complejidad: {complejidad}\n"
+    reporte += f"• Cantidad de vistas: {cantidad}\n"
+    reporte += f"• Precio: ${total:,.2f} MXN\n"
+    reporte += f"\nFecha: {now.strftime('%d/%m/%Y')}\n"
+    reporte += f"Hora: {now.strftime('%H:%M')}\n"
+
+    asunto = f"COTIZACIÓN DE PERSPECTIVAS - {now.strftime('%d/%m/%Y %H:%M')}"
+    email_ok, smtp_error = enviar_correo(EMAIL_DESTINO, asunto, reporte)
+
+    print(f"\n{'='*50}")
+    print("🔔 COTIZACIÓN DE PERSPECTIVAS")
+    print(f"   Contacto: {contacto}")
+    print(f"   Tipo: {tipo_nombre} | Complejidad: {complejidad} | Cantidad: {cantidad}")
+    print(f"   Total: ${total:,.2f}")
+    print(f"{'='*50}\n")
+
+    return jsonify({
+        "status": "success",
+        "email": "sent" if email_ok else "failed",
+        "smtp_error": smtp_error
+    }), 200
+
+@app.route('/cotizar_bim', methods=['POST'])
+def cotizar_bim():
+    data = request.json or {}
+    ip = request.remote_addr or 'unknown'
+    if not _check_rate_limit(ip):
+        return jsonify({"status": "error", "message": "rate_limit"}), 429
+
+    contacto = data.get('contacto', 'No proporcionado')
+    tipo = data.get('tipo', 'Vivienda')
+    disciplina = data.get('disciplina', 'arq')
+    m2 = float(data.get('m2', 0))
+    total = float(data.get('total', 0))
+
+    disciplina_nombre = 'Arquitectónica' if disciplina == 'arq' else 'Estructural'
+
+    now = datetime.datetime.now()
+    reporte = f"========== COTIZACIÓN DE MODELADO BIM LOD 300 ==========\n"
+    reporte += f"Alguien cotizó modelado BIM LOD 300 con las siguientes características:\n\n"
+    reporte += f"• Contacto: {contacto}\n"
+    reporte += f"• Tipo de proyecto: {tipo}\n"
+    reporte += f"• Disciplina: {disciplina_nombre}\n"
+    reporte += f"• Superficie: {m2:,.0f} m²\n"
+    reporte += f"• Precio: ${total:,.2f} MXN\n"
+    reporte += f"\nFecha: {now.strftime('%d/%m/%Y')}\n"
+    reporte += f"Hora: {now.strftime('%H:%M')}\n"
+
+    asunto = f"COTIZACIÓN BIM LOD 300 - {now.strftime('%d/%m/%Y %H:%M')}"
+    email_ok, smtp_error = enviar_correo(EMAIL_DESTINO, asunto, reporte)
+
+    print(f"\n{'='*50}")
+    print("🔔 COTIZACIÓN DE MODELADO BIM LOD 300")
+    print(f"   Contacto: {contacto}")
+    print(f"   Tipo: {tipo} | Disciplina: {disciplina_nombre} | Superficie: {m2:,.0f} m²")
+    print(f"   Total: ${total:,.2f}")
+    print(f"{'='*50}\n")
+
+    return jsonify({
+        "status": "success",
+        "email": "sent" if email_ok else "failed",
+        "smtp_error": smtp_error
+    }), 200
+
+@app.route('/cotizar_planos', methods=['POST'])
+def cotizar_planos():
+    data = request.json or {}
+    ip = request.remote_addr or 'unknown'
+    if not _check_rate_limit(ip):
+        return jsonify({"status": "error", "message": "rate_limit"}), 429
+
+    contacto = data.get('contacto', 'No proporcionado')
+    tipo = data.get('tipo', 'Vivienda')
+    complejidad = data.get('complejidad', 'Estándar')
+    m2 = float(data.get('m2', 0))
+    total = float(data.get('total', 0))
+
+    now = datetime.datetime.now()
+    reporte = f"========== COTIZACIÓN DE PLANOS EJECUTIVOS ARQUITECTÓNICOS ==========\n"
+    reporte += f"Alguien cotizó planos ejecutivos arquitectónicos con las siguientes características:\n\n"
+    reporte += f"• Contacto: {contacto}\n"
+    reporte += f"• Tipo de proyecto: {tipo}\n"
+    reporte += f"• Complejidad de acabados: {complejidad}\n"
+    reporte += f"• Superficie: {m2:,.0f} m²\n"
+    reporte += f"• Precio: ${total:,.2f} MXN\n"
+    reporte += f"\nFecha: {now.strftime('%d/%m/%Y')}\n"
+    reporte += f"Hora: {now.strftime('%H:%M')}\n"
+
+    asunto = f"COTIZACIÓN PLANOS EJECUTIVOS - {now.strftime('%d/%m/%Y %H:%M')}"
+    email_ok, smtp_error = enviar_correo(EMAIL_DESTINO, asunto, reporte)
+
+    print(f"\n{'='*50}")
+    print("🔔 COTIZACIÓN DE PLANOS EJECUTIVOS ARQUITECTÓNICOS")
+    print(f"   Contacto: {contacto}")
+    print(f"   Tipo: {tipo} | Complejidad: {complejidad} | Superficie: {m2:,.0f} m²")
+    print(f"   Total: ${total:,.2f}")
+    print(f"{'='*50}\n")
+
+    return jsonify({
+        "status": "success",
+        "email": "sent" if email_ok else "failed",
+        "smtp_error": smtp_error
     }), 200
 
 @app.route('/activity_matrix/<temp_id>', methods=['GET'])

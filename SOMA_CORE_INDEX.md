@@ -34,7 +34,7 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 - [x] **Organización de Procesos:** Mapeo del flujo lead → proyecto → entrega → cierre. En `metodologia/Bloque 1 - Gestion del Entorno (ADM)/PROTOCOLO_ORGANIZACION_PROCESOS.md`.
 - [x] **Sistema de Cobros:** Esquema 30/40/30 implementado. Dashboard con botón "Generar 30/40/30". Endpoint `POST /cobros/generar_esquema/<id>`.
 - [x] **Registro de Pagos:** Resumen financiero en Dashboard, badges de pago por lead, tabla de cobros en expediente.
-- [ ] **Definir Tiempos de Entrega:** Pendiente de definición basada en experiencia de Juan (tamaño + paquete + factores). Estructura base en `TIEMPOS_ENTREGA_BASE.md`.
+- [ ] **Definir Tiempos de Entrega:** ⚠️ Avanzado 11/08/2026 — los cotizadores web ya muestran tiempos de referencia de mercado (D5: 3-5 días/vista, paquetes 1-3 semanas; BIM: 2-6 semanas según m²), con compromiso final en la entrevista de alcance. Pendiente documento formal `TIEMPOS_ENTREGA_BASE.md` para proyectos SOMA completos.
 - [ ] **Automatización de Impuestos:** Cálculo de ISR/IVA, generación de CFDI, reportes fiscales.
 - [x] **Protocolo de Presupuesto:** Precios oficiales v3.0 ($250/$350/$850), cargo mínimo $6,500, subsidio cruzado. En `metodologia/Bloque 1 - Gestion del Entorno (ADM)/PROTOCOLO_PRESUPUESTO_Y_VIABILIDAD.md`.
 
@@ -70,6 +70,11 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 
 ## BLOQUE 4: MARKETING Y COMUNICACIÓN (MKT)
 - [x] **Presencia Digital:** Página Web V2 (`web/Pagina Web 6.html`), Dashboard Editorial, Dashboard de Gestión.
+- [x] **Cotizadores de servicios (11/08/2026):** Servicios de Visualización (D5), Modelado BIM LOD 300 y Planos Ejecutivos Arquitectónicos con mini-cotizadores interactivos:
+  - **D5**: Interior $2,500 · Exterior $3,000 · Aéreo $4,500/vista · complejidad ×0.8-×2.5 · paquetes −10%/−15% · `POST /cotizar_perspectivas`.
+  - **BIM LOD 300**: $90/$110/$130/$150 por m² · solo Arq/Est (sin MEP) · >500 m² −5%, >1,000 m² −10%, mínimo $12,000 · entregable solo Revit (RVT) · `POST /cotizar_bim`.
+  - **Planos Ejecutivos**: $130/$160/$190 por m² (Vivienda/Residencia/Comercial, **sin industrial**) · complejidad del proyecto ×0.85-×1.6 (Simple/Estándar/Complejo) · >300 m² −5%, >600 m² −10%, mínimo $10,000 · entregable PDF + DWG · `POST /cotizar_planos`. Reemplaza a "PLANOS DE ANTEPROYECTO" (eliminado).
+  - Los tres: validación de contacto real (correo/teléfono ≥10 dígitos), precio oculto hasta presionar, "+ IVA", pago dinámico 50/50 (<$15,000) o 30/40/30 (≥$15,000), solo transferencia, tiempos de entrega de referencia de mercado.
 - [x] **Hero Web:** 4 frases rotativas de Carta de Presentación. Video playlist crossfade (2 players, sin pausa). Opacidad final 0.40.
 - [x] **Carrusel Vertical (Portafolio):** Transition fix con preloader + cleanup. `decodeURIComponent` en títulos. Nombres de archivo sincronizados con disco.
 - [ ] **Material de Publicación:** Portafolio, Tesis de Proyectos.

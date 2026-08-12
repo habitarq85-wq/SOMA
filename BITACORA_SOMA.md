@@ -1,5 +1,80 @@
 # MEMORIA EVOLUTIVA - SOMA TALLER VIRTUAL DE ARQUITECTURA
 
+## Sesión: 2026-08-11 — Cotizador Planos Ejecutivos Arquitectónicos (actividades y precios definidos)
+
+### Contexto
+Se agregó un tercer mini-cotizador a la sección Servicios: **Planos Ejecutivos Arquitectónicos**, para completar la oferta de servicios técnicos. Antes de implementarlo se validaron los rangos de precios contra fuentes de mercado 2026 (Arqbeat, Ernesto Resendiz, Arqzon, PE BIM, Cronoshare Mérida, Habitissimo Mérida). **Por decisión de Juan se excluye industrial/naves industriales.**
+
+### Solución implementada
+1. **Nuevo servicio** "PLANOS EJECUTIVOS" en index 3 de `changeService` (reemplaza a "PLANOS DE ANTEPROYECTO", que se eliminó de la lista).
+2. **Precios base por m²** (rango bajo del mercado, validado):
+   - Vivienda **$130** · Residencia **$160** · Comercial **$190**. **Sin industrial** (decisión de Juan).
+3. **Complejidad de acabados**: Básico ×0.85 · Estándar ×1.0 · Alto ×1.6 (carpinterías a medida, cancelería, detalles finos).
+4. **Reglas**: descuentos >300 m² −5%, >600 m² −10%. Tarifa mínima **$10,000 MXN**. Precios + IVA.
+5. **Entregables**: planos en **PDF y DWG** (plantas de conjunto y por nivel, cortes, fachadas, acabados, carpinterías/cancelería, detalles constructivos, especificaciones). 2 rondas de revisiones.
+6. **Tiempos (referencia de mercado)**: 3-4 semanas ≤300 m² · 4-6 semanas 300-600 m² · 6-8 semanas >600 m². Compromiso real en entrevista de alcance.
+7. **Esquema de pago dinámico**: 50/50 < $15,000; 30/40/30 ≥ $15,000 (consistente con D5 y BIM).
+8. **Nuevo endpoint público `POST /cotizar_planos`** (espejo de `/cotizar_bim`, `public_paths` actualizado).
+
+### Verificación
+- Sintaxis `server.py` validada (`ast.parse` OK) y JS del HTML validado (`new Function` OK).
+- Cálculos probados: Vivienda 100 m² Estándar $13,000 · Básico $11,050 · Alto $20,800 · mínimo 60 m² → $10,000 · Comercial 400 m² → $72,200 (−5%) · Residencia 700 m² → $100,800 (−10%).
+
+### Archivos creados/modificados
+- `web/Pagina Web 6.html` — cotizador Planos Ejecutivos (HTML+JS), `changeService` index 3 (reemplaza "PLANOS DE ANTEPROYECTO"), tiempos de mercado, pago dinámico, "+ IVA", entregables PDF+DWG.
+- `backend/server.py` — endpoint `POST /cotizar_planos` + `public_paths`.
+- `AGENTS.md`, `BITACORA_SOMA.md`, `SOMA_SNAPSHOT.md`, `SOMA_CORE_INDEX.md` — Actualizados.
+
+### Pendientes
+- Revisar los 3 cotizadores en vivo y pulir copy de Servicios.
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
+- Lead magnet — decidir ubicación en página web
+
+---
+
+## Sesión: 2026-08-11 — Cotizadores D5 + BIM LOD 300 en web (actividades y precios definidos)
+
+### Contexto
+Se continuó con la web: se terminó el cotizador D5 (perspectivas) iniciado el 07/08 y se creó un segundo cotizador para el servicio de Modelado BIM LOD 300. Se definieron formalmente actividades, precios, tiempos de entrega (con referencia de mercado) y esquemas de pago, tras un análisis crítico de las versiones iniciales.
+
+### Solución implementada
+1. **Cotizador D5 completado** (botón "VER COTIZACIÓN"):
+   - Validación de contacto real: correo con formato válido o teléfono con ≥10 dígitos.
+   - Precio oculto hasta presionar el botón; muestra total + IVA.
+   - `POST /cotizar_perspectivas` → correo a `habitarq85@gmail.com` vía Brevo (endpoint ya existía).
+2. **Nuevo cotizador BIM LOD 300** (`#bim-cotizador`, index 2 en `changeService`):
+   - Precios base por m² (rango bajo del mercado): Vivienda **$90**, Residencial **$110**, Comercial **$130**, Industrial **$150**.
+   - Disciplinas: **solo Arquitectura y Estructura, mismo precio, sin MEP** (decisión de Juan).
+   - Descuentos: >500 m² −5%, >1,000 m² −10%. Tarifa mínima **$12,000 MXN**.
+   - Entregable: **solo archivo Revit (RVT)**.
+   - Nuevo endpoint público `POST /cotizar_bim` (espejo de `/cotizar_perspectivas`, `public_paths` actualizado).
+3. **Análisis crítico de los cotizadores** (formas de pago y tiempos) con investigación de mercado 2026:
+   - Renders MX: interior 3-5 días, exterior 5-10 días, paquete desarrollo 2-4 semanas (Carnet 3D, myarchitectai).
+   - BIM LOD 300: <1,000 m² 2-3 semanas, 1,000-3,000 m² 3-4 semanas, >3,000 m² 4-6 semanas; scan-to-BIM referencia 3-18 días hábiles según tamaño (ENGINYRING), modelo desde cero 2-4 semanas (Arrival 3D).
+   - Decisiones de Juan: el cotizador es **referencia**; el plazo definitivo se compromete en la **entrevista de alcance**.
+4. **Cambios aplicados a ambos cotizadores**:
+   - **Tiempos de entrega** actualizados a referencia de mercado (ver arriba), con leyenda de que el compromiso real se confirma tras la entrevista.
+   - **Esquema de pago dinámico**: 50/50 si total < $15,000; 30/40/30 si ≥ $15,000 (umbral definido por Juan). Solo transferencia.
+   - **IVA explícito**: los totales muestran "+ IVA" (se quitó el ambiguo "No incluye IVA").
+
+### Verificación
+- `POST /cotizar_bim` probado localmente → `email: sent`, reporte correcto en `backend/reportes/`.
+- Sintaxis de `server.py` validada y servidor reiniciado (`soma-flask`), `/health` → ok.
+- Selectores HTML/JS verificados (bimSelect, calcBim, verCotizacionBim, PagoScheme).
+
+### Archivos creados/modificados
+- `web/Pagina Web 6.html` — cotizador BIM LOD 300 (HTML+JS), `changeService` index 2, tiempos de mercado, esquema de pago dinámico, "+ IVA", entregable solo RVT.
+- `backend/server.py` — endpoint `POST /cotizar_bim` + `public_paths`.
+- `AGENTS.md`, `BITACORA_SOMA.md`, `SOMA_SNAPSHOT.md`, `SOMA_CORE_INDEX.md` — Actualizados.
+
+### Pendientes
+- Continuar con la web: revisar cotizadores en vivo y pulir copy de Servicios.
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
+- Crear tabla `algoritmo_contenido` para outputs de cada estación
+- Lead magnet — decidir ubicación en página web
+
+---
+
 ## Sesión: 2026-08-05 (noche) — Monitoreo de salud: endpoint /health + alertas por correo
 
 ### Contexto
