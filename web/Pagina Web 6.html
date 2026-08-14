@@ -579,21 +579,28 @@
             .trayectoria-grid > div:last-child { text-align: center; }
             .trayectoria-grid > div:last-child p { text-align: center; font-size: 0.5rem !important; }
             .topic-slide { width: 200px; padding: 8px 12px; }
-            .services-row { grid-template-columns: 1fr; gap: 4px; align-items: start; }
-            .sv-caption { top: calc(50% + 90px); width: 150px; }
+            .services-row { grid-template-columns: minmax(150px, 1fr) 2fr; gap: 12px; align-items: start; }
+            .sv-caption { top: calc(50% + 75px); width: 150px; }
             .sv-caption .sv-btn { font-size: 0.35rem; letter-spacing: 1px; padding: 6px 6px; gap: 4px; backdrop-filter: none; -webkit-backdrop-filter: none; }
-            .interactive-list { font-size: 0.45rem; line-height: 1.4; padding-left: 8px; }
-            .services-visual { grid-column: 1 / -1; width: 100% !important; max-width: none; min-width: 0; height: 230px; }
-            .services-visual img { object-fit: cover; height: 170px; }
-            .services-visual.cotizador-on { grid-column: 1 / -1; width: 100% !important; max-width: none; min-width: 0; justify-self: start; height: 230px; }
-            .render-cotizador { width: 100%; padding: 10px 12px; min-height: 230px; }
-            .rc-body { gap: 6px; }
-            .rc-block { gap: 6px; }
-            .rc-opt { font-size: 0.38rem; padding: 4px 3px; }
-            .render-cotizador .rc-opt { font-size: 0.42rem; }
-            .rc-total { margin-top: 8px; padding-top: 6px; }
-            .rc-btn-quote { padding: 7px 12px; }
-            .rc-input { width: 52px; padding: 4px 6px; }
+            .interactive-list { font-size: 0.45rem; line-height: 1.4; padding-left: 8px; align-self: start; }
+            .services-visual { grid-column: auto; width: 100% !important; max-width: none; min-width: 0; height: 210px; }
+            .services-visual img { object-fit: cover; height: 150px; }
+            .services-visual.cotizador-on { grid-column: auto; width: 100% !important; max-width: none; min-width: 0; justify-self: start; height: 210px; }
+            .render-cotizador { width: 100%; padding: 6px 10px; min-height: 200px; }
+            .render-cotizador h3 { font-size: 0.45rem; margin-bottom: 1px; }
+            .render-cotizador .rc-sub { font-size: 0.36rem; margin-bottom: 4px; }
+            .rc-body { gap: 3px; }
+            .rc-block { gap: 6px; margin-top: 5px !important; }
+            .rc-grid { gap: 3px; }
+            .rc-opt { font-size: 0.35rem; padding: 3px 2px; min-height: 24px; }
+            .render-cotizador .rc-opt { font-size: 0.36rem; }
+            .render-cotizador .rc-mini { font-size: 0.36rem; }
+            .rc-grid .rc-input { height: 24px; }
+            .rc-total { margin-top: 3px; padding-top: 3px; }
+            .rc-total b { font-size: 0.65rem; }
+            .rc-btn-quote { padding: 3px 8px; font-size: 0.38rem; }
+            .rc-input { width: 42px; padding: 3px 4px; }
+            .rc-term-hint { font-size: 0.4rem; margin-top: 2px; padding: 3px 0 1px; }
             .contacto-block.contacto-block { margin-top: 2vh !important; }
             .services-wrapper > div { position: relative; }
             .contacto-block {
