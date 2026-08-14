@@ -1,5 +1,41 @@
 # MEMORIA EVOLUTIVA - SOMA TALLER VIRTUAL DE ARQUITECTURA
 
+## Sesión: 2026-08-14 — Fix carrusel en landscape verificado en celular, efecto imagen+título completado, y servicios/contacto compactos en celular horizontal (incluye push de cotizadores a GitHub y diagnóstico de cold start)
+
+### Contexto
+Juan pidió (1) subir a GitHub el trabajo acumulado de los cotizadores, (2) revisar por qué por la mañana la página tardaba en cargar mostrando el "constructor" de Render sospechando de los workers de Cloudflare, y (3) arreglar el carrusel de proyectos que en celular horizontal quedaba muy abajo y se cortaba con el borde inferior de la pantalla.
+
+### Solución implementada
+1. **Push a GitHub (commit `ce7b91d`)**: solo los 6 archivos modificados (`web/Pagina Web 6.html`, `backend/server.py`, `AGENTS.md`, `BITACORA_SOMA.md`, `SOMA_CORE_INDEX.md`, `SOMA_SNAPSHOT.md`); los no rastreados quedaron fuera por decisión de Juan. Push inicial falló con `gnutls_handshake() failed: The TLS connection was non-properly terminated` y se resolvió reintentando tras `sleep 2`.
+2. **Diagnóstico del "constructor" matutino**: el worker `soma-keep-warm` está sano (health `{status: ok}` con server/db/brevo OK), el cron `*/5 * * * *` está activo y Render responde HTTP 200 en ~1.5s. **No es un fallo del worker.** Causa más probable: agotamiento del cupo de 750 h/mes de Render Free (el keep-warm 24/7 consume ~744 h/mes), que suspende el servicio hasta el siguiente ciclo. No hay token de API de Render en `.env` para verificar el uso de horas por CLI.
+3. **Fix del carrusel en landscape**: en `@media (max-height: 520px)` de `Pagina Web 6.html` se compactó el slide vertical de la sección 2 (150×267 → 120×200px), se centró la sección y se anuló el `padding-top: 6vh` inline del título. El carrusel antes terminaba a ~364px en un viewport de 375px; ahora cabe completo.
+4. **Pulido del carrusel en landscape** (verificado en el Samsung A12 de Juan):
+   - **Títulos enormes/solapados** en landscape ancho (844/932px): la regla `max-width: 768px` no aplica a anchos mayores, así que el `.slide-title` base (0.65rem) se veía grande. Fix: `.slide-title` compacto en el bloque landscape (0.5rem, fondo oscuro redondeado abajo-izquierda) + efecto naranja `background: var(--accent)` en `.slide.revealed .slide-title`.
+   - **Imagen "estática"**: `@media (hover: none)` dejaba la imagen no-revelada en `grayscale(0.4)/opacity(0.8)`, haciendo imperceptible el cambio. Fix: en landscape la imagen parte de `grayscale(0.8)/opacity(0.6)` con `transform: scale(0.9)` y transición completa (filter+opacity+transform) — efecto idéntico al vertical y laptop.
+5. **Servicios/Contacto compactos en landscape** (la sección no cabía completa en el A12 horizontal):
+   - **`.services-row` en 2 columnas** (menú | visual) en lugar de 1 columna apilada → ahorra ~44px de alto.
+   - **Cotizadores compactos**: `.services-visual` 210px, imagen 150px, `.render-cotizador` `min-height` 200px con paddings/fuentes/gaps reducidos (BIM 200px, Planos 203px) — el panel cabe dentro del visual sin montarse.
+
+### Verificación
+- Puppeteer con scroll real sobre `#main-viewport` (scrollIntoView se engaña con el scroll-snap): 667×375, 740×360, 844×390, 932×430 → carrusel visible completo (`fits: true`). Desktop 1366/1024 y móvil vertical sin cambios.
+- Servicios: verificado en 800×360, 800×300, 667×375 y 568×320 con los 4 cotizadores abiertos → contacto cabe, cotizador dentro del visual sin scroll interno, sin solapamientos (h3/rc-sub/rc-grid/rc-block/rc-total/rc-term-hint), sin scroll horizontal, secciones de 360px exactos.
+- Worker: `https://soma-keep-warm.habitarq85.workers.dev/__health` → OK. Render: `https://soma-853c.onrender.com/health` → HTTP 200.
+- Fixes pusheados en commits `bef0557`, `05c57c9` y `d077a87`.
+
+### Archivos creados/modificados
+- `web/Pagina Web 6.html` — fix carrusel landscape, efecto imagen+título, servicios 2 columnas + cotizadores compactos en landscape.
+- `AGENTS.md` — bitácora de sesión actualizada.
+- `BITACORA_SOMA.md` — Esta entrada.
+- `SOMA_SNAPSHOT.md`, `SOMA_CORE_INDEX.md` — Actualizados.
+
+### Pendientes
+- Revisar en el celular de Juan el fix de servicios/contacto en landscape (A12) tras recargar con Ctrl+Shift+R.
+- Investigar horas consumidas de Render Free (panel → Usage) y decidir: plan de pago (~$7 USD/mes) o mover estáticos a Cloudflare Pages.
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD.
+- Lead magnet — decidir ubicación en página web.
+
+---
+
 ## Sesión: 2026-08-13 — Cotizadores BIM y Planos alineados en grid (mismo criterio que el de renders) y botón COTIZADOR SOMA robusto en móvil
 
 ### Contexto

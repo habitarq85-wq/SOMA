@@ -1,5 +1,39 @@
 # Contexto de Sesión — Algoritmo SOMA
 
+## Sesión: 14 Ago 2026 ✅ — Fix carrusel en landscape verificado en celular, efecto imagen+título completado, y servicios/contacto compactos en celular horizontal (incluye push de cotizadores a GitHub y diagnóstico de cold start)
+
+### Bitácora del día
+1. **Push a GitHub del trabajo acumulado de cotizadores** (commit `ce7b91d`, solo los 6 archivos modificados — el resto quedó sin rastrear por decisión de Juan). El push falló una vez con `gnutls_handshake() failed: The TLS connection was non-properly terminated` y se resolvió reintentando con `sleep 2`.
+2. **Diagnóstico del "constructor" matutino de Render**: la página tardó en cargar mostrando el spinner de Render. Verificado en vivo: worker `soma-keep-warm` (`__health`) → `{status: ok}` con server/db/brevo OK; Render `/health` → HTTP 200 en ~1.5s; wrangler autenticado y cron `*/5 * * * *` configurado. **Los workers de Cloudflare NO están fallando.** Causa más probable: Render Free tier (750 h/mes) — el keep-warm 24/7 consume ~744 h/mes y al agotarse el cupo Render suspende el servicio hasta el siguiente ciclo, produciendo cold start al entrar por la mañana. Sin token de API de Render en `.env` no se puede consultar el uso de horas por CLI.
+3. **Fix: carrusel de proyectos cortado en celular horizontal** (reporte de Juan: el carrusel quedaba muy abajo y lo cortaba la parte inferior). Causa: en landscape el slide vertical (150×267) definía la altura del carrusel (~287-307px) que sumada al título (`padding-top: 6vh` inline) excedía el alto del viewport (360-430px). Fix en `@media (max-height: 520px)`:
+   - Slide vertical de la sección 2: `150×267` → **`120×200px`**.
+   - Sección 2: `justify-content: center !important; padding-top/bottom: 0 !important`.
+   - Título: `> div:nth-of-type(2) { padding-top: 0 !important }` (anula el 6vh inline).
+   - Verificado con Puppeteer (scroll real en `#main-viewport`, no `scrollIntoView` que se engaña con el scroll-snap): 667×375, 740×360, 844×390, 932×430 → carrusel visible completo (`fits: true`). Desktop/tablet y vertical sin cambios.
+   - Commit `bef0557` pusheado a `origin/main`.
+4. **Fix carrusel landscape verificado en el celular de Juan (Samsung Galaxy A12)** y pulido del efecto:
+   - **Títulos enormes/solapados en landscape ancho** (844/932px): la regla `max-width: 768px` no aplica a anchos mayores, así que el `.slide-title` base (0.65rem) se veía grande. Se añadieron reglas compactas en `@media (max-height: 520px)`: `.slide-title` 0.5rem con fondo oscuro redondeado abajo-izquierda, y el **efecto naranja** `background: var(--accent)` + `opacity: 1` en `.slide.revealed .slide-title`.
+   - **Imagen "estática" en landscape ancho**: causa raíz = `@media (hover: none)` dejaba la imagen no-revelada en `grayscale(0.4)/opacity(0.8)`, haciendo imperceptible el cambio al revelar. Fix: en el bloque landscape, `section:nth-of-type(2) .slide img` ahora parte de `grayscale(0.8)/opacity(0.6)` con `transform: scale(0.9)` y `transition` completa (filter+opacity+transform) — el efecto queda idéntico al vertical y laptop. Verificado con estilos computados iguales en 844×390, 667×375 y 390×844.
+   - Commit `05c57c9` pusheado a `origin/main`.
+5. **Servicios/Contacto compactos en celular horizontal** (reporte de Juan: la sección no cabía completa en su A12 en landscape). Root cause: el contenido apilado (menú 40px + visual 230px + contacto) excedía el alto efectivo del viewport cuando la barra del navegador Android está visible (~300px). Fix en `@media (max-height: 520px)`:
+   - `.services-row` en **2 columnas** (`minmax(150px,1fr) 2fr`) con menú a la izquierda y visual a la derecha (antes 1 columna apilada) → ahorra ~44px de alto.
+   - **Cotizadores compactos**: `.services-visual` 210px, imagen 150px, `.render-cotizador` padding 6px/10px y `min-height` 200px, h3/rc-sub/rc-opt/rc-mini/rc-total/rc-btn-quote/rc-input reducidos para que el panel quepa dentro del visual sin montarse (BIM 200px, Planos 203px).
+   - Verificado con Puppeteer en 800×360, 800×300, 667×375 y 568×320 con los **4 cotizadores abiertos**: contacto cabe (fits), cotizador dentro del visual (`cotEnVisual OK`, sin scroll interno `scrollH < clientH`), sin solapamientos entre h3/rc-sub/rc-grid/rc-block/rc-total/rc-term-hint, sin scroll horizontal, secciones de 360px exactos.
+   - Commit `d077a87` pusheado a `origin/main`.
+
+### Archivos creados/modificados
+- `web/Pagina Web 6.html` — fix carrusel landscape (3 líneas CSS en `@media (max-height: 520px)`), efecto completo imagen+título, servicios 2 columnas + cotizadores compactos en landscape.
+- `AGENTS.md` — Esta entrada.
+- `BITACORA_SOMA.md`, `SOMA_SNAPSHOT.md`, `SOMA_CORE_INDEX.md` — Actualizados.
+
+### Próxima sesión
+- Revisar en el celular de Juan el fix de servicios/contacto en landscape (A12) tras recargar con Ctrl+Shift+R.
+- Investigar el límite de horas de Render Free: revisar en el panel de Render → Usage; si está al tope, evaluar plan de pago de Render (~$7 USD/mes) o mover la parte estática a Cloudflare Pages.
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD.
+- Lead magnet — decidir ubicación en página web.
+
+---
+
 ## Sesión: 13 Ago 2026 ✅ — Cotizadores BIM y Planos alineados en grid (mismo criterio que el de renders) y botón COTIZADOR SOMA robusto en móvil
 
 ### Bitácora del día
