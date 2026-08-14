@@ -44,7 +44,7 @@
         }
         section:last-of-type {
             height: 100vh; overflow: visible;
-            justify-content: flex-start; padding: 8vh 10% 6vh;
+            justify-content: center; padding: 3vh 10% 3vh;
             scroll-snap-align: start;
         }
 
@@ -100,7 +100,7 @@
         .video-overlay {
             position: absolute; top: 0; left: 0;
             width: 100%; height: 100%; 
-            background: linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,0.70) 100%);
+            background: linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,0.63) 100%);
             z-index: 1;
         }
         .hero-title { margin-bottom: 0; }
@@ -187,37 +187,38 @@
 
         /* --- 04. SERVICIOS --- */
         .services-wrapper { width: 100%; z-index: 2; }
-        .contacto-block.contacto-block { margin-top: clamp(5vh, 8vh, 12vh) !important; }
-        .services-row { display: grid; grid-template-columns: 1fr auto; column-gap: 30px; row-gap: 6px; align-items: center; }
+        .contacto-block.contacto-block { margin-top: clamp(1vh, 2vh, 3vh) !important; }
+        .services-row { display: grid; grid-template-columns: 1fr 420px; column-gap: 30px; row-gap: 14px; align-items: start; }
         .interactive-list { list-style: none; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; line-height: 2.2; border-left: 2px solid var(--accent); padding-left: 25px; }
         .interactive-list li { cursor: pointer; opacity: 0.4; transition: 0.4s var(--ease); }
         .interactive-list li.active { opacity: 1; color: var(--accent); }
-        .services-visual { width: 100%; max-width: 150px; height: 210px; border: 1px solid rgba(255,255,255,0.05); background: #1a1a1a; overflow: hidden; }
-        .services-visual.cotizador-on { max-width: 440px; min-width: 420px; height: auto; border-color: var(--accent); overflow: visible; background: transparent; }
-        .services-visual img { width: 100%; height: 100%; display: none; object-fit: cover; filter: grayscale(1); transition: 0.6s var(--ease); }
+        .services-visual { width: 100%; max-width: 420px; min-width: 420px; height: 290px; border: 1px solid transparent; background: transparent; position: relative; overflow: hidden; }
+        .services-visual.cotizador-on { border-color: var(--accent); overflow: visible; background: transparent; }
+        .services-visual img { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 150px; height: 210px; display: none; object-fit: cover; filter: grayscale(1); box-shadow: 0 10px 30px rgba(0,0,0,0.35); transition: 0.6s var(--ease); }
         .services-visual img.active-img { display: block; opacity: 0.8; }
         .services-visual.cotizador-on img { display: none !important; }
-        .sv-caption { grid-column: 2; margin-top: 0; justify-self: start; display: none; }
-        .sv-caption.show { display: block; }
+        .sv-caption { position: absolute; left: 50%; top: calc(50% + 105px); transform: translateX(-50%); display: block; width: 150px; max-width: 150px; height: 30px; overflow: hidden; box-sizing: border-box; visibility: hidden; opacity: 0; pointer-events: none; z-index: 5; transition: none; }
+        .sv-caption.show { visibility: visible; opacity: 1; pointer-events: auto; }
+        .services-visual.cotizador-on .sv-caption { visibility: hidden !important; opacity: 0 !important; }
         .sv-btn {
-            font-family: 'JetBrains Mono', monospace; font-size: 0.5rem;
-            text-transform: uppercase; letter-spacing: 3px; color: rgba(255,255,255,0.9);
+            font-family: 'JetBrains Mono', monospace; font-size: 0.52rem;
+            text-transform: uppercase; letter-spacing: 2.5px; color: rgba(255,255,255,0.9);
             background: rgba(168,62,24,0.35);
             backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-            border: none; padding: 8px 14px; cursor: pointer; transition: 0.3s var(--ease);
-            display: inline-flex; align-items: center; gap: 10px;
+            border: none; padding: 8px 10px; cursor: pointer; transition: 0.3s var(--ease);
+            display: inline-flex; align-items: center; gap: 6px; width: 100%; max-width: 150px; box-sizing: border-box; justify-content: space-between; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .sv-btn::after { content: '→'; font-size: 0.65rem; opacity: 0.6; transition: 0.3s var(--ease); }
         .sv-btn:hover { background: var(--accent); color: #fff; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(212,94,44,0.35); }
         .sv-btn:hover::after { opacity: 1; transform: translateX(5px); }
-        .services-wrapper > div > div:last-child {
+        .contacto-block {
             margin-top: 45px !important; padding-top: 14px !important; padding-left: 25px;
         }
-        .services-wrapper > div > div:last-child h2 { margin-bottom: 2px; }
-        .services-wrapper > div > div:last-child p {
+        .contacto-block h2 { margin-bottom: 2px; }
+        .contacto-block p {
             font-size: 0.65rem !important; margin-top: 5px !important;
         }
-        .services-wrapper > div > div:last-child .btn-soma {
+        .contacto-block .btn-soma {
             margin-top: 12px !important; padding: 10px 22px; font-size: 0.6rem;
         }
         .render-cotizador { display: none; background: rgba(168,62,24,0.35); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.15); padding: 16px 18px; box-sizing: border-box; width: 100%; }
@@ -228,11 +229,30 @@
         .rc-body { display: flex; flex-direction: column; gap: 12px; }
         .rc-block { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
         .rc-label { font-family: 'JetBrains Mono', monospace; font-size: 0.45rem; text-transform: uppercase; letter-spacing: 1.5px; color: #bbb; white-space: nowrap; }
-        .rc-opts { display: flex; flex-wrap: wrap; gap: 8px; }
-        .rc-opts.four { display: grid; grid-template-columns: repeat(4, auto); }
-        .rc-opt { font-family: 'JetBrains Mono', monospace; font-size: 0.45rem; padding: 7px 10px; border: 1px solid #333; color: #ccc; cursor: pointer; text-align: center; transition: 0.25s var(--ease); background: transparent; line-height: 1.3; white-space: nowrap; position: relative; }
-        .rc-opt:hover { border-color: var(--accent); }
-        .rc-opt.on { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; }
+        .rc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; align-items: center; }
+        .rc-grid-4 { grid-template-columns: repeat(4, 1fr); }
+        .rc-grid .rc-opt { width: 100%; }
+        .rc-grid .rc-input { width: 100%; height: 30px; }
+        .rc-grid .rc-mini { text-align: center; color: #888; }
+        .rc-grid .rc-field { grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .rc-grid .rc-cell { display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .rc-grid .rc-cell .rc-input { width: 72px; }
+        .plano-grid { gap: 6px; }
+        .plano-grid .rc-cell { justify-content: flex-start; }
+        .plano-grid .rc-cell .rc-input { width: 62px; height: 22px; font-size: 0.6rem; }
+        .rc-grid .rc-span-1 { grid-column: span 1; }
+        .rc-grid .rc-span-2 { grid-column: span 2; }
+        .rc-grid .rc-span-3 { grid-column: span 3; }
+        .rc-grid .rc-span-4 { grid-column: span 4; }
+        .rc-grid .rc-num { text-align: center; }
+        .rc-opts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; flex: 1; min-width: 0; }
+        .rc-opts.two { grid-template-columns: repeat(2, 1fr); }
+        .rc-opts.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        .rc-opts .rc-opt { width: 100%; }
+        .rc-opts.four .rc-opt { font-size: 0.4rem; padding: 7px 6px; }
+        .rc-opt { font-family: 'JetBrains Mono', monospace; font-size: 0.45rem; padding: 7px 10px; border: 1px solid transparent; color: #ccc; cursor: pointer; text-align: center; transition: 0.25s var(--ease); background: rgba(168,62,24,0.55); line-height: 1.3; white-space: nowrap; position: relative; height: 30px; display: flex; align-items: center; justify-content: center; }
+        .rc-opt:hover { border-color: transparent; }
+        .rc-opt.on { background: var(--accent); border-color: #000; color: #fff; font-weight: 700; }
         .rc-opt[data-tip]::after { content: attr(data-tip); position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: #0a0a0a; border: 1px solid var(--accent); color: var(--paper); font-family: 'JetBrains Mono', monospace; font-size: 0.55rem; padding: 8px 12px; white-space: normal; width: max-content; max-width: 240px; line-height: 1.5; opacity: 0; visibility: hidden; transition: 0.25s var(--ease); z-index: 50; pointer-events: none; }
         .rc-opt[data-tip]:hover::after { opacity: 1; visibility: visible; }
         .rc-opts.four .rc-opt:first-child[data-tip]::after { left: 0; transform: none; }
@@ -256,6 +276,12 @@
         .rc-term-hint:hover .rc-term-tip { opacity: 1; visibility: visible; }
 
         .render-cotizador .rc-sub { color: #ebd9cd; }
+        #render-cotizador .rc-block { margin-top: 7px; }
+        #bim-cotizador .rc-grid { gap: 6px; }
+        #bim-cotizador .rc-block { margin-top: 7px; }
+        #plano-cotizador .rc-block { margin-top: 7px; }
+        .render-cotizador .rc-opt { font-size: 0.5rem; }
+        .render-cotizador .rc-mini { font-size: 0.5rem; }
         .render-cotizador h3, .render-cotizador .rc-caret,
         .render-cotizador .rc-term-hint, .render-cotizador .rc-total b,
         .render-cotizador .rc-hidden-total { color: #ffd2bd; }
@@ -358,7 +384,7 @@
         @media (max-width: 768px) {
             .scroll-container { scroll-snap-type: none; }
             .scroll-hint { bottom: 26px; color: rgba(244,241,238,0.75); font-size: 2.2rem; text-shadow: 0 2px 12px rgba(0,0,0,0.8); }
-            section, section:last-of-type { padding: 0 4%; min-height: 100vh; height: auto; justify-content: flex-start; padding-top: 6vh; padding-bottom: 6vh; overflow: visible; }
+            section, section:last-of-type { padding: 0 4%; min-height: 100vh; height: auto; justify-content: center; padding-top: 2vh; padding-bottom: 2vh; overflow: visible; }
             section:first-child { padding-top: 15vh; justify-content: flex-start; }
             section:nth-of-type(2) { justify-content: flex-start; padding-top: 3vh; padding-bottom: 3vh; }
             section:nth-of-type(2) > div:first-of-type { padding-top: 0 !important; }
@@ -372,7 +398,7 @@
             section:nth-of-type(2) .slide .slide-title { transition: opacity 0.6s ease, background 0.6s ease; }
             section:nth-of-type(2) .slide.revealed .slide-title { opacity: 1; background: var(--accent); }
             section:first-child .video-overlay {
-                background: linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,0.70) 100%);
+                background: linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,0.63) 100%);
             }
             h2 { font-size: clamp(1.2rem, 5vw, 1.6rem); margin-bottom: 8px; }
             .label { font-size: 0.5rem; letter-spacing: 2px; margin-bottom: 6px; }
@@ -421,15 +447,16 @@
             }
 
             .services-row { grid-template-columns: 1fr; gap: 10px 0; }
-            .sv-caption { grid-column: auto; justify-self: start; }
+            .sv-caption { top: calc(50% + 105px); width: 150px; }
+            .sv-caption .sv-btn { backdrop-filter: none; -webkit-backdrop-filter: none; }
             .interactive-list { font-size: 0.65rem; line-height: 2; padding-left: 15px; }
-            .services-visual { width: 100% !important; max-width: 200px; height: auto; }
-            .services-visual img { object-fit: contain; height: auto; }
-            .services-visual.cotizador-on { grid-column: 1 / -1; width: 100% !important; max-width: 440px; min-width: 0; justify-self: start; height: auto; }
-            .render-cotizador { width: 100%; }
-            .services-wrapper > div > div:last-child p { font-size: 0.65rem !important; margin-top: 4px !important; }
-            .contacto-block.contacto-block { margin-top: 8vh !important; }
-            .services-wrapper > div > div:last-child {
+            .services-visual { grid-column: 1 / -1; width: 100% !important; max-width: none; min-width: 0; height: 320px; }
+            .services-visual img { object-fit: cover; height: 210px; }
+            .services-visual.cotizador-on { grid-column: 1 / -1; width: 100% !important; max-width: 440px; min-width: 0; justify-self: start; height: 320px; }
+            .render-cotizador { width: 100%; min-height: 292px; }
+            .contacto-block p { font-size: 0.65rem !important; margin-top: 4px !important; }
+            .contacto-block.contacto-block { margin-top: 4vh !important; }
+            .contacto-block {
                 border-top: 1px solid rgba(255,255,255,0.3) !important;
                 margin-top: 40px !important; padding-top: 20px !important;
             }
@@ -494,18 +521,20 @@
             .img-option img { object-fit: contain; height: auto; max-height: 200px; }
             #input-program > div { grid-template-columns: 1fr; }
             .services-row { grid-template-columns: 1fr; gap: 8px 0; }
-            .sv-caption { grid-column: auto; justify-self: start; }
-            .services-visual { width: 100% !important; max-width: 150px; height: auto; }
-            .services-visual img { object-fit: contain; height: auto; }
-            .services-visual.cotizador-on { grid-column: 1 / -1; width: 100% !important; max-width: none; min-width: 0; justify-self: start; height: auto; }
+            .sv-caption { top: calc(50% + 105px); width: 150px; }
+            .sv-caption .sv-btn { font-size: 0.45rem; letter-spacing: 1.5px; padding: 7px 8px; backdrop-filter: none; -webkit-backdrop-filter: none; }
+            .services-visual { grid-column: 1 / -1; width: 100% !important; max-width: none; min-width: 0; height: 320px; }
+            .services-visual img { object-fit: cover; height: 210px; }
+            .services-visual.cotizador-on { grid-column: 1 / -1; width: 100% !important; max-width: none; min-width: 0; justify-self: start; height: 320px; }
             .render-cotizador { width: 100%; padding: 14px 12px; }
             .rc-body { gap: 10px; }
-            .rc-opts.four { grid-template-columns: repeat(2, 1fr); }
+            .rc-opts.four { grid-template-columns: repeat(4, 1fr); }
+            .render-cotizador { min-height: 292px; }
             .rc-opt { font-size: 0.4rem; padding: 5px 4px; }
             .rc-opt[data-tip]::after { width: 150px; max-width: 150px; top: calc(100% + 6px); }
             .interactive-list { font-size: 0.55rem; line-height: 1.6; padding-left: 12px; }
-            .services-wrapper > div > div:last-child p { font-size: 0.55rem !important; margin-top: 3px !important; }
-            .contacto-block.contacto-block { margin-top: 6vh !important; }
+            .contacto-block p { font-size: 0.55rem !important; margin-top: 3px !important; }
+            .contacto-block.contacto-block { margin-top: 3vh !important; }
             .topic-slide { width: 240px; }
             .inspection-overlay { padding: 0; }
             .view-side { height: 90px; padding: 6px 8px; gap: 6px; }
@@ -543,34 +572,36 @@
             .trayectoria-grid > div:last-child { text-align: center; }
             .trayectoria-grid > div:last-child p { text-align: center; font-size: 0.5rem !important; }
             .topic-slide { width: 200px; padding: 8px 12px; }
-            .services-row { grid-template-columns: 1fr auto; gap: 4px; align-items: center; }
-            .sv-caption { grid-column: 2; justify-self: start; }
+            .services-row { grid-template-columns: 1fr; gap: 4px; align-items: start; }
+            .sv-caption { top: calc(50% + 105px); width: 150px; }
+            .sv-caption .sv-btn { font-size: 0.35rem; letter-spacing: 1px; padding: 6px 6px; gap: 4px; backdrop-filter: none; -webkit-backdrop-filter: none; }
             .interactive-list { font-size: 0.45rem; line-height: 1.4; padding-left: 8px; }
-            .services-visual { width: 100px !important; height: auto; }
-            .services-visual img { object-fit: contain; height: auto; }
-            .services-visual.cotizador-on { grid-column: 1 / -1; width: 100% !important; max-width: none; min-width: 0; justify-self: start; height: auto; }
-            .render-cotizador { width: 100%; padding: 10px 12px; }
+            .services-visual { grid-column: 1 / -1; width: 100% !important; max-width: none; min-width: 0; height: 320px; }
+            .services-visual img { object-fit: cover; height: 210px; }
+            .services-visual.cotizador-on { grid-column: 1 / -1; width: 100% !important; max-width: none; min-width: 0; justify-self: start; height: 320px; }
+            .render-cotizador { width: 100%; padding: 10px 12px; min-height: 292px; }
             .rc-body { gap: 6px; }
             .rc-block { gap: 6px; }
             .rc-opt { font-size: 0.38rem; padding: 4px 3px; }
+            .render-cotizador .rc-opt { font-size: 0.42rem; }
             .rc-total { margin-top: 8px; padding-top: 6px; }
             .rc-btn-quote { padding: 7px 12px; }
             .rc-input { width: 52px; padding: 4px 6px; }
-            .contacto-block.contacto-block { margin-top: 4vh !important; }
+            .contacto-block.contacto-block { margin-top: 2vh !important; }
             .services-wrapper > div { position: relative; }
-            .services-wrapper > div > div:last-child {
+            .contacto-block {
                 border-top: 1px solid rgba(255,255,255,0.2) !important;
                 margin-top: 10px !important; padding: 6px 0 2vh !important;
                 display: flex !important; flex-wrap: wrap; align-items: center; gap: 4px;
             }
-            .services-wrapper > div > div:last-child h2 {
+            .contacto-block h2 {
                 font-size: 0.4rem; margin: 0; letter-spacing: 1px;
             }
-            .services-wrapper > div > div:last-child p {
+            .contacto-block p {
                 font-size: 0.45rem !important; margin: 0 !important; line-height: 1.2;
                 font-family: 'JetBrains Mono', monospace !important;
             }
-            .services-wrapper > div > div:last-child .btn-soma {
+            .contacto-block .btn-soma {
                 margin-left: auto !important; margin-top: 0 !important; padding: 4px 10px; font-size: 0.45rem;
                 flex-shrink: 0;
             }
@@ -782,7 +813,6 @@
         </div>
         <div class="services-wrapper">
             <div>
-                <p style="font-family: 'JetBrains Mono', monospace; font-size: clamp(0.65rem, 1vw, 0.8rem); color: rgba(244,241,238,0.7); line-height: 1.6; margin-bottom: 25px; max-width: 720px;">
                 <div class="services-row">
                     <ul class="interactive-list">
                         <li class="active" onclick="changeService(this, 0)">DISEÑO ARQUITECTÓNICO</li>
@@ -792,34 +822,20 @@
                     </ul>
                     <div class="services-visual" id="services-visual">
                         <img loading="lazy" src="../recursos_graficos/Servicios/Diseño arquitectónico.webp" class="active-img" alt="Diseño arquitectónico">
-                        <img loading="lazy" src="../recursos_graficos/Servicios/Visualización Arquitectónica.webp" alt="Visualización arquitectónica">
-                        <img loading="lazy" src="../recursos_graficos/Servicios/Modelado BIM.webp" alt="Modelado BIM">
-                        <img loading="lazy" src="../recursos_graficos/Servicios/Planos de Anteproyecto.webp" alt="Planos ejecutivos">
                         <div class="render-cotizador" id="render-cotizador">
-                        <h3>COTIZADOR D5</h3>
-                        <p class="rc-sub">Render arquitectónico por vista — precios MXN</p>
+                        <h3>COTIZADOR DE RENDERS</h3>
+                        <p class="rc-sub">Render arquitectónico — precios MXN por render</p>
                         <div class="rc-body">
-                            <div class="rc-block">
-                                <span class="rc-label">Tipo de vista</span>
-                                <div class="rc-opts three">
-                                    <button type="button" class="rc-opt on" onclick="rcSelect(this,'renderTipo','interior')">INTERIOR</button>
-                                    <button type="button" class="rc-opt" onclick="rcSelect(this,'renderTipo','exterior')">EXTERIOR</button>
-                                    <button type="button" class="rc-opt" onclick="rcSelect(this,'renderTipo','aereo')">AÉREO</button>
-                                </div>
-                            </div>
-                            <div class="rc-block">
-                                <span class="rc-label">Complejidad</span>
-                                <div class="rc-opts four">
-                                    <button type="button" class="rc-opt" data-tip="Un ambiente, mobiliario estándar" onclick="rcSelect(this,'renderComplejidad',0.8)">BÁSICO</button>
-                                    <button type="button" class="rc-opt on" data-tip="Sala, recámara o similar con amueblado completo" onclick="rcSelect(this,'renderComplejidad',1)">MEDIO</button>
-                                    <button type="button" class="rc-opt" data-tip="Sala-comedor-cocina u otros ambientes en una sola vista" onclick="rcSelect(this,'renderComplejidad',1.65)">INTEGRADO</button>
-                                    <button type="button" class="rc-opt" data-tip="Interiores densos, locales, hoteles, vegetación abundante" onclick="rcSelect(this,'renderComplejidad',2.5)">COMPLEJO</button>
-                                </div>
-                            </div>
-                            <div class="rc-block">
-                                <span class="rc-label">Cantidad de vistas</span>
+                            <div class="rc-grid">
+                                <span class="rc-label rc-span-2">Tipo de render</span>
+                                <span class="rc-label rc-num">Nº renders</span>
+                                <button type="button" class="rc-opt on" data-grp="tipo" onclick="rcSelect(this,'renderTipo','interior')">INTERIOR</button>
+                                <button type="button" class="rc-opt" data-grp="tipo" onclick="rcSelect(this,'renderTipo','exterior')">EXTERIOR</button>
                                 <input type="number" class="rc-input" id="renderCantidad" value="1" min="1" max="20" onchange="calcRender()">
-                                <span class="rc-mini">uds</span>
+                                <span class="rc-label rc-span-3">Nivel de ambientación</span>
+                                <button type="button" class="rc-opt" data-grp="nivel" data-complejidad="0.8" onclick="rcSelect(this,'renderComplejidad',0.8)">BÁSICO</button>
+                                <button type="button" class="rc-opt on" data-grp="nivel" data-complejidad="1" onclick="rcSelect(this,'renderComplejidad',1)">MEDIO</button>
+                                <button type="button" class="rc-opt" data-grp="nivel" data-complejidad="2.5" onclick="rcSelect(this,'renderComplejidad',2.5)">ALTO</button>
                             </div>
                         </div>
                         <div class="rc-block">
@@ -832,36 +848,32 @@
                         </div>
                         <span class="rc-term-hint">Proceso y términos <span class="rc-caret">▾</span><span class="rc-term-tip">
                             La visualización incluye <b>modelado de la escena, amueblado, ambientación, texturizado y postproducción</b>.<br><br>
-                            Tiempo de entrega (referencia de mercado): <b>3–5 días hábiles</b> por vista; paquetes de 3–5 vistas <b>1–2 semanas</b>; 6+ vistas <b>2–3 semanas</b>. El plazo definitivo se confirma tras la entrevista de alcance.<br><br>
-                            Pago por <b>transferencia</b>: <span id="renderPagoScheme">50% anticipo · 50% en la entrega final</span> (30/40/30 para montos ≥ $15,000 MXN). <b>Precios + IVA</b>.<br><br>
-                            Entregas: revisión preliminar, 1 entrega de ajuste y entrega final. Formato <b>JPG y PNG</b>.<br><br>
-                            <b>2 rondas de revisiones incluidas.</b> Paquete de 3–5 vistas −10%, 6+ vistas −15%.
+                            Tiempo de entrega (referencia): <b>5–10 días hábiles</b> por render; paquetes de 3–5 renders <b>2–3 semanas</b>; 6+ renders <b>3–4 semanas</b>. El plazo definitivo se confirma tras la entrevista de alcance (depende del nivel de detalle y carga de trabajo actual).<br><br>
+                            <b>Flujo de trabajo y pagos:</b><br>
+                            1. <b>Contratación</b> → <span id="renderPagoAnticipo">50% anticipo</span> (30% si monto ≥ $15,000 MXN).<br>
+                            2. <b>Primera entrega</b> → propuesta de arranque.<br>
+                            3. <b>Revisión → ajuste</b> (40% si monto ≥ $15,000 MXN).<br>
+                            4. <b>Última revisión</b> → detalles finales.<br>
+                            5. <b>Entrega final</b> → <span id="renderPagoFinal">50% restante</span> (30% si monto ≥ $15,000 MXN).<br><br>
+                            Pago por <b>transferencia</b>. <b>Precios + IVA</b>.<br><br>
+                            Formato <b>JPG y PNG</b>.
                         </span></span>
                     </div>
                     <div class="render-cotizador bim-cotizador" id="bim-cotizador">
                         <h3>COTIZADOR BIM LOD 300</h3>
-                        <p class="rc-sub">Modelado BIM arquitectónico y estructural — precios MXN/m²</p>
+                        <p class="rc-sub">Modelado BIM arquitectónico — precios MXN/m²</p>
                         <div class="rc-body">
-                            <div class="rc-block">
-                                <span class="rc-label">Tipo de proyecto</span>
-                                <div class="rc-opts four">
-                                    <button type="button" class="rc-opt on" onclick="bimSelect(this,'bimTipo',90)">VIVIENDA</button>
-                                    <button type="button" class="rc-opt" onclick="bimSelect(this,'bimTipo',110)">RESIDENCIAL</button>
-                                    <button type="button" class="rc-opt" onclick="bimSelect(this,'bimTipo',130)">COMERCIAL</button>
-                                    <button type="button" class="rc-opt" onclick="bimSelect(this,'bimTipo',150)">INDUSTRIAL</button>
+                            <div class="rc-grid">
+                                <span class="rc-label rc-span-3">Tipo de proyecto</span>
+                                <button type="button" class="rc-opt on" data-grp="bimTipo" onclick="bimSelect(this,'bimTipo',90)">CASA HABITACIÓN</button>
+                                <button type="button" class="rc-opt" data-grp="bimTipo" onclick="bimSelect(this,'bimTipo',110)">MULTIFAMILIAR</button>
+                                <button type="button" class="rc-opt" data-grp="bimTipo" onclick="bimSelect(this,'bimTipo',130)">COMERCIAL</button>
+                                <span class="rc-label rc-span-2">Superficie</span>
+                                <span class="rc-label rc-span-1"></span>
+                                <div class="rc-field rc-span-2">
+                                    <input type="number" class="rc-input" id="bimM2" value="100" min="10" max="100000" onchange="calcBim()" oninput="calcBim()">
+                                    <span class="rc-mini">m²</span>
                                 </div>
-                            </div>
-                            <div class="rc-block">
-                                <span class="rc-label">Disciplina</span>
-                                <div class="rc-opts two">
-                                    <button type="button" class="rc-opt on" onclick="bimSelect(this,'bimDisciplina','arq')">ARQUITECTÓNICA</button>
-                                    <button type="button" class="rc-opt" onclick="bimSelect(this,'bimDisciplina','est')">ESTRUCTURAL</button>
-                                </div>
-                            </div>
-                            <div class="rc-block">
-                                <span class="rc-label">Superficie</span>
-                                <input type="number" class="rc-input" id="bimM2" value="100" min="10" max="100000" onchange="calcBim()" oninput="calcBim()">
-                                <span class="rc-mini">m²</span>
                             </div>
                         </div>
                         <div class="rc-block">
@@ -870,39 +882,35 @@
                         </div>
                         <div class="rc-total">
                             <button type="button" class="rc-btn-quote" onclick="verCotizacionBim(this)">VER COTIZACIÓN</button>
-                            <b id="bimTotal" class="rc-hidden-total">$9,000</b>
+                            <b id="bimTotal" class="rc-hidden-total">$10,000</b>
                         </div>
                         <span class="rc-term-hint">Proceso y términos <span class="rc-caret">▾</span><span class="rc-term-tip">
-                            El modelado BIM LOD 300 incluye <b>modelo arquitectónico y/o estructural en Revit, elementos definidos con especificaciones y documentación ejecutiva</b> (plantas, cortes, fachadas).<br><br>
-                            Tiempo de entrega (referencia de mercado): <b>2–3 semanas</b> hasta 1,000 m²; <b>3–4 semanas</b> de 1,000 a 3,000 m²; <b>4–6 semanas</b> para más de 3,000 m². El plazo definitivo se confirma tras la entrevista de alcance.<br><br>
-                            Pago por <b>transferencia</b>: <span id="bimPagoScheme">50% anticipo · 50% en la entrega final</span> (30/40/30 para montos ≥ $15,000 MXN). <b>Precios + IVA</b>.<br><br>
-                            Entregable: archivo <b>Revit (RVT)</b>. <b>2 rondas de revisiones incluidas.</b><br><br>
-                            Descuento por volumen de honorarios: >$40,000 −5% · >$80,000 −10%.</span></span>
+                            Incluye <b>modelo 3D arquitectónico en Revit (RVT)</b> con elementos modelados con <b>especificación general</b>. Alcance se confirma en la entrevista.<br><br>
+                            Tiempo de entrega (referencia): <b>2–3 semanas</b> hasta 1,000 m²; <b>3–4 semanas</b> de 1,000 a 3,000 m²; <b>4–6 semanas</b> para más de 3,000 m².<br><br>
+                            <b>Flujo de trabajo y pagos (50/50):</b><br>
+                            1. <b>Contratación</b> → <span id="bimPagoAnticipo">50% anticipo</span> + revisión de documentación y setup del modelo.<br>
+                            2. <b>Primera entrega</b> → modelo base 3D.<br>
+                            3. <b>Revisión → ajuste</b> (1 ronda incluida).<br>
+                            4. <b>Entrega final</b> → archivo RVT completo (<span id="bimPagoFinal">50% restante</span>).<br><br>
+                            Pago por <b>transferencia</b>. <b>Precios + IVA</b>.</span></span>
                     </div>
                     <div class="render-cotizador bim-cotizador" id="plano-cotizador">
                         <h3>COTIZADOR PLANOS EJECUTIVOS</h3>
                         <p class="rc-sub">Planos ejecutivos arquitectónicos — precios MXN/m²</p>
                         <div class="rc-body">
-                            <div class="rc-block">
-                                <span class="rc-label">Tipo de proyecto</span>
-                                <div class="rc-opts">
-                                    <button type="button" class="rc-opt on" onclick="planoSelect(this,'planoTipo',130)">VIVIENDA</button>
-                                    <button type="button" class="rc-opt" onclick="planoSelect(this,'planoTipo',160)">RESIDENCIA</button>
-                                    <button type="button" class="rc-opt" onclick="planoSelect(this,'planoTipo',190)">COMERCIAL</button>
+                            <div class="rc-grid plano-grid">
+                                <span class="rc-label rc-span-2">Tipo de proyecto</span>
+                                <div class="rc-cell">
+                                    <input type="number" class="rc-input" id="planoM2" value="100" min="10" max="100000" onchange="calcPlano()" oninput="calcPlano()">
+                                    <span class="rc-mini">m²</span>
                                 </div>
-                            </div>
-                            <div class="rc-block">
-                                <span class="rc-label">Complejidad del proyecto</span>
-                                <div class="rc-opts">
-                                    <button type="button" class="rc-opt" data-tip="Espacios repetitivos o regulares, plantas repetidas, pocos niveles, detalles estándar" onclick="planoSelect(this,'planoComplejidad',0.85)">SIMPLE</button>
-                                    <button type="button" class="rc-opt on" data-tip="1–3 niveles, mobiliario completo de mercado, detalles típicos, carpinterías sencillas" onclick="planoSelect(this,'planoComplejidad',1)">ESTÁNDAR</button>
-                                    <button type="button" class="rc-opt" data-tip="Muy amueblado o geometría irregular: dobles alturas, curvas, carpinterías a medida, interiores densos" onclick="planoSelect(this,'planoComplejidad',1.6)">COMPLEJO</button>
-                                </div>
-                            </div>
-                            <div class="rc-block">
-                                <span class="rc-label">Superficie</span>
-                                <input type="number" class="rc-input" id="planoM2" value="100" min="10" max="100000" onchange="calcPlano()" oninput="calcPlano()">
-                                <span class="rc-mini">m²</span>
+                                <button type="button" class="rc-opt on" data-grp="planoTipo" onclick="planoSelect(this,'planoTipo',130)">CASA HABITACIÓN</button>
+                                <button type="button" class="rc-opt" data-grp="planoTipo" onclick="planoSelect(this,'planoTipo',160)">MULTIFAMILIAR</button>
+                                <button type="button" class="rc-opt" data-grp="planoTipo" onclick="planoSelect(this,'planoTipo',190)">COMERCIAL</button>
+                                <span class="rc-label rc-span-3">Complejidad del proyecto</span>
+                                <button type="button" class="rc-opt" data-grp="planoComplejidad" data-tip="Espacios repetitivos o regulares, plantas repetidas, pocos niveles, detalles estándar" onclick="planoSelect(this,'planoComplejidad',0.85)">SIMPLE</button>
+                                <button type="button" class="rc-opt on" data-grp="planoComplejidad" data-tip="1–3 niveles, mobiliario completo de mercado, detalles típicos, carpinterías sencillas" onclick="planoSelect(this,'planoComplejidad',1)">ESTÁNDAR</button>
+                                <button type="button" class="rc-opt" data-grp="planoComplejidad" data-tip="Muy amueblado o geometría irregular: dobles alturas, curvas, carpinterías a medida, interiores densos" onclick="planoSelect(this,'planoComplejidad',1.6)">COMPLEJO</button>
                             </div>
                         </div>
                         <div class="rc-block">
@@ -914,16 +922,23 @@
                             <b id="planoTotal" class="rc-hidden-total">$13,000</b>
                         </div>
                         <span class="rc-term-hint">Proceso y términos <span class="rc-caret">▾</span><span class="rc-term-tip">
-                            Los planos ejecutivos arquitectónicos incluyen <b>plantas de conjunto, plantas por nivel, cortes, fachadas, plano de acabados, plano de carpinterías y cancelería, detalles constructivos y especificaciones</b> listos para trámite.<br><br>
+                            Los planos ejecutivos incluyen <b>planos arquitectónicos, ejecutivos generales y ejecutivos de detalle</b>.<br><br>
                             Tiempo de entrega (referencia de mercado): <b>3–4 semanas</b> hasta 300 m²; <b>4–6 semanas</b> de 300 a 600 m²; <b>6–8 semanas</b> para más de 600 m². El plazo definitivo se confirma tras la entrevista de alcance.<br><br>
-                            Pago por <b>transferencia</b>: <span id="planoPagoScheme">50% anticipo · 50% en la entrega final</span> (30/40/30 para montos ≥ $15,000 MXN). <b>Precios + IVA</b>.<br><br>
-                            Entregables: planos en <b>PDF y DWG</b>. <b>2 rondas de revisiones incluidas.</b> Tarifa mínima <b>$10,000 MXN</b>.<br><br>
-                            Superficie >300 m² −5% · >600 m² −10%.
+                            <b>Flujo de trabajo y pagos (progresivo):</b><br>
+                            1. <b>Contratación</b> → 30% anticipo.<br>
+                            2. <b>Primera entrega</b> → planos arquitectónicos (20%).<br>
+                            3. <b>Segunda entrega</b> → ajuste de arquitectónicos + ejecutivos generales (20%).<br>
+                            4. <b>Tercera entrega</b> → ajuste de ejecutivos generales + ejecutivos de detalle (20%).<br>
+                            5. <b>Entrega preliminar</b> → ajuste final de detalle (incluido).<br>
+                            6. <b>Entrega final</b> → documentación completa (10%).<br><br>
+                            Pago por <b>transferencia</b>. <b>Precios + IVA</b>.<br><br>
+                            Entregables: planos en <b>PDF y DWG</b>.
                         </span></span>
                     </div>
-                </div>
-                <div class="sv-caption show">
-                    <button type="button" class="sv-btn" onclick="openImmersion()">COTIZADOR SOMA</button>
+                    <div class="sv-caption show">
+                        <button type="button" class="sv-btn" onclick="openImmersion()">COTIZADOR SOMA</button>
+                    </div>
+                    </div>
                 </div>
             </div>
                 <div class="contacto-block" style="border-top: 1px solid rgba(255,255,255,0.3); margin-top: 35px; padding-top: 25px;">
@@ -1263,15 +1278,37 @@
 
     // --- COTIZADOR D5 (RENDER) ---
     let renderCfg = { tipo: 'interior', complejidad: 1 };
-    const RENDER_PRECIOS = { interior: 2500, exterior: 3000, aereo: 4500 };
-    const RENDER_COMPLEJIDAD_NOMBRE = { 0.8: 'Básico', 1: 'Medio', 1.65: 'Integrado', 2.5: 'Complejo' };
+    const RENDER_PRECIOS = { interior: 2500, exterior: 3000 };
+    const RENDER_COMPLEJIDAD_NOMBRE = { 0.8: 'Básico', 1: 'Medio', 2.5: 'Alto' };
+    const RENDER_TIPS = {
+        interior: {
+            0.8: 'Un ambiente con mobiliario esencial y acabados sencillos',
+            1: 'Ambiente completo, bien amueblado y con detalles de ambientación',
+            2.5: 'Interiores ricos en detalles, acabados finos, texturas y vegetación'
+        },
+        exterior: {
+            0.8: 'Fachada o exterior sencillo con contexto básico',
+            1: 'Exterior con paisajismo, mobiliario y ambientación completa',
+            2.5: 'Exteriores detallados con vegetación abundante y entorno rico'
+        }
+    };
     let renderUltimo = null;
     function rcSelect(btn, group, value) {
-        const groupEl = btn.parentElement;
-        groupEl.querySelectorAll('.rc-opt').forEach(o => o.classList.remove('on'));
+        const grp = btn.getAttribute('data-grp') || group;
+        document.querySelectorAll('.rc-opt[data-grp="' + grp + '"]').forEach(o => o.classList.remove('on'));
         btn.classList.add('on');
-        renderCfg[group.replace('render', '').toLowerCase()] = value;
+        const key = group.replace('render', '').toLowerCase();
+        renderCfg[key] = value;
+        if (key === 'tipo') actualizarTipsRender();
         calcRender();
+    }
+    function actualizarTipsRender() {
+        const tipo = renderCfg.tipo;
+        document.querySelectorAll('.rc-opt[data-grp="nivel"]').forEach(function(b) {
+            const nivel = parseFloat(b.getAttribute('data-complejidad'));
+            const tip = (RENDER_TIPS[tipo] || {})[nivel];
+            if (tip) b.setAttribute('data-tip', tip);
+        });
     }
     function calcRender() {
         const tipo = renderCfg.tipo;
@@ -1279,8 +1316,6 @@
         const cantidad = Math.max(1, parseInt(document.getElementById('renderCantidad').value, 10) || 1);
         let unit = RENDER_PRECIOS[tipo] * complejidad;
         let total = unit * cantidad;
-        if (cantidad >= 6) total *= 0.85;
-        else if (cantidad >= 3) total *= 0.9;
         total = Math.round(total);
         renderUltimo = { tipo: tipo, complejidad: complejidad, cantidad: cantidad, total: total };
         const btn = document.querySelector('.rc-btn-quote');
@@ -1290,10 +1325,11 @@
             totalEl.textContent = '$' + total.toLocaleString('en-US') + ' + IVA';
             totalEl.style.display = 'none';
         }
-        const pagoEl = document.getElementById('renderPagoScheme');
-        if (pagoEl) pagoEl.textContent = total >= 15000
-            ? '30% anticipo · 40% en la primera entrega · 30% en la entrega final'
-            : '50% anticipo · 50% en la entrega final';
+        const esGrande = total >= 15000;
+        const anticipoEl = document.getElementById('renderPagoAnticipo');
+        if (anticipoEl) anticipoEl.textContent = esGrande ? '30% anticipo' : '50% anticipo';
+        const finalEl = document.getElementById('renderPagoFinal');
+        if (finalEl) finalEl.textContent = esGrande ? '30% restante' : '50% restante';
     }
 
     function esContactoValido(val) {
@@ -1349,12 +1385,12 @@
     }
 
     // --- COTIZADOR BIM LOD 300 ---
-    let bimCfg = { tipo: 90, disciplina: 'arq' };
-    const BIM_TIPO_NOMBRE = { 90: 'Vivienda', 110: 'Residencial', 130: 'Comercial', 150: 'Industrial' };
+    let bimCfg = { tipo: 90 };
+    const BIM_TIPO_NOMBRE = { 90: 'Casa habitación', 110: 'Multifamiliar', 130: 'Comercial' };
     let bimUltimo = null;
     function bimSelect(btn, group, value) {
-        const groupEl = btn.parentElement;
-        groupEl.querySelectorAll('.rc-opt').forEach(o => o.classList.remove('on'));
+        const grp = btn.getAttribute('data-grp') || group;
+        document.querySelectorAll('.rc-opt[data-grp="' + grp + '"]').forEach(o => o.classList.remove('on'));
         btn.classList.add('on');
         bimCfg[group.replace('bim', '').toLowerCase()] = value;
         calcBim();
@@ -1362,19 +1398,19 @@
     function calcBim() {
         const m2 = Math.max(10, parseInt(document.getElementById('bimM2').value, 10) || 10);
         let total = bimCfg.tipo * m2;
-        if (total > 80000) total *= 0.9;
-        else if (total > 40000) total *= 0.95;
-        total = Math.max(Math.round(total), 9000);
-        bimUltimo = { tipo: bimCfg.tipo, disciplina: bimCfg.disciplina, m2: m2, total: total };
+        total = Math.max(Math.round(total), 10000);
+        bimUltimo = { tipo: bimCfg.tipo, m2: m2, total: total };
         const totalEl = document.getElementById('bimTotal');
         if (totalEl) {
             totalEl.textContent = '$' + total.toLocaleString('en-US') + ' + IVA';
             totalEl.style.display = 'none';
         }
         const pagoEl = document.getElementById('bimPagoScheme');
-        if (pagoEl) pagoEl.textContent = total >= 15000
-            ? '30% anticipo · 40% en la primera entrega · 30% en la entrega final'
-            : '50% anticipo · 50% en la entrega final';
+        if (pagoEl) pagoEl.textContent = '50% anticipo · 50% en la entrega final';
+        const anticipoEl = document.getElementById('bimPagoAnticipo');
+        if (anticipoEl) anticipoEl.textContent = '50% anticipo';
+        const finalEl = document.getElementById('bimPagoFinal');
+        if (finalEl) finalEl.textContent = '50% restante';
     }
 
     async function verCotizacionBim(btn) {
@@ -1402,7 +1438,7 @@
                 body: JSON.stringify({
                     contacto: contacto,
                     tipo: BIM_TIPO_NOMBRE[bimUltimo.tipo] || bimUltimo.tipo,
-                    disciplina: bimUltimo.disciplina,
+                    disciplina: 'arq',
                     m2: bimUltimo.m2,
                     total: bimUltimo.total
                 }),
@@ -1423,12 +1459,12 @@
 
     // --- COTIZADOR PLANOS EJECUTIVOS ARQUITECTÓNICOS ---
     let planoCfg = { tipo: 130, complejidad: 1 };
-    const PLANO_TIPO_NOMBRE = { 130: 'Vivienda', 160: 'Residencia', 190: 'Comercial' };
+    const PLANO_TIPO_NOMBRE = { 130: 'Casa habitación', 160: 'Multifamiliar', 190: 'Comercial' };
     const PLANO_COMPLEJIDAD_NOMBRE = { 0.85: 'Simple', 1: 'Estándar', 1.6: 'Complejo' };
     let planoUltimo = null;
     function planoSelect(btn, group, value) {
-        const groupEl = btn.parentElement;
-        groupEl.querySelectorAll('.rc-opt').forEach(o => o.classList.remove('on'));
+        const grp = btn.getAttribute('data-grp') || group;
+        document.querySelectorAll('.rc-opt[data-grp="' + grp + '"]').forEach(o => o.classList.remove('on'));
         btn.classList.add('on');
         planoCfg[group.replace('plano', '').toLowerCase()] = value;
         calcPlano();
@@ -1436,8 +1472,6 @@
     function calcPlano() {
         const m2 = Math.max(10, parseInt(document.getElementById('planoM2').value, 10) || 10);
         let total = planoCfg.tipo * m2 * planoCfg.complejidad;
-        if (m2 > 600) total *= 0.9;
-        else if (m2 > 300) total *= 0.95;
         total = Math.max(Math.round(total), 10000);
         planoUltimo = { tipo: planoCfg.tipo, complejidad: planoCfg.complejidad, m2: m2, total: total };
         const totalEl = document.getElementById('planoTotal');
@@ -1445,10 +1479,6 @@
             totalEl.textContent = '$' + total.toLocaleString('en-US') + ' + IVA';
             totalEl.style.display = 'none';
         }
-        const pagoEl = document.getElementById('planoPagoScheme');
-        if (pagoEl) pagoEl.textContent = total >= 15000
-            ? '30% anticipo · 40% en la primera entrega · 30% en la entrega final'
-            : '50% anticipo · 50% en la entrega final';
     }
 
     async function verCotizacionPlano(btn) {
@@ -1828,6 +1858,9 @@
         if (viewport) viewport.addEventListener('scroll', syncScrollHint, { passive: true });
         else window.addEventListener('scroll', syncScrollHint, { passive: true });
     }
+
+    actualizarTipsRender();
+    calcRender();
 </script>
 </body>
 </html>

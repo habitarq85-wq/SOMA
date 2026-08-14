@@ -470,24 +470,24 @@ def cotizar_perspectivas():
     total = float(data.get('total', 0))
     contacto = data.get('contacto', 'No proporcionado')
 
-    tipo_nombre = {'interior': 'Interior', 'exterior': 'Exterior', 'aereo': 'Aéreo'}.get(tipo, tipo)
+    tipo_nombre = {'interior': 'Interior', 'exterior': 'Exterior'}.get(tipo, tipo)
 
     now = datetime.datetime.now()
-    reporte = f"========== COTIZACIÓN DE PERSPECTIVAS ==========\n"
-    reporte += f"Alguien cotizó perspectivas con las siguientes características:\n\n"
+    reporte = f"========== COTIZACIÓN DE RENDERS ==========\n"
+    reporte += f"Alguien cotizó renders arquitectónicos con las siguientes características:\n\n"
     reporte += f"• Contacto: {contacto}\n"
-    reporte += f"• Tipo de vista: {tipo_nombre}\n"
+    reporte += f"• Tipo de render: {tipo_nombre}\n"
     reporte += f"• Complejidad: {complejidad}\n"
-    reporte += f"• Cantidad de vistas: {cantidad}\n"
+    reporte += f"• Cantidad de renders: {cantidad}\n"
     reporte += f"• Precio: ${total:,.2f} MXN\n"
     reporte += f"\nFecha: {now.strftime('%d/%m/%Y')}\n"
     reporte += f"Hora: {now.strftime('%H:%M')}\n"
 
-    asunto = f"COTIZACIÓN DE PERSPECTIVAS - {now.strftime('%d/%m/%Y %H:%M')}"
+    asunto = f"COTIZACIÓN DE RENDERS - {now.strftime('%d/%m/%Y %H:%M')}"
     email_ok, smtp_error = enviar_correo(EMAIL_DESTINO, asunto, reporte)
 
     print(f"\n{'='*50}")
-    print("🔔 COTIZACIÓN DE PERSPECTIVAS")
+    print("🔔 COTIZACIÓN DE RENDERS")
     print(f"   Contacto: {contacto}")
     print(f"   Tipo: {tipo_nombre} | Complejidad: {complejidad} | Cantidad: {cantidad}")
     print(f"   Total: ${total:,.2f}")
@@ -559,7 +559,7 @@ def cotizar_planos():
     reporte += f"Alguien cotizó planos ejecutivos arquitectónicos con las siguientes características:\n\n"
     reporte += f"• Contacto: {contacto}\n"
     reporte += f"• Tipo de proyecto: {tipo}\n"
-    reporte += f"• Complejidad de acabados: {complejidad}\n"
+    reporte += f"• Complejidad del proyecto: {complejidad}\n"
     reporte += f"• Superficie: {m2:,.0f} m²\n"
     reporte += f"• Precio: ${total:,.2f} MXN\n"
     reporte += f"\nFecha: {now.strftime('%d/%m/%Y')}\n"

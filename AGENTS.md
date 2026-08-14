@@ -1,5 +1,65 @@
 # Contexto de Sesión — Algoritmo SOMA
 
+## Sesión: 13 Ago 2026 ✅ — Cotizadores BIM y Planos alineados en grid (mismo criterio que el de renders) y botón COTIZADOR SOMA robusto en móvil
+
+### Bitácora del día
+1. **BIM y Planos convertidos a grid de botones uniformes** (mismo criterio que el cotizador de renders): ambos ahora usan `.rc-grid` con botones del mismo ancho/altura (30px), alineados y dentro del borde.
+   - BIM: `.rc-grid-4` (4 columnas) — Tipo de proyecto (4 btns), luego "Disciplina" (span-2) + "Superficie" (span-2) con campo `rc-field rc-span-2` (input+m²).
+   - Planos: `.rc-grid` (3 columnas) con `.plano-grid` (gap 6px) — "Tipo de proyecto" (span-2) + campo Superficie (span-1, `rc-cell` input 62×22px), luego 3 btns tipo, luego "Complejidad del proyecto" (span-3), luego 3 btns complejidad.
+   - Se corrigió un bug en planos: el primer armado perdió el botón COMERCIAL y excedía el borde (337px). Ahora con "Superficie" en la fila 1 y el campo compacto el panel mide **289px desktop** (dentro de 290) y **292px tablet/móvil** (dentro de 320).
+   - `bimSelect` y `planoSelect` ahora usan `data-grp` (como `rcSelect`) para agrupar botones independientemente del contenedor.
+   - Verificado en 4 viewports (1366/768/390/480): los 3 cotizadores caben en el contenedor y los botones son uniformes por grupo.
+2. **Botón COTIZADOR SOMA robusto en móvil** (reporte de Juan: se veía más ancho que la imagen y tardaba en desaparecer al cambiar de servicio):
+   - `.sv-caption` ahora tiene `max-width: 150px; overflow: hidden; box-sizing: border-box; transition: none` + `opacity: 0` + `pointer-events: none` cuando está oculto (`.show` los activa).
+   - `.sv-btn` con `max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap` para que el texto nunca desborde los 150px de la imagen (incluso si JetBrains Mono no carga).
+   - Regla de refuerzo `.services-visual.cotizador-on .sv-caption { visibility: hidden !important }` — el botón se oculta al instante al entrar a cualquier cotizador, sin depender del JS.
+   - `backdrop-filter` eliminado en los breakpoints móviles (768px, 480px y max-height 520px) por lentitud de render en Android.
+   - En 480px se redujo el botón a `font-size: 0.45rem; letter-spacing: 1.5px; padding: 7px 8px`.
+   - Verificado en 320/360/375/390px: botón 150px = imagen 150px, `scrollWidth=150` (sin desborde), desaparición instantánea (60ms, transición none).
+
+### Archivos creados/modificados
+- `web/Pagina Web 6.html` — grids de BIM/Planos, `data-grp` en bimSelect/planoSelect, botón COTIZADOR SOMA robusto, backdrop-filter off en móvil.
+- `AGENTS.md` — Esta entrada.
+- Scripts de prueba temporales en `recursos_graficos/material_instagram/` eliminados.
+
+### Próxima sesión
+- Verificar en el celular de Juan (reporte original: botón ancho y desaparición tardía).
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD.
+- Lead magnet — decidir ubicación en página web.
+
+---
+
+## Sesión: 13 Ago 2026 ✅ — Cotizador de renders rediseñado (sin Aéreo, "Nivel de ambientación", tooltips), sección Servicios estática y contacto visible en pantalla
+
+### Bitácora del día
+1. **Imagen de servicios recuperó su proporción**: en lugar de estirarse a 420×290 (tamaño de los cotizadores), la imagen ahora se centra en su proporción original (150×210) dentro del contenedor transparente 420×290 (desktop) / 320px alto (móvil). El layout no cambia al alternar servicios.
+2. **Contacto visible al final del scroll**: ajustados `section:last-of-type` padding de `8vh 10% 6vh` → `5vh 10% 4vh` y `.contacto-block` margin-top de `clamp(5vh,8vh,12vh)` → `clamp(2vh,4vh,6vh)`. Verificado: con scroll al máximo el contacto queda dentro de pantalla con espacio abajo — desktop 126px, móvil 161px (antes quedaba ~68px fuera de la pantalla porque el scroll-snap dejaba la sección a 194px del top).
+3. **Botón "COTIZADOR SOMA" justo debajo de la imagen**: `.sv-caption` se movió DENTRO de `#services-visual` y ahora es `position: absolute; top: calc(50% + 105px)` (borde inferior de la imagen 210px centrada), centrado con `left: 50%; translateX(-50%)`. En los breakpoints móviles la imagen pasa de `height: 100%` (se estiraba a 318px) a `height: 210px` fija para mantener la proporción y dejar el hueco del botón. Solo se muestra en Diseño (índice 0, `toggle('show', index===0)`); en cotizadores queda oculto y no interfiere con el panel (que sobresale ~9px por `overflow: visible`). Verificado: `gapImgBtn = 0px` en desktop y móvil, contacto sigue cabiendo.
+4. **Bloque de servicios subido y borde del contenedor transparente**: `section:last-of-type` padding `5vh 10% 4vh` → `1vh 10% 1vh` (desktop) y el breakpoint `max-width: 768px` de `6vh 4% 6vh` → `1vh 4% 2vh`; margen del `.contacto-block` reducido (`clamp(2vh,4vh,6vh)` → `clamp(1vh,2vh,3vh)` desktop; 8vh→4vh, 6vh→3vh, 4vh→2vh en breakpoints móviles). Contacto queda con ~162px de espacio abajo en desktop y ~190px en móvil. El borde de `.services-visual` cambió de `rgba(255,255,255,0.05)` a `transparent` — en Diseño ya no se ve la rejilla; en cotizadores sigue el borde terracota (`border-color: var(--accent)`).
+5. **Label bajado, título pegado al menú y contacto con más aire**: `section:last-of-type` padding-top `1vh` → `3vh` (label a 23px del borde, antes 8px). Se eliminó el `<p>` vacío que separaba título y menú, y se corrigieron los selectores `.services-wrapper > div > div:last-child` → `.contacto-block` (la regla daba `margin-top: 45px` y `padding-left: 25px` al `.services-row`, empujando todo el grid hacia abajo). `.services-row` ahora `align-items: start` (antes center) para que el menú quede arriba alineado con el cotizador. Resultado: hueco título→menú 170px→15px, contacto con **242px** de aire abajo (desktop) y **291px** (móvil). Verificado en D5/BIM/Planos/Diseño y viewports 1366/1024/390.
+6. **Sección de servicios centrada verticalmente**: `section:last-of-type` cambia de `justify-content: flex-start` → `center` (desktop y breakpoint móvil `padding: 2vh 4%`), logrando espacios superior e inferior **iguales** en los viewports normales: 132px=132px (desktop 768 y tablet 1024), 149px=150px (móvil 390×844), 123px=124px (móvil 480). En landscape (390px de alto) el contenido excede la pantalla y el label queda parcialmente cortado arriba (caso límite preexistente), contacto siempre visible.
+1. **Cotizador de renders rediseñado** (petición de Juan): botón AÉREO eliminado (solo INTERIOR/EXTERIOR), "Complejidad" → "Nivel de ambientación" (BÁSICO/MEDIO/ALTO ×0.8/1.0/2.5), botones uniformes estilo calculadora (tipo 2 cols, nivel 3 cols). `RENDER_PRECIOS = { interior: 2500, exterior: 3000 }`.
+2. **Tooltips por tipo** (`RENDER_TIPS` + `actualizarTipsRender()`): los tooltips de BÁSICO/MEDIO/ALTO cambian según interior/exterior al hacer clic.
+3. **Alturas de cotizadores igualadas**: eliminado `#render-cotizador .rc-block { flex-direction: column }` que hacía el panel de renders 60px más alto. Los 3 paneles miden 290px (desktop) / 292px (móvil).
+4. **Contenedor visual de tamaño fijo**: `.services-visual` siempre 420×290 (desktop) / 320px alto (móvil). `.sv-caption` usa `visibility` para reservar espacio sin salto.
+5. **Menú y contacto estáticos** al alternar los 4 servicios: verificado en 7 viewports (1366, 1024, 834, 768, 390×844, 844×390, 667×375), sin errores JS ni overflow.
+6. **Móvil**: `.rc-opts.four` fijo en `repeat(4, 1fr)` (el wrap a 2 cols hacía el BIM 320px vs 282px), min-height panel 292px.
+
+### Archivos creados/modificados
+- `web/Pagina Web 6.html` — rediseño cotizador de renders (HTML+JS+CSS), contenedor visual fijo, breakpoints móvil/landscape.
+- `BITACORA_SOMA.md` — Entrada de sesión.
+
+### Próxima sesión
+- Revisar el cambio en vivo tras deploy a Render.
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
+- Lead magnet — decidir ubicación en página web
+
+---
+
+## Sesión: 13 Ago 2026 ✅ — Ajustes de cotizadores a medio camino: regla BIM alineada a m², copy D5 a "renders", limpieza de imágenes de servicios
+
+---
+
 ## Sesión: 11 Ago 2026 ✅ — Cotizadores D5 + BIM LOD 300 + Planos Ejecutivos: actividades y precios definidos
 
 ### Bitácora del día
@@ -61,10 +121,10 @@
 ## Estado del Proyecto
 - ✅ **DASHBOARD funcional**: Pipeline completo (3 momentos), expediente, PDFs, métricas, auth.
 - ✅ **Cotizadores en web (D5 + BIM LOD 300 + Planos Ejecutivos)**: Servicios muestran mini-cotizadores interactivos con validación de contacto, precio oculto hasta presionar y correo a `habitarq85@gmail.com` vía Brevo.
-  - **D5 (Visualización)**: Interior $2,500 · Exterior $3,000 · Aéreo $4,500 por vista. Complejidad ×0.8/×1.0/×1.65/×2.5. Paquete 3-5 vistas −10%, 6+ −15%. Endpoint `/cotizar_perspectivas`.
+  - **D5 (Visualización)**: Interior $2,500 · Exterior $3,000 · Aéreo $4,500 por render. Complejidad ×0.8 (Básico)/×1.0 (Medio)/×2.5 (Cargado). Paquete 3-5 renders −10%, 6+ −15%. Endpoint `/cotizar_perspectivas`.
   - **BIM LOD 300**: Vivienda $90 · Residencial $110 · Comercial $130 · Industrial $150/m². Solo Arq/Est (sin MEP), mismo precio. >500 m² −5%, >1,000 m² −10%, mínimo $12,000. Entregable: Revit (RVT). Endpoint `/cotizar_bim`.
   - **Planos Ejecutivos**: Vivienda $130 · Residencia $160 · Comercial $190/m² (**sin industrial**). Complejidad del proyecto ×0.85 (Simple)/×1.0 (Estándar)/×1.6 (Complejo). >300 m² −5%, >600 m² −10%, mínimo $10,000. Entregable: PDF + DWG. Endpoint `/cotizar_planos`.
-  - **Tiempos (referencia de mercado)**: D5 3-5 días/vista, paquetes 1-3 semanas; BIM 2-6 semanas según m². Compromiso real en entrevista de alcance.
+  - **Tiempos (referencia de mercado)**: D5 3-5 días/render, paquetes 1-3 semanas; BIM 2-6 semanas según m². Compromiso real en entrevista de alcance.
   - **Pago dinámico**: 50/50 si total < $15,000; 30/40/30 si ≥ $15,000. Precios + IVA explícito. Solo transferencia.
 - ✅ **Base de datos en Supabase (Pooler IPv4)**: PostgreSQL vía `aws-0-us-east-1.pooler.supabase.com:6543`. Keep-warm cada 5 min con query SQL real (`/keepwarm`).
 - ✅ **Fallback local SQLite**: Si Supabase falla, `db.py` usa automáticamente el backup local (`web/EjemploBD/proyectos_arquitectonicos.db`).

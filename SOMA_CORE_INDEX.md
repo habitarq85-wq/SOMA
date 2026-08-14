@@ -34,7 +34,7 @@ Este documento es el índice maestro para el agente SOMA. Debe actualizarse al f
 - [x] **Organización de Procesos:** Mapeo del flujo lead → proyecto → entrega → cierre. En `metodologia/Bloque 1 - Gestion del Entorno (ADM)/PROTOCOLO_ORGANIZACION_PROCESOS.md`.
 - [x] **Sistema de Cobros:** Esquema 30/40/30 implementado. Dashboard con botón "Generar 30/40/30". Endpoint `POST /cobros/generar_esquema/<id>`.
 - [x] **Registro de Pagos:** Resumen financiero en Dashboard, badges de pago por lead, tabla de cobros en expediente.
-- [ ] **Definir Tiempos de Entrega:** ⚠️ Avanzado 11/08/2026 — los cotizadores web ya muestran tiempos de referencia de mercado (D5: 3-5 días/vista, paquetes 1-3 semanas; BIM: 2-6 semanas según m²), con compromiso final en la entrevista de alcance. Pendiente documento formal `TIEMPOS_ENTREGA_BASE.md` para proyectos SOMA completos.
+- [ ] **Definir Tiempos de Entrega:** ⚠️ Avanzado 11/08/2026 — los cotizadores web ya muestran tiempos de referencia de mercado (D5: 3-5 días/render, paquetes 1-3 semanas; BIM: 2-6 semanas según m²), con compromiso final en la entrevista de alcance. Pendiente documento formal `TIEMPOS_ENTREGA_BASE.md` para proyectos SOMA completos.
 - [ ] **Automatización de Impuestos:** Cálculo de ISR/IVA, generación de CFDI, reportes fiscales.
 - [x] **Protocolo de Presupuesto:** Precios oficiales v3.0 ($250/$350/$850), cargo mínimo $6,500, subsidio cruzado. En `metodologia/Bloque 1 - Gestion del Entorno (ADM)/PROTOCOLO_PRESUPUESTO_Y_VIABILIDAD.md`.
 

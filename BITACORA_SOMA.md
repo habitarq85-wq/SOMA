@@ -1,5 +1,127 @@
 # MEMORIA EVOLUTIVA - SOMA TALLER VIRTUAL DE ARQUITECTURA
 
+## Sesión: 2026-08-13 — Cotizadores BIM y Planos alineados en grid (mismo criterio que el de renders) y botón COTIZADOR SOMA robusto en móvil
+
+### Contexto
+Juan pidió aplicar a los cotizadores de BIM y Planos Ejecutivos el mismo criterio ya aplicado al de renders: botones del mismo tamaño, alineados y sin salirse del borde. Además reportó que en su celular (vertical) el botón COTIZADOR SOMA se veía más ancho que la imagen y tardaba en desaparecer al cambiar de servicio.
+
+### Solución implementada
+1. **BIM convertido a `.rc-grid-4`** (4 columnas): "Tipo de proyecto" con 4 botones uniformes (VIVIENDA/RESIDENCIAL/COMERCIAL/INDUSTRIAL), luego "Disciplina" (span-2) + "Superficie" (span-2) con el campo (input + m²) en la misma fila de los 2 botones de disciplina.
+2. **Planos convertido a `.rc-grid`** (3 columnas) con `.plano-grid` (gap 6px): "Tipo de proyecto" (span-2) + campo Superficie (span-1, `.rc-cell` input 62×22px) en la fila 1; luego 3 botones de tipo; luego "Complejidad del proyecto" (span-3); luego 3 botones de complejidad (SIMPLE/ESTÁNDAR/COMPLEJO con tooltips).
+   - Se corrigió un bug del primer armado: faltaba el botón COMERCIAL y el panel excedía el borde (337px vs 290px). Reubicando "Superficie" a la fila 1 y compactando el campo, el panel mide **289px desktop** (dentro de 290) y **292px tablet/móvil** (dentro de 320).
+3. **Agrupación por `data-grp`**: `bimSelect` y `planoSelect` ahora usan `data-grp` (como `rcSelect`) para que al hacer clic solo se ilumine el botón de su grupo, independientemente del contenedor.
+4. **Botón COTIZADOR SOMA robusto en móvil**: `.sv-caption` con `max-width: 150px; overflow: hidden; transition: none` y `opacity: 0; pointer-events: none` cuando oculto; `.sv-btn` con `max-width: 150px; overflow: hidden; text-overflow: ellipsis` para que el texto nunca desborde los 150px de la imagen. Regla de refuerzo `.services-visual.cotizador-on .sv-caption { visibility: hidden !important }` para ocultado instantáneo. `backdrop-filter` eliminado en breakpoints móviles por lentitud de render en Android.
+
+### Verificación
+- Puppeteer en 4 viewports (1366/768/390/480): los 3 cotizadores caben dentro del borde (RENDER 289/292, BIM 282/292, PLANOS 289/292) y los botones son uniformes por grupo (mismo ancho y alto 30px).
+- Anchura del botón en 320/360/375/390px: botón 150px = imagen 150px, `scrollWidth=150` (sin desborde aunque JetBrains Mono no cargue), desaparición instantánea (60ms, transition none).
+
+### Archivos creados/modificados
+- `web/Pagina Web 6.html` — grids de BIM/Planos, `data-grp` en bimSelect/planoSelect, botón COTIZADOR SOMA robusto, backdrop-filter off en móvil.
+- `AGENTS.md` — bitácora de sesión actualizada.
+- `BITACORA_SOMA.md` — Esta entrada.
+
+### Pendientes
+- Verificar en el celular de Juan el botón COTIZADOR SOMA (ancho y desaparición).
+- Revisar el cambio en vivo tras deploy a Render.
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD.
+- Lead magnet — decidir ubicación en página web.
+
+---
+
+## Sesión: 2026-08-13 — Sección Servicios pulida: imagen en proporción, botón COTIZADOR SOMA bajo la imagen y sección centrada verticalmente
+
+### Contexto
+Juan pidió ajustar la sección de Servicios (04. Alcance y Contacto) para que: la imagen de Diseño Arquitectónico se viera en su proporción original dentro de la rejilla, el botón COTIZADOR SOMA quedara debajo de la imagen, el contacto no se saliera del borde inferior, y los espacios superior e inferior de la sección quedaran equilibrados. También reportó que el borde del contenedor de la imagen se veía blanco semitransparente.
+
+### Solución implementada
+1. **Imagen en su proporción original (150×210)**: antes se estiraba a 420×290 (tamaño de los cotizadores). Ahora se centra dentro del contenedor transparente 420×290 (desktop) / 320px alto (móvil), sin cambiar el layout al alternar servicios.
+2. **Botón COTIZADOR SOMA dentro de `#services-visual`**: `.sv-caption` pasó a `position: absolute; top: calc(50% + 105px); left: 50%; translateX(-50%)` — queda exactamente pegado debajo de la imagen (`gapImgBtn = 0px`). En los breakpoints móviles la imagen pasó de `height: 100%` (se estiraba a 318px) a `height: 210px` fija para mantener la proporción. Solo se muestra en Diseño (índice 0); en cotizadores queda oculto y no interfiere con el panel.
+3. **Borde del contenedor transparente**: `.services-visual` border de `rgba(255,255,255,0.05)` → `transparent`. En cotizadores se mantiene el borde terracota (`border-color: var(--accent)`).
+4. **Bloque de servicios compactado y subido**: se eliminó un `<p>` vacío que separaba el título del menú (hueco título→menú pasó de 170px → 15px). Se corrigieron los selectores `.services-wrapper > div > div:last-child` → `.contacto-block` (la regla le daba `margin-top: 45px` y `padding-left: 25px` al `.services-row`, empujando el grid hacia abajo). `.services-row` pasó de `align-items: center` → `start`.
+5. **Sección centrada verticalmente**: `section:last-of-type` con `justify-content: center` (desktop y breakpoint móvil `padding: 2vh 4%`), logrando espacios superior e inferior **iguales**: 132px=132px (desktop 1366/1024), 149px=150px (móvil 390×844), 123px=124px (móvil 480×800). El contacto ya no se sale del borde inferior (antes quedaba ~68px fuera).
+
+### Verificación
+- Puppeteer en servidor local (`http://127.0.0.1:8080/`): botón centrado y pegado a la imagen (gap 0px) en desktop y móvil; sin solape con el cotizador; contacto cabe con aire abajo en todos los viewports (desktop 242px, móvil 291px tras compactar); después del centrado vertical espacios superior=inferior (132/149/123px).
+- Viewports probados: 1366×768, 1024×768, 844×390, 390×844, 480×800, 667×375, 1024×768.
+
+### Archivos creados/modificados
+- `web/Pagina Web 6.html` — imagen en proporción, botón COTIZADOR SOMA dentro del contenedor, borde transparente, bloque compactado, sección centrada verticalmente.
+- `AGENTS.md` — bitácora de sesión actualizada.
+- `BITACORA_SOMA.md` — Esta entrada.
+
+### Pendientes
+- Revisar el cambio en vivo tras deploy a Render.
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD.
+- Lead magnet — decidir ubicación en página web.
+
+---
+
+## Sesión: 2026-08-13 — Cotizador de renders rediseñado (sin Aéreo, "Nivel de ambientación", tooltips) y sección Servicios estática al cambiar de servicio
+
+### Contexto
+Juan pidió rediseñar el cotizador de renders (Visualización): eliminar el botón AÉREO, renombrar "Complejidad" a "Nivel de ambientación" con Básico/Medio/Alto, botones uniformes estilo calculadora y tooltips redefinidos. Además reportó que el menú de servicios y la sección Contacto se desplazaban al alternar entre Diseño Arquitectónico y Visualización.
+
+### Solución implementada
+1. **Cotizador de renders**: botón AÉREO eliminado (solo INTERIOR/EXTERIOR). Label "Nivel de ambientación" con botones BÁSICO/MEDIO/ALTO (`data-complejidad` 0.8/1/2.5). `RENDER_PRECIOS = { interior: 2500, exterior: 3000 }`. Botones uniformes que llenan el ancho en fila (tipo 2 columnas, nivel 3 columnas).
+2. **Tooltips por tipo** (`RENDER_TIPS` + `actualizarTipsRender()`): al cambiar de interior/exterior se actualizan los tooltips de BÁSICO/MEDIO/ALTO:
+   - Interior: "Un ambiente con mobiliario esencial…" / "Ambiente completo, bien amueblado…" / "Interiores ricos en detalles, acabados finos, texturas y vegetación".
+   - Exterior: "Fachada o exterior sencillo…" / "Exterior con paisajismo, mobiliario…" / "Exteriores detallados con vegetación abundante…".
+3. **Alturas de cotizadores igualadas**: se eliminó el CSS `#render-cotizador .rc-block { flex-direction: column }` (de la prueba anterior) que hacía el panel de renders 60px más alto que BIM/Planos. Los 3 paneles miden ahora **290px** (desktop) y **292px** (móvil).
+4. **Contenedor visual de tamaño fijo**: `.services-visual` siempre 420×290px en desktop y 320px de alto en tablet/móvil (ya no 150×210 en imagen vs 420×283 en cotizador). El `.sv-caption` (botón COTIZADOR SOMA) usa `visibility` en vez de `display:none` para reservar su espacio sin provocar salto.
+5. **Menú y contacto estáticos**: verificado en 7 viewports (1366×768, 1024×768, 834×1112, 768×1024, 390×844, 844×390, 667×375) — `menuY` y `contactoY` idénticos al alternar entre los 4 servicios, sin errores JS ni overflow horizontal. En landscape (`max-height:520px`) la fila de servicios pasó a `1fr` con visual fijo a 320px.
+6. **Móvil**: `.rc-opts.four` ya no se envuelve a 2 columnas (era la causa de que el cotizador BIM midiera 320px vs 282px de renders/planos); se fijó `repeat(4, 1fr)` y min-height de panel 292px.
+
+### Verificación
+- JS validado con `new Function` (script 0 OK).
+- Puppeteer en servidor local: tooltips cambian interior↔exterior; totales correctos (Interior $2,500, Interior+Alto $6,250, Exterior $3,000). Altura de los 3 cotizadores 290px desktop / 292px móvil.
+- Estabilidad del menú y contacto confirmada en 7 viewports (sin saltos al alternar servicios).
+
+### Archivos creados/modificados
+- `web/Pagina Web 6.html` — rediseño del cotizador de renders (HTML+JS+CSS), contenedor visual de tamaño fijo, breakpoints móvil/landscape ajustados.
+- `BITACORA_SOMA.md` — Esta entrada.
+
+### Pendientes
+- Revisar el cambio en vivo tras deploy a Render.
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
+- Lead magnet — decidir ubicación en página web
+
+---
+
+## Sesión: 2026-08-13 — Ajustes de cotizadores a medio camino: regla BIM LOD 300 alineada a m², copy unificado a "renders", limpieza de imágenes de servicios
+
+### Contexto
+Juan reportó que varios ajustes de los cotizadores de la sección Servicios quedaron a medio camino. Se auditaron los 3 cotizadores contra la documentación (AGENTS/SNAPSHOT) y se encontraron inconsistencias.
+
+### Hallazgos y solución
+1. **Cotizador BIM LOD 300 (la más grave)**: el código `calcBim()` aplicaba descuentos por honorarios totales (>$40,000 −5%, >$80,000 −10%) con tarifa mínima $9,000, pero la decisión documentada del 11 Ago era por superficie (>500 m² −5%, >1,000 m² −10%) con mínimo **$12,000**. Corregido:
+   - `calcBim()` ahora aplica `m2 > 1000 → ×0.9`, `m2 > 500 → ×0.95`, mínimo `12000`.
+   - Default del HTML `#bimTotal` pasó de `$9,000` a `$12,000`.
+   - Hint de términos actualizado: "Descuento por superficie: >500 m² −5% · >1,000 m² −10%. Tarifa mínima $12,000 MXN."
+2. **Copy D5 unificado a "renders"** (cambios sin commitear de sesión previa, ahora completos y consistentes):
+   - h3: "COTIZADOR D5" → **"COTIZADOR DE RENDERS"**; subtítulo "Render arquitectónico — precios MXN por imagen".
+   - Complejidad: se eliminó la opción "Integrado" (×1.65); queda **Básico ×0.8 / Medio ×1.0 / Cargado ×2.5**. El label pasó de "Tipo de vista" a "Tipo de render".
+   - "Cantidad de vistas / uds" → "Número de renders / rnds"; tiempos y paquetes en términos reescritos de "vistas" a "renders".
+   - `RENDER_COMPLEJIDAD_NOMBRE` actualizado a `{0.8: 'Básico', 1: 'Medio', 2.5: 'Cargado'}`.
+3. **Imágenes de servicios**: por indicación de Juan, solo la imagen de **Diseño Arquitectónico** es útil; Visualización, Modelado BIM y Planos fueron reemplazadas por los cotizadores. Se eliminaron las 3 `<img>` restantes del HTML (los archivos quedan en disco). `changeService()` sigue funcionando porque solo usa `images[index]` para index 0.
+4. **Documentación sincronizada**: AGENTS.md, SOMA_SNAPSHOT.md y SOMA_CORE_INDEX.md actualizados (se quitaron referencias a ×1.65/"Integrado"/"por vista" y se reflejó la regla m² del BIM).
+
+### Verificación
+- JS del HTML validado con `new Function` (script 0 OK).
+- Pruebas funcionales con Puppeteer en servidor local: BIM default **$12,000**, 600 m² → **$51,300** (90×600×0.95), 1,500 m² → **$121,500** (90×1500×0.9); D5 default **$2,500**, Cargado → **$6,250**; Planos default **$13,000**, 400 m² → **$49,400** (130×400×0.95). Sin errores JS, overflow horizontal 0 en desktop y móvil (390×844, 844×390).
+
+### Archivos creados/modificados
+- `web/Pagina Web 6.html` — regla BIM m², copy D5 a renders, eliminadas 3 imágenes de servicios.
+- `AGENTS.md`, `SOMA_SNAPSHOT.md`, `SOMA_CORE_INDEX.md` — Documentación alineada.
+- `BITACORA_SOMA.md` — Esta entrada.
+
+### Pendientes
+- Revisar el cambio en vivo tras deploy a Render.
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD
+- Lead magnet — decidir ubicación en página web
+
+---
+
 ## Sesión: 2026-08-11 — Revisión en vivo de formatos: rectángulos de cotizadores unificados, sección contacto con aire, fix desborde vertical y deploy a Render
 
 ### Contexto
