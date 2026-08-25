@@ -1,5 +1,34 @@
 # MEMORIA EVOLUTIVA - SOMA TALLER VIRTUAL DE ARQUITECTURA
 
+## Sesión: 2026-08-25 — Menú de navegación minimalista en la web pública (hamburguesa arriba-derecha + panel desplegable sutil)
+
+### Contexto
+Juan pidió un símbolo de menú en la portada que llevara directamente a las secciones de la página. Iteró el diseño: primero pantalla completa, luego lo redujo a algo "muy sutil" sin fondo circular; lo movió de izquierda a derecha y pidió alinearlo verticalmente con el botón circular del Cotizador SOMA. También consultó por el correo de advertencia de Supabase por inactividad.
+
+### Solución implementada
+1. **Ids ancla** en las 5 secciones (`#inicio`, `#portafolio`, `#trayectoria`, `#filosofia`, `#servicios`).
+2. **Logo minimalista**: 3 líneas finas sin contenedor, con `mix-blend-mode: difference` para invertirse automáticamente sobre secciones claras/oscuras. Abierto → X terracota visible en cualquier fondo.
+3. **Panel desplegable compacto** (~125×170px) bajo el botón: fondo `rgba(10,10,10,0.18)` + `blur(10px)`, texto JetBrains Mono 0.62rem uppercase alineado a la derecha, entrada escalonada de enlaces.
+4. **Posición**: fijo arriba-derecha (`top: 22px; right: 32px`), eje vertical alineado al centro exacto del botón flotante Cotizador SOMa (diff 0px verificado).
+5. **Navegación JS**: scroll suave dentro del contenedor scroll-snap vía `scrollIntoView`, cierre con Esc/clic fuera/selección, `aria-expanded`. z-index bajo los modales.
+6. **Supabase**: el aviso de pausa se explica por huecos de keep-warm cuando Render suspende al agotar sus horas free; el `SELECT 1` cada 5 min ya cuenta como actividad (verificado `/keepwarm` OK y `__health` db ok). No se requieren inserts de prueba.
+
+### Verificación
+- Puppeteer en 1366×768, 390×844 y 844×390: menú abre/cierra, los enlaces llevan exactamente a cada sección, panel cabe sin scroll horizontal, sin errores JS.
+- Alineación de ejes verticales menú↔cotizador: diferencia 0px.
+
+### Archivos creados/modificados
+- `web/Pagina Web 6.html` — CSS/HTML/JS del menú + ids de secciones.
+- `AGENTS.md`, `BITACORA_SOMA.md`, `SOMA_CORE_INDEX.md` — Actualizados.
+
+### Pendientes
+- Verificar el menú en el celular de Juan (A12) tras deploy.
+- Investigar horas consumidas de Render Free (panel → Usage); decidir plan pago o Cloudflare Pages.
+- Vincular estaciones 4+ con datos de la BD.
+- Lead magnet — decidir ubicación en página web.
+
+---
+
 ## Sesión: 2026-08-14 — Fix carrusel en landscape verificado en celular, efecto imagen+título completado, y servicios/contacto compactos en celular horizontal (incluye push de cotizadores a GitHub y diagnóstico de cold start)
 
 ### Contexto

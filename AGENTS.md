@@ -1,5 +1,30 @@
 # Contexto de Sesión — Algoritmo SOMA
 
+## Sesión: 25 Ago 2026 ✅ — Menú de navegación minimalista en la web pública (hamburguesa arriba-derecha + panel desplegable sutil)
+
+### Bitácora del día
+1. **Servidor local levantado** con el comando de siempre (`systemd-run --user --unit=soma-flask ...` en `localhost:8080`).
+2. **Menú de navegación para las 5 secciones** de `web/Pagina Web 6.html`:
+   - **Ids ancla agregados**: `#inicio` (hero), `#portafolio`, `#trayectoria`, `#filosofia`, `#servicios`.
+   - **Logo minimalista sin fondo circular**: solo 3 líneas finas (1.5px, 20px). Sobre fondos oscuros se ven claras y sobre claras se invierten solas vía `mix-blend-mode: difference`. Al abrirse se transforman en **X terracota** (`var(--accent)` con `mix-blend-mode: normal`) — visible sobre cualquier sección.
+   - **Panel desplegable pequeño y sutil** (~125×170px) anclado bajo el botón: fondo `rgba(10,10,10,0.18)` (18% opacidad, ajustado por Juan desde 0.45→0.5→0.25→0.18) + `blur(10px)`, esquinas redondeadas, textos JetBrains Mono 0.62rem uppercase alineados a la derecha. Aparición escalonada de los enlaces.
+   - **Posición final**: fijo arriba-derecha (`top: 22px; right: 32px`), con su eje vertical **alineado exactamente con el centro del botón circular Cotizador SOMA** inferior (verificado: diff = 0px). Juan primero lo pidió a la izquierda y luego lo regresó a la derecha.
+   - **Enlaces**: Inicio, Proyectos, Evolución, Filosofía, Servicios (Juan pidió quitar "Inicio", lo vio como "logo dinámico" y pidió restaurarlo).
+   - **JS**: toggle con `aria-expanded`, scroll suave con `scrollIntoView({behavior:'smooth'})` dentro del contenedor scroll-snap, cierre con Esc / clic fuera / selección. El panel queda bajo los modales (z-index 1550/1600 vs modales 2000+).
+3. **Duda sobre Supabase pausada**: Juan recibió correo de advertencia de inactividad. Verificado en vivo que el keep-warm sigue funcionando (`__health` → db ok/postgres, `/keepwarm` → OK). Explicación: huecos cuando Render suspende el servicio al agotar 750 h/mes — no hace falta meter cotizaciones de prueba, el `SELECT 1` cada 5 min ya cuenta como actividad. Pendiente raíz: revisar Usage en Render.
+4. **Push a GitHub** (commit `d054c08`, solo `web/Pagina Web 6.html`; los no rastreados quedaron fuera por decisión de Juan).
+
+### Archivos creados/modificados
+- `web/Pagina Web 6.html` — CSS del menú (toggle + panel), HTML del botón/nav con ids en secciones, JS de toggle/navegación.
+
+### Próxima sesión
+- Verificar el menú en el celular de Juan (A12) y en vivo tras deploy de Render.
+- Investigar el límite de horas de Render Free (panel → Usage); decidir plan de pago (~$7 USD/mes) o mover estáticos a Cloudflare Pages.
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD.
+- Lead magnet — decidir ubicación en página web.
+
+---
+
 ## Sesión: 14 Ago 2026 ✅ — Fix carrusel en landscape verificado en celular, efecto imagen+título completado, y servicios/contacto compactos en celular horizontal (incluye push de cotizadores a GitHub y diagnóstico de cold start)
 
 ### Bitácora del día
