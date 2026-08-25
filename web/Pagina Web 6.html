@@ -100,7 +100,7 @@
         .video-overlay {
             position: absolute; top: 0; left: 0;
             width: 100%; height: 100%; 
-            background: linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,0.63) 100%);
+            background: linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,0.53) 100%);
             z-index: 1;
         }
         .hero-title { margin-bottom: 0; }
@@ -201,9 +201,9 @@
         .sv-caption.show { visibility: visible; opacity: 1; pointer-events: auto; }
         .services-visual.cotizador-on .sv-caption { visibility: hidden !important; opacity: 0 !important; }
         .sv-btn {
-            font-family: 'JetBrains Mono', monospace; font-size: 0.52rem;
-            text-transform: uppercase; letter-spacing: 2.5px; color: rgba(255,255,255,0.9);
-            background: rgba(168,62,24,0.35);
+            font-family: 'JetBrains Mono', monospace; font-size: 0.62rem;
+            text-transform: uppercase; letter-spacing: 1.2px; color: rgba(255,255,255,0.9);
+            background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
             border: none; padding: 8px 10px; cursor: pointer; transition: 0.3s var(--ease);
             display: inline-flex; align-items: center; gap: 6px; width: 100%; max-width: 150px; box-sizing: border-box; justify-content: space-between; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -398,7 +398,7 @@
             section:nth-of-type(2) .slide .slide-title { transition: opacity 0.6s ease, background 0.6s ease; }
             section:nth-of-type(2) .slide.revealed .slide-title { opacity: 1; background: var(--accent); }
             section:first-child .video-overlay {
-                background: linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,0.63) 100%);
+                background: linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,0.53) 100%);
             }
             h2 { font-size: clamp(1.2rem, 5vw, 1.6rem); margin-bottom: 8px; }
             .label { font-size: 0.5rem; letter-spacing: 2px; margin-bottom: 6px; }
@@ -522,7 +522,7 @@
             #input-program > div { grid-template-columns: 1fr; }
             .services-row { grid-template-columns: 1fr; gap: 8px 0; }
             .sv-caption { top: calc(50% + 105px); width: 150px; }
-            .sv-caption .sv-btn { font-size: 0.45rem; letter-spacing: 1.5px; padding: 7px 8px; backdrop-filter: none; -webkit-backdrop-filter: none; }
+            .sv-caption .sv-btn { font-size: 0.52rem; letter-spacing: 1px; padding: 7px 8px; backdrop-filter: none; -webkit-backdrop-filter: none; }
             .services-visual { grid-column: 1 / -1; width: 100% !important; max-width: none; min-width: 0; height: 320px; }
             .services-visual img { object-fit: cover; height: 210px; }
             .services-visual.cotizador-on { grid-column: 1 / -1; width: 100% !important; max-width: none; min-width: 0; justify-self: start; height: 320px; }
@@ -581,7 +581,7 @@
             .topic-slide { width: 200px; padding: 8px 12px; }
             .services-row { grid-template-columns: minmax(150px, 1fr) 2fr; gap: 12px; align-items: start; }
             .sv-caption { top: calc(50% + 75px); width: 150px; }
-            .sv-caption .sv-btn { font-size: 0.35rem; letter-spacing: 1px; padding: 6px 6px; gap: 4px; backdrop-filter: none; -webkit-backdrop-filter: none; }
+            .sv-caption .sv-btn { font-size: 0.42rem; letter-spacing: 0.8px; padding: 6px 6px; gap: 4px; backdrop-filter: none; -webkit-backdrop-filter: none; }
             .interactive-list { font-size: 0.45rem; line-height: 1.4; padding-left: 8px; align-self: start; }
             .services-visual { grid-column: auto; width: 100% !important; max-width: none; min-width: 0; height: 210px; }
             .services-visual img { object-fit: cover; height: 150px; }
