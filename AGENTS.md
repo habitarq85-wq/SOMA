@@ -1,5 +1,169 @@
 # Contexto de Sesión — Algoritmo SOMA
 
+## Sesión: 11 Sep 2026 ✅ — Alerta falsa de Brevo + retry en keep-warm (2 fallos consecutivos)
+
+### Bitácora del día
+1. **Aviso recibido de "Brevo caído"**: diagnosticado como **falsa alerta** — pico transitorio de latencia/red entre el worker y la API de Brevo superó el timeout de 15s del chequeo `/health` (server.py:101), marcando `brevo: error` y disparando la alerta por correo. Se recuperó solo en el siguiente ciclo de cron.
+2. **Verificación en vivo**: Brevo API responde HTTP 200 en ~0.6s; status.brevo.com *"fully operational"*; Render `/health` y worker → `brevo: ok`; entregas reales del día (delivered 09:15, varios opened) — el envío funciona.
+3. **Retry en el worker keep-warm**: ahora se requiere **2 fallos consecutivos** (≈10 min, 2 ciclos) para alertar. Contador `fails_<componente>` persistido en la Cache API; al recuperarse se reinicia y limpia el estado de alerta. Evita falsas alertas por picos aislados.
+4. **Deploy**: `npx wrangler deploy` en `workers/keep-warm` → versión `708041fa-b2f6-4937-afb8-ad02bd11f892`. Worker `/__health` verificado `ok` tras el deploy.
+
+### Archivos modificados
+- `workers/keep-warm/src/index.js` — `FAILS_REQUIRED = 2`, funciones `countFailure()` y `recovered()`, `checkHealth()` usa el contador en vez de `notify()` directo.
+
+### Próxima sesión
+- Si se desea mayor holgura, subir timeout de 15s→30s en el chequeo de Brevo (server.py:101).
+- Revisar `volumetria_Casa_Ejemplo.blend` en Blender GUI para verificar visualmente la compactación.
+- Rellenar datos de sitio + restricciones normativas en la UI.
+- Migrar tablas nuevas a Supabase (cuando se reestructure la BD).
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD.
+- Lead magnet — decidir ubicación en página web.
+
+---
+
+## Sesión: 01 Sep 2026 ✅ — Volumetría compacta con rpack + Reset de conexiones
+
+### Bitácora del día
+1. **Volumetría con rpack (rectangle-packer)**: reemplazado el algoritmo BFS manual por `rpack` (MaxRects) para empaquetado óptimo de rectángulos.
+   - **Compactación: 41.2% → 91.3%** (bounding box de 439m² → 198m², reducción 55%).
+   - **Espacio muerto: 58.8% → 8.7%**.
+   - Conexiones contiguas: 30/34 → 28/34 (82%, aceptable).
+   - Instalado `rectangle-packer` en Python de Blender: `/home/juan/.local/bin/blender/5.1/python/bin/python3.13 -m pip install rectangle-packer`.
+   - Archivo: `scripts_automatizacion/blender/generar_volumetria.py` — nueva función `_layout_por_diagrama()` usa `rpack.pack()` con orden BFS del grafo; fallback BFS si rpack falla.
+2. **Botón Reset desconecta nodos**: fix en `web/js/algoritmo.js` — `resetDiagrama()` ahora hace PUT a `/programa/espacio/{id}/relaciones` con `relaciones: []` para todos los espacios, limpiando cada `relacion_directa` en la BD. Antes solo borraba posiciones del diagrama.
+3. **Tamaño de círculos proporcional al área**: verificado que el endpoint `/api/diagrama/grafo/<id>` ya calcula `size = 4 × √(área)`. Cochera 30m² → size 21.9, Recámaras 14-16m² → size 15-16.
+4. **Servidor Flask** levantado con `bash start_local.sh` (localhost:8080, PID ~16919).
+
+### Archivos modificados
+- `scripts_automatizacion/blender/generar_volumetria.py` — `_layout_por_diagrama()` reescrita con `rpack`; import `rpack` agregado; función fallback `_layout_por_diagrama_bfs()`.
+- `web/js/algoritmo.js` — `resetDiagrama()` ahora limpia relaciones en BD.
+
+### Próxima sesión
+- Revisar `volumetria_Casa_Ejemplo.blend` en Blender GUI para verificar visualmente la compactación.
+- Rellenar datos de sitio + restricciones normativas en la UI.
+- Migrar tablas nuevas a Supabase (cuando se reestructure la BD).
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD.
+- Lead magnet — decidir ubicación en página web.
+
+---
+
+## Sesión: 31 Ago 2026 (cont. 3) ✅ — Integración de Sverchok (addon paramétrico) + PoC validada y cerrada
+
+### Bitácora del día
+1. **Instalado Sverchok 1.4.0** (addon paramétrico de nodos para Blender) en `/home/juan/.config/blender/5.1/scripts/addons/sverchok` (descargado master de `nortikin/sverchok`, ~20MB, formato legacy sin `blender_manifest.toml`, `bl_info` mínimo Blender 3.5). Habilitado vía `bpy.ops.preferences.addon_enable(module='sverchok')` → `ADDON_ENABLED: True`.
+   - Advertencia benigna al habilitar: `ValueError: NODE_OT_tree_importer registration error... io_panel_properties PointerProperty no soporta data-block properties` — no impide el addon.
+   - Addon roto preexistente `bl_ext.user_default.simple_wall_builder` sigue dando aviso (no bloquea).
+   - Entorno: Blender 5.1.1 en `/home/juan/.local/bin/blender/blender`, verificado como usuario `juan`. NO confiar en la ruta `~/Documentos_PROYECTO_SOMA_ltgbvo` del método `bash`; usar rutas absolutas `/home/juan/Documentos/PROYECTO SOMA/`.
+2. **PoC de concepto paramétrico PROBADA (validada)**: creé un grafo Sverchok (`SverchCustomTreeType`) con `SvBoxNodeMk2`("Box") enlazado a `SvViewerDrawMk4`, usando el patrón **`node.process()` + `socket.sv_get()`** (NO `tree.update()`, que en modo `--background` no computa ni materializa): leí los **8 vértices** del cubo generado. Confirmado que Sverchok genera geometría paramétrica accesible por script.
+3. **Límites encontrados (por eso la PoC se cierra aquí)**:
+   - El `SvBoxNodeMk2` NO acepta dimensiones por espacio: `Size` es un `FloatProperty` **escalar** (default 1.0) → siempre cubo unitario 1×1×1. Es un cubo de "divisions", no un volumen arquitectónico.
+   - El nodo `SvBoxSolidNode` ("Box (Solid)", con `box_length/width/height` correctos) **requiere FreeCAD** (`sv_dependencies={'FreeCAD'}`, no instalado) → no usable para la volumetría.
+   - `SvMatrixApplyJoinNode` ("Matrix Apply to Mesh") + `SvMatrixInNodeMK4` resuelven el problema (Box unitario → matriz de escala/posición → Apply), pero **en modo `--background` sin escena/viewport no computan**: `SvNoDataError: No data passed into socket`. Solo el nodo **fuente** computa con `process()`. `tree.update()` tampoco llena sockets en background.
+4. **Decisión de Juan**: **CERRAR la PoC aquí** (opción recomendada). Sverchok queda instalado y validado como capaz de generar geometría paramétrica. La integración completa al pipeline (grafo por espacio ligado a datos SOMA, colección "Paramétrica") se planifica como fase aparte.
+
+### Archivos creados/modificados
+- `/home/juan/.config/blender/5.1/scripts/addons/sverchok` — NUEVO. Sverchok 1.4.0 instalado (legacy addon).
+- `/home/juan/Documentos/PROYECTO SOMA/scripts_automatizacion/blender/generar_volumetria.py` — SIN cambios (volumetría por espacio ya documentada en sesión cont.2).
+- Scripts de prueba en `/tmp/opencode/` (`poc*.py`, `diag*.py`, `insp*.py`, etc.) — solo diagnóstico, fuera del repo.
+
+### Próxima sesión
+- (Opcional) Planificar integración de Sverchok al pipeline: grafo por espacio con datos SOMA como inputs (requiere Blender con GUI o `xvfb-run` para materializar en escena — `xvfb-run` NO está instalado, necesita sudo/apt).
+- Abrir `output/volumetria_Casa_Ejemplo.blend` → colección "Base": 17 volúmenes por espacio con nombre propio y color de zona, en bloque denso pegados.
+- Rellenar datos de sitio + restricciones normativas en la UI.
+- Migrar tablas nuevas a Supabase (cuando se reestructure la BD).
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD.
+- Lead magnet — decidir ubicación en página web.
+
+---
+
+## Sesión: 31 Ago 2026 (cont. 2) ✅ — Volumetría por ESPACIO (nombre propio + color por zona) y bloque denso pegadas por conexiones
+
+### Bitácora del día
+1. **Volúmenes por espacio, no por zona** (petición de Juan: "los volúmenes tengan nombre, la zona la identifique el color"):
+   - Antes: 1 volumen por zona ("Z1 Social"). Ahora: **1 volumen por espacio** con su nombre real ("Sala", "Terraza", "Cochera"...), coloreado con el color de su zona (azul=Social, amarillo=Operativa, rojo=Descanso, naranja=Soporte). Altura = altura de la zona. Verificado en materiales: colors por zona correctos.
+   - `_dimensiones_espacio()` calcula largo×ancho por espacio desde su área (proporción 1.5:1). `_generar_posiciones_espacios()` + `_empaquetar_componente()` + `_orden_dfs()` (`grep` en `generar_volumetria.py`).
+2. **Bug preexistente de tamaño en `crear_caja`** (contribuía a que no se tocaran): `primitive_cube_add(size=1)` crea un cubo de 1×1×1, pero la escala era `largo/2, ancho/2, altura/2` → **todos los volúmenes a la mitad** y con huecos entre espacios. Fix: `obj.scale = (largo, ancho, altura)` (escala = dimensión deseada). AHORA MIDE LA MITAD: los volúmenes tienen su tamaño real (12.8m vs 6.4m de ancho).
+3. **Volúmenes pegados por conexiones** (petición: "estén pegados como se pueda cuando hay conexiones en el grafo"):
+   - Enfoque elegido por Juan: **Componentes conexas** → 1 bloque denso único. Los espacios conectados (directa o indirectamente) se empaquetan en franjas y **se tocan entre sí**. Resultado: bloque de ~11.6×21.8m con los 17 espacios pegados; **18/34 conexiones específicas** del grafo quedan físicamente adyacentes (el máximo "como se pueda" de un bloque rectangular sin solaparse, porque los 17 espacios forman UNA sola componente gigante vía Terraza).
+   - Nota de diseño: si en el futuro se quiere más % de conexiones tocándose o bloques por zona, hay que cambiar el enfoque (ver pregunta 1 del día).
+4. **Diagrama de relaciones ya NO posiciona los volúmenes**: la volumetría "Base" ahora usa empaquetado por componentes conexas (no las posiciones X,Y del diagrama). Las posiciones del diagrama siguen existiendo para la maqueta visual en la UI.
+
+### Archivos creados/modificados
+- `scripts_automatizacion/blender/generar_volumetria.py` — MOD. Reescritas `posicionar_zonas`→`_generar_posiciones_espacios` + `_empaquetar_componente` + `_orden_dfs` + `_componentes_conexas` + `_dimensiones_espacio`; `generar_variacion(espacios, estrategia, semilla)` por espacio; `main()` simplificado (ya no usa `agrupar_por_zona` para posicionar). Fix `crear_caja` escala.
+- `backend/server.py` — SIN cambios (el endpoint ya lanzaba este script).
+
+### Próxima sesión
+- Abrir `output/volumetria_Casa_Ejemplo.blend` → colección "Base": 17 volúmenes con nombre propio y color de zona, en bloque denso pegados.
+- Probar el botón "GENERAR VOLUMETRÍA 3D" en la UI (ya probado por endpoint: `running`→`done`, 175KB).
+- Rellenar datos de sitio + restricciones normativas en la UI.
+- Migrar tablas nuevas a Supabase (cuando se reestructure la BD).
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD.
+- Lead magnet — decidir ubicación en página web.
+
+---
+
+## Sesión: 31 Ago 2026 (continuación) ✅ — Fix volumetría atorada + volumetría "Base" ahora refleja el diagrama de relaciones
+
+### Bitácora del día
+1. **Causa raíz del "se atoró y no generó volumen"** (reporte de Juan): el script de Blender `generar_volumetria.py` **no tenía `import json`** (línea 13-17). Como el botón de la UI siempre envía `--posiciones`, el script hacía `json.load(f)` y fallaba con `NameError: name 'json' is not defined`. El proceso en background fallaba silenciosamente y nunca dejaba el `.blend` — por eso el polling quedaba eterno "generando".
+2. **Fix endpoint `/generar_volumetria/<id>`** (server.py): cambiado `subprocess.run(capture_output=True)` → `subprocess.Popen` con salida redirigida a `log_<id>.txt` (evita que el buffer de captura bloquee el hilo daemon) + `start_new_session=True` + timeout 300s. Además se escribe un archivo de estado `status_<id>.json` (`running`/`done`/`error`).
+3. **Fix endpoint `/output_existe/<id>`** (server.py): ahora lee `status_<id>.json` y devuelve `estado` real, no solo si existe el `.blend`. Produce `running`/`done`.
+4. **Volumetría "Base" ahora refleja el diagrama de relaciones** (el problema de fondo: "veo el volumen pero no la relación con el diagrama"):
+   - Causa: el diagrama posiciona **espacios** (claves "1".."17" en BD, que el endpoint `diagrama_grafo` usa como id de nodo), pero la volumetría posiciona **zonas** (Z1-Z5). El código buscaba `str(z)` ("1","2"...) en las posiciones del diagrama y nunca coincidía con las agrupaciones → todas las zonas caían apiladas en el origen.
+   - Fix en `generar_volumetria.py`: `main()` construye `zonas_claves = {zona: [claves de sus espacios]}` (de `agrupar_por_zona` que ya guarda `.claves`). Se propaga a `generar_variacion` → `posicionar_zonas`. En la estrategia `diagrama`, cada zona se posiciona en el **centroide** (promedio x,y) de sus espacios presentes en el diagrama, escalado a metros (extensión ≈ 40m) y centrado respecto al centroide global del diagrama.
+   - Verificado abriendo el `.blend`: Z1 Social→izquierda, Z2 Operativa→derecha, Z3 Descanso→arriba, Z4 Soporte→abajo, coincidiendo con la disposición del diagrama de prueba. (Los `location` de objeto son 0,0,0; la posición real está en la geometría/bounding box — comportamiento original de `crear_caja`.)
+5. **Server local** levantado con `bash start_local.sh` (localhost:8080).
+
+### Archivos creados/modificados
+- `scripts_automatizacion/blender/generar_volumetria.py` — MOD. `import json` agregado; función `_centroid_escalado()` (nueva); `posicionar_zonas(..., zonas_claves=None)` con estrategia diagrama por centroide de espacios por zona; `generar_variacion(..., zonas_claves=None)`; `main()` construye `zonas_claves` y lo propaga.
+- `backend/server.py` — MOD. `generar_volumetria`: Popen + log + `status_<id>.json`. `output_existe`: lee estado.
+
+### Próxima sesión
+- Verificar la volumetría "Base" en el escritorio 3D de Blender (abrir `output/volumetria_Casa_Ejemplo.blend` → colección "Base").
+- Probar en la UI el botón "GENERAR VOLUMETRÍA 3D" tras reorganizar nodos del diagrama → el volumen Base debe reflejarlo.
+- Rellenar datos de sitio + restricciones normativas en la UI.
+- Migrar tablas nuevas a Supabase (cuando se reestructure la BD).
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD.
+- Lead magnet — decidir ubicación en página web.
+
+---
+
+## Sesión: 31 Ago 2026 ✅ — Generador de Volumetría 3D (Blender) + Diagrama de Relaciones con posiciones proporcionales
+
+### Bitácora del día
+1. **Pipeline completo de volumetría SOMA**: del programa arquitectónico en SQLite → script de Blender → archivo .blend con volúmenes por zona.
+2. **Archivos nuevos**:
+   - `scripts_automatizacion/blender/leap_utils.py` — Capa de datos (SQLite local + Supabase REST API).
+   - `scripts_automatizacion/blender/generar_volumetria.py` — Script principal de Blender que genera volúmenes 3D con 6 estrategias (compacto, pabellines, lineal, angular, patio, torcido).
+   - `biblioteca/normativas/COS_CUS_MERIDA.json` — Datos PMDU de Mérida (COS/CUS por zona).
+3. **Nuevas tablas en server.py** `init_db()`: `datos_sitio` y `restricciones_normativas` con endpoints CRUD (GET/PUT). Endpoint `GET /normativas/merida` para el JSON PMDU.
+4. **Tamaños de círculos proporcionales a m²**: fórmula `size = 4 × √(area)` en el endpoint `/api/diagrama/grafo/<id>` (server.py:2218). Verificado: Casa Ejemplo → Cochera 30m² = size 21.9, Recámaras 14-16m² = size 15-16.
+5. **Posiciones del diagrama → Blender**: el botón "GENERAR VOLUMETRÍA 3D" envía las posiciones de vis-network al backend, que las guarda en un JSON temporal. Blender las lee y las usa para posicionar los volúmenes en la variación "Base". Las demás variaciones usan estrategias aleatorias.
+6. **Posiciones del diagrama permanentes**: al cerrar y abrir el diagrama, los nodos permanecen donde se dejaron (guardado en localStorage). Se desactiva la física cuando hay posiciones guardadas.
+7. **Botón en algoritmo_soma.html**: sección "Generador de Volumetría 3D" debajo del diagrama de relaciones (aparece en Estación 3). Incluye inputs de variaciones y semilla, polling de completado cada 3s, y aviso visual cuando termina.
+8. **Endpoint `/generar_volumetria/<id>`**: ejecuta Blender en background (threading), guarda posiciones del diagrama, genera archivo .blend en `scripts_automatizacion/blender/output/`.
+9. **Endpoint `/output_existe/<id>`**: verifica si el .blend ya fue generado para el polling del frontend.
+10. **Fix JS**: eliminado bloque `catch` duplicado en `generarVolumetria()` que rompía toda la ejecución del JS y evitaba que se cargaran las tarjetas de proyectos.
+11. **`/get_leads` como ruta pública**: necesaria porque el `fetch()` de JavaScript no envía Basic Auth headers automáticamente.
+
+### Archivos creados/modificados
+- `scripts_automatizacion/blender/leap_utils.py` — NUEVO. Capa de datos.
+- `scripts_automatizacion/blender/generar_volumetria.py` — NUEVO. Script Blender.
+- `scripts_automatizacion/blender/__init__.py` — NUEVO. Paquete Python.
+- `scripts_automatizacion/blender/output/` — NUEVO. Directorio de salida .blend.
+- `biblioteca/normativas/COS_CUS_MERIDA.json` — NUEVO. Datos PMDU.
+- `backend/server.py` — 2 tablas nuevas (datos_sitio, restricciones_normativas), 7 endpoints nuevos, fix `import subprocess`, tamaño de círculos proporcional a m², `/get_leads` público.
+- `web/algoritmo_soma.html` — Sección de volumetría 3D con inputs y botón.
+- `web/js/algoritmo.js` — Funciones `generarVolumetria()`, `toggleVolumetriaSection()`, física del diagrama desactivada con posiciones guardadas, fix catch duplicado.
+
+### Próxima sesión
+- Probar generación de volumetría con datos reales (rellenar datos de sitio + restricciones normativas en la UI).
+- Migrar tablas nuevas a Supabase (cuando se reestructure la BD).
+- Vincular estaciones 4+ (Conceptualización, Modelado, Visualización) con datos de la BD.
+- Lead magnet — decidir ubicación en página web.
+
+---
+
 ## Sesión: 25 Ago 2026 ✅ — Menú de navegación minimalista en la web pública (hamburguesa arriba-derecha + panel desplegable sutil)
 
 ### Bitácora del día
@@ -477,12 +641,16 @@
 
 ### Comandos
 ```bash
-# Servidor
-systemctl --user stop soma-flask.service
-systemd-run --user --unit=soma-flask --setenv=DATABASE_URL=postgresql://soma_user:soma_pass@localhost:5432/soma_db /home/juan/Documentos/PROYECTO\ SOMA/backend/venv/bin/python /home/juan/Documentos/PROYECTO\ SOMA/backend/server.py
+# Servidor (usa .env → Supabase online; fallback automático a SQLite si cae)
+./start_local.sh
+#   O bien (mismo efecto, con logs en journalctl):
+#   systemctl --user stop soma-flask.service
+#   systemd-run --user --unit=soma-flask --setenv=DATABASE_URL="$DATABASE_URL" /home/juan/Documentos/PROYECTO\ SOMA/backend/venv/bin/python /home/juan/Documentos/PROYECTO\ SOMA/backend/server.py
+#   (cargar antes: set -a; source .env; set +a)
 
 # Logs
 journalctl --user -u soma-flask.service -f
+tail -f /tmp/soma_flask.log
 
 # Dashboard
 http://localhost:8080/dashboard
@@ -490,8 +658,8 @@ http://localhost:8080/dashboard
 # Algoritmo
 http://localhost:8080/algoritmo
 
-# PostgreSQL
-PGPASSWORD=soma_pass psql -h localhost -U soma_user -d soma_db
+# Verificar qué BD usa el servidor
+curl -s http://127.0.0.1:8080/health   # db_backend: postgres (Supabase) o sqlite (fallback)
 
 # Métricas
 curl -s "http://127.0.0.1:8080/metrics/bloque01?year=2026&month=6" | python3 -m json.tool

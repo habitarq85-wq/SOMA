@@ -1,4 +1,5 @@
 const BASE = 'https://soma-853c.onrender.com';
+const SUPABASE_URL = 'https://dejojumyyydrlqoegqnf.supabase.co';
 
 // Estado persistente entre invocaciones (Cache API de Cloudflare Workers).
 // cachePut/cacheGet devuelven una promesa para evitar race conditions en el cron.
@@ -33,13 +34,34 @@ async function notify(component, detail) {
   }
 }
 
+// Umbral de fallos consecutivos antes de alertar (evita falsas alertas por picos transitorios)
+const FAILS_REQUIRED = 2;
+
+async function countFailure(component, detail) {
+  const key = `fails_${component}`;
+  const prev = parseInt(await cacheGet(key) || '0', 10);
+  const n = prev + 1;
+  if (n >= FAILS_REQUIRED) {
+    await cachePut(key, '0');
+    await notify(component, detail);
+  } else {
+    await cachePut(key, String(n));
+    console.log(`FAIL ${component} ${n}/${FAILS_REQUIRED}: ${detail}`);
+  }
+}
+
+async function recovered(component) {
+  await cachePut(`fails_${component}`, '0');
+  await caches.default.delete(`https://soma-cache.local/alert_${component}`).catch(() => {});
+}
+
 async function checkHealth() {
   let j;
   try {
     const r = await fetch(`${BASE}/health`, { headers: { 'User-Agent': 'Cloudflare-Worker' } });
     j = await r.json();
   } catch (e) {
-    await notify('server', `No responde /health: ${e.message}`);
+    await countFailure('server', `No responde /health: ${e.message}`);
     return;
   }
 
@@ -47,20 +69,21 @@ async function checkHealth() {
   for (const comp of ['server', 'db', 'brevo']) {
     const val = checks[comp];
     if (!val || val === 'ok') {
-      // componente recuperado: limpiar estado de alerta
-      await caches.default.delete(`https://soma-cache.local/alert_${comp}`).catch(() => {});
+      await recovered(comp);
     } else {
-      await notify(comp, val);
+      await countFailure(comp, val);
     }
   }
 }
 
 export default {
   async scheduled(event, env, ctx) {
-    // 1. keep-warm: mantener Render y BD vivos (como antes)
+    // 1. keep-warm: mantener Render y BD vivos
     const targets = [
       BASE,
       `${BASE}/keepwarm`,
+      SUPABASE_URL,           // ping directo a Supabase (REST API)
+      `${SUPABASE_URL}/rest/v1/`,  // ping a la API REST de Supabase
     ];
     await Promise.allSettled(targets.map(url =>
       fetch(url, { method: 'GET', headers: { 'User-Agent': 'Cloudflare-Worker' } })

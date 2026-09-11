@@ -1,5 +1,240 @@
 # MEMORIA EVOLUTIVA - SOMA TALLER VIRTUAL DE ARQUITECTURA
 
+## Sesión: 2026-09-11 — Alerta falsa de Brevo + retry de 2 fallos en el keep-warm
+
+### Estado actual (cierre de día)
+**Brevo sano; falsa alerta resuelta en su causa raíz.** El aviso de "Brevo caído" fue un pico transitorio que superó el timeout de 15s del chequeo `/health`, no una caída real (API 200 en 0.6s, status page operational, entregas del día OK). Para evitar repeticiones, el worker keep-warm ahora solo alerta tras **2 fallos consecutivos** (~10 min), con contador persistido en la Cache API. Deployado en Cloudflare (v `708041fa`).
+
+### Qué se hizo
+1. **Diagnóstico de la alerta**: `/health` (Render y worker) → `brevo: ok`; `GET /v3/account` → HTTP 200 en 0.63s; `GET /v3/smtp/statistics/events` → `delivered`/`opened` el mismo día. status.brevo.com sin incidentes. Causa más probable: latencia puntual > 15s (timeout del chequeo en `server.py:101`).
+2. **Fix en `workers/keep-warm/src/index.js`**:
+   - Nuevo `FAILS_REQUIRED = 2`: un fallo aislado solo incrementa el contador, no alerta.
+   - `countFailure()` persiste `fails_<componente>` en la Cache API; al llegar a 2 resetea y llama a `notify()`.
+   - `recovered()` reinicia el contador y limpia `alert_<componente>` cuando el componente vuelve a `ok`.
+   - `checkHealth()` usa el contador para `server`, `db`, `brevo` (y el caso de `/health` caído).
+3. **Deploy y verificación**: `wrangler deploy` → versión `708041fa-b2f6-4937-afb8-ad02bd11f892`; `GET /__health` → `{status: ok, brevo: ok, db: ok, server: ok}`.
+
+### Archivos creados/modificados
+- `workers/keep-warm/src/index.js` — retry de 2 fallos consecutivos antes de alertar.
+
+### Pendientes
+- (Opcional) Subir timeout de 15s→30s en el chequeo de Brevo (`server.py:101`) si se quiere más holgura.
+- Desplegar en Render el fix de RLS pendiente de la sesión 2026-09-09 (versionado en producción).
+
+---
+
+## Sesión: 2026-09-09 — Fix de seguridad RLS en Supabase (alerta `rls_disabled_in_public`)
+
+### Estado actual (cierre de día)
+**Base de datos online asegurada.** Supabase alertó que las tablas sin Row-Level Security quedaban expuestas: cualquier persona con la URL del proyecto podía leer, editar y borrar datos (`rls_disabled_in_public`). Se habilitó RLS en las 10 tablas y se crearon políticas de solo-lectura para la volumetría. Todo sigue funcionando: backend, backups y worker no se ven afectados.
+
+### Qué se hizo
+1. **Diagnóstico**: el backend conecta a Supabase por `psycopg2` como superuser (pooler), que **bypasea RLS**; las tablas se crearon vía `init_db()` (Conexión directa), que en Supabase deja RLS desactivado por defecto → el rol `anon` quedaba con acceso total por la REST API.
+2. **Verificación del estado online**: 8/10 tablas ya tenían RLS habilitado; faltaban **`datos_sitio`** y **`restricciones_normativas`**.
+3. **Fix aplicado en vivo contra la BD online** (idempotente):
+   - `ALTER TABLE ... ENABLE ROW LEVEL SECURITY` en las 10 tablas.
+   - `GRANT SELECT` + política `anon_read_*` (solo SELECT) en las 4 tablas que lee la volumetría CLI: `captura_web`, `programa_arquitectonico`, `restricciones_normativas`, `datos_sitio`.
+4. **`init_db()` de server.py actualizado**: si la conexión es PostgreSQL, re-aplica RLS + políticas en cada arranque/deploy (idempotente). El fallback local SQLite no se toca.
+5. **Verificado**: superuser puede seguir escribiendo (prueba con rollback, OK). El worker keep-warm no se ve afectado (evita la suspensión vía `/keepwarm` → `SELECT 1` por superuser; sus pings a `supabase.co` no tocan tablas). La volumetría de la UI lee de SQLite local, no de Supabase REST.
+
+### Archivos creados/modificados
+- `backend/server.py` — `init_db()`: bloque RLS + políticas `anon_read_*` cuando `use_pg`.
+
+### Pendientes
+- Desplegar en Render para que el fix quede versionado en producción.
+- (Pendiente futuro, NO urgente) Agregar `datos_sitio` y `restricciones_normativas` a la lista `TABLAS` de `backup_pg_to_sqlite.py` para paridad del fallback.
+
+---
+
+## Sesión: 2026-09-03 — Reseñas de renders + Filosofía SOMA para redes sociales
+
+### Estado actual (cierre de día)
+**Archivo de reseñas de renders creado** en el escritorio (`reseña_render_soma.txt`) con 4 reseñas de proyectos y 6 puntos de filosofía SOMA (versión corta + larga). Todo listo para publicación en redes sociales.
+
+### Qué se hizo
+1. **Reseñas de proyectos creadas** (4):
+   - **Casa-Alpha (1):** Pasillo de madera, enredaderas, ventanales de piso a techo. Vegetación y materiales honestos.
+   - **Casa-Alpha (2):** Fachada con listones de madera vertical, voladizo blanco, vegetación que suaviza la geometría.
+   - **Casona-Cristi:** Casa del centro de Mérida restaurada. Grosella y crema en paleta patrimonial, almohadillado original con arcos, herrerías orgánicas, puertas de madera.
+   - **Casa-Taller Roma:** Volumen de concreto, vidrio y acento naranja con expresividad. Escalera exterior como lenguaje, árboles existentes respetados.
+2. **Filosofía SOMA reformulada** para redes sociales:
+   - Versión corta (60 caracteres por punto) para Instagram/Facebook.
+   - Versión larga (original de la web) para piezas detalladas.
+   - 6 pilares: Arquitectura Accesible, Tecnología como Exoesqueleto, Automatización, Creatividad Liberada, Habitar, Tres Niveles Una Calidad.
+3. **Formato unificado** de contacto al final de cada reseña: SOMA Arquitectura + www.soma-arquitectura.com + info@soma-arquitectura.com + WhatsApp 999 531 4093.
+4. **Archivo actualizado** en `/home/juan/Escritorio/reseña_render_soma.txt` con todas las reseñas y filosofía.
+
+### Archivos creados/modificados
+- `/home/juan/Escritorio/reseña_render_soma.txt` — 4 reseñas + filosofía SOMA (corta y larga).
+
+### Pendientes
+- Publicar reseñas en redes sociales (Instagram, Facebook).
+- Generar imágenes de renders de los proyectos para acompañar las reseñas.
+- Vincular estaciones 4+ del Algoritmo SOMA con datos de la BD.
+- Lead magnet — decidir ubicación en página web.
+
+---
+
+## Sesión: 2026-09-01 (cierre) — rpack (MaxRects) logra 91% de compactación + Reset desconecta nodos
+
+### Estado actual (cierre de día)
+**Volumetría 3D lista para revisión visual.** El algoritmo de empaquetado ahora usa `rpack` (MaxRects) que minimiza el bounding box. Resultado: **91.3% de compactación** (antes 41.2%), bounding box de **198m²** (antes 439m²), **8.7% de espacio muerto**. Conexiones contiguas: 28/34 (82%). El `.blend` está en `output/volumetria_Casa_Ejemplo.blend`.
+
+### Qué se hizo
+1. **rpack (rectangle-packer) integrado**: reemplazado el algoritmo BFS manual por `rpack.pack()` (MaxRects). Instalado en Python de Blender: `/home/juan/.local/bin/blender/5.1/python/bin/python3.13 -m pip install rectangle-packer`.
+   - `_layout_por_diagrama()` ahora usa rpack con orden BFS del grafo.
+   - Fallback BFS si rpack falla (`_layout_por_diagrama_bfs()`).
+   - Centrado sobre el centroide del diagrama para preservar la distribución relativa.
+2. **Botón Reset desconecta nodos**: `resetDiagrama()` en `algoritmo.js` ahora limpia todas las relaciones en BD (`PUT /programa/espacio/{id}/relaciones` con `relaciones: []`), no solo borra posiciones del diagrama.
+3. **Tamaño de círculos proporcional al área**: verificado que el endpoint ya calcula `size = 4 × √(área)`.
+
+### Métricas de verificación
+| Métrica | BFS anterior | rpack actual |
+|---------|-------------|--------------|
+| Compactación | 41.2% | **91.3%** |
+| Espacio muerto | 58.8% | **8.7%** |
+| Bounding box | 439 m² | **198 m²** |
+| Conexiones | 30/34 (88%) | 28/34 (82%) |
+
+### Pendientes
+- **Revisar visualmente** el `.blend` en Blender GUI.
+- Rellenar datos de sitio + restricciones normativas en la UI.
+- Migrar tablas nuevas a Supabase.
+- Vincular estaciones 4+ con datos de la BD.
+
+---
+
+## Sesión: 2026-09-01 (cont. monolito) — Compactación en monolito (gravedad + barrido VPSC) sustituye repulsión por pares
+
+### ⚠️ ESTADO ACTUAL (cierre de día) — AÚN NO QUEDA BIEN, se continúa mañana
+**Sigue sin respetar la ubicación del grafo del diagrama.** Ya están juntas (monolito unido, muros a tope), pero **la ubicación de cada caja es incorrecta** respecto a la posición original del diagrama. El objetivo restante: que las cajas toquen (monolito) **Y a la vez** respeten los centroides/posición de cada círculo del grafo como se dibujan en la UI. **Pendiente abierto de la próxima sesión.**
+
+### Contexto
+Con el layout del diagrama ya en buena ubicación ("ya quedaron en buena ubicación"), Juan pidió: acercar los volúmenes conectados (ya hecho en Fase 1) y después acercar los demás hasta que **todos se junten formando un monolito contiguo, no separados**. Antes pidió papers académicos sobre interacción de volumetrías para fundamentar la solución.
+
+### Qué se usó de la literatura
+- **BARRIDO POR EJES (VPSC)** — Dwyer, Marriott & Stuckey, *Fast Node Overlap Removal*, Graph Drawing 2005: en cada pasada se ordenan los volúmenes por un eje y se empuja cada uno SOLO hacia +eje hasta quedar contra el borde del vecino previo que lo pisa (+gap). Conserva el orden del eje → **termina garantizado y no oscila** (a diferencia de la repulsión por pares anterior, que divergía: 20→27 solapes).
+- **Compactación gravitatoria** — tradition de empaquetamiento del *Facility Layout Problem*: atracción de todos los volúmenes hacia el centroide global, re-limpiando con contraints en cada micro-paso (equivalente práctico a IPSep-CoLa, Dwyer/Koren/Marriott TVCG 2006), hasta que el bloque deja de encoger.
+
+### Solución implementada (`_layout_por_diagrama` → pipeline de 5 fases)
+1. **Fase 0 — EXPANSIÓN RADIAL** (semejanza desde centroide; sin cambios).
+2. **Fase 0b — BARRIDO POR EJES** (helper `_sweep_eje` + `_limpiar_solapes`, reemplaza la repulsión por pares). Solape residual → limpieza por barridos X/Y alternados que sólo empujan en +eje y conservan el orden (termina garantizado).
+3. **Fase 1 — RESORTES en aristas** (conectados pegados; ahora sobre `sorted(aristas)` → **layout determinista**, el set anterior variaba de orden entre procesos).
+4. **Fase 2 — MONOLITO**: `k_monolito=0.10`, gravedad de todos al centroide global, `_limpiar_solapes(400)` (convergencia completa) tras cada micro-paso, terminación cuando el bbox deja de encoger 5 iteraciones seguidas. Sin "restaurar mejor estado" (eso reabría huecos).
+5. **Fase 3 — RE-MMATE DEL MONOLITO**: si quedó más de una pieza (fricción diagonal), se fusionan: se toma la pareja más cercana ENTRE piezas distintas y se traslada rígidamente una pieza hasta poner la pareja EN CONTACTO (100% del hueco) + barrido.
+6. **Fase 4 — CIERRE FINO**: todo volumen suelto se acerca a su VECINO MÁS CERCANO en pasos cortos (re-llimpiando) hasta quedar a <=1.5× gap (muro a muro).
+7. **Ciclo 3+4** hasta lograr UNA sola pieza contigua y sin aislamientos.
+
+### Verificación (proyecto 21, grafo real, 15 diagramas distintos)
+- **0/15 fallas**: en todos, **una sola pieza contigua**, ningún volumen aislado, **0 solapes**, **todos los volúmenes a 0.1cm de un vecino (muros a tope)**, 0.1-0.2s por corrida.
+- **Corrección por reporte de Juan**: "perdió la ubicación del grafo" y "todos están separados".
+  - Causa "separados": el `gap=0.15m` (15cm) dejaba un filme de aire entre volúmenes → se veían desconectados. Cambiado a `gap=0.001m` (1mm): los muros quedan a tope, monolito visualmente unido.
+  - Causa "perdió la ubicación del grafo": la UI leyó un `.blend` antiguo (`.blend1`) que tenía huecos de hasta 10m. El `.blend` actual (regenerado) respeta el diagrama: corr X 0.82 / Y 0.90.
+  - Fusión potenciada: la pieza se traslada al CONTACTO (100% del hueco, no la mitad) + barrido, en ciclo REMATE+CIERRE FINO hasta lograr 1 sola pieza. Antes el "mitad del hueco" podía quedar en una costura de 27cm.
+- Blender headless real con `posiciones_21.json`: 17 objetos, **0 solapes**, **1 sola pieza (isla contigua)**, 17/17 volúmenes con hueco al vecino de **0.1cm**, bloque 47.1×8.4m (396m²).
+
+### Archivos creados/modificados
+- `scripts_automatizacion/blender/generar_volumetria.py` — MOD. `gap` default 0.15→0.001 (muros a tope); `_fusionar_piezas`/`_cierre_fino` en funciones y en ciclo hasta 1 pieza; fusión al 100% del hueco; docstring 6 fases.
+- `output/volumetria_Casa_Ejemplo.blend` — REGENERADO (monolito 47.1×8.4m, 0 solapes, 1 pieza, todos a 0.1cm). **Nota: aunque el monolito está unido, la ubicación de cada caja aún NO respeta el diagrama → pendiente.**
+
+### Pendientes
+- **MAÑANA (PENDIENTE PRINCIPAL):** las cajas ya están juntas en monolito, pero **la ubicación de cada caja no respeta la posición del grafo del diagrama**. Hay que lograr que el monolito toque sin romper la localización de cada volumen según los centroides dibujados en la UI. Explorar: en vez de gravedad fuerte al centroide global (que aplasta la geografía y mueve las cajas de lugar), compactar respetando más los centroides — p.ej. gravedad más suave, mantener el orden relativo X/Y por zona del diagrama, o empujar cada caja hacia SU propio centroide original.
+- Probar el botón "GENERAR VOLUMETRÍA 3D" en la UI (dibujar diagrama → ver el volumen monolito reflejarlo y respetar las posiciones del grafo).
+- (Con sudo) deshabilitar servicio Postgres local: `sudo systemctl stop postgresql@16-main && sudo systemctl disable postgresql@16-main`.
+
+## Sesión: 2026-09-01 (cont. volumetría 3D) — Layout de Blender respeta centroides del diagrama + conexiones (0 solapes)
+
+### Contexto
+Juan reportó que la automatización de volumetría 3D no respetaba las posiciones de los centroides de los círculos del diagrama de relaciones, ni sus conexiones ("no pueden estar separados"). Pidió mejorar la distribución de los volúmenes en Blender documentándose para mayor precisión.
+
+### Diagnóstico
+`algoritmo.js:892-898` SÍ envía los centroides reales de vis-network (`posiciones[id] = {x, y}`) → `server.py:1079` los guarda en `output/posiciones_<id>.json` → pero `generar_volumetria.py` **descartaba las coordenadas**: `_generar_posiciones_por_grafo` solo usaba bandas en Y + orden en X, produciendo un bloque rectangular denso sin relación con el diagrama. Investigado en la literatura: el "floorplan dual" (GPLAN) exige grafos planares/triangulados (no aplica a grafos de relaciones arquitectónicos); la familia correcta es **node overlap removal con preservación de forma** (PRISM/force-scan/VPSC).
+
+### Solución implementada (`generar_volumetria.py`)
+Pipeline documentado en `_layout_por_diagrama` + `_escalar_diagrama_a_metros` + `_bordes` + `_overlap`:
+1. **`_escalar_diagrama_a_metros()`** — px→metros con escala uniforme (preserva proporción), centrado en el origen, tamaño objetivo `sqrt(área_total)*1.35`.
+2. **Fase 0 — EXPANSIÓN RADIAL**: se escalan las posiciones desde el centroide del diagrama (transformación de semejanza) hasta que ningún rectángulo se monte. Preserva la forma dibujada y converge garantizado a 0 solapes.
+3. **Fase 0b — repulsión dura**: para centroides casi idénticos que la semejanza no separa.
+4. **Fase 1 — resortes en aristas**: los conectados se atraen hasta quedar PEGADOS en el eje (objetivo = hipotensa de semianchos + gap), con comprobación local tipo Gauss-Seidel que NO reintroduce solape.
+5. `_generar_posiciones_por_grafo` delega al nuevo layout; fallback al compacto si no hay posiciones. Extraída `_generar_posiciones_espacios_compacto()` para reuso.
+
+### Verificación end-to-end
+- Test sintético con grafo REAL del proyecto 21 (leído de BD): **0 solapes**, correlación X/Y vs diagrama **0.95/0.99**, **22-30/34 pares conectados pegados** (el resto bloqueado por terceros volúmenes).
+- Blender headless real con `posiciones_21.json` (px vis-network): colección "Diagrama" con 17 objetos, **0 solapes reales**, correlación **0.952/0.888**, extensión 45×20m proporcional al diagrama.
+- Descarte del enfoque inicial (ancla+resorte+repulsión simultáneos, Gauss-Seidel duro): oscilaba y no convergía (69→40→96 solapes según variante) — los resortes reintroducen solape si se aplican durante toda la simulación. El punto clave es resolver solapes ANTES (semejanza radial) y luego solo acercar conectados con guardia de solape.
+
+### Archivos creados/modificados
+- `scripts_automatizacion/blender/generar_volumetria.py` — MOD. Nuevas `_escalar_diagrama_a_metros`, `_bordes`, `_overlap`, `_layout_por_diagrama` (3 fases); `_generar_posiciones_por_grafo` delega; extraída `_generar_posiciones_espacios_compacto`; `import itertools`.
+- `output/volumetria_Casa_Ejemplo.blend` — REGENERADO con layout por diagrama (colección "Diagrama", 17 objetos).
+- Tests en `/tmp/opencode/test_layout.py` y `test_fases.py` (solo diagnóstico).
+
+### Pendientes
+- Probar el botón "GENERAR VOLUMETRÍA 3D" en la UI (dibujar diagrama → ver el volumen reflejarlo).
+- Si se quiere la Fase 1 (pegado de conectados) más agresiva, rediseñar el "resorte con desplazamiento de terceros"; hoy ~65-88% según semilla.
+- (Con sudo) deshabilitar servicio Postgres local: `sudo systemctl stop postgresql@16-main && sudo systemctl disable postgresql@16-main`.
+
+## Sesión: 2026-09-01 — Estipulación de 2 BDs (Postgres local → antecedentes) + Fix flow volumetría
+
+### Contexto
+Juan reportó que la tarjeta "Casa Ejemplo" desapareció del dashboard y que el botón de volumetría 3D dejó de funcionar. Diagnóstico conjunto con API/BD reveló 3 hallazgos: (1) el servidor local se levantaba con `DATABASE_URL` apuntando al **PostgreSQL local** (obsoleto, solo 2 leads), por eso Casa Ejemplo no aparecía — sigue viva en Supabase y SQLite; (2) había un bug JS en el botón de volumetría; (3) existía una tercera BD (Postgres local) que no pertenece al diseño funcional del proyecto.
+
+### Decisión (estipulación)
+El proyecto opera con **exactamente dos bases funcionales**: **Supabase (principal, online)** y **SQLite local (respaldo/fallback)**. El **Postgres local** (`localhost:5432/soma_db`) quedó **deshabilitado y archivado** en `antecedentes/postgres_local_soma_db_*.{dump,sql}`. No debe usarse para arrancar el servidor.
+
+### Solución implementada
+1. **Volcado del Postgres local** a `antecedentes/` en 2 formatos: `postgres_local_soma_db_20260901.dump` (formato custom pg, 31KB) y `postgres_local_soma_db_20260901.sql` (SQL plano, 10 tablas con COPY incl. leads Casa Perez 16 / Casa Los Lagos 17).
+2. **`AGENTS.md`** — Sección "Comandos" actualizada: primer método `./start_local.sh` (carga `.env` → Supabase), alternativas con `source .env`; agregados pasos para verificar BD vía `/health`; **eliminado** el comando `systemd-run --setenv=DATABASE_URL=...localhost:5432/soma_db` y el psql local.
+3. **`SOMA_SNAPSHOT.md`** — Nueva sección "ESTIPULACIÓN FUNCIONAL: DOS BASES DE DATOS" con la tabla de las 3 fuentes (Supabase ✅ / SQLite ✅ / Postgres local ⚠️ obsoleto).
+4. **Fix botón volumetría 3D** (`web/js/algoritmo.js:911`): `variaciones` indefinido → `ReferenceError` ("Error de red"). Reemplazado por mensaje fijo.
+5. **Fix endpoint volumetría** (`backend/server.py`): `/output_existe/` no estaba en `public_prefixes` → el polling del front sin auth recibía 401. Agregado. Además, `run_blender()` ahora registra el `.blend` generado en `status_<id>.json` (`archivo`) y `output_existe` respeta el estado (`running`/`error`/`done`) en vez de reportar el `.blend` viejo como éxito.
+6. **Verificación end-to-end**: POST `/generar_volumetria/21` con posiciones simuladas de grafo → Blender corrió (returncode 0) → colección "Diagrama" con 17 objetos cuyas dimensiones reales fueron validadas abriendo el `.blend` headless (Cochera 6.7×4.5×2.6, Sala 4.9×3.3, etc.).
+
+### Archivos creados/modificados
+- `antecedentes/postgres_local_soma_db_20260901.dump|.sql` — NUEVO (archivo del Postgres local obsoleto).
+- `AGENTS.md` — Comandos actualizados (sin Postgres local), nota de 2 BDs.
+- `SOMA_SNAPSHOT.md` — Sección de estipulación de 2 BDs.
+- `web/js/algoritmo.js` — Fix `variaciones` + mensaje de estado correcto.
+- `backend/server.py` — `/output_existe/` público, registro de `.blend` en status, polling respeta `running`.
+
+### Pendientes
+- (Con sudo) `sudo systemctl stop postgresql@16-main && sudo systemctl disable postgresql@16-main` — deshabilitar el servicio Postgres local.
+- Probar el botón "GENERAR VOLUMETRÍA 3D" en la UI (tras el fix) para confirmar el flujo completo diagrama→Blender.
+- Continuar con la visión tipo architechtures.com (Fase 1: motor de empaquetado 2D navegable) tras cerrar el flujo actual.
+
+---
+
+## Sesión: 2026-08-31 — Generador de Volumetría 3D (Blender) + Diagrama de Relaciones con posiciones proporcionales
+
+### Contexto
+Juan quiso automatizar el paso de programa arquitectónico → modelo volumétrico 3D en Blender. El flujo: programa en BD → script de Blender → archivo .blend con volúmenes por zona SOMA (colores, proporciones reales). También quería que los círculos del diagrama de relaciones espaciales tuvieran área proporcional a los m² y que sus posiciones se usaran para posicionar los volúmenes en Blender.
+
+### Solución implementada
+1. **Pipeline completo de volumetría**: `leap_utils.py` (capa de datos SQLite/Supabase) + `generar_volumetria.py` (script Blender con 6 estrategias: compacto, pabellines, lineal, angular, patio, torcido).
+2. **Círculos proporcionales a m²**: fórmula `size = 4 × √(area)` en endpoint `/api/diagrama/grafo/<id>`. Cochera 30m² → size 21.9, Recámaras 14-16m² → size 15-16.
+3. **Posiciones del diagrama → Blender**: botón "GENERAR VOLUMETRÍA 3D" envía posiciones de vis-network al backend, que las guarda en JSON temporal. Blender las usa para la variación "Base".
+4. **Posiciones permanentes en el diagrama**: guardado en localStorage, física desactivada cuando hay posiciones guardadas.
+5. **Nuevas tablas**: `datos_sitio` y `restricciones_normativas` en `init_db()` con endpoints CRUD.
+6. **Endpoint `/generar_volumetria/<id>`**: ejecuta Blender en background con threading.
+7. **Polling de completado**: cada 3s verifica si el .blend existe, aviso visual cuando termina.
+8. **Fix catch duplicado**: eliminado bloque `catch` duplicado en `generarVolumetria()` que rompía todo el JS.
+9. **`/get_leads` público**: necesario porque `fetch()` de JS no envía Basic Auth.
+
+### Archivos creados/modificados
+- `scripts_automatizacion/blender/leap_utils.py` — NUEVO
+- `scripts_automatizacion/blender/generar_volumetria.py` — NUEVO
+- `scripts_automatizacion/blender/output/` — NUEVO (directorio de salida)
+- `biblioteca/normativas/COS_CUS_MERIDA.json` — NUEVO
+- `backend/server.py` — 2 tablas, 8 endpoints nuevos, fix subprocess, círculos proporcionales, `/get_leads` público
+- `web/algoritmo_soma.html` — Sección de volumetría 3D
+- `web/js/algoritmo.js` — Funciones volumetría, fix catch duplicado, posiciones permanentes
+
+### Pendientes
+- Probar generación con datos reales de sitio + restricciones normativas
+- Migrar tablas nuevas a Supabase
+- Vincular estaciones 4+ con datos de la BD
+
+---
+
 ## Sesión: 2026-08-25 — Menú de navegación minimalista en la web pública (hamburguesa arriba-derecha + panel desplegable sutil)
 
 ### Contexto
